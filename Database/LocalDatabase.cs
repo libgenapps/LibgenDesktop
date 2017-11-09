@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace LibgenDesktop.Database
 {
@@ -138,6 +139,7 @@ namespace LibgenDesktop.Database
 
         public IEnumerable<Book> SearchBooks(string searchQuery)
         {
+            searchQuery = searchQuery.Replace('-', '+');
             using (SQLiteCommand command = connection.CreateCommand())
             {
                 command.CommandText = SqlScripts.SEARCH_BOOKS;

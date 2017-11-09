@@ -66,6 +66,7 @@ namespace LibgenDesktop.Interface
             progressOperation.ProgressEvent += ProgressOperation_ProgressEvent;
             progressOperation.CompletedEvent += ProgressOperation_CompletedEvent;
             progressOperation.CancelledEvent += ProgressOperation_CancelledEvent;
+            progressOperation.ErrorEvent += ProgressOperation_ErrorEvent;
             progressBar.Value = 0;
             progressBar.Visible = true;
             searchTextBox.ReadOnly = true;
@@ -120,6 +121,18 @@ namespace LibgenDesktop.Interface
             RemoveProgressOperation();
         }
 
+        private void ProgressOperation_ErrorEvent(object sender, ErrorEventArgs e)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                progressBar.Visible = false;
+                searchTextBox.ReadOnly = false;
+                ErrorForm errorForm = new ErrorForm(e.Exception.ToString());
+                errorForm.ShowDialog();
+            }));
+            StopProgressOperation();
+        }
+
         private void StopProgressOperation()
         {
             currentProgressOperation?.Cancel();
@@ -134,6 +147,7 @@ namespace LibgenDesktop.Interface
                 removingProgressOperation.ProgressEvent -= ProgressOperation_ProgressEvent;
                 removingProgressOperation.CompletedEvent -= ProgressOperation_CompletedEvent;
                 removingProgressOperation.CancelledEvent -= ProgressOperation_CancelledEvent;
+                removingProgressOperation.ErrorEvent -= ProgressOperation_ErrorEvent;
                 currentProgressOperation = null;
             }
         }
