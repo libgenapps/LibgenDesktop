@@ -1165,6 +1165,8 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "BookForm";
+            this.Load += new System.EventHandler(this.BookForm_Load);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.BookForm_MouseMove);
             ((System.ComponentModel.ISupportInitialize)(this.bookCoverPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

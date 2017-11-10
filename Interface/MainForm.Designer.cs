@@ -49,6 +49,9 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.statusPanel = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.offlineModeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.spacerLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.connectionStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.mainMenu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.bookListView)).BeginInit();
             this.statusPanel.SuspendLayout();
@@ -61,7 +64,7 @@
             this.mainMenu.Location = new System.Drawing.Point(0, 0);
             this.mainMenu.Name = "mainMenu";
             this.mainMenu.Padding = new System.Windows.Forms.Padding(7, 3, 0, 3);
-            this.mainMenu.Size = new System.Drawing.Size(1180, 25);
+            this.mainMenu.Size = new System.Drawing.Size(1184, 25);
             this.mainMenu.TabIndex = 0;
             this.mainMenu.Text = "menuStrip1";
             // 
@@ -72,6 +75,7 @@
             this.openDatabaseMenuItem,
             this.importFromSqlDumpMenuItem,
             this.syncMenuItem,
+            this.offlineModeMenuItem,
             this.exitMenuItem});
             this.fileSubMenu.Name = "fileSubMenu";
             this.fileSubMenu.Size = new System.Drawing.Size(48, 19);
@@ -124,7 +128,7 @@
             this.searchTextBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.searchTextBox.Name = "searchTextBox";
             this.searchTextBox.ReadOnly = true;
-            this.searchTextBox.Size = new System.Drawing.Size(1168, 29);
+            this.searchTextBox.Size = new System.Drawing.Size(1172, 29);
             this.searchTextBox.TabIndex = 2;
             this.searchTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.searchTextBox_KeyPress);
             // 
@@ -170,7 +174,7 @@
             this.bookListView.RowHeight = 26;
             this.bookListView.SelectAllOnControlA = false;
             this.bookListView.ShowGroups = false;
-            this.bookListView.Size = new System.Drawing.Size(1168, 522);
+            this.bookListView.Size = new System.Drawing.Size(1172, 519);
             this.bookListView.TabIndex = 3;
             this.bookListView.UseAlternatingBackColors = true;
             this.bookListView.UseCompatibleStateImageBehavior = false;
@@ -243,7 +247,7 @@
             this.progressBar.Location = new System.Drawing.Point(5, 62);
             this.progressBar.Maximum = 1000;
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(1168, 3);
+            this.progressBar.Size = new System.Drawing.Size(1172, 3);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 4;
             this.progressBar.Visible = false;
@@ -252,11 +256,13 @@
             // 
             this.statusPanel.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.statusPanel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLabel});
-            this.statusPanel.Location = new System.Drawing.Point(0, 589);
+            this.statusLabel,
+            this.spacerLabel,
+            this.connectionStatusLabel});
+            this.statusPanel.Location = new System.Drawing.Point(0, 586);
             this.statusPanel.Name = "statusPanel";
             this.statusPanel.RenderMode = System.Windows.Forms.ToolStripRenderMode.ManagerRenderMode;
-            this.statusPanel.Size = new System.Drawing.Size(1180, 25);
+            this.statusPanel.Size = new System.Drawing.Size(1184, 25);
             this.statusPanel.TabIndex = 5;
             // 
             // statusLabel
@@ -266,12 +272,34 @@
             this.statusLabel.Size = new System.Drawing.Size(71, 17);
             this.statusLabel.Text = "Status text.";
             // 
+            // offlineModeMenuItem
+            // 
+            this.offlineModeMenuItem.CheckOnClick = true;
+            this.offlineModeMenuItem.Name = "offlineModeMenuItem";
+            this.offlineModeMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.offlineModeMenuItem.Text = "Работать автономно";
+            this.offlineModeMenuItem.Click += new System.EventHandler(this.offlineModeMenuItem_Click);
+            // 
+            // spacerLabel
+            // 
+            this.spacerLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.spacerLabel.Name = "spacerLabel";
+            this.spacerLabel.Size = new System.Drawing.Size(935, 20);
+            this.spacerLabel.Spring = true;
+            this.spacerLabel.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
+            // 
+            // connectionStatusLabel
+            // 
+            this.connectionStatusLabel.Name = "connectionStatusLabel";
+            this.connectionStatusLabel.Size = new System.Drawing.Size(127, 20);
+            this.connectionStatusLabel.Text = "Автономный режим";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1180, 614);
+            this.ClientSize = new System.Drawing.Size(1184, 611);
             this.Controls.Add(this.statusPanel);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.bookListView);
@@ -319,6 +347,9 @@
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.StatusStrip statusPanel;
         private System.Windows.Forms.ToolStripStatusLabel statusLabel;
+        private System.Windows.Forms.ToolStripMenuItem offlineModeMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel spacerLabel;
+        private System.Windows.Forms.ToolStripStatusLabel connectionStatusLabel;
     }
 }
 

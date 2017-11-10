@@ -11,18 +11,16 @@ namespace LibgenDesktop.Database
     internal class LocalDatabase
     {
         public const int INSERT_TRANSACTION_BATCH = 500;
-        private const string DEFAULT_DATABASE_FILE_NAME = "libgen.db";
 
         private readonly SQLiteConnection connection;
 
-        public LocalDatabase()
+        public LocalDatabase(string databaseFileName)
         {
-            string filePath = DEFAULT_DATABASE_FILE_NAME;
-            if (!File.Exists(filePath))
+            if (!File.Exists(databaseFileName))
             {
-                SQLiteConnection.CreateFile(filePath);
+                SQLiteConnection.CreateFile(databaseFileName);
             }
-            connection = new SQLiteConnection("Data Source = " + filePath);
+            connection = new SQLiteConnection("Data Source = " + databaseFileName);
             connection.Open();
             connection.EnableExtensions(true);
             connection.LoadExtension("SQLite.Interop.dll", "sqlite3_fts5_init");

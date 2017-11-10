@@ -42,7 +42,7 @@
             this.errorHeaderLabel.Name = "errorHeaderLabel";
             this.errorHeaderLabel.Size = new System.Drawing.Size(576, 30);
             this.errorHeaderLabel.TabIndex = 0;
-            this.errorHeaderLabel.Text = "Возникла непредвиденная ошибка.";
+            this.errorHeaderLabel.Text = "Возникла непредвиденная ошибка:";
             this.errorHeaderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // detailsTextBox
@@ -99,6 +99,7 @@
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(400, 300);
             this.Name = "ErrorForm";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Ошибка";
             this.ResumeLayout(false);

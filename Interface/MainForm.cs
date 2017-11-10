@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using LibgenDesktop.Cache;
 using LibgenDesktop.Database;
 using LibgenDesktop.Infrastructure;
+using LibgenDesktop.Settings;
 
 namespace LibgenDesktop.Interface
 {
@@ -13,11 +14,13 @@ namespace LibgenDesktop.Interface
 
         private readonly LocalDatabase localDatabase;
         private readonly DataCache dataCache;
+        private AppSettings appSettings;
         private ProgressOperation currentProgressOperation;
 
         public MainForm()
         {
-            localDatabase = new LocalDatabase();
+            appSettings = SettingsStorage.LoadSettings();
+            localDatabase = new LocalDatabase(appSettings.DatabaseFileName);
             dataCache = new DataCache(localDatabase);
             currentProgressOperation = null;
             InitializeComponent();
@@ -25,6 +28,20 @@ namespace LibgenDesktop.Interface
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            if (appSettings.Window.Maximized)
+            {
+                WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                Left = appSettings.Window.Left;
+                Top = appSettings.Window.Top;
+                Width = appSettings.Window.Width;
+                Height = appSettings.Window.Height;
+            }
+            offlineModeMenuItem.Checked = appSettings.OfflineMode;
+            UpdateOfflineModeStatus(false);
+            Icon = IconUtils.GetAppIcon();
             mainMenu.BackColor = Color.White;
             statusPanel.BackColor = Color.White;
             StartProgressOperation(dataCache.CreateLoadBooksOperation());
@@ -155,14 +172,17 @@ namespace LibgenDesktop.Interface
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             StopProgressOperation();
+            appSettings.Window.Maximized = WindowState == FormWindowState.Maximized;
+            appSettings.Window.Left = Left;
+            appSettings.Window.Top = Top;
+            appSettings.Window.Width = Width;
+            appSettings.Window.Height = Height;
+            SettingsStorage.SaveSettings(appSettings);
         }
 
         private void bookListView_DoubleClick(object sender, EventArgs e)
         {
-            Book selectedBook = bookListView.SelectedObject as Book;
-            selectedBook = localDatabase.GetBookById(selectedBook.Id);
-            BookForm bookForm = new BookForm(selectedBook);
-            bookForm.ShowDialog();
+            OpenSelectedBookDetails();
         }
 
         private void searchTextBox_KeyPress(object sender, KeyPressEventArgs e)
@@ -201,15 +221,42 @@ namespace LibgenDesktop.Interface
                 case Keys.PageDown:
                 case Keys.Home:
                 case Keys.End:
+                case Keys.F4:
                     return;
-            }
-            if (e.KeyCode == Keys.Escape)
-            {
-                searchTextBox.Focus();
-                searchTextBox.SelectAll();
+                case Keys.Escape:
+                    searchTextBox.Focus();
+                    searchTextBox.SelectAll();
+                    break;
+                case Keys.Enter:
+                    BeginInvoke(new Action(() => OpenSelectedBookDetails()));
+                    break;
             }
             e.Handled = true;
             e.SuppressKeyPress = true;
+        }
+
+        private void OpenSelectedBookDetails()
+        {
+            Book selectedBook = bookListView.SelectedObject as Book;
+            selectedBook = localDatabase.GetBookById(selectedBook.Id);
+            BookForm bookForm = new BookForm(selectedBook, appSettings.OfflineMode);
+            bookForm.ShowDialog();
+        }
+
+        private void UpdateOfflineModeStatus(bool saveSettings)
+        {
+            bool offlineMode = offlineModeMenuItem.Checked;
+            connectionStatusLabel.Visible = offlineMode;
+            if (saveSettings)
+            {
+                appSettings.OfflineMode = offlineMode;
+                SettingsStorage.SaveSettings(appSettings);
+            }
+        }
+
+        private void offlineModeMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateOfflineModeStatus(true);
         }
     }
 }

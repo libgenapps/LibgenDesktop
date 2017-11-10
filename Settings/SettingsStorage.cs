@@ -10,15 +10,22 @@ namespace LibgenDesktop.Settings
         public static AppSettings LoadSettings()
         {
             AppSettings result = null;
-            if (File.Exists(CONFIG_FILE_NAME))
+            try
             {
-                DataContractJsonSerializer dataContractSerializer = new DataContractJsonSerializer(typeof(AppSettings));
-                using (FileStream fileStream = new FileStream(CONFIG_FILE_NAME, FileMode.Open))
+                if (File.Exists(CONFIG_FILE_NAME))
                 {
-                    result = dataContractSerializer.ReadObject(fileStream) as AppSettings;
+                    DataContractJsonSerializer dataContractSerializer = new DataContractJsonSerializer(typeof(AppSettings));
+                    using (FileStream fileStream = new FileStream(CONFIG_FILE_NAME, FileMode.Open))
+                    {
+                        result = dataContractSerializer.ReadObject(fileStream) as AppSettings;
+                    }
+                }
+                if (result == null)
+                {
+                    result = AppSettings.Default;
                 }
             }
-            if (result == null)
+            catch
             {
                 result = AppSettings.Default;
             }

@@ -17,12 +17,27 @@ namespace LibgenDesktop.Interface
         private const string BOOK_DOWNLOAD_URL_PREFIX = "http://libgen.io/book/index.php?md5=";
 
         private readonly Book book;
+        private readonly bool offlineMode;
+        private ToolTip offlineModeTooltip;
+        private bool offlineModeTooltipVisible;
 
-        internal BookForm(Book book)
+        internal BookForm(Book book, bool offlineMode)
         {
             InitializeComponent();
             this.book = book;
+            this.offlineMode = offlineMode;
             PopulateBookFields();
+        }
+
+        private void BookForm_Load(object sender, EventArgs e)
+        {
+            Icon = IconUtils.GetAppIcon();
+            if (offlineMode)
+            {
+                downloadButton.Enabled = false;
+                offlineModeTooltip = new ToolTip();
+                offlineModeTooltipVisible = false;
+            }
         }
 
         private void PopulateBookFields()
@@ -127,10 +142,17 @@ namespace LibgenDesktop.Interface
             }
             else
             {
-                coverLoadingLabel.Text = "Загружается обложка...";
-                WebClient webClient = new WebClient();
-                webClient.DownloadDataCompleted += WebClient_DownloadDataCompleted;
-                webClient.DownloadDataAsync(new Uri(BOOK_COVER_URL_PREFIX + bookCoverUrl));
+                if (offlineMode)
+                {
+                    coverLoadingLabel.Text = "Обложка не загружена, потому что\r\nвключен автономный режим";
+                }
+                else
+                {
+                    coverLoadingLabel.Text = "Загружается обложка...";
+                    WebClient webClient = new WebClient();
+                    webClient.DownloadDataCompleted += WebClient_DownloadDataCompleted;
+                    webClient.DownloadDataAsync(new Uri(BOOK_COVER_URL_PREFIX + bookCoverUrl));
+                }
             }
         }
 
@@ -167,6 +189,31 @@ namespace LibgenDesktop.Interface
         private void downloadButton_Click(object sender, EventArgs e)
         {
             Process.Start(BOOK_DOWNLOAD_URL_PREFIX + book.ExtendedProperties.Md5Hash);
+        }
+
+        private void BookForm_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (offlineModeTooltip == null)
+            {
+                return;
+            }
+            Control controlUnderPointer = GetChildAtPoint(e.Location);
+            if (controlUnderPointer == downloadButton)
+            {
+                if (!offlineModeTooltipVisible)
+                {
+                    offlineModeTooltip.Show("Включен автономный режим", downloadButton, downloadButton.Width / 2, downloadButton.Height);
+                    offlineModeTooltipVisible = true;
+                }
+            }
+            else
+            {
+                if (offlineModeTooltipVisible)
+                {
+                    offlineModeTooltip.Hide(downloadButton);
+                    offlineModeTooltipVisible = false;
+                }
+            }
         }
     }
 }
