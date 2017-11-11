@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -15,11 +16,18 @@ namespace LibgenDesktop.Interface
 {
     public partial class BookForm : Form
     {
+        internal class BookProperty
+        {
+            public string Title { get; set; }
+            public string Value { get; set; }
+        }
+
         private const string BOOK_COVER_URL_PREFIX = "http://libgen.io/covers/";
         private const string BOOK_DOWNLOAD_URL_PREFIX = "http://libgen.io/book/index.php?md5=";
 
         private readonly Book book;
         private readonly bool offlineMode;
+        private List<BookProperty> bookProperties;
         private ToolTip offlineModeTooltip;
         private bool offlineModeTooltipVisible;
 
@@ -32,7 +40,9 @@ namespace LibgenDesktop.Interface
             Width = appSettings.BookWindow.Width;
             Height = appSettings.BookWindow.Height;
             MinimumSize = new Size(AppSettings.BOOK_WINDOW_MIN_WIDTH, AppSettings.BOOK_WINDOW_MIN_HEIGHT);
+            Text = $"{book.Title} (книга №{book.Id})";
             PopulateBookFields();
+            LoadCover(book.ExtendedProperties.CoverUrl);
         }
 
         private void BookForm_Load(object sender, EventArgs e)
@@ -48,57 +58,56 @@ namespace LibgenDesktop.Interface
 
         private void PopulateBookFields()
         {
-            Text = $"{book.Title} (книга №{book.Id})";
-            SetValueLabelText(titleValueLabel, book.Title);
-            SetValueLabelText(authorsValueLabel, book.Authors);
-            SetValueLabelText(seriesValueLabel, book.Series);
-            SetValueLabelText(publisherValueLabel, book.Publisher);
-            SetValueLabelText(yearValueLabel, book.Year);
-            SetValueLabelText(languageValueLabel, book.ExtendedProperties.Language);
-            SetValueLabelText(formatValueLabel, book.Format);
-            SetValueLabelText(identifierValueLabel, book.ExtendedProperties.Identifier);
-            SetValueLabelText(addedValueLabel, book.ExtendedProperties.AddedDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
-            SetValueLabelText(updatedValueLabel, book.ExtendedProperties.LastModifiedDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
-            SetValueLabelText(libraryValueLabel, book.ExtendedProperties.Library);
-            SetValueLabelText(fileSizeValueLabel, book.FileSizeWithBytesString);
-            SetValueLabelText(commentValueLabel, book.ExtendedProperties.Commentary);
-            SetValueLabelText(topicsValueLabel, book.ExtendedProperties.Topic);
-            SetValueLabelText(volumeValueLabel, book.ExtendedProperties.VolumeInfo);
-            SetValueLabelText(periodicalValueLabel, book.ExtendedProperties.Periodical);
-            SetValueLabelText(cityValueLabel, book.ExtendedProperties.City);
-            SetValueLabelText(editionValueLabel, book.ExtendedProperties.Edition);
-            SetValueLabelText(pagesValueLabel, PagesToString(book.ExtendedProperties.Pages, book.ExtendedProperties.PagesInFile));
-            SetValueLabelText(tagsValueLabel, book.ExtendedProperties.Tags);
-            SetValueLabelText(md5HashValueLabel, book.ExtendedProperties.Md5Hash);
-            SetValueLabelText(libgenIdValueLabel, book.ExtendedProperties.LibgenId.ToString());
-            SetValueLabelText(issnValueLabel, book.ExtendedProperties.Issn);
-            SetValueLabelText(udcValueLabel, book.ExtendedProperties.Udc);
-            SetValueLabelText(lbcValueLabel, book.ExtendedProperties.Lbc);
-            SetValueLabelText(lccValueLabel, book.ExtendedProperties.Lcc);
-            SetValueLabelText(ddcValueLabel, book.ExtendedProperties.Ddc);
-            SetValueLabelText(doiValueLabel, book.ExtendedProperties.Doi);
-            SetValueLabelText(openLibraryIdValueLabel, book.ExtendedProperties.OpenLibraryId);
-            SetValueLabelText(googleIdValueLabel, book.ExtendedProperties.GoogleBookid);
-            SetValueLabelText(asinValueLabel, book.ExtendedProperties.Asin);
-            SetValueLabelText(dpiValueLabel, book.ExtendedProperties.Dpi.ToString());
-            ocrValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Searchable, "да", "нет", "неизвестно");
-            bookmarkedValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Bookmarked, "есть", "нет", "неизвестно");
-            scannedValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Scanned, "да", "нет", "неизвестно");
-            orientationValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Orientation, "портретная", "альбомная", "неизвестно");
-            paginatedValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Paginated, "есть", "нет", "неизвестно");
-            colorValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Color, "да", "нет", "неизвестно");
-            cleanedValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Cleaned, "да", "нет", "неизвестно");
-            LoadCover(book.ExtendedProperties.CoverUrl);
+            bookProperties = new List<BookProperty>();
+            AddBookProperty("Наименование", book.Title);
+            AddBookProperty("Авторы", book.Authors);
+            AddBookProperty("Серия", book.Series);
+            AddBookProperty("Издатель", book.Title);
+            AddBookProperty("Год", book.Year);
+            AddBookProperty("Язык", book.ExtendedProperties.Language);
+            AddBookProperty("Формат", book.Format);
+            AddBookProperty("ISBN", book.ExtendedProperties.Identifier);
+            AddBookProperty("Добавлено", book.ExtendedProperties.AddedDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
+            AddBookProperty("Обновлено", book.ExtendedProperties.LastModifiedDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
+            AddBookProperty("Библиотека", book.ExtendedProperties.Library);
+            AddBookProperty("Размер файла", book.FileSizeWithBytesString);
+            AddBookProperty("Темы", book.ExtendedProperties.Topic);
+            AddBookProperty("Том", book.ExtendedProperties.VolumeInfo);
+            AddBookProperty("Журнал", book.ExtendedProperties.Periodical);
+            AddBookProperty("Город", book.ExtendedProperties.City);
+            AddBookProperty("Издание", book.ExtendedProperties.Edition);
+            AddBookProperty("Страниц", PagesToString(book.ExtendedProperties.Pages, book.ExtendedProperties.PagesInFile));
+            AddBookProperty("Теги", book.ExtendedProperties.Tags);
+            AddBookProperty("MD5-хэш", book.ExtendedProperties.Md5Hash);
+            AddBookProperty("Libgen ID", book.ExtendedProperties.LibgenId.ToString());
+            AddBookProperty("ISSN", book.ExtendedProperties.Issn);
+            AddBookProperty("UDC", book.ExtendedProperties.Udc);
+            AddBookProperty("LBC", book.ExtendedProperties.Lbc);
+            AddBookProperty("LCC", book.ExtendedProperties.Lcc);
+            AddBookProperty("DDC", book.ExtendedProperties.Ddc);
+            AddBookProperty("DOI", book.ExtendedProperties.Doi);
+            AddBookProperty("OpenLibraryID", book.ExtendedProperties.Doi);
+            AddBookProperty("GoogleID", book.ExtendedProperties.Doi);
+            AddBookProperty("ASIN", book.ExtendedProperties.Doi);
+            AddBookProperty("DPI", book.ExtendedProperties.Dpi.ToString());
+            AddBookProperty("OCR", StringBooleanToLabelString(book.Searchable, "да", "нет", "неизвестно"));
+            AddBookProperty("Оглавление", StringBooleanToLabelString(book.ExtendedProperties.Bookmarked, "есть", "нет", "неизвестно"));
+            AddBookProperty("Отсканирована", StringBooleanToLabelString(book.ExtendedProperties.Scanned, "да", "нет", "неизвестно"));
+            AddBookProperty("Ориентация", StringBooleanToLabelString(book.ExtendedProperties.Orientation, "портретная", "альбомная", "неизвестно"));
+            AddBookProperty("Постраничная", StringBooleanToLabelString(book.ExtendedProperties.Paginated, "есть", "нет", "неизвестно"));
+            AddBookProperty("Цветная", StringBooleanToLabelString(book.ExtendedProperties.Color, "да", "нет", "неизвестно"));
+            AddBookProperty("Вычищенная", StringBooleanToLabelString(book.ExtendedProperties.Cleaned, "да", "нет", "неизвестно"));
+            AddBookProperty("Комментарий", book.ExtendedProperties.Commentary);
+            bookDetailsDataGridView.DataSource = bookProperties;
         }
 
-        private void SetValueLabelText(Label valueLabel, string text)
+        private void AddBookProperty(string title, string value)
         {
-            valueLabel.Text = text;
-            if (!String.IsNullOrWhiteSpace(text))
+            bookProperties.Add(new BookProperty
             {
-                valueLabel.ContextMenuStrip = valueLabelContextMenu;
-                valueLabel.MouseDown += ValueLabel_MouseDown;
-            }
+                Title = title + ':',
+                Value = value
+            });
         }
 
         private void ValueLabel_MouseDown(object sender, MouseEventArgs e)
@@ -223,10 +232,6 @@ namespace LibgenDesktop.Interface
 
         private void BookForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            foreach (Label label in Controls.OfType<Label>())
-            {
-                label.MouseDown -= ValueLabel_MouseDown;
-            }
             SettingsStorage.AppSettings.BookWindow.Width = Width;
             SettingsStorage.AppSettings.BookWindow.Height = Height;
             SettingsStorage.SaveSettings();
@@ -234,7 +239,26 @@ namespace LibgenDesktop.Interface
 
         private void copyValueLabelTextMenuItem_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl.Text);
+            Clipboard.SetText((sender as ToolStripMenuItem).Tag.ToString());
+        }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            bookDetailsDataGridView.ClearSelection();
+        }
+
+        private void bookDetailsDataGridView_CellContextMenuStripNeeded(object sender, DataGridViewCellContextMenuStripNeededEventArgs e)
+        {
+            if (e.ColumnIndex == 1)
+            {
+                string cellText = bookDetailsDataGridView.Rows[e.RowIndex].Cells[1].Value.ToString();
+                if (!String.IsNullOrWhiteSpace(cellText))
+                {
+                    copyValueLabelTextMenuItem.Text = $"Скопировать \"{cellText}\"";
+                    copyValueLabelTextMenuItem.Tag = cellText;
+                    e.ContextMenuStrip = valueLabelContextMenu;
+                }
+            }
         }
     }
 }

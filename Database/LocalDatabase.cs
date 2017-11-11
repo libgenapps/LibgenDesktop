@@ -65,6 +65,7 @@ namespace LibgenDesktop.Database
                         book.Publisher = dataReader.GetString(5);
                         book.Format = dataReader.GetString(6);
                         book.SizeInBytes = dataReader.GetInt64(7);
+                        book.Searchable = dataReader.GetString(8);
                         yield return book;
                     }
                 }
@@ -116,7 +117,7 @@ namespace LibgenDesktop.Database
                     book.ExtendedProperties.Paginated = dataReader.GetString(31);
                     book.ExtendedProperties.Scanned = dataReader.GetString(32);
                     book.ExtendedProperties.Bookmarked = dataReader.GetString(33);
-                    book.ExtendedProperties.Searchable = dataReader.GetString(34);
+                    book.Searchable = dataReader.GetString(34);
                     book.SizeInBytes = dataReader.GetInt64(35);
                     book.Format = dataReader.GetString(36);
                     book.ExtendedProperties.Md5Hash = dataReader.GetString(37);
@@ -137,7 +138,29 @@ namespace LibgenDesktop.Database
 
         public IEnumerable<Book> SearchBooks(string searchQuery)
         {
-            searchQuery = searchQuery.Replace('-', '+');
+            List<string> searchQueryBuilder = new List<string>();
+            foreach (string searchQueryPart in searchQuery.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                switch (searchQueryPart)
+                {
+                    case "AND":
+                    case "OR":
+                    case "NOT":
+                        searchQueryBuilder.Add(searchQueryPart);
+                        continue;
+                    default:
+                        if (searchQueryPart.Length > 1 && searchQueryPart.EndsWith("*"))
+                        {
+                            searchQueryBuilder.Add($"\"{ searchQueryPart.Substring(0, searchQueryPart.Length - 1) }\"*");
+                        }
+                        else
+                        {
+                            searchQueryBuilder.Add($"\"{ searchQueryPart }\"");
+                        }
+                        break;
+                }
+            }
+            searchQuery = String.Join(" ", searchQueryBuilder);
             using (SQLiteCommand command = connection.CreateCommand())
             {
                 command.CommandText = SqlScripts.SEARCH_BOOKS;
@@ -155,6 +178,7 @@ namespace LibgenDesktop.Database
                         book.Publisher = dataReader.GetString(5);
                         book.Format = dataReader.GetString(6);
                         book.SizeInBytes = dataReader.GetInt64(7);
+                        book.Searchable = dataReader.GetString(8);
                         yield return book;
                     }
                 }
@@ -260,7 +284,7 @@ namespace LibgenDesktop.Database
                         paginatedParameter.Value = book.ExtendedProperties.Paginated;
                         scannedParameter.Value = book.ExtendedProperties.Scanned;
                         bookmarkedParameter.Value = book.ExtendedProperties.Bookmarked;
-                        searchableParameter.Value = book.ExtendedProperties.Searchable;
+                        searchableParameter.Value = book.Searchable;
                         sizeInBytesParameter.Value = book.SizeInBytes;
                         formatParameter.Value = book.Format;
                         md5HashParameter.Value = book.ExtendedProperties.Md5Hash;

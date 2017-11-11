@@ -29,7 +29,7 @@ namespace LibgenDesktop.Settings
             public int PublisherColumnWidth { get; set; }
             public int FormatColumnWidth { get; set; }
             public int FileSizeColumnWidth { get; set; }
-
+            public int OcrColumnWidth { get; set; }
         }
 
         public const int MAIN_WINDOW_MIN_WIDTH = 800;
@@ -44,6 +44,7 @@ namespace LibgenDesktop.Settings
         public const int PUBLISHER_COLUMN_MIN_WIDTH = 50;
         public const int FORMAT_COLUMN_MIN_WIDTH = 20;
         public const int FILESIZE_COLUMN_MIN_WIDTH = 30;
+        public const int OCR_COLUMN_MIN_WIDTH = 40;
 
         private const string DEFAULT_DATABASE_FILE_NAME = "libgen.db";
         private const int DEFAULT_MAIN_WINDOW_WIDTH = 1200;
@@ -58,6 +59,7 @@ namespace LibgenDesktop.Settings
         public const int DEFAULT_PUBLISHER_COLUMN_WIDTH = 200;
         public const int DEFAULT_FORMAT_COLUMN_WIDTH = 60;
         public const int DEFAULT_FILESIZE_COLUMN_WIDTH = 110;
+        public const int DEFAULT_OCR_COLUMN_WIDTH = 40;
 
         public static AppSettings Default
         {
@@ -115,7 +117,8 @@ namespace LibgenDesktop.Settings
                     YearColumnWidth = DEFAULT_YEAR_COLUMN_WIDTH,
                     PublisherColumnWidth = DEFAULT_PUBLISHER_COLUMN_WIDTH,
                     FormatColumnWidth = DEFAULT_FORMAT_COLUMN_WIDTH,
-                    FileSizeColumnWidth = DEFAULT_FILESIZE_COLUMN_WIDTH
+                    FileSizeColumnWidth = DEFAULT_FILESIZE_COLUMN_WIDTH,
+                    OcrColumnWidth = DEFAULT_OCR_COLUMN_WIDTH
                 };
             }
         }
@@ -218,6 +221,10 @@ namespace LibgenDesktop.Settings
                 if (appSettings.Columns.FileSizeColumnWidth < ID_COLUMN_MIN_WIDTH)
                 {
                     appSettings.Columns.FileSizeColumnWidth = ID_COLUMN_MIN_WIDTH;
+                }
+                if (appSettings.Columns.OcrColumnWidth < OCR_COLUMN_MIN_WIDTH)
+                {
+                    appSettings.Columns.OcrColumnWidth = OCR_COLUMN_MIN_WIDTH;
                 }
             }
         }

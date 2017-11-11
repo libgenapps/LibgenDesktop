@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Weavers>
+    <Costura>
+        <Unmanaged32Assemblies>
+            SQLite.Interop
+        </Unmanaged32Assemblies>
+        <Unmanaged64Assemblies>
+            SQLite.Interop
+        </Unmanaged64Assemblies>
+    </Costura>
+</Weavers>

@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.mainMenu = new System.Windows.Forms.MenuStrip();
             this.fileSubMenu = new System.Windows.Forms.ToolStripMenuItem();
             this.newDatabaseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +49,8 @@
             this.publisherColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.formatColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.fileSizeColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.ocrColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.bookListImages = new System.Windows.Forms.ImageList(this.components);
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.statusPanel = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -131,6 +135,7 @@
             this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.searchTextBox.BackColor = System.Drawing.Color.White;
+            this.searchTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.searchTextBox.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.searchTextBox.Location = new System.Drawing.Point(5, 31);
             this.searchTextBox.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
@@ -138,11 +143,12 @@
             this.searchTextBox.ReadOnly = true;
             this.searchTextBox.Size = new System.Drawing.Size(1172, 29);
             this.searchTextBox.TabIndex = 2;
+            this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyDown);
             this.searchTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.searchTextBox_KeyPress);
             // 
             // openSqlDumpDialog
             // 
-            this.openSqlDumpDialog.Filter = "SQL-дампы (*.sql)|*.sql|Все файлы (*.*)|*.*";
+            this.openSqlDumpDialog.Filter = "SQL-дампы (*.sql, *.zip, *.rar)|*.sql;*zip;*.rar|Все файлы (*.*)|*.*";
             this.openSqlDumpDialog.Title = "Выбор SQL-дампа";
             // 
             // bookListView
@@ -155,6 +161,7 @@
             this.bookListView.AllColumns.Add(this.publisherColumn);
             this.bookListView.AllColumns.Add(this.formatColumn);
             this.bookListView.AllColumns.Add(this.fileSizeColumn);
+            this.bookListView.AllColumns.Add(this.ocrColumn);
             this.bookListView.AllowColumnReorder = true;
             this.bookListView.AlternateRowBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
             this.bookListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -170,7 +177,8 @@
             this.yearColumn,
             this.publisherColumn,
             this.formatColumn,
-            this.fileSizeColumn});
+            this.fileSizeColumn,
+            this.ocrColumn});
             this.bookListView.Cursor = System.Windows.Forms.Cursors.Default;
             this.bookListView.FullRowSelect = true;
             this.bookListView.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
@@ -183,6 +191,7 @@
             this.bookListView.SelectAllOnControlA = false;
             this.bookListView.ShowGroups = false;
             this.bookListView.Size = new System.Drawing.Size(1172, 519);
+            this.bookListView.SmallImageList = this.bookListImages;
             this.bookListView.TabIndex = 3;
             this.bookListView.UseAlternatingBackColors = true;
             this.bookListView.UseCompatibleStateImageBehavior = false;
@@ -257,6 +266,21 @@
             this.fileSizeColumn.Text = "Размер файла";
             this.fileSizeColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.fileSizeColumn.Width = 100;
+            // 
+            // ocrColumn
+            // 
+            this.ocrColumn.AspectName = "";
+            this.ocrColumn.MinimumWidth = 40;
+            this.ocrColumn.Searchable = false;
+            this.ocrColumn.Text = "OCR";
+            this.ocrColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.ocrColumn.Width = 40;
+            // 
+            // bookListImages
+            // 
+            this.bookListImages.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("bookListImages.ImageStream")));
+            this.bookListImages.TransparentColor = System.Drawing.Color.Transparent;
+            this.bookListImages.Images.SetKeyName(0, "check");
             // 
             // progressBar
             // 
@@ -360,6 +384,8 @@
         private System.Windows.Forms.ToolStripMenuItem offlineModeMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel spacerLabel;
         private System.Windows.Forms.ToolStripStatusLabel connectionStatusLabel;
+        private BrightIdeasSoftware.OLVColumn ocrColumn;
+        private System.Windows.Forms.ImageList bookListImages;
     }
 }
 

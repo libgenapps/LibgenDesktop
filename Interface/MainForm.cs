@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
@@ -24,6 +25,7 @@ namespace LibgenDesktop.Interface
             dataCache = new DataCache(localDatabase);
             currentProgressOperation = null;
             InitializeComponent();
+            ocrColumn.ImageGetter = book => (book as Book).Ocr ? "check" : null;
             MinimumSize = new Size(AppSettings.MAIN_WINDOW_MIN_WIDTH, AppSettings.MAIN_WINDOW_MIN_HEIGHT);
         }
 
@@ -282,6 +284,15 @@ namespace LibgenDesktop.Interface
         private void bookListView_BeforeSearching(object sender, BeforeSearchingEventArgs e)
         {
             e.Canceled = true;
+        }
+
+        private void searchTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Escape)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+            }
         }
     }
 }

@@ -35,7 +35,6 @@ namespace LibgenDesktop.Database
             public string Paginated { get; set; }
             public string Scanned { get; set; }
             public string Bookmarked { get; set; }
-            public string Searchable { get; set; }
             public string Md5Hash { get; set; }
             public string Generic { get; set; }
             public string Visible { get; set; }
@@ -57,9 +56,11 @@ namespace LibgenDesktop.Database
         public string Publisher { get; set; }
         public long SizeInBytes { get; set; }
         public string Format { get; set; }
+        public string Searchable { get; set; }
         public BookExtendedProperties ExtendedProperties { get; set; }
 
         public string FileSizeString => Formatters.FileSizeToString(SizeInBytes, false);
         public string FileSizeWithBytesString => Formatters.FileSizeToString(SizeInBytes, true);
+        public bool Ocr => Searchable == "1";
     }
 }

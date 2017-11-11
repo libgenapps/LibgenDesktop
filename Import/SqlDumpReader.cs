@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using LibgenDesktop.Database;
+using SharpCompress.Archives.Rar;
+using SharpCompress.Archives.Zip;
 
 namespace LibgenDesktop.Import
 {
@@ -17,14 +20,34 @@ namespace LibgenDesktop.Import
 
         private readonly long fileSize;
         private readonly StreamReader streamReader;
+        private readonly ZipArchive zipArchive;
+        private readonly RarArchive rarArchive;
 
         private bool disposed = false;
         private long currentFilePosition;
 
         public SqlDumpReader(string filePath)
         {
-            fileSize = new FileInfo(filePath).Length;
-            streamReader = new StreamReader(filePath);
+            string fileExtension = Path.GetExtension(filePath);
+            switch (fileExtension.ToLower())
+            {
+                case ".zip":
+                    zipArchive = ZipArchive.Open(filePath);
+                    ZipArchiveEntry firstZipArchiveEntry = zipArchive.Entries.First();
+                    fileSize = firstZipArchiveEntry.Size;
+                    streamReader = new StreamReader(firstZipArchiveEntry.OpenEntryStream());
+                    break;
+                case ".rar":
+                    rarArchive = RarArchive.Open(filePath);
+                    RarArchiveEntry firstRarArchiveEntry = rarArchive.Entries.First();
+                    fileSize = firstRarArchiveEntry.Size;
+                    streamReader = new StreamReader(firstRarArchiveEntry.OpenEntryStream());
+                    break;
+                default:
+                    fileSize = new FileInfo(filePath).Length;
+                    streamReader = new StreamReader(filePath);
+                    break;
+            }
         }
 
         public event EventHandler<ReadRowsProgressEventArgs> ReadRowsProgress;
@@ -98,7 +121,7 @@ namespace LibgenDesktop.Import
                                         book.ExtendedProperties.Paginated = ParseString(line, ref position);
                                         book.ExtendedProperties.Scanned = ParseString(line, ref position);
                                         book.ExtendedProperties.Bookmarked = ParseString(line, ref position);
-                                        book.ExtendedProperties.Searchable = ParseString(line, ref position);
+                                        book.Searchable = ParseString(line, ref position);
                                         book.SizeInBytes = ParseInt64(line, ref position);
                                         book.Format = ParseString(line, ref position);
                                         book.ExtendedProperties.Md5Hash = ParseString(line, ref position);
@@ -132,6 +155,10 @@ namespace LibgenDesktop.Import
                         updateTableParsed = true;
                     }
                 }
+                else
+                {
+                    RaiseReadRowsProgressEvent(rowsParsed);
+                }
             }
             if (!updateTableParsed)
             {
@@ -150,6 +177,14 @@ namespace LibgenDesktop.Import
             {
                 if (disposing)
                 {
+                    if (zipArchive != null)
+                    {
+                        zipArchive.Dispose();
+                    }
+                    if (rarArchive != null)
+                    {
+                        rarArchive.Dispose();
+                    }
                     streamReader.Dispose();
                 }
                 disposed = true;

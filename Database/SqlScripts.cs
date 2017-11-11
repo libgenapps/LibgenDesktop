@@ -60,7 +60,7 @@
 
         public const string COUNT_BOOKS = "SELECT MAX(Id) FROM books LIMIT 1";
 
-        public const string GET_ALL_BOOKS = "SELECT Id,Title,Authors,Series,Year,Publisher,Format,SizeInBytes FROM books ORDER BY Id";
+        public const string GET_ALL_BOOKS = "SELECT Id,Title,Authors,Series,Year,Publisher,Format,SizeInBytes,Searchable FROM books ORDER BY Id";
 
         public const string GET_BOOK_BY_ID = "SELECT Id,Title,VolumeInfo,Series,Periodical,Authors,Year,Edition,Publisher,City," +
             "Pages,PagesInFile,Language,Topic,Library,Issue,Identifier,Issn,Asin,Udc,Lbc,Ddc,Lcc,Doi," +
@@ -68,7 +68,7 @@
             "Searchable,SizeInBytes,Format,Md5Hash,Generic,Visible,Locator,Local,AddedDateTime," +
             "LastModifiedDateTime,CoverUrl,Tags,IdentifierPlain,LibgenId FROM books WHERE Id = @Id";
 
-        public const string SEARCH_BOOKS = "SELECT Id,Title,Authors,Series,Year,Publisher,Format,SizeInBytes FROM books " +
+        public const string SEARCH_BOOKS = "SELECT Id,Title,Authors,Series,Year,Publisher,Format,SizeInBytes,Searchable FROM books " +
             "WHERE Id IN (SELECT rowid FROM books_fts WHERE books_fts MATCH @SearchQuery) ORDER BY Id";
 
         public const string INSERT_BOOK =

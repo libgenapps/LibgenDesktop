@@ -13,7 +13,7 @@ namespace LibgenDesktop.Interface
         {
             thousandsSeparatedNumberFormat = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             thousandsSeparatedNumberFormat.NumberGroupSeparator = " ";
-            fileSizePostfixes = new[] { "байт", "Кб", "Мб", "Гб", "Тб" };
+            fileSizePostfixes = new[] { "байт", "КБ", "МБ", "ГБ", "ТБ" };
         }
 
         public static NumberFormatInfo ThousandsSeparatedNumberFormat => thousandsSeparatedNumberFormat;
