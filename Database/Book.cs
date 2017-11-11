@@ -1,4 +1,5 @@
 ﻿using System;
+using LibgenDesktop.Interface;
 
 namespace LibgenDesktop.Database
 {
@@ -57,5 +58,8 @@ namespace LibgenDesktop.Database
         public long SizeInBytes { get; set; }
         public string Format { get; set; }
         public BookExtendedProperties ExtendedProperties { get; set; }
+
+        public string FileSizeString => Formatters.FileSizeToString(SizeInBytes, false);
+        public string FileSizeWithBytesString => Formatters.FileSizeToString(SizeInBytes, true);
     }
 }

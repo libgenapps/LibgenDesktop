@@ -39,7 +39,7 @@ namespace LibgenDesktop.Cache
                 {
                     RaiseProgressEvent(new ProgressEventArgs
                     {
-                        ProgressDescription = $"Поиск книг (найдено {targetList.Count.ToString("N0", Formatters.BookCountFormat)})...",
+                        ProgressDescription = $"Поиск книг (найдено {targetList.Count.ToString("N0", Formatters.ThousandsSeparatedNumberFormat)})...",
                         PercentCompleted = Double.NaN
                     });
                     currentBatchBookNumber = 0;

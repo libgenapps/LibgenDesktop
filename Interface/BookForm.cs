@@ -4,10 +4,12 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using System.Windows.Forms;
 using LibgenDesktop.Database;
+using LibgenDesktop.Settings;
 
 namespace LibgenDesktop.Interface
 {
@@ -21,11 +23,15 @@ namespace LibgenDesktop.Interface
         private ToolTip offlineModeTooltip;
         private bool offlineModeTooltipVisible;
 
-        internal BookForm(Book book, bool offlineMode)
+        internal BookForm(Book book)
         {
             InitializeComponent();
             this.book = book;
-            this.offlineMode = offlineMode;
+            AppSettings appSettings = SettingsStorage.AppSettings;
+            offlineMode = appSettings.OfflineMode;
+            Width = appSettings.BookWindow.Width;
+            Height = appSettings.BookWindow.Height;
+            MinimumSize = new Size(AppSettings.BOOK_WINDOW_MIN_WIDTH, AppSettings.BOOK_WINDOW_MIN_HEIGHT);
             PopulateBookFields();
         }
 
@@ -43,37 +49,38 @@ namespace LibgenDesktop.Interface
         private void PopulateBookFields()
         {
             Text = $"{book.Title} (книга №{book.Id})";
-            titleValueLabel.Text = book.Title;
-            authorsValueLabel.Text = book.Authors;
-            seriesValueLabel.Text = book.Series;
-            publisherValueLabel.Text = book.Publisher;
-            languageValueLabel.Text = book.ExtendedProperties.Language;
-            formatValueLabel.Text = book.Format;
-            identifierValueLabel.Text = book.ExtendedProperties.Identifier;
-            addedValueLabel.Text = book.ExtendedProperties.AddedDateTime.ToString("dd.MM.yyyy HH:mm:ss");
-            updatedValueLabel.Text = book.ExtendedProperties.LastModifiedDateTime.ToString("dd.MM.yyyy HH:mm:ss");
-            libraryValueLabel.Text = book.ExtendedProperties.Library;
-            fileSizeValueLabel.Text = FileSizeToString(book.SizeInBytes);
-            commentValueLabel.Text = book.ExtendedProperties.Commentary;
-            topicsValueLabel.Text = book.ExtendedProperties.Topic;
-            volumeValueLabel.Text = book.ExtendedProperties.VolumeInfo;
-            periodicalValueLabel.Text = book.ExtendedProperties.Periodical;
-            cityValueLabel.Text = book.ExtendedProperties.City;
-            editionValueLabel.Text = book.ExtendedProperties.Edition;
-            pagesValueLabel.Text = PagesToString(book.ExtendedProperties.Pages, book.ExtendedProperties.PagesInFile);
-            tagsValueLabel.Text = book.ExtendedProperties.Tags;
-            md5HashValueLabel.Text = book.ExtendedProperties.Md5Hash;
-            libgenIdValueLabel.Text = book.ExtendedProperties.LibgenId.ToString();
-            issnValueLabel.Text = book.ExtendedProperties.Issn;
-            udcValueLabel.Text = book.ExtendedProperties.Udc;
-            lbcValueLabel.Text = book.ExtendedProperties.Lbc;
-            lccValueLabel.Text = book.ExtendedProperties.Lcc;
-            ddcValueLabel.Text = book.ExtendedProperties.Ddc;
-            doiValueLabel.Text = book.ExtendedProperties.Doi;
-            openLibraryIdValueLabel.Text = book.ExtendedProperties.OpenLibraryId;
-            googleIdValueLabel.Text = book.ExtendedProperties.GoogleBookid;
-            asinValueLabel.Text = book.ExtendedProperties.Asin;
-            dpiValueLabel.Text = book.ExtendedProperties.Dpi.ToString();
+            SetValueLabelText(titleValueLabel, book.Title);
+            SetValueLabelText(authorsValueLabel, book.Authors);
+            SetValueLabelText(seriesValueLabel, book.Series);
+            SetValueLabelText(publisherValueLabel, book.Publisher);
+            SetValueLabelText(yearValueLabel, book.Year);
+            SetValueLabelText(languageValueLabel, book.ExtendedProperties.Language);
+            SetValueLabelText(formatValueLabel, book.Format);
+            SetValueLabelText(identifierValueLabel, book.ExtendedProperties.Identifier);
+            SetValueLabelText(addedValueLabel, book.ExtendedProperties.AddedDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
+            SetValueLabelText(updatedValueLabel, book.ExtendedProperties.LastModifiedDateTime.ToString("dd.MM.yyyy HH:mm:ss"));
+            SetValueLabelText(libraryValueLabel, book.ExtendedProperties.Library);
+            SetValueLabelText(fileSizeValueLabel, book.FileSizeWithBytesString);
+            SetValueLabelText(commentValueLabel, book.ExtendedProperties.Commentary);
+            SetValueLabelText(topicsValueLabel, book.ExtendedProperties.Topic);
+            SetValueLabelText(volumeValueLabel, book.ExtendedProperties.VolumeInfo);
+            SetValueLabelText(periodicalValueLabel, book.ExtendedProperties.Periodical);
+            SetValueLabelText(cityValueLabel, book.ExtendedProperties.City);
+            SetValueLabelText(editionValueLabel, book.ExtendedProperties.Edition);
+            SetValueLabelText(pagesValueLabel, PagesToString(book.ExtendedProperties.Pages, book.ExtendedProperties.PagesInFile));
+            SetValueLabelText(tagsValueLabel, book.ExtendedProperties.Tags);
+            SetValueLabelText(md5HashValueLabel, book.ExtendedProperties.Md5Hash);
+            SetValueLabelText(libgenIdValueLabel, book.ExtendedProperties.LibgenId.ToString());
+            SetValueLabelText(issnValueLabel, book.ExtendedProperties.Issn);
+            SetValueLabelText(udcValueLabel, book.ExtendedProperties.Udc);
+            SetValueLabelText(lbcValueLabel, book.ExtendedProperties.Lbc);
+            SetValueLabelText(lccValueLabel, book.ExtendedProperties.Lcc);
+            SetValueLabelText(ddcValueLabel, book.ExtendedProperties.Ddc);
+            SetValueLabelText(doiValueLabel, book.ExtendedProperties.Doi);
+            SetValueLabelText(openLibraryIdValueLabel, book.ExtendedProperties.OpenLibraryId);
+            SetValueLabelText(googleIdValueLabel, book.ExtendedProperties.GoogleBookid);
+            SetValueLabelText(asinValueLabel, book.ExtendedProperties.Asin);
+            SetValueLabelText(dpiValueLabel, book.ExtendedProperties.Dpi.ToString());
             ocrValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Searchable, "да", "нет", "неизвестно");
             bookmarkedValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Bookmarked, "есть", "нет", "неизвестно");
             scannedValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Scanned, "да", "нет", "неизвестно");
@@ -82,6 +89,24 @@ namespace LibgenDesktop.Interface
             colorValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Color, "да", "нет", "неизвестно");
             cleanedValueLabel.Text = StringBooleanToLabelString(book.ExtendedProperties.Cleaned, "да", "нет", "неизвестно");
             LoadCover(book.ExtendedProperties.CoverUrl);
+        }
+
+        private void SetValueLabelText(Label valueLabel, string text)
+        {
+            valueLabel.Text = text;
+            if (!String.IsNullOrWhiteSpace(text))
+            {
+                valueLabel.ContextMenuStrip = valueLabelContextMenu;
+                valueLabel.MouseDown += ValueLabel_MouseDown;
+            }
+        }
+
+        private void ValueLabel_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                copyValueLabelTextMenuItem.Text = $"Скопировать \"{(sender as Label).Text}\"";
+            }
         }
 
         private string StringBooleanToLabelString(string value, string value1Label, string value0Label, string valueUnknownLabel)
@@ -112,26 +137,6 @@ namespace LibgenDesktop.Interface
             resultBuilder.Append(pagesInFile.ToString());
             resultBuilder.Append(" (всего в файле)");
             return resultBuilder.ToString();
-        }
-
-        private string FileSizeToString(long fileSize)
-        {
-            string[] postfixes = new[] { "байт", "Кб", "Мб", "Гб", "Тб" };
-            int postfixIndex = fileSize != 0 ? (int)Math.Floor(Math.Log(fileSize) / Math.Log(1024)) : 0;
-            StringBuilder resultBuilder = new StringBuilder();
-            resultBuilder.Append((fileSize / Math.Pow(1024, postfixIndex)).ToString("N2"));
-            resultBuilder.Append(" ");
-            resultBuilder.Append(postfixes[postfixIndex]);
-            if (postfixIndex != 0)
-            {
-                NumberFormatInfo fileSizeFormat = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-                fileSizeFormat.NumberGroupSeparator = " ";
-                resultBuilder.Append(" (");
-                resultBuilder.Append(fileSize.ToString("N0", fileSizeFormat));
-                resultBuilder.Append(" байт)");
-            }
-            return resultBuilder.ToString();
-
         }
 
         private void LoadCover(string bookCoverUrl)
@@ -214,6 +219,22 @@ namespace LibgenDesktop.Interface
                     offlineModeTooltipVisible = false;
                 }
             }
+        }
+
+        private void BookForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            foreach (Label label in Controls.OfType<Label>())
+            {
+                label.MouseDown -= ValueLabel_MouseDown;
+            }
+            SettingsStorage.AppSettings.BookWindow.Width = Width;
+            SettingsStorage.AppSettings.BookWindow.Height = Height;
+            SettingsStorage.SaveSettings();
+        }
+
+        private void copyValueLabelTextMenuItem_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(((sender as ToolStripMenuItem).Owner as ContextMenuStrip).SourceControl.Text);
         }
     }
 }

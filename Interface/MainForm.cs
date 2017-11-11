@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using LibgenDesktop.Cache;
 using LibgenDesktop.Database;
 using LibgenDesktop.Infrastructure;
@@ -14,31 +15,48 @@ namespace LibgenDesktop.Interface
 
         private readonly LocalDatabase localDatabase;
         private readonly DataCache dataCache;
-        private AppSettings appSettings;
         private ProgressOperation currentProgressOperation;
 
         public MainForm()
         {
-            appSettings = SettingsStorage.LoadSettings();
-            localDatabase = new LocalDatabase(appSettings.DatabaseFileName);
+            SettingsStorage.LoadSettings();
+            localDatabase = new LocalDatabase(SettingsStorage.AppSettings.DatabaseFileName);
             dataCache = new DataCache(localDatabase);
             currentProgressOperation = null;
             InitializeComponent();
+            MinimumSize = new Size(AppSettings.MAIN_WINDOW_MIN_WIDTH, AppSettings.MAIN_WINDOW_MIN_HEIGHT);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            if (appSettings.Window.Maximized)
+            AppSettings appSettings = SettingsStorage.AppSettings;
+            if (appSettings.MainWindow.Maximized)
             {
                 WindowState = FormWindowState.Maximized;
             }
             else
             {
-                Left = appSettings.Window.Left;
-                Top = appSettings.Window.Top;
-                Width = appSettings.Window.Width;
-                Height = appSettings.Window.Height;
+                Left = appSettings.MainWindow.Left;
+                Top = appSettings.MainWindow.Top;
+                Width = appSettings.MainWindow.Width;
+                Height = appSettings.MainWindow.Height;
             }
+            idColumn.MinimumWidth = AppSettings.ID_COLUMN_MIN_WIDTH;
+            idColumn.Width = appSettings.Columns.IdColumnWidth;
+            titleColumn.MinimumWidth = AppSettings.TITLE_COLUMN_MIN_WIDTH;
+            titleColumn.Width = appSettings.Columns.TitleColumnWidth;
+            authorsColumn.MinimumWidth = AppSettings.AUTHORS_COLUMN_MIN_WIDTH;
+            authorsColumn.Width = appSettings.Columns.AuthorsColumnWidth;
+            seriesColumn.MinimumWidth = AppSettings.SERIES_COLUMN_MIN_WIDTH;
+            seriesColumn.Width = appSettings.Columns.SeriesColumnWidth;
+            yearColumn.MinimumWidth = AppSettings.YEAR_COLUMN_MIN_WIDTH;
+            yearColumn.Width = appSettings.Columns.YearColumnWidth;
+            publisherColumn.MinimumWidth = AppSettings.PUBLISHER_COLUMN_MIN_WIDTH;
+            publisherColumn.Width = appSettings.Columns.PublisherColumnWidth;
+            formatColumn.MinimumWidth = AppSettings.FORMAT_COLUMN_MIN_WIDTH;
+            formatColumn.Width = appSettings.Columns.FormatColumnWidth;
+            fileSizeColumn.MinimumWidth = AppSettings.FILESIZE_COLUMN_MIN_WIDTH;
+            fileSizeColumn.Width = appSettings.Columns.FileSizeColumnWidth;
             offlineModeMenuItem.Checked = appSettings.OfflineMode;
             UpdateOfflineModeStatus(false);
             Icon = IconUtils.GetAppIcon();
@@ -172,12 +190,26 @@ namespace LibgenDesktop.Interface
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             StopProgressOperation();
-            appSettings.Window.Maximized = WindowState == FormWindowState.Maximized;
-            appSettings.Window.Left = Left;
-            appSettings.Window.Top = Top;
-            appSettings.Window.Width = Width;
-            appSettings.Window.Height = Height;
-            SettingsStorage.SaveSettings(appSettings);
+            SettingsStorage.AppSettings.MainWindow = new AppSettings.MainWindowSettings
+            {
+                Maximized = WindowState == FormWindowState.Maximized,
+                Left = Left,
+                Top = Top,
+                Width = Width,
+                Height = Height
+            };
+            SettingsStorage.AppSettings.Columns = new AppSettings.ColumnSettings
+            {
+                IdColumnWidth = idColumn.Width,
+                TitleColumnWidth = titleColumn.Width,
+                AuthorsColumnWidth = authorsColumn.Width,
+                SeriesColumnWidth = seriesColumn.Width,
+                YearColumnWidth = yearColumn.Width,
+                PublisherColumnWidth = publisherColumn.Width,
+                FormatColumnWidth = formatColumn.Width,
+                FileSizeColumnWidth = fileSizeColumn.Width
+            };
+            SettingsStorage.SaveSettings();
         }
 
         private void bookListView_DoubleClick(object sender, EventArgs e)
@@ -206,40 +238,28 @@ namespace LibgenDesktop.Interface
         private void ShowBookCountInStatusLabel()
         {
             string statusLabelPrefix = dataCache.IsInAllBooksMode ? "Всего книг" : "Найдено книг";
-            statusLabel.Text = $"{statusLabelPrefix}: {dataCache.DataAccessor.GetObjectCount().ToString("N0", Formatters.BookCountFormat)}";
+            statusLabel.Text = $"{statusLabelPrefix}: {dataCache.DataAccessor.GetObjectCount().ToString("N0", Formatters.ThousandsSeparatedNumberFormat)}";
         }
 
         private void bookListView_KeyDown(object sender, KeyEventArgs e)
         {
             switch (e.KeyCode)
             {
-                case Keys.Up:
-                case Keys.Down:
-                case Keys.Left:
-                case Keys.Right:
-                case Keys.PageUp:
-                case Keys.PageDown:
-                case Keys.Home:
-                case Keys.End:
-                case Keys.F4:
-                    return;
                 case Keys.Escape:
                     searchTextBox.Focus();
                     searchTextBox.SelectAll();
                     break;
                 case Keys.Enter:
-                    BeginInvoke(new Action(() => OpenSelectedBookDetails()));
+                    OpenSelectedBookDetails();
                     break;
             }
-            e.Handled = true;
-            e.SuppressKeyPress = true;
         }
 
         private void OpenSelectedBookDetails()
         {
             Book selectedBook = bookListView.SelectedObject as Book;
             selectedBook = localDatabase.GetBookById(selectedBook.Id);
-            BookForm bookForm = new BookForm(selectedBook, appSettings.OfflineMode);
+            BookForm bookForm = new BookForm(selectedBook);
             bookForm.ShowDialog();
         }
 
@@ -249,14 +269,19 @@ namespace LibgenDesktop.Interface
             connectionStatusLabel.Visible = offlineMode;
             if (saveSettings)
             {
-                appSettings.OfflineMode = offlineMode;
-                SettingsStorage.SaveSettings(appSettings);
+                SettingsStorage.AppSettings.OfflineMode = offlineMode;
+                SettingsStorage.SaveSettings();
             }
         }
 
         private void offlineModeMenuItem_Click(object sender, EventArgs e)
         {
             UpdateOfflineModeStatus(true);
+        }
+
+        private void bookListView_BeforeSearching(object sender, BeforeSearchingEventArgs e)
+        {
+            e.Canceled = true;
         }
     }
 }

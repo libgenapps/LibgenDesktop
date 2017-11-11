@@ -70,7 +70,7 @@ namespace LibgenDesktop.Import
         {
             RaiseProgressEvent(new ProgressEventArgs
             {
-                ProgressDescription = $"Импорт из SQL-дампа... (импортировано {e.RowsParsed.ToString("N0", Formatters.BookCountFormat)} книг)",
+                ProgressDescription = $"Импорт из SQL-дампа... (импортировано {e.RowsParsed.ToString("N0", Formatters.ThousandsSeparatedNumberFormat)} книг)",
                 PercentCompleted = ((double)e.CurrentPosition * 100 / e.TotalLength)
             });
         }

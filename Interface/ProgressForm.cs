@@ -18,6 +18,7 @@ namespace LibgenDesktop.Interface
             progressOperation.ProgressEvent += ProgressOperation_ProgressEvent;
             progressOperation.CompletedEvent += ProgressOperation_CompletedEvent;
             progressOperation.CancelledEvent += ProgressOperation_CancelledEvent;
+            progressOperation.ErrorEvent += ProgressOperation_ErrorEvent;
         }
 
         private void ProgressForm_Shown(object sender, EventArgs e)
@@ -57,6 +58,16 @@ namespace LibgenDesktop.Interface
         private void ProgressOperation_CancelledEvent(object sender, EventArgs e)
         {
             BeginInvoke(new Action(() => Close()));
+        }
+
+        private void ProgressOperation_ErrorEvent(object sender, ErrorEventArgs e)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                ErrorForm errorForm = new ErrorForm(e.Exception.ToString());
+                errorForm.ShowDialog();
+                Close();
+            }));
         }
 
         private void cancelButton_Click(object sender, EventArgs e)

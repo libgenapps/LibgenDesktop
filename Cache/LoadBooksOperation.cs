@@ -34,7 +34,7 @@ namespace LibgenDesktop.Cache
                 {
                     RaiseProgressEvent(new ProgressEventArgs
                     {
-                        ProgressDescription = $"Загрузка книг (загружено {targetList.Count.ToString("N0", Formatters.BookCountFormat)} из {totalBookCount.ToString("N0", Formatters.BookCountFormat)})...",
+                        ProgressDescription = $"Загрузка книг (загружено {targetList.Count.ToString("N0", Formatters.ThousandsSeparatedNumberFormat)} из {totalBookCount.ToString("N0", Formatters.ThousandsSeparatedNumberFormat)})...",
                         PercentCompleted = (double)targetList.Count * 100 / totalBookCount
                     });
                     currentBatchBookNumber = 0;

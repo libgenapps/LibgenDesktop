@@ -34,6 +34,7 @@
             this.openDatabaseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importFromSqlDumpMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.syncMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.offlineModeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchTextBox = new System.Windows.Forms.TextBox();
             this.openSqlDumpDialog = new System.Windows.Forms.OpenFileDialog();
@@ -49,7 +50,6 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.statusPanel = new System.Windows.Forms.StatusStrip();
             this.statusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.offlineModeMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.spacerLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.connectionStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.mainMenu.SuspendLayout();
@@ -110,6 +110,14 @@
             this.syncMenuItem.Name = "syncMenuItem";
             this.syncMenuItem.Size = new System.Drawing.Size(205, 22);
             this.syncMenuItem.Text = "Синхронизация...";
+            // 
+            // offlineModeMenuItem
+            // 
+            this.offlineModeMenuItem.CheckOnClick = true;
+            this.offlineModeMenuItem.Name = "offlineModeMenuItem";
+            this.offlineModeMenuItem.Size = new System.Drawing.Size(205, 22);
+            this.offlineModeMenuItem.Text = "Работать автономно";
+            this.offlineModeMenuItem.Click += new System.EventHandler(this.offlineModeMenuItem_Click);
             // 
             // exitMenuItem
             // 
@@ -183,46 +191,53 @@
             this.bookListView.UseTranslucentSelection = true;
             this.bookListView.View = System.Windows.Forms.View.Details;
             this.bookListView.VirtualMode = true;
+            this.bookListView.BeforeSearching += new System.EventHandler<BrightIdeasSoftware.BeforeSearchingEventArgs>(this.bookListView_BeforeSearching);
             this.bookListView.DoubleClick += new System.EventHandler(this.bookListView_DoubleClick);
             this.bookListView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.bookListView_KeyDown);
             // 
             // idColumn
             // 
             this.idColumn.AspectName = "Id";
+            this.idColumn.MinimumWidth = 20;
             this.idColumn.Searchable = false;
             this.idColumn.Text = "№";
             // 
             // titleColumn
             // 
             this.titleColumn.AspectName = "Title";
-            this.titleColumn.FillsFreeSpace = true;
+            this.titleColumn.MinimumWidth = 100;
             this.titleColumn.Searchable = false;
             this.titleColumn.Text = "Наименование";
+            this.titleColumn.Width = 100;
             // 
             // authorsColumn
             // 
             this.authorsColumn.AspectName = "Authors";
-            this.authorsColumn.FillsFreeSpace = true;
+            this.authorsColumn.MinimumWidth = 100;
             this.authorsColumn.Searchable = false;
             this.authorsColumn.Text = "Авторы";
+            this.authorsColumn.Width = 100;
             // 
             // seriesColumn
             // 
             this.seriesColumn.AspectName = "Series";
-            this.seriesColumn.FillsFreeSpace = true;
+            this.seriesColumn.MinimumWidth = 100;
             this.seriesColumn.Searchable = false;
             this.seriesColumn.Text = "Серия";
+            this.seriesColumn.Width = 100;
             // 
             // yearColumn
             // 
             this.yearColumn.AspectName = "Year";
+            this.yearColumn.MinimumWidth = 20;
             this.yearColumn.Searchable = false;
-            this.yearColumn.Text = "Год публикации";
+            this.yearColumn.Text = "Год";
             this.yearColumn.Width = 110;
             // 
             // publisherColumn
             // 
             this.publisherColumn.AspectName = "Publisher";
+            this.publisherColumn.MinimumWidth = 50;
             this.publisherColumn.Searchable = false;
             this.publisherColumn.Text = "Издатель";
             this.publisherColumn.Width = 150;
@@ -230,14 +245,17 @@
             // formatColumn
             // 
             this.formatColumn.AspectName = "Format";
+            this.formatColumn.MinimumWidth = 20;
             this.formatColumn.Searchable = false;
             this.formatColumn.Text = "Формат";
             // 
             // fileSizeColumn
             // 
-            this.fileSizeColumn.AspectName = "SizeInBytes";
+            this.fileSizeColumn.AspectName = "FileSizeString";
+            this.fileSizeColumn.MinimumWidth = 30;
             this.fileSizeColumn.Searchable = false;
             this.fileSizeColumn.Text = "Размер файла";
+            this.fileSizeColumn.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.fileSizeColumn.Width = 100;
             // 
             // progressBar
@@ -272,19 +290,11 @@
             this.statusLabel.Size = new System.Drawing.Size(71, 17);
             this.statusLabel.Text = "Status text.";
             // 
-            // offlineModeMenuItem
-            // 
-            this.offlineModeMenuItem.CheckOnClick = true;
-            this.offlineModeMenuItem.Name = "offlineModeMenuItem";
-            this.offlineModeMenuItem.Size = new System.Drawing.Size(205, 22);
-            this.offlineModeMenuItem.Text = "Работать автономно";
-            this.offlineModeMenuItem.Click += new System.EventHandler(this.offlineModeMenuItem_Click);
-            // 
             // spacerLabel
             // 
             this.spacerLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.spacerLabel.Name = "spacerLabel";
-            this.spacerLabel.Size = new System.Drawing.Size(935, 20);
+            this.spacerLabel.Size = new System.Drawing.Size(970, 20);
             this.spacerLabel.Spring = true;
             this.spacerLabel.TextDirection = System.Windows.Forms.ToolStripTextDirection.Horizontal;
             // 

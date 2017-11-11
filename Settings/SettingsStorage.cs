@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using System.Runtime.Serialization.Json;
+using Newtonsoft.Json;
 
 namespace LibgenDesktop.Settings
 {
@@ -7,37 +7,45 @@ namespace LibgenDesktop.Settings
     {
         private const string CONFIG_FILE_NAME = "libgen.config";
 
-        public static AppSettings LoadSettings()
+        private static AppSettings appSettings;
+
+        static SettingsStorage()
         {
-            AppSettings result = null;
+            appSettings = AppSettings.Default;
+        }
+
+        public static AppSettings AppSettings => appSettings;
+
+        public static void LoadSettings()
+        {
             try
             {
                 if (File.Exists(CONFIG_FILE_NAME))
                 {
-                    DataContractJsonSerializer dataContractSerializer = new DataContractJsonSerializer(typeof(AppSettings));
-                    using (FileStream fileStream = new FileStream(CONFIG_FILE_NAME, FileMode.Open))
+                    JsonSerializer jsonSerializer = new JsonSerializer();
+                    using (StreamReader streamReader = new StreamReader(CONFIG_FILE_NAME))
+                    using (JsonTextReader jsonTextReader = new JsonTextReader(streamReader))
                     {
-                        result = dataContractSerializer.ReadObject(fileStream) as AppSettings;
+                        appSettings = jsonSerializer.Deserialize<AppSettings>(jsonTextReader);
                     }
                 }
-                if (result == null)
-                {
-                    result = AppSettings.Default;
-                }
+                AppSettings.ValidateAndCorrect(appSettings);
             }
             catch
             {
-                result = AppSettings.Default;
+                appSettings = AppSettings.Default;
             }
-            return result;
         }
 
-        public static void SaveSettings(AppSettings appSettings)
+        public static void SaveSettings()
         {
-            DataContractJsonSerializer dataContractSerializer = new DataContractJsonSerializer(typeof(AppSettings));
-            using (FileStream fileStream = new FileStream(CONFIG_FILE_NAME, FileMode.Create))
+            JsonSerializer jsonSerializer = new JsonSerializer();
+            using (StreamWriter streamWriter = new StreamWriter(CONFIG_FILE_NAME))
+            using (JsonTextWriter jsonTextWriter = new JsonTextWriter(streamWriter))
             {
-                dataContractSerializer.WriteObject(fileStream, appSettings);
+                jsonTextWriter.Formatting = Formatting.Indented;
+                jsonTextWriter.Indentation = 4;
+                jsonSerializer.Serialize(jsonTextWriter, appSettings);
             }
         }
     }
