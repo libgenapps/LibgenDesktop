@@ -38,8 +38,16 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.10.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="ObjectListView">
       <HintPath>packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpCompress, Version=0.18.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
+      <HintPath>packages\SharpCompress.0.18.2\lib\net35\SharpCompress.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -65,6 +73,7 @@
     <Compile Include="Database\Book.cs" />
     <Compile Include="Import\ImportSqlDumpOperation.cs" />
     <Compile Include="Database\LocalDatabase.cs" />
+    <Compile Include="Infrastructure\ErrorEventArgs.cs" />
     <Compile Include="Infrastructure\ProgressEventArgs.cs" />
     <Compile Include="Infrastructure\ProgressOperation.cs" />
     <Compile Include="Interface\BookForm.cs">
@@ -73,7 +82,14 @@
     <Compile Include="Interface\BookForm.Designer.cs">
       <DependentUpon>BookForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Interface\ErrorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Interface\ErrorForm.Designer.cs">
+      <DependentUpon>ErrorForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Interface\Formatters.cs" />
+    <Compile Include="Interface\IconUtils.cs" />
     <Compile Include="Interface\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -94,6 +110,9 @@
     <Compile Include="Settings\SettingsStorage.cs" />
     <EmbeddedResource Include="Interface\BookForm.resx">
       <DependentUpon>BookForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Interface\ErrorForm.resx">
+      <DependentUpon>ErrorForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Interface\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
