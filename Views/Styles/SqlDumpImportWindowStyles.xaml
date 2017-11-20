@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <Style x:Key="TopContainer" TargetType="Grid">
+        <Setter Property="Margin" Value="12" />
+    </Style>
+    <Style x:Key="ProgressDescriptionLabel" TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,8,0,8" />
+    </Style>
+    <Style x:Key="ProgressBar" TargetType="ProgressBar" BasedOn="{StaticResource MaterialDesignLinearProgressBar}">
+        <Setter Property="materialDesign:TransitionAssist.DisableTransitions" Value="True" />
+        <Setter Property="Height" Value="16" />
+    </Style>
+    <Style x:Key="BottomContainer" TargetType="Grid">
+        <Setter Property="Margin" Value="0,8,0,0" />
+    </Style>
+    <Style x:Key="StatusLabel" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="CancelButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}" />
+</ResourceDictionary>

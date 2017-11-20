@@ -1,0 +1,31 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.ErrorWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                       mc:Ignorable="d"
+                       Title="Ошибка"
+                       Style="{StaticResource ErrorWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="Styles\ErrorWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Возникла непредвиденная ошибка:" Style="{StaticResource HeaderLabel}" />
+        <TextBox Grid.Row="1" Text="{Binding Error, Mode=OneWay}" Style="{StaticResource ErrorTextBox}" />
+        <Grid Grid.Row="2" Style="{StaticResource ButtonContainer}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="СКОПИРОВАТЬ В БУФЕР ОБМЕНА" Command="{Binding CopyErrorCommand}" />
+            <Button Grid.Column="2" Content="ЗАКРЫТЬ" Style="{StaticResource CloseButton}" />
+        </Grid>
+    </Grid>
+</c:LibgenDesktopWindow>

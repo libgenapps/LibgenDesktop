@@ -1,0 +1,40 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                    xmlns:const="clr-namespace:LibgenDesktop.Common">
+    <Style x:Key="LibgenDesktopWindow">
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource MaterialDesignBody}" />
+        <Setter Property="Window.Background" Value="{DynamicResource MaterialDesignPaper}" />
+        <Setter Property="Window.FontWeight" Value="Light" />
+        <Setter Property="Window.FontSize" Value="15" />
+        <Setter Property="Window.FontFamily" Value="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" />
+    </Style>
+    <Style x:Key="MainWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.MAIN_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.MAIN_WINDOW_MIN_HEIGHT}}" />
+    </Style>
+    <Style x:Key="BookDetailsWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.BOOK_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.BOOK_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="ErrorWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.ERROR_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.ERROR_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="Window.Width" Value="620" />
+        <Setter Property="Window.Height" Value="450" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="SqlDumpImportWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="NoResize" />
+        <Setter Property="Window.SizeToContent" Value="Height" />
+        <Setter Property="Window.Width" Value="600" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+    </Style>
+</ResourceDictionary>

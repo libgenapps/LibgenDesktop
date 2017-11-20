@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2005
+VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibgenDesktop", "LibgenDesktop.csproj", "{5B0ED485-1C8D-4EC9-AE28-20FC5E74FADD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibgenDesktop", "LibgenDesktop.csproj", "{7158E1EB-44F7-4C26-BF9A-DA055F85D0BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5B0ED485-1C8D-4EC9-AE28-20FC5E74FADD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B0ED485-1C8D-4EC9-AE28-20FC5E74FADD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B0ED485-1C8D-4EC9-AE28-20FC5E74FADD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B0ED485-1C8D-4EC9-AE28-20FC5E74FADD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7158E1EB-44F7-4C26-BF9A-DA055F85D0BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7158E1EB-44F7-4C26-BF9A-DA055F85D0BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7158E1EB-44F7-4C26-BF9A-DA055F85D0BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7158E1EB-44F7-4C26-BF9A-DA055F85D0BB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {5D628854-083D-4A9B-A5A4-BC50250A71B5}
+		SolutionGuid = {1CB75FAD-8C25-4486-BEFB-DF4CA961ACD6}
 	EndGlobalSection
 EndGlobal

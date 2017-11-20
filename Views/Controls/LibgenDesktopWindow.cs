@@ -1,0 +1,117 @@
+﻿using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Input;
+using LibgenDesktop.Infrastructure;
+
+namespace LibgenDesktop.Views.Controls
+{
+    public class LibgenDesktopWindow : Window
+    {
+        public static readonly DependencyProperty ShowIconProperty = DependencyProperty.Register("ShowIcon", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
+        public static readonly DependencyProperty ShowMinimizeButtonProperty = DependencyProperty.Register("ShowMinimizeButton", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
+        public static readonly DependencyProperty ShowMaximizeButtonProperty = DependencyProperty.Register("ShowMaximizeButton", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
+        public static readonly DependencyProperty ClosingCommandProperty = DependencyProperty.Register("ClosingCommand", typeof(FuncCommand<bool>), typeof(LibgenDesktopWindow));
+        public static readonly DependencyProperty ClosedCommandProperty = DependencyProperty.Register("ClosedCommand", typeof(ICommand), typeof(LibgenDesktopWindow));
+
+        public bool ShowIcon
+        {
+            get
+            {
+                return (bool)GetValue(ShowIconProperty);
+            }
+            set
+            {
+                SetValue(ShowIconProperty, value);
+            }
+        }
+
+        public bool ShowMinimizeButton
+        {
+            get
+            {
+                return (bool)GetValue(ShowMinimizeButtonProperty);
+            }
+            set
+            {
+                SetValue(ShowMinimizeButtonProperty, value);
+            }
+        }
+
+        public bool ShowMaximizeButton
+        {
+            get
+            {
+                return (bool)GetValue(ShowMaximizeButtonProperty);
+            }
+            set
+            {
+                SetValue(ShowMaximizeButtonProperty, value);
+            }
+        }
+
+        public FuncCommand<bool> ClosingCommand
+        {
+            get
+            {
+                return (FuncCommand<bool>)GetValue(ClosingCommandProperty);
+            }
+            set
+            {
+                SetValue(ClosingCommandProperty, value);
+            }
+        }
+
+        public ICommand ClosedCommand
+        {
+            get
+            {
+                return (ICommand)GetValue(ClosedCommandProperty);
+            }
+            set
+            {
+                SetValue(ClosedCommandProperty, value);
+            }
+        }
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            if (!ShowIcon)
+            {
+                WindowManager.RemoveWindowIcon(this);
+            }
+            if (!ShowMinimizeButton)
+            {
+                WindowManager.RemoveWindowMinimizeButton(this);
+            }
+            if (!ShowMaximizeButton)
+            {
+                WindowManager.RemoveWindowMaximizeButton(this);
+            }
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            FuncCommand<bool> closingCommand = ClosingCommand;
+            if (closingCommand != null)
+            {
+                e.Cancel = !closingCommand.Execute();
+            }
+            if (!e.Cancel)
+            {
+                base.OnClosing(e);
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            ICommand closedCommand = ClosedCommand;
+            if (closedCommand != null)
+            {
+                closedCommand.Execute(null);
+            }
+            base.OnClosed(e);
+        }
+    }
+}

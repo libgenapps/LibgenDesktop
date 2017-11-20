@@ -1,0 +1,7 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:u="clr-namespace:LibgenDesktop.Views.Utils">
+    <u:BooleanToVisibilityConverter x:Key="booleanToHiddenConverter" TrueValue="Visible" FalseValue="Hidden" />
+    <u:BooleanToWindowStateConverter x:Key="booleanToMaximizedConverter" TrueValue="Maximized" FalseValue="Normal" />
+    <u:DataGridLengthConverter x:Key="dataGridLengthConverter" />
+</ResourceDictionary>
