@@ -8,22 +8,22 @@ using LibgenDesktop.Models.Entities;
 
 namespace LibgenDesktop.Models.Utils
 {
-    internal class AsyncBookCollection : IReadOnlyList<Book>, IList, INotifyCollectionChanged, INotifyPropertyChanged
+    internal class AsyncBookCollection : IReadOnlyList<NonFictionBook>, IList, INotifyCollectionChanged, INotifyPropertyChanged
     {
-        internal class BookEnumerator : IEnumerator<Book>, IEnumerator
+        internal class BookEnumerator : IEnumerator<NonFictionBook>, IEnumerator
         {
-            private readonly List<Book> sourceList;
+            private readonly List<NonFictionBook> sourceList;
             private readonly int sourceListItemLimit;
             private int currentIndex;
 
-            public BookEnumerator(List<Book> sourceList, int sourceListItemLimit)
+            public BookEnumerator(List<NonFictionBook> sourceList, int sourceListItemLimit)
             {
                 this.sourceList = sourceList;
                 this.sourceListItemLimit = sourceListItemLimit;
                 currentIndex = -1;
             }
 
-            public Book Current => sourceList[currentIndex];
+            public NonFictionBook Current => sourceList[currentIndex];
 
             object IEnumerator.Current => Current;
 
@@ -34,7 +34,6 @@ namespace LibgenDesktop.Models.Utils
             public bool MoveNext()
             {
                 currentIndex++;
-                System.Diagnostics.Debug.WriteLine("MoveNext " + currentIndex.ToString());
                 return currentIndex < sourceListItemLimit;
             }
 
@@ -44,19 +43,19 @@ namespace LibgenDesktop.Models.Utils
             }
         }
 
-        private readonly List<Book> internalList;
+        private readonly List<NonFictionBook> internalList;
         private readonly SynchronizationContext synchronizationContext;
 
         private int reportedBookCount;
 
         public AsyncBookCollection()
         {
-            internalList = new List<Book>();
+            internalList = new List<NonFictionBook>();
             synchronizationContext = SynchronizationContext.Current;
             reportedBookCount = 0;
         }
 
-        public Book this[int index] => internalList[index];
+        public NonFictionBook this[int index] => internalList[index];
 
         public int Count => reportedBookCount;
         public int AddedBookCount => internalList.Count;
@@ -79,12 +78,12 @@ namespace LibgenDesktop.Models.Utils
             internalList.Capacity = capacity;
         }
 
-        public void AddBook(Book book)
+        public void AddBook(NonFictionBook book)
         {
             internalList.Add(book);
         }
 
-        public void AddBooks(IEnumerable<Book> books)
+        public void AddBooks(IEnumerable<NonFictionBook> books)
         {
             internalList.AddRange(books);
         }
@@ -95,7 +94,7 @@ namespace LibgenDesktop.Models.Utils
             NotifyReset();
         }
 
-        public IEnumerator<Book> GetEnumerator()
+        public IEnumerator<NonFictionBook> GetEnumerator()
         {
             return new BookEnumerator(internalList, reportedBookCount);
         }
@@ -112,7 +111,7 @@ namespace LibgenDesktop.Models.Utils
 
         public bool Contains(object value)
         {
-            return internalList.Contains((Book)value);
+            return internalList.Contains((NonFictionBook)value);
         }
 
         public void Clear()
@@ -124,7 +123,7 @@ namespace LibgenDesktop.Models.Utils
 
         public int IndexOf(object value)
         {
-            return internalList.IndexOf((Book)value);
+            return internalList.IndexOf((NonFictionBook)value);
         }
 
         public void Insert(int index, object value)

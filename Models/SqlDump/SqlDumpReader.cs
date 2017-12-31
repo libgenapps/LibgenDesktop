@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using LibgenDesktop.Models.Entities;
+using SharpCompress.Archives.GZip;
 using SharpCompress.Archives.Rar;
 using SharpCompress.Archives.Zip;
 
@@ -11,20 +11,37 @@ namespace LibgenDesktop.Models.SqlDump
 {
     internal class SqlDumpReader : IDisposable
     {
-        public class ReadRowsProgressEventArgs : EventArgs
+        internal enum LineCommand
         {
-            public long CurrentPosition { get; set; }
-            public long TotalLength { get; set; }
-            public int RowsParsed { get; set; }
+            CREATE_TABLE = 1,
+            INSERT,
+            OTHER
         }
 
-        private readonly long fileSize;
+        internal class ParsedTableDefinition
+        {
+            public string TableName { get; set; }
+            public List<ParsedColumnDefinition> Columns { get; set; }
+        }
+
+        internal class ParsedColumnDefinition
+        {
+            public ParsedColumnDefinition(string columnName, ColumnType columnType)
+            {
+                ColumnName = columnName;
+                ColumnType = columnType;
+            }
+
+            public string ColumnName { get; set; }
+            public ColumnType ColumnType { get; set; }
+        }
+
         private readonly StreamReader streamReader;
         private readonly ZipArchive zipArchive;
         private readonly RarArchive rarArchive;
+        private readonly GZipArchive gZipArchive;
 
         private bool disposed = false;
-        private long currentFilePosition;
 
         public SqlDumpReader(string filePath)
         {
@@ -34,141 +51,143 @@ namespace LibgenDesktop.Models.SqlDump
                 case ".zip":
                     zipArchive = ZipArchive.Open(filePath);
                     ZipArchiveEntry firstZipArchiveEntry = zipArchive.Entries.First();
-                    fileSize = firstZipArchiveEntry.Size;
+                    FileSize = firstZipArchiveEntry.Size;
                     streamReader = new StreamReader(firstZipArchiveEntry.OpenEntryStream());
                     break;
                 case ".rar":
                     rarArchive = RarArchive.Open(filePath);
                     RarArchiveEntry firstRarArchiveEntry = rarArchive.Entries.First();
-                    fileSize = firstRarArchiveEntry.Size;
+                    FileSize = firstRarArchiveEntry.Size;
                     streamReader = new StreamReader(firstRarArchiveEntry.OpenEntryStream());
                     break;
+                case ".gz":
+                    gZipArchive = GZipArchive.Open(filePath);
+                    GZipArchiveEntry firstGZipArchiveEntry = gZipArchive.Entries.First();
+                    FileSize = firstGZipArchiveEntry.Size;
+                    streamReader = new StreamReader(firstGZipArchiveEntry.OpenEntryStream());
+                    break;
                 default:
-                    fileSize = new FileInfo(filePath).Length;
+                    FileSize = new FileInfo(filePath).Length;
                     streamReader = new StreamReader(filePath);
                     break;
             }
+            CurrentFilePosition = 0;
         }
 
-        public event EventHandler<ReadRowsProgressEventArgs> ReadRowsProgress;
-
-        public IEnumerable<Book> ReadRows()
-        {
-            currentFilePosition = 0;
-            int rowsParsed = 0;
-            bool updateTableParsed = false;
-            RaiseReadRowsProgressEvent(0);
-            while (!streamReader.EndOfStream)
-            {
-                string line = streamReader.ReadLine();
-                currentFilePosition += line.Length + 1;
-                if (line.StartsWith("CREATE TABLE"))
-                {
-                    string tableName = ParseTableName(line);
-                    if (tableName == "updated")
-                    {
-                        while (!streamReader.EndOfStream)
-                        {
-                            line = streamReader.ReadLine();
-                            currentFilePosition += line.Length + 1;
-                            if (line.StartsWith("CREATE TABLE"))
-                            {
-                                break;
-                            }
-                            if (line.StartsWith("INSERT INTO `updated`"))
-                            {
-                                if (line.StartsWith("INSERT INTO `updated` (`ID`, `Title`, `VolumeInfo`, `Series`, `Periodical`, `Author`, `Year`, `Edition`, `Publisher`, `City`, `Pages`, `PagesInFile`, `Language`, `Topic`, `Library`, `Issue`, `Identifier`, `ISSN`, `ASIN`, `UDC`, `LBC`, `DDC`, `LCC`, `Doi`, `Googlebookid`, `OpenLibraryID`, `Commentary`, `DPI`, `Color`, `Cleaned`, `Orientation`, `Paginated`, `Scanned`, `Bookmarked`, `Searchable`, `Filesize`, `Extension`, `MD5`, `Generic`, `Visible`, `Locator`, `Local`, `TimeAdded`, `TimeLastModified`, `Coverurl`, `Tags`, `IdentifierWODash`) VALUES ("))
-                                {
-                                    int position = line.IndexOf("VALUES (") + 8;
-                                    bool endOfBatchFound = false;
-                                    while (!endOfBatchFound)
-                                    {
-                                        rowsParsed++;
-                                        Book book = new Book();
-                                        book.Id = rowsParsed;
-                                        book.ExtendedProperties = new Book.BookExtendedProperties();
-                                        book.ExtendedProperties.LibgenId = ParseInt32(line, ref position);
-                                        book.Title = ParseString(line, ref position);
-                                        book.ExtendedProperties.VolumeInfo = ParseString(line, ref position);
-                                        book.Series = ParseString(line, ref position);
-                                        book.ExtendedProperties.Periodical = ParseString(line, ref position);
-                                        book.Authors = ParseString(line, ref position);
-                                        book.Year = ParseString(line, ref position);
-                                        book.ExtendedProperties.Edition = ParseString(line, ref position);
-                                        book.Publisher = ParseString(line, ref position);
-                                        book.ExtendedProperties.City = ParseString(line, ref position);
-                                        book.ExtendedProperties.Pages = ParseString(line, ref position);
-                                        book.ExtendedProperties.PagesInFile = ParseInt32(line, ref position);
-                                        book.ExtendedProperties.Language = ParseString(line, ref position);
-                                        book.ExtendedProperties.Topic = ParseString(line, ref position);
-                                        book.ExtendedProperties.Library = ParseString(line, ref position);
-                                        book.ExtendedProperties.Issue = ParseString(line, ref position);
-                                        book.ExtendedProperties.Identifier = ParseString(line, ref position);
-                                        book.ExtendedProperties.Issn = ParseString(line, ref position);
-                                        book.ExtendedProperties.Asin = ParseString(line, ref position);
-                                        book.ExtendedProperties.Udc = ParseString(line, ref position);
-                                        book.ExtendedProperties.Lbc = ParseString(line, ref position);
-                                        book.ExtendedProperties.Ddc = ParseString(line, ref position);
-                                        book.ExtendedProperties.Lcc = ParseString(line, ref position);
-                                        book.ExtendedProperties.Doi = ParseString(line, ref position);
-                                        book.ExtendedProperties.GoogleBookid = ParseString(line, ref position);
-                                        book.ExtendedProperties.OpenLibraryId = ParseString(line, ref position);
-                                        book.ExtendedProperties.Commentary = ParseString(line, ref position);
-                                        book.ExtendedProperties.Dpi = ParseInt32(line, ref position);
-                                        book.ExtendedProperties.Color = ParseString(line, ref position);
-                                        book.ExtendedProperties.Cleaned = ParseString(line, ref position);
-                                        book.ExtendedProperties.Orientation = ParseString(line, ref position);
-                                        book.ExtendedProperties.Paginated = ParseString(line, ref position);
-                                        book.ExtendedProperties.Scanned = ParseString(line, ref position);
-                                        book.ExtendedProperties.Bookmarked = ParseString(line, ref position);
-                                        book.Searchable = ParseString(line, ref position);
-                                        book.SizeInBytes = ParseInt64(line, ref position);
-                                        book.Format = ParseString(line, ref position);
-                                        book.ExtendedProperties.Md5Hash = ParseString(line, ref position);
-                                        book.ExtendedProperties.Generic = ParseString(line, ref position);
-                                        book.ExtendedProperties.Visible = ParseString(line, ref position);
-                                        book.ExtendedProperties.Locator = ParseString(line, ref position);
-                                        book.ExtendedProperties.Local = ParseInt32(line, ref position);
-                                        book.ExtendedProperties.AddedDateTime = ParseDateTime(line, ref position);
-                                        book.ExtendedProperties.LastModifiedDateTime = ParseDateTime(line, ref position);
-                                        book.ExtendedProperties.CoverUrl = ParseString(line, ref position);
-                                        book.ExtendedProperties.Tags = ParseString(line, ref position);
-                                        book.ExtendedProperties.IdentifierPlain = ParseString(line, ref position);
-                                        yield return book;
-                                        if (line[position] == ';')
-                                        {
-                                            endOfBatchFound = true;
-                                        }
-                                        else
-                                        {
-                                            position += 2;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    throw new Exception($"Unexpected set of columns in the line:\r\n{line}");
-                                }
-                            }
-                            RaiseReadRowsProgressEvent(rowsParsed);
-                        }
-                        updateTableParsed = true;
-                    }
-                }
-                else
-                {
-                    RaiseReadRowsProgressEvent(rowsParsed);
-                }
-            }
-            if (!updateTableParsed)
-            {
-                throw new Exception("Couldn't find \"updated\" table rows in the dump file.");
-            }
-        }
+        public long CurrentFilePosition { get; private set; }
+        public long FileSize { get; }
+        public LineCommand CurrentLineCommand { get; private set; }
+        private string CurrentLine { get; set; }
 
         public void Dispose()
         {
             Dispose(true);
+        }
+
+        public bool ReadLine()
+        {
+            if (streamReader.EndOfStream)
+            {
+                CurrentLineCommand = LineCommand.OTHER;
+                return false;
+            }
+            CurrentLine = streamReader.ReadLine();
+            CurrentFilePosition = streamReader.BaseStream.Position;
+            if (CurrentLine.StartsWith("CREATE TABLE"))
+            {
+                CurrentLineCommand = LineCommand.CREATE_TABLE;
+            }
+            else if (CurrentLine.StartsWith("INSERT INTO"))
+            {
+                CurrentLineCommand = LineCommand.INSERT;
+            }
+            else
+            {
+                CurrentLineCommand = LineCommand.OTHER;
+            }
+            return true;
+        }
+
+        public ParsedTableDefinition ParseTableDefinition()
+        {
+            ParsedTableDefinition result = new ParsedTableDefinition();
+            result.TableName = ParseTableName(CurrentLine);
+            result.Columns = new List<ParsedColumnDefinition>();
+            bool tableParsed = false;
+            while (ReadLine())
+            {
+                string tableLine = CurrentLine.Trim();
+                if (tableLine.StartsWith("`"))
+                {
+                    string[] tableLineParts = tableLine.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    string columnName = tableLineParts[0].Trim('`');
+                    string columnTypeString = tableLineParts[1].ToLower();
+                    ColumnType? columnType;
+                    if (columnTypeString.StartsWith("char") || columnTypeString.StartsWith("varchar"))
+                    {
+                        columnType = ColumnType.CHAR_OR_VARCHAR;
+                    }
+                    else if (columnTypeString.StartsWith("int"))
+                    {
+                        columnType = ColumnType.INT;
+                    }
+                    else if (columnTypeString.StartsWith("bigint"))
+                    {
+                        columnType = ColumnType.BIGINT;
+                    }
+                    else if (columnTypeString.StartsWith("timestamp"))
+                    {
+                        columnType = ColumnType.TIMESTAMP;
+                    }
+                    else
+                    {
+                        columnType = null;
+                    }
+                    if (columnType.HasValue)
+                    {
+                        result.Columns.Add(new ParsedColumnDefinition(columnName, columnType.Value));
+                    }
+                }
+                if (tableLine.EndsWith(";"))
+                {
+                    tableParsed = true;
+                    break;
+                }
+            }
+            if (!tableParsed)
+            {
+                throw new Exception($"Couldn't parse definition of the table \"{result.TableName}\".");
+            }
+            return result;
+        }
+
+        public IEnumerable<T> ParseImportObjects<T>(List<Action<T, string>> objectSetters) where T : new()
+        {
+            do
+            {
+                int position = CurrentLine.IndexOf("VALUES (") + 8;
+                bool endOfBatchFound = false;
+                while (!endOfBatchFound)
+                {
+                    T newObject = new T();
+                    foreach (Action<T, string> objectSetter in objectSetters)
+                    {
+                        string stringValue = ParseString(CurrentLine, ref position);
+                        objectSetter?.Invoke(newObject, stringValue);
+                    }
+                    yield return newObject;
+                    if (CurrentLine[position] == ';')
+                    {
+                        endOfBatchFound = true;
+                    }
+                    else
+                    {
+                        position += 2;
+                    }
+                }
+                ReadLine();
+            }
+            while (CurrentLineCommand == LineCommand.INSERT);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -185,37 +204,40 @@ namespace LibgenDesktop.Models.SqlDump
                     {
                         rarArchive.Dispose();
                     }
+                    if (gZipArchive != null)
+                    {
+                        gZipArchive.Dispose();
+                    }
                     streamReader.Dispose();
                 }
                 disposed = true;
             }
         }
 
-        protected virtual void RaiseReadRowsProgressEvent(int rowsParsed)
-        {
-            ReadRowsProgress?.Invoke(this, new ReadRowsProgressEventArgs
-            {
-                CurrentPosition = streamReader.BaseStream.Position,
-                TotalLength = fileSize,
-                RowsParsed = rowsParsed
-            });
-        }
-
         private string ParseTableName(string line)
         {
-            int position = 0;
+            int position = "CREATE TABLE".Length;
             int tableNameStartPosition = 0;
             while (position < line.Length)
             {
-                if (line[position] == '`')
+                if (line[position] != ' ')
                 {
                     if (tableNameStartPosition == 0)
                     {
-                        tableNameStartPosition = position + 1;
+                        tableNameStartPosition = position;
                     }
-                    else
+                }
+                else
+                {
+                    if (tableNameStartPosition != 0)
                     {
-                        return line.Substring(tableNameStartPosition, position - tableNameStartPosition);
+                        string tableName = line.Substring(tableNameStartPosition, position - tableNameStartPosition);
+                        int lastDotPosition = tableName.LastIndexOf('.');
+                        if (lastDotPosition != -1)
+                        {
+                            tableName = tableName.Substring(lastDotPosition + 1);
+                        }
+                        return tableName.Trim('`');
                     }
                 }
                 position++;
@@ -223,57 +245,61 @@ namespace LibgenDesktop.Models.SqlDump
             throw new Exception($"Couldn't parse table name from the line:\r\n{line}");
         }
 
-        private int ParseInt32(string line, ref int position)
+        private void PopulateBookField(NonFictionBook book, string fieldName, string line, ref int position)
         {
-            int startPosition = position;
-            while (Char.IsDigit(line[position]))
-            {
-                position++;
-            }
-            int result = Int32.Parse(line.Substring(startPosition, position - startPosition));
-            position++;
-            return result;
-        }
-
-        private long ParseInt64(string line, ref int position)
-        {
-            int startPosition = position;
-            while (Char.IsDigit(line[position]))
-            {
-                position++;
-            }
-            long result = Int64.Parse(line.Substring(startPosition, position - startPosition));
-            position++;
-            return result;
         }
 
         private string ParseString(string line, ref int position)
         {
-            position++;
-            int startPosition = position;
-            while (position < line.Length && line[position] != '\'')
+            bool openQuote = false;
+            bool closingQuote = false;
+            if (line[position] == '\'')
             {
-                if (line[position] == '\\' && line[position + 1] == '\'')
+                openQuote = true;
+                position++;
+            }
+            int startPosition = position;
+            while (position < line.Length)
+            {
+                if ((line[position] == ',' || line[position] == ')') && !openQuote)
+                {
+                    break;
+                }
+                if (line[position] == '\'')
+                {
+                    if (openQuote)
+                    {
+                        closingQuote = true;
+                        break;
+                    }
+                    else
+                    {
+                        throw new Exception($"Matching opening quote was not found for a closing quote at position {startPosition} in the line:\r\n{line}");
+                    }
+                }
+                if (line[position] == '\\' && (line[position + 1] == '\'' || line[position + 1] == '\\'))
                 {
                     position++;
                 }
                 position++;
             }
-            if (position == line.Length)
+            if (openQuote && !closingQuote)
             {
                 throw new Exception($"Closing quote is missing after position {startPosition} in the line:\r\n{line}");
             }
             else
             {
-                string result = line.Substring(startPosition, position - startPosition).Replace("\\'", "'");
-                position += 2;
+                string result = line.Substring(startPosition, position - startPosition).Replace(@"\\", @"\").Replace(@"\'", "'");
+                if (closingQuote)
+                {
+                    position += 2;
+                }
+                else
+                {
+                    position++;
+                }
                 return result;
             }
-        }
-
-        private DateTime ParseDateTime(string line, ref int position)
-        {
-            return DateTime.ParseExact(ParseString(line, ref position), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
     }
 }

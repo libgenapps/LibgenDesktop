@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace LibgenDesktop.Models.Utils
@@ -18,6 +19,13 @@ namespace LibgenDesktop.Models.Utils
 
         public static NumberFormatInfo ThousandsSeparatedNumberFormat => thousandsSeparatedNumberFormat;
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static string ToFormattedString(this int value)
+        {
+            return value.ToString("N0", ThousandsSeparatedNumberFormat);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string FileSizeToString(long fileSize, bool showBytes)
         {
             int postfixIndex = fileSize != 0 ? (int)Math.Floor(Math.Log(fileSize) / Math.Log(1024)) : 0;

@@ -25,7 +25,7 @@ namespace LibgenDesktop.Views.Controls
             {
                 ContextMenu labelContextMenu = Resources["labelContextMenu"] as ContextMenu;
                 MenuItem copyMenuItem = labelContextMenu.Items[0] as MenuItem;
-                copyMenuItem.Header = $"Копировать \"{ Text }\"";
+                copyMenuItem.Header = $"Копировать \"{Text}\"";
                 ContextMenu = labelContextMenu;
             }
         }

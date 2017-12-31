@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,157 +10,391 @@ using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.SqlDump;
-using LibgenDesktop.Models.Utils;
 using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.Models
 {
     internal class MainModel
     {
-        private readonly LocalDatabase localDatabase;
+        internal enum DatabaseStatus
+        {
+            OPENED = 1,
+            NOT_FOUND,
+            NOT_SET,
+            CORRUPTED
+        }
+
+        internal enum ImportSqlDumpResult
+        {
+            COMPLETED = 1,
+            CANCELLED,
+            DATA_NOT_FOUND,
+            EXCEPTION
+        }
+
+        private const double IMPORT_PROGRESS_UPDATE_INTERVAL = 0.5;
+        private const double SEARCH_PROGRESS_UPDATE_INTERVAL = 0.1;
+
+        private LocalDatabase localDatabase;
 
         public MainModel()
         {
             AppSettings = SettingsStorage.LoadSettings();
-            localDatabase = new LocalDatabase(AppSettings.DatabaseFileName);
-            AllBooks = new AsyncBookCollection();
-            SearchResults = new AsyncBookCollection();
+            OpenDatabase(AppSettings.DatabaseFileName);
         }
 
         public AppSettings AppSettings { get; }
-        public AsyncBookCollection AllBooks { get; }
-        public AsyncBookCollection SearchResults { get; }
+        public DatabaseStatus LocalDatabaseStatus { get; private set; }
+        public DatabaseMetadata DatabaseMetadata { get; private set; }
+        public int NonFictionBookCount { get; private set; }
+        public int FictionBookCount { get; private set; }
+        public int SciMagArticleCount { get; private set; }
 
-        public Task LoadAllBooksAsync(IProgress<LoadAllBooksProgress> progressHandler, CancellationToken cancellationToken)
+        public Task<ObservableCollection<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
+            CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
-            {
-                int totalBookCount = localDatabase.CountBooks();
-                AllBooks.SetCapacity(totalBookCount);
-                int currentBatchBookNumber = 0;
-                int reportProgressBatchSize = totalBookCount / 1000;
-                foreach (Book book in localDatabase.GetAllBooks())
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        return;
-                    }
-                    AllBooks.AddBook(book);
-                    currentBatchBookNumber++;
-                    if (currentBatchBookNumber == reportProgressBatchSize)
-                    {
-                        progressHandler.Report(new LoadAllBooksProgress(AllBooks.AddedBookCount, totalBookCount));
-                        currentBatchBookNumber = 0;
-                        if (AllBooks.AddedBookCount - AllBooks.Count > AllBooks.Count)
-                        {
-                            AllBooks.UpdateReportedBookCount();
-                        }
-                    }
-                }
-                if (currentBatchBookNumber > 0)
-                {
-                    progressHandler.Report(new LoadAllBooksProgress(AllBooks.AddedBookCount, totalBookCount, isFinished: true));
-                }
-                AllBooks.UpdateReportedBookCount();
-            });
+            return SearchItemsAsync(localDatabase.SearchNonFictionBooks, searchQuery, progressHandler, cancellationToken);
         }
 
-        public void ClearSearchResults()
+        public Task<NonFictionBook> LoadNonFictionBookAsync(int bookId)
         {
-            SearchResults.Clear();
+            return LoadItemAsync(localDatabase.GetNonFictionBookById, bookId);
         }
 
-        public Task SearchBooksAsync(string searchQuery, IProgress<SearchBooksProgress> progressHandler, CancellationToken cancellationToken)
+        public Task<ObservableCollection<FictionBook>> SearchFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
+            CancellationToken cancellationToken)
         {
-            return Task.Run(() =>
-            {
-                int currentBatchBookNumber = 0;
-                foreach (Book book in localDatabase.SearchBooks(searchQuery))
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        return;
-                    }
-                    SearchResults.AddBook(book);
-                    currentBatchBookNumber++;
-                    if (currentBatchBookNumber == SEARCH_REPORT_PROGRESS_BATCH_SIZE)
-                    {
-                        progressHandler.Report(new SearchBooksProgress(SearchResults.AddedBookCount));
-                        currentBatchBookNumber = 0;
-                        if (SearchResults.AddedBookCount - SearchResults.Count > SearchResults.Count)
-                        {
-                            SearchResults.UpdateReportedBookCount();
-                        }
-                    }
-                }
-                if (currentBatchBookNumber > 0)
-                {
-                    progressHandler.Report(new SearchBooksProgress(SearchResults.AddedBookCount, isFinished: true));
-                }
-                SearchResults.UpdateReportedBookCount();
-            });
+            return SearchItemsAsync(localDatabase.SearchFictionBooks, searchQuery, progressHandler, cancellationToken);
         }
 
-        public Task<Book> LoadBookAsync(int bookId)
+        public Task<FictionBook> LoadFictionBookAsync(int bookId)
         {
-            return Task<Book>.Run(() =>
-            {
-                return localDatabase.GetBookById(bookId);
-            });
+            return LoadItemAsync(localDatabase.GetFictionBookById, bookId);
         }
 
-        public Task ImportSqlDumpAsync(string sqlDumpFilePath, IProgress<ImportSqlDumpProgress> progressHandler, CancellationToken cancellationToken)
+        public Task<ObservableCollection<SciMagArticle>> SearchSciMagAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
+            CancellationToken cancellationToken)
+        {
+            return SearchItemsAsync(localDatabase.SearchSciMagArticles, searchQuery, progressHandler, cancellationToken);
+        }
+
+        public Task<SciMagArticle> LoadSciMagArticleAsync(int articleId)
+        {
+            return LoadItemAsync(localDatabase.GetSciMagArticleById, articleId);
+        }
+
+        public Task<ImportSqlDumpResult> ImportSqlDumpAsync(string sqlDumpFilePath, IProgress<object> progressHandler, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
                 using (SqlDumpReader sqlDumpReader = new SqlDumpReader(sqlDumpFilePath))
                 {
-                    EventHandler<SqlDumpReader.ReadRowsProgressEventArgs> readRowsProgressHandler = (sender, e) =>
+                    while (true)
                     {
-                        progressHandler.Report(new ImportSqlDumpProgress(e.RowsParsed, e.CurrentPosition, e.TotalLength));
-                    };
-                    sqlDumpReader.ReadRowsProgress += readRowsProgressHandler;
-                    List<Book> currentBatchBooks = new List<Book>(INSERT_TRANSACTION_BATCH);
-                    foreach (Book book in sqlDumpReader.ReadRows())
-                    {
+                        bool tableFound = false;
+                        while (sqlDumpReader.ReadLine())
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                return ImportSqlDumpResult.CANCELLED;
+                            }
+                            if (sqlDumpReader.CurrentLineCommand == SqlDumpReader.LineCommand.CREATE_TABLE)
+                            {
+                                tableFound = true;
+                                break;
+                            }
+                            progressHandler.Report(new ImportSearchTableDefinitionProgress(sqlDumpReader.CurrentFilePosition, sqlDumpReader.FileSize));
+                        }
+                        if (!tableFound)
+                        {
+                            return ImportSqlDumpResult.DATA_NOT_FOUND;
+                        }
+                        SqlDumpReader.ParsedTableDefinition parsedTableDefinition = sqlDumpReader.ParseTableDefinition();
+                        TableType tableType = DetectImportTableType(parsedTableDefinition);
+                        if (tableType == TableType.UNKNOWN)
+                        {
+                            continue;
+                        }
+                        progressHandler.Report(new ImportTableDefinitionFoundProgress(tableType));
+                        bool insertFound = false;
+                        while (sqlDumpReader.ReadLine())
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                return ImportSqlDumpResult.CANCELLED;
+                            }
+                            if (sqlDumpReader.CurrentLineCommand == SqlDumpReader.LineCommand.INSERT)
+                            {
+                                insertFound = true;
+                                break;
+                            }
+                        }
+                        if (!insertFound)
+                        {
+                            return ImportSqlDumpResult.DATA_NOT_FOUND;
+                        }
+                        switch (tableType)
+                        {
+                            case TableType.NON_FICTION:
+                                if (NonFictionBookCount != 0)
+                                {
+                                    throw new Exception("Update-импорт пока не поддерживается.");
+                                }
+                                ImportObjects(sqlDumpReader, progressHandler, cancellationToken, TableDefinitions.NonFiction,
+                                    parsedTableDefinition, localDatabase.AddNonFictionBooks);
+                                UpdateNonFictionBookCount();
+                                break;
+                            case TableType.FICTION:
+                                if (FictionBookCount != 0)
+                                {
+                                    throw new Exception("Update-импорт пока не поддерживается.");
+                                }
+                                ImportObjects(sqlDumpReader, progressHandler, cancellationToken, TableDefinitions.Fiction,
+                                    parsedTableDefinition, localDatabase.AddFictionBooks);
+                                UpdateFictionBookCount();
+                                break;
+                            case TableType.SCI_MAG:
+                                if (SciMagArticleCount != 0)
+                                {
+                                    throw new Exception("Update-импорт пока не поддерживается.");
+                                }
+                                ImportObjects(sqlDumpReader, progressHandler, cancellationToken, TableDefinitions.SciMag,
+                                    parsedTableDefinition, localDatabase.AddSciMagArticles);
+                                UpdateSciMagArticleCount();
+                                break;
+                        }
                         if (cancellationToken.IsCancellationRequested)
                         {
-                            break;
+                            return ImportSqlDumpResult.CANCELLED;
                         }
-                        currentBatchBooks.Add(book);
-                        if (currentBatchBooks.Count == INSERT_TRANSACTION_BATCH)
-                        {
-                            localDatabase.AddBooks(currentBatchBooks);
-                            foreach (Book currentBatchBook in currentBatchBooks)
-                            {
-                                currentBatchBook.ExtendedProperties = null;
-                            }
-                            AllBooks.AddBooks(currentBatchBooks);
-                            if (AllBooks.Count == 0)
-                            {
-                                AllBooks.UpdateReportedBookCount();
-                            }
-                            currentBatchBooks.Clear();
-                        }
+                        return ImportSqlDumpResult.COMPLETED;
                     }
-                    if (currentBatchBooks.Any())
-                    {
-                        localDatabase.AddBooks(currentBatchBooks);
-                        foreach (Book currentBatchBook in currentBatchBooks)
-                        {
-                            currentBatchBook.ExtendedProperties = null;
-                        }
-                        AllBooks.AddBooks(currentBatchBooks);
-                    }
-                    sqlDumpReader.ReadRowsProgress -= readRowsProgressHandler;
                 }
-                AllBooks.UpdateReportedBookCount();
             });
         }
 
         public void SaveSettings()
         {
             SettingsStorage.SaveSettings(AppSettings);
+        }
+
+        public string GetDatabaseNormalizedPath(string databaseFullPath)
+        {
+            string currentDirectory = Directory.GetCurrentDirectory();
+            if (databaseFullPath.ToLower().StartsWith(currentDirectory.ToLower()))
+            {
+                return databaseFullPath.Substring(currentDirectory.Length + 1);
+            }
+            else
+            {
+                return databaseFullPath;
+            }
+        }
+
+        public string GetDatabaseFullPath(string databaseNormalizedPath)
+        {
+            if (Path.IsPathRooted(databaseNormalizedPath))
+            {
+                return databaseNormalizedPath;
+            }
+            else
+            {
+                return Path.Combine(Directory.GetCurrentDirectory(), databaseNormalizedPath);
+            }
+        }
+
+        public string GetCurrentDirectory()
+        {
+            return Directory.GetCurrentDirectory();
+        }
+
+        public bool OpenDatabase(string databaseFilePath)
+        {
+            if (localDatabase != null)
+            {
+                localDatabase.Dispose();
+                localDatabase = null;
+            }
+            if (!String.IsNullOrWhiteSpace(databaseFilePath))
+            {
+                if (File.Exists(databaseFilePath))
+                {
+                    try
+                    {
+                        localDatabase = LocalDatabase.OpenDatabase(databaseFilePath);
+                        if (!localDatabase.CheckIfMetadataExists())
+                        {
+                            LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
+                            return false;
+                        }
+                        DatabaseMetadata = localDatabase.GetMetadata();
+                        if (DatabaseMetadata.Version != CURRENT_DATABASE_VERSION)
+                        {
+                            LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
+                            return false;
+                        }
+                        UpdateNonFictionBookCount();
+                        UpdateFictionBookCount();
+                        UpdateSciMagArticleCount();
+                    }
+                    catch
+                    {
+                        LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
+                        return false;
+                    }
+                    LocalDatabaseStatus = DatabaseStatus.OPENED;
+                    return true;
+                }
+                else
+                {
+                    LocalDatabaseStatus = DatabaseStatus.NOT_FOUND;
+                }
+            }
+            else
+            {
+                LocalDatabaseStatus = DatabaseStatus.NOT_SET;
+            }
+            return false;
+        }
+
+        public bool CreateDatabase(string databaseFilePath)
+        {
+            if (localDatabase != null)
+            {
+                localDatabase.Dispose();
+                localDatabase = null;
+            }
+            try
+            {
+                localDatabase = LocalDatabase.CreateDatabase(databaseFilePath);
+                localDatabase.CreateMetadataTable();
+                localDatabase.CreateNonFictionTables();
+                localDatabase.CreateFictionTables();
+                localDatabase.CreateSciMagTables();
+                DatabaseMetadata databaseMetadata = new DatabaseMetadata
+                {
+                    Version = CURRENT_DATABASE_VERSION
+                };
+                localDatabase.AddMetadata(databaseMetadata);
+                NonFictionBookCount = 0;
+                FictionBookCount = 0;
+                SciMagArticleCount = 0;
+                return true;
+            }
+            catch
+            {
+                LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
+                return false;
+            }
+        }
+
+        private Task<ObservableCollection<T>> SearchItemsAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction, string searchQuery,
+            IProgress<SearchProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+            {
+                int? resultLimit = null;
+                if (AppSettings.Search.LimitResults)
+                {
+                    resultLimit = AppSettings.Search.MaximumResultCount;
+                }
+                ObservableCollection<T> result = new ObservableCollection<T>();
+                DateTime lastUpdateDateTime = DateTime.Now;
+                foreach (T item in searchFunction(searchQuery, resultLimit))
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return null;
+                    }
+                    result.Add(item);
+                    DateTime now = DateTime.Now;
+                    if ((now - lastUpdateDateTime).TotalSeconds > SEARCH_PROGRESS_UPDATE_INTERVAL)
+                    {
+                        progressHandler.Report(new SearchProgress(result.Count));
+                        lastUpdateDateTime = now;
+                    }
+                }
+                progressHandler.Report(new SearchProgress(result.Count));
+                return result;
+            });
+        }
+
+        private Task<T> LoadItemAsync<T>(Func<int, T> loadFunction, int itemId)
+        {
+            return Task.Run(() =>
+            {
+                return loadFunction(itemId);
+            });
+        }
+
+        private TableType DetectImportTableType(SqlDumpReader.ParsedTableDefinition parsedTableDefinition)
+        {
+            if (TableDefinitions.AllTables.TryGetValue(parsedTableDefinition.TableName, out TableDefinition tableDefinition))
+            {
+                foreach (SqlDumpReader.ParsedColumnDefinition parsedColumnDefinition in parsedTableDefinition.Columns)
+                {
+                    if (tableDefinition.Columns.TryGetValue(parsedColumnDefinition.ColumnName.ToLower(), out ColumnDefinition columnDefinition))
+                    {
+                        if (columnDefinition.ColumnType == parsedColumnDefinition.ColumnType)
+                        {
+                            continue;
+                        }
+                    }
+                    return TableType.UNKNOWN;
+                }
+                return tableDefinition.TableType;
+            }
+            return TableType.UNKNOWN;
+        }
+
+        private void ImportObjects<T>(SqlDumpReader sqlDumpReader, IProgress<object> progressHandler, CancellationToken cancellationToken,
+            TableDefinition<T> tableDefinition, SqlDumpReader.ParsedTableDefinition parsedTableDefinition, Action<List<T>> databaseBatchImportAction)
+            where T : new()
+        {
+            DateTime lastUpdateDateTime = DateTime.Now;
+            int importedObjectCount = 0;
+            List<T> currentBatchObjects = new List<T>(INSERT_TRANSACTION_BATCH);
+            List<Action<T, string>> sortedColumnSetters = tableDefinition.GetSortedColumnSetters(parsedTableDefinition.Columns.Select(column => column.ColumnName));
+            foreach (T importingObject in sqlDumpReader.ParseImportObjects(sortedColumnSetters))
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return;
+                }
+                currentBatchObjects.Add(importingObject);
+                importedObjectCount++;
+                if (currentBatchObjects.Count == INSERT_TRANSACTION_BATCH)
+                {
+                    databaseBatchImportAction(currentBatchObjects);
+                    currentBatchObjects.Clear();
+                    DateTime now = DateTime.Now;
+                    if ((now - lastUpdateDateTime).TotalSeconds > IMPORT_PROGRESS_UPDATE_INTERVAL)
+                    {
+                        progressHandler.Report(new ImportObjectsProgress(importedObjectCount));
+                        lastUpdateDateTime = now;
+                    }
+                }
+            }
+            if (currentBatchObjects.Any())
+            {
+                databaseBatchImportAction(currentBatchObjects);
+            }
+            progressHandler.Report(new ImportObjectsProgress(importedObjectCount));
+        }
+
+        private void UpdateNonFictionBookCount()
+        {
+            NonFictionBookCount = localDatabase.CountNonFictionBooks();
+        }
+
+        private void UpdateFictionBookCount()
+        {
+            FictionBookCount = localDatabase.CountFictionBooks();
+        }
+
+        private void UpdateSciMagArticleCount()
+        {
+            SciMagArticleCount = localDatabase.CountSciMagArticles();
         }
     }
 }

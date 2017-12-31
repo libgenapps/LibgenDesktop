@@ -1,0 +1,58 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.Tabs.SearchTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+             xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
+             mc:Ignorable="d" 
+             d:DesignWidth="1000" d:DesignHeight="600"
+             u:EventListenerExtensions.EventProvider="{Binding Events}">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SearchTabStyles.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource CenterPanel}">
+        <Image Style="{StaticResource LogoImage}" />
+        <Grid Visibility="{Binding IsSearchBlockVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <StackPanel Style="{StaticResource SearchParamsPanel}"
+                        Visibility="{Binding IsSearchParamsPanelVisible, Converter={StaticResource booleanToHiddenConverter}}">
+                <TextBox Name="searchTextBox" Style="{StaticResource SearchTextBox}"
+                            md:HintAssist.Hint="Поиск" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                            ToolTipService.ToolTip="{Binding SearchBoxHint}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
+                    </TextBox.InputBindings>
+                </TextBox>
+                <StackPanel Style="{StaticResource LibraryPanel}"
+                            Visibility="{Binding IsLibrarySelectorVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+                    <c:PressedSwitch Visibility="{Binding IsNonFictionLibraryAvailable, Converter={StaticResource booleanToCollapsedConverter}}"
+                                        IsChecked="{Binding IsNonFictionLibrarySelected}">
+                        <TextBlock Text="Нехудожественная литература" />
+                    </c:PressedSwitch>
+                    <c:PressedSwitch Visibility="{Binding IsFictionLibraryAvailable, Converter={StaticResource booleanToCollapsedConverter}}"
+                                        IsChecked="{Binding IsFictionLibrarySelected}">
+                        <TextBlock Text="Художественная литература" />
+                    </c:PressedSwitch>
+                    <c:PressedSwitch Visibility="{Binding IsSciMagLibraryAvailable, Converter={StaticResource booleanToCollapsedConverter}}"
+                                        IsChecked="{Binding IsSciMagLibrarySelected}">
+                        <TextBlock Text="Научные статьи" />
+                    </c:PressedSwitch>
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Style="{StaticResource SearchProgressPanel}"
+                        Visibility="{Binding IsSearchProgressPanelVisible, Converter={StaticResource booleanToHiddenConverter}}">
+                <StackPanel Style="{StaticResource SearchProgressHeader}">
+                    <ProgressBar Style="{StaticResource SearchProgressHeaderProgressBar}" />
+                    <TextBlock Text="Идет поиск..." Style="{StaticResource SearchProgressHeaderLabel}" />
+                </StackPanel>
+                <TextBlock Text="{Binding SearchProgressStatus}" Style="{StaticResource SearchProgressStatus}" />
+            </StackPanel>
+        </Grid>
+        <StackPanel Style="{StaticResource ImportBlock}"
+                    Visibility="{Binding IsImportBlockVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <TextBlock Text="База данных пуста. Скачайте дамп базы данных с сайта Library Genesis, а затем импортируйте его." />
+            <Button Content="Импортировать" Style="{StaticResource ImportButton}" Command="{Binding ImportCommand}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

@@ -64,7 +64,11 @@ namespace LibgenDesktop.Infrastructure
                 Window.Owner = parentWindow;
                 Window.WindowStartupLocation = WindowStartupLocation.CenterOwner;
             }
-            return ShowDialog(showMaximized, true);
+            else
+            {
+                Window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            return ShowDialog(showMaximized, parentWindow == null);
         }
 
         public void Close()
@@ -102,10 +106,9 @@ namespace LibgenDesktop.Infrastructure
             Closed?.Invoke(this, EventArgs.Empty);
         }
 
-        private bool? ShowDialog(bool showMaximized, bool hasOwner)
+        private bool? ShowDialog(bool showMaximized, bool showInTaskbar)
         {
-            Window.WindowStartupLocation = hasOwner ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen;
-            Window.ShowInTaskbar = false;
+            Window.ShowInTaskbar = showInTaskbar;
             Window.WindowState = GetWindowState(showMaximized);
             return Window.ShowDialog();
         }

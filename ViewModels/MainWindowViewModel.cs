@@ -1,37 +1,31 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
-using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Settings;
-using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.ViewModels
 {
     internal class MainWindowViewModel : ViewModel
     {
         private readonly MainModel mainModel;
-        private AsyncBookCollection books;
-        private bool allowSqlDumpImport;
-        private bool isInOfflineMode;
-        private bool isInSearchMode;
-        private double progressValue;
-        private bool isProgressVisible;
-        private bool isProgressIndeterminate;
-        private bool isSearchindDisabled;
-        private string statusText;
+        private SearchTabViewModel defaultSearchTabViewModel;
+        private TabViewModel selectedTabViewModel;
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(MainModel mainModel)
         {
-            mainModel = new MainModel();
-            OpenBookDetailsCommand = new Command(param => OpenBookDetails(param as Book));
-            ImportSqlDumpCommand = new Command(ImportSqlDump);
-            ExitCommand = new Command(Exit);
-            SearchCommand = new Command(Search);
-            BookDataGridEnterKeyCommand = new Command(BookDataGridEnterKeyPressed);
+            this.mainModel = mainModel;
+            NewTabCommand = new Command(NewTab);
+            CloseTabCommand = new Command(param => CloseTab(param as TabViewModel));
+            CloseCurrentTabCommand = new Command(CloseCurrentTab);
+            DownloadManagerCommand = new Command(ShowDownloadManager);
+            ImportCommand = new Command(Import);
+            SettingsCommand = new Command(SettingsMenuItemClick);
             WindowClosedCommand = new Command(WindowClosed);
+            DefaultSearchTabViewModel = new SearchTabViewModel(mainModel, null);
+            TabViewModels = new ObservableCollection<TabViewModel>();
             Initialize();
         }
 
@@ -40,131 +34,68 @@ namespace LibgenDesktop.ViewModels
         public int WindowLeft { get; set; }
         public int WindowTop { get; set; }
         public bool IsWindowMaximized { get; set; }
-        public int TitleColumnWidth { get; set; }
-        public int AuthorsColumnWidth { get; set; }
-        public int SeriesColumnWidth { get; set; }
-        public int YearColumnWidth { get; set; }
-        public int PublisherColumnWidth { get; set; }
-        public int FormatColumnWidth { get; set; }
-        public int FileSizeColumnWidth { get; set; }
-        public int OcrColumnWidth { get; set; }
-        public string SearchQuery { get; set; }
-        public Book SelectedBook { get; set; }
 
-        public AsyncBookCollection Books
+        public ObservableCollection<TabViewModel> TabViewModels { get; }
+
+        public SearchTabViewModel DefaultSearchTabViewModel
         {
             get
             {
-                return books;
-            }
-            private set
-            {
-                books = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool AllowSqlDumpImport
-        {
-            get
-            {
-                return allowSqlDumpImport;
+                return defaultSearchTabViewModel;
             }
             set
             {
-                allowSqlDumpImport = value;
+                defaultSearchTabViewModel = value;
                 NotifyPropertyChanged();
             }
         }
 
-        public bool IsInOfflineMode
+        public TabViewModel SelectedTabViewModel
         {
             get
             {
-                return isInOfflineMode;
+                return selectedTabViewModel;
             }
             set
             {
-                isInOfflineMode = value;
+                selectedTabViewModel = value;
                 NotifyPropertyChanged();
-                mainModel.AppSettings.OfflineMode = value;
-                mainModel.SaveSettings();
             }
         }
 
-        public double ProgressValue
+        public bool IsDefaultSearchTabVisible
         {
             get
             {
-                return progressValue;
-            }
-            private set
-            {
-                progressValue = value;
-                NotifyPropertyChanged();
+                return TabViewModels == null || !TabViewModels.Any();
             }
         }
 
-        public bool IsProgressVisible
+        public bool AreTabsVisible
         {
             get
             {
-                return isProgressVisible;
-            }
-            private set
-            {
-                isProgressVisible = value;
-                NotifyPropertyChanged();
+                return !IsDefaultSearchTabVisible;
             }
         }
 
-        public bool IsProgressIndeterminate
+        public bool IsNewTabButtonVisible
         {
             get
             {
-                return isProgressIndeterminate;
-            }
-            set
-            {
-                isProgressIndeterminate = value;
-                NotifyPropertyChanged();
+                return TabViewModels.Any() && !TabViewModels.Any(tabViewModel => tabViewModel is SearchTabViewModel);
             }
         }
 
-        public bool IsSearchindDisabled
-        {
-            get
-            {
-                return isSearchindDisabled;
-            }
-            private set
-            {
-                isSearchindDisabled = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string StatusText
-        {
-            get
-            {
-                return statusText;
-            }
-            private set
-            {
-                statusText = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public Command OpenBookDetailsCommand { get; }
-        public Command ImportSqlDumpCommand { get; }
-        public Command ExitCommand { get; }
-        public Command SearchCommand { get; }
-        public Command BookDataGridEnterKeyCommand { get; }
+        public Command NewTabCommand { get; }
+        public Command CloseTabCommand { get; }
+        public Command CloseCurrentTabCommand { get; }
+        public Command DownloadManagerCommand { get; }
+        public Command ImportCommand { get; }
+        public Command SettingsCommand { get; }
         public Command WindowClosedCommand { get; }
 
-        private async void Initialize()
+        private void Initialize()
         {
             AppSettings appSettings = mainModel.AppSettings;
             AppSettings.MainWindowSettings mainWindowSettings = appSettings.MainWindow;
@@ -173,163 +104,153 @@ namespace LibgenDesktop.ViewModels
             WindowLeft = mainWindowSettings.Left;
             WindowTop = mainWindowSettings.Top;
             IsWindowMaximized = mainWindowSettings.Maximized;
-            AppSettings.ColumnSettings columnSettings = appSettings.Columns;
-            TitleColumnWidth = columnSettings.TitleColumnWidth;
-            AuthorsColumnWidth = columnSettings.AuthorsColumnWidth;
-            SeriesColumnWidth = columnSettings.SeriesColumnWidth;
-            YearColumnWidth = columnSettings.YearColumnWidth;
-            PublisherColumnWidth = columnSettings.PublisherColumnWidth;
-            FormatColumnWidth = columnSettings.FormatColumnWidth;
-            FileSizeColumnWidth = columnSettings.FileSizeColumnWidth;
-            OcrColumnWidth = columnSettings.OcrColumnWidth;
-            isInOfflineMode = appSettings.OfflineMode;
-            allowSqlDumpImport = false;
-            SearchQuery = String.Empty;
-            IsSearchindDisabled = false;
-            books = mainModel.AllBooks;
-            isInSearchMode = false;
-            progressValue = 0;
-            isProgressVisible = true;
-            isProgressIndeterminate = false;
-            statusText = "Загрузка книг...";
-            Progress<LoadAllBooksProgress> loadAllBooksProgressHandler = new Progress<LoadAllBooksProgress>(HandleLoadAllBooksProgress);
-            CancellationToken cancellationToken = new CancellationToken();
-            try
-            {
-                await mainModel.LoadAllBooksAsync(loadAllBooksProgressHandler, cancellationToken);
-            }
-            catch (Exception exception)
-            {
-                ShowErrorWindow(exception);
-            }
-            InitialLoadCompleted();
+            DefaultSearchTabViewModel.ImportRequested += DefaultSearchTabViewModel_ImportRequested;
+            DefaultSearchTabViewModel.NonFictionSearchComplete += SearchTabNonFictionSearchComplete;
+            DefaultSearchTabViewModel.FictionSearchComplete += SearchTabFictionSearchComplete;
+            DefaultSearchTabViewModel.SciMagSearchComplete += SearchTabSciMagSearchComplete;
+            selectedTabViewModel = null;
         }
 
-        private void HandleLoadAllBooksProgress(LoadAllBooksProgress loadAllBooksProgress)
+        private void DefaultSearchTabViewModel_ImportRequested(object sender, EventArgs e)
         {
-            if (!isInSearchMode)
+            Import();
+        }
+
+        private void SearchTabNonFictionSearchComplete(object sender, SearchTabViewModel.SearchCompleteEventArgs<NonFictionBook> e)
+        {
+            NonFictionSearchResultsTabViewModel nonFictionSearchResultsTabViewModel =
+                new NonFictionSearchResultsTabViewModel(mainModel, CurrentWindowContext, e.SearchQuery, e.SearchResult);
+            ShowSearchResults(sender as SearchTabViewModel, nonFictionSearchResultsTabViewModel);
+        }
+
+        private void SearchTabFictionSearchComplete(object sender, SearchTabViewModel.SearchCompleteEventArgs<FictionBook> e)
+        {
+            FictionSearchResultsTabViewModel fictionSearchResultsTabViewModel =
+                new FictionSearchResultsTabViewModel(mainModel, CurrentWindowContext, e.SearchQuery, e.SearchResult);
+            ShowSearchResults(sender as SearchTabViewModel, fictionSearchResultsTabViewModel);
+        }
+
+        private void SearchTabSciMagSearchComplete(object sender, SearchTabViewModel.SearchCompleteEventArgs<SciMagArticle> e)
+        {
+            SciMagSearchResultsTabViewModel sciMagSearchResultsTabViewModel =
+                new SciMagSearchResultsTabViewModel(mainModel, CurrentWindowContext, e.SearchQuery, e.SearchResult);
+            ShowSearchResults(sender as SearchTabViewModel, sciMagSearchResultsTabViewModel);
+        }
+
+        private void ShowSearchResults(SearchTabViewModel searchTabViewModel, TabViewModel searchResultsTabViewModel)
+        {
+            if (searchTabViewModel != DefaultSearchTabViewModel)
             {
-                IsProgressIndeterminate = false;
-                if (!loadAllBooksProgress.IsFinished)
-                {
-                    IsProgressVisible = true;
-                    StatusText = $"Загрузка книг (загружено { loadAllBooksProgress.BooksLoaded.ToString("N0", Formatters.ThousandsSeparatedNumberFormat)} из { loadAllBooksProgress.TotalBookCount.ToString("N0", Formatters.ThousandsSeparatedNumberFormat)})...";
-                    ProgressValue = (double)loadAllBooksProgress.BooksLoaded / loadAllBooksProgress.TotalBookCount;
-                }
+                searchTabViewModel.NonFictionSearchComplete -= SearchTabNonFictionSearchComplete;
+                searchTabViewModel.FictionSearchComplete -= SearchTabFictionSearchComplete;
+                searchTabViewModel.SciMagSearchComplete -= SearchTabSciMagSearchComplete;
+                TabViewModels.Remove(searchTabViewModel);
+            }
+            TabViewModels.Add(searchResultsTabViewModel);
+            SelectedTabViewModel = searchResultsTabViewModel;
+            NotifyPropertyChanged(nameof(IsDefaultSearchTabVisible));
+            NotifyPropertyChanged(nameof(AreTabsVisible));
+            NotifyPropertyChanged(nameof(IsNewTabButtonVisible));
+        }
+
+        private void NewTab()
+        {
+            if (IsNewTabButtonVisible)
+            {
+                SearchTabViewModel searchTabViewModel = new SearchTabViewModel(mainModel, CurrentWindowContext);
+                searchTabViewModel.NonFictionSearchComplete += SearchTabNonFictionSearchComplete;
+                searchTabViewModel.FictionSearchComplete += SearchTabFictionSearchComplete;
+                searchTabViewModel.SciMagSearchComplete += SearchTabSciMagSearchComplete;
+                TabViewModels.Add(searchTabViewModel);
+                SelectedTabViewModel = searchTabViewModel;
+                NotifyPropertyChanged(nameof(IsNewTabButtonVisible));
             }
         }
 
-        private void BookDataGridEnterKeyPressed()
+        private void CloseCurrentTab()
         {
-            OpenBookDetails(SelectedBook);
+            if (TabViewModels.Any())
+            {
+                CloseTab(SelectedTabViewModel);
+            }
         }
 
-        private void OpenBookDetails(Book book)
+        private void CloseTab(TabViewModel tabViewModel)
         {
-            IWindowContext currentWindowContext = WindowManager.GetCreatedWindowContext(this);
-            BookDetailsWindowViewModel bookDetailsWindowViewModel = new BookDetailsWindowViewModel(mainModel, book);
-            IWindowContext bookDetailsWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.BOOK_DETAILS_WINDOW, bookDetailsWindowViewModel, currentWindowContext);
-            AppSettings.BookWindowSettings bookWindowSettings = mainModel.AppSettings.BookWindow;
-            bookDetailsWindowContext.ShowDialog(bookWindowSettings.Width, bookWindowSettings.Height);
+            if (tabViewModel is SearchTabViewModel searchTabViewModel)
+            {
+                searchTabViewModel.NonFictionSearchComplete -= SearchTabNonFictionSearchComplete;
+                searchTabViewModel.FictionSearchComplete -= SearchTabFictionSearchComplete;
+                searchTabViewModel.SciMagSearchComplete -= SearchTabSciMagSearchComplete;
+            }
+            int removingTabIndex = TabViewModels.IndexOf(tabViewModel);
+            TabViewModels.Remove(tabViewModel);
+            NotifyPropertyChanged(nameof(IsDefaultSearchTabVisible));
+            NotifyPropertyChanged(nameof(AreTabsVisible));
+            NotifyPropertyChanged(nameof(IsNewTabButtonVisible));
+            if (!TabViewModels.Any())
+            {
+                SelectedTabViewModel = null;
+                DefaultSearchTabViewModel.Refresh(setFocus: true);
+            }
+            else
+            {
+                int newSelectedTabIndex = TabViewModels.Count > removingTabIndex ? removingTabIndex : TabViewModels.Count - 1;
+                SelectedTabViewModel = TabViewModels[newSelectedTabIndex];
+            }
         }
 
-        private void ImportSqlDump()
+        private void ShowDownloadManager()
+        {
+            DownloadManagerTabViewModel downloadManagerTabViewModel = TabViewModels.OfType<DownloadManagerTabViewModel>().FirstOrDefault();
+            if (downloadManagerTabViewModel == null)
+            {
+                downloadManagerTabViewModel = new DownloadManagerTabViewModel(mainModel, CurrentWindowContext);
+                TabViewModels.Add(downloadManagerTabViewModel);
+                SelectedTabViewModel = downloadManagerTabViewModel;
+                NotifyPropertyChanged(nameof(IsDefaultSearchTabVisible));
+                NotifyPropertyChanged(nameof(AreTabsVisible));
+                NotifyPropertyChanged(nameof(IsNewTabButtonVisible));
+            }
+            else
+            {
+                SelectedTabViewModel = downloadManagerTabViewModel;
+            }
+        }
+
+        private void Import()
         {
             OpenFileDialogParameters selectSqlDumpFileDialogParameters = new OpenFileDialogParameters
             {
                 DialogTitle = "Выбор SQL-дампа",
-                Filter = "SQL-дампы (*.sql, *.zip, *.rar)|*.sql;*zip;*.rar|Все файлы (*.*)|*.*",
+                Filter = "Все поддерживаемые файлы|*.sql;*zip;*.rar;*.gz|SQL -дампы (*.sql)|*.sql|Архивы (*.zip, *.rar, *.gz)|*zip;*.rar;*.gz|Все файлы (*.*)|*.*",
                 Multiselect = false
             };
             OpenFileDialogResult selectSqlDumpFileDialogResult = WindowManager.ShowOpenFileDialog(selectSqlDumpFileDialogParameters);
             if (selectSqlDumpFileDialogResult.DialogResult)
             {
-                StatusText = "Импорт из SQL-дампа...";
-                IWindowContext currentWindowContext = WindowManager.GetCreatedWindowContext(this);
-                SqlDumpImportWindowViewModel sqlDumpImportWindowViewModel = new SqlDumpImportWindowViewModel(mainModel, selectSqlDumpFileDialogResult.SelectedFilePaths.First());
-                IWindowContext sqlDumpImportWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.SQL_DUMP_IMPORT_WINDOW, sqlDumpImportWindowViewModel, currentWindowContext);
-                sqlDumpImportWindowContext.ShowDialog();
-                SetTotalBookNumberStatus();
-            }
-        }
-
-        private async void Search()
-        {
-            string searchQuery = SearchQuery.Trim();
-            if (String.IsNullOrEmpty(searchQuery))
-            {
-                Books = mainModel.AllBooks;
-                SetTotalBookNumberStatus();
-                IsSearchindDisabled = false;
-                isInSearchMode = false;
-            }
-            else
-            {
-                isInSearchMode = true;
-                IsProgressIndeterminate = true;
-                IsProgressVisible = true;
-                IsSearchindDisabled = true;
-                statusText = "Поиск книг...";
-                mainModel.ClearSearchResults();
-                Books = mainModel.SearchResults;
-                Progress<SearchBooksProgress> searchBooksProgressHandler = new Progress<SearchBooksProgress>(HandleSearchBooksProgress);
-                CancellationToken cancellationToken = new CancellationToken();
-                try
+                ImportWindowViewModel importWindowViewModel = new ImportWindowViewModel(mainModel, selectSqlDumpFileDialogResult.SelectedFilePaths.First());
+                IWindowContext importWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.IMPORT_WINDOW, importWindowViewModel, CurrentWindowContext);
+                importWindowContext.ShowDialog();
+                if (IsDefaultSearchTabVisible)
                 {
-                    await mainModel.SearchBooksAsync(searchQuery, searchBooksProgressHandler, cancellationToken);
+                    DefaultSearchTabViewModel.Refresh(setFocus: true);
                 }
-                catch (Exception exception)
+                else
                 {
-                    ShowErrorWindow(exception);
-                }
-                IsProgressVisible = false;
-                IsSearchindDisabled = false;
-                SetFoundBooksStatus();
-            }
-        }
-
-        private void HandleSearchBooksProgress(SearchBooksProgress searchBooksProgress)
-        {
-            if (isInSearchMode)
-            {
-                if (!searchBooksProgress.IsFinished)
-                {
-                    IsProgressVisible = true;
-                    IsProgressIndeterminate = true;
-                    StatusText = $"Поиск книг (найдено { searchBooksProgress.BooksFound.ToString("N0", Formatters.ThousandsSeparatedNumberFormat)})...";
+                    foreach (SearchTabViewModel searchTabViewModel in TabViewModels.OfType<SearchTabViewModel>())
+                    {
+                        searchTabViewModel.Refresh(setFocus: searchTabViewModel == SelectedTabViewModel);
+                    }
                 }
             }
         }
 
-        private void SetTotalBookNumberStatus()
+        private void SettingsMenuItemClick()
         {
-            StatusText = $"Всего книг: {Books.Count.ToString("N0", Formatters.ThousandsSeparatedNumberFormat)}";
-        }
-
-        private void SetFoundBooksStatus()
-        {
-            StatusText = $"Найдено книг: {Books.Count.ToString("N0", Formatters.ThousandsSeparatedNumberFormat)}";
-        }
-
-        private void InitialLoadCompleted()
-        {
-            UpdateAllowSqlDumpImport();
-            if (!isInSearchMode)
-            {
-                IsProgressVisible = false;
-                SetTotalBookNumberStatus();
-            }
-        }
-
-        private void UpdateAllowSqlDumpImport()
-        {
-            AllowSqlDumpImport = mainModel.AllBooks.Count == 0;
-        }
-
-        private void Exit()
-        {
-            IWindowContext currentWindowContext = WindowManager.GetCreatedWindowContext(this);
-            currentWindowContext.Close();
+            SettingsWindowViewModel settingsWindowViewModel = new SettingsWindowViewModel(mainModel);
+            IWindowContext settingsWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.SETTINGS_WINDOW, settingsWindowViewModel, CurrentWindowContext);
+            settingsWindowContext.ShowDialog();
         }
 
         private void WindowClosed()
@@ -341,17 +262,6 @@ namespace LibgenDesktop.ViewModels
                 Left = WindowLeft,
                 Top = WindowTop,
                 Maximized = IsWindowMaximized
-            };
-            mainModel.AppSettings.Columns = new AppSettings.ColumnSettings
-            {
-                TitleColumnWidth = TitleColumnWidth,
-                AuthorsColumnWidth = AuthorsColumnWidth,
-                SeriesColumnWidth = SeriesColumnWidth,
-                YearColumnWidth = YearColumnWidth,
-                PublisherColumnWidth = PublisherColumnWidth,
-                FormatColumnWidth = FormatColumnWidth,
-                FileSizeColumnWidth = FileSizeColumnWidth,
-                OcrColumnWidth = OcrColumnWidth
             };
             mainModel.SaveSettings();
         }

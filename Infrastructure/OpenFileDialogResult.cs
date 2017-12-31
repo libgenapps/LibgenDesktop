@@ -2,7 +2,7 @@
 
 namespace LibgenDesktop.Infrastructure
 {
-    public class OpenFileDialogResult
+    internal class OpenFileDialogResult
     {
         public bool DialogResult { get; set; }
         public List<string> SelectedFilePaths { get; set; }

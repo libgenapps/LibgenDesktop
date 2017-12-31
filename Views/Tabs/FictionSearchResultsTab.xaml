@@ -1,0 +1,84 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.Tabs.FictionSearchResultsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:const="clr-namespace:LibgenDesktop.Common"
+             xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
+             mc:Ignorable="d" 
+             d:DesignWidth="600" d:DesignHeight="400"
+             u:EventListenerExtensions.EventProvider="{Binding Events}">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/FictionSearchResultsTabStyles.xaml" />
+    </UserControl.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBox Name="searchTextBox" Grid.Row="0" Style="{StaticResource SearchTextBox}"
+                 md:HintAssist.Hint="Поиск" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTipService.ToolTip="Поиск по наименованию, авторам, серии, издателю и ISBN с дефисами">
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
+            </TextBox.InputBindings>
+        </TextBox>
+        <DataGrid Name="bookGrid" Grid.Row="1" ItemsSource="{Binding Path=Books}" SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
+                  Visibility="{Binding IsBookGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                  Style="{StaticResource BookDataGrid}">
+            <DataGrid.Resources>
+                <u:BindingProxy x:Key="dataGridViewModel" DataContext="{Binding}" />
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+                    <Setter Property="u:DataGridExtensions.DoubleClickCommand" Value="{Binding ElementName=bookGrid, Path=DataContext.OpenDetailsCommand}"/>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.InputBindings>
+                <KeyBinding Command="{Binding BookDataGridEnterKeyCommand}" Key="Enter" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Title}" Header="Наименование"
+                                    Width="{Binding DataContext.TitleColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.FICTION_GRID_TITLE_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource TitleColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding Authors}" Header="Авторы"
+                                    Width="{Binding DataContext.AuthorsColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.FICTION_GRID_AUTHORS_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource AuthorsColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding Series}" Header="Серия"
+                                    Width="{Binding DataContext.SeriesColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.FICTION_GRID_SERIES_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource SeriesColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding YearString}" Header="Год"
+                                    Width="{Binding DataContext.YearColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.FICTION_GRID_YEAR_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource YearColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding Publisher}" Header="Издатель"
+                                    Width="{Binding DataContext.PublisherColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource PublisherColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding Format}" Header="Формат"
+                                    Width="{Binding DataContext.FormatColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.FICTION_GRID_FORMAT_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource FormatColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding FileSizeString}" Header="Размер файла" SortMemberPath="SizeInBytes"
+                                    Width="{Binding DataContext.FileSizeColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.FICTION_GRID_FILESIZE_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource FileSizeColumnStyle}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Grid.Row="1" Style="{StaticResource BookSearchProgressPanel}"
+                    Visibility="{Binding IsSearchProgressPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <StackPanel Style="{StaticResource SearchProgressHeader}">
+                <ProgressBar Style="{StaticResource SearchProgressHeaderProgressBar}" />
+                <TextBlock Text="Идет поиск..." Style="{StaticResource SearchProgressHeaderLabel}" />
+            </StackPanel>
+            <TextBlock Text="{Binding SearchProgressStatus}" Style="{StaticResource SearchProgressStatus}" />
+        </StackPanel>
+        <TextBlock Grid.Row="2" Text="{Binding BookCount}" Style="{StaticResource StatusBarText}"
+                   Visibility="{Binding IsStatusBarVisible, Converter={StaticResource booleanToCollapsedConverter}}"/>
+    </Grid>
+</UserControl>

@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using LibgenDesktop.Common;
 using LibgenDesktop.Infrastructure;
@@ -16,9 +11,10 @@ using LibgenDesktop.Models.Settings;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class BookDetailsWindowViewModel : ViewModel
+    internal class FictionDetailsWindowViewModel : ViewModel
     {
         private readonly MainModel mainModel;
+        private FictionBook book;
         private bool bookCoverNotLoadedDueToOfflineMode;
         private bool bookCoverLoading;
         private bool bookCoverLoadingFailed;
@@ -26,20 +22,33 @@ namespace LibgenDesktop.ViewModels
         private bool bookCoverVisible;
         private BitmapImage bookCover;
 
-        public BookDetailsWindowViewModel(MainModel mainModel, Book mainBookInfo)
+        public FictionDetailsWindowViewModel(MainModel mainModel, FictionBook book)
         {
             this.mainModel = mainModel;
+            this.book = book;
             DownloadBookCommand = new Command(DownloadBook);
             CloseCommand = new Command(CloseWindow);
             WindowClosedCommand = new Command(WindowClosed);
-            Initialize(mainBookInfo);
+            Initialize();
         }
 
-        public Book Book { get; private set; }
         public string WindowTitle { get; private set; }
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
         public bool IsInOfflineMode { get; private set; }
+
+        public FictionBook Book
+        {
+            get
+            {
+                return book;
+            }
+            private set
+            {
+                book = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public bool BookCoverNotLoadedDueToOfflineMode
         {
@@ -123,12 +132,12 @@ namespace LibgenDesktop.ViewModels
         public Command CloseCommand { get; }
         public Command WindowClosedCommand { get; }
 
-        private async void Initialize(Book mainBookInfo)
+        private async void Initialize()
         {
-            WindowTitle = mainBookInfo.Title;
-            WindowWidth = mainModel.AppSettings.BookWindow.Width;
-            WindowHeight = mainModel.AppSettings.BookWindow.Height;
-            if (mainModel.AppSettings.OfflineMode)
+            WindowTitle = Book.Title;
+            WindowWidth = mainModel.AppSettings.Fiction.DetailsWindow.Width;
+            WindowHeight = mainModel.AppSettings.Fiction.DetailsWindow.Height;
+            if (mainModel.AppSettings.Network.OfflineMode)
             {
                 IsInOfflineMode = true;
                 BookCoverNotLoadedDueToOfflineMode = true;
@@ -144,9 +153,7 @@ namespace LibgenDesktop.ViewModels
             NoCover = false;
             BookCoverVisible = false;
             BookCover = null;
-            Book = await mainModel.LoadBookAsync(mainBookInfo.Id);
-            NotifyPropertyChanged(nameof(Book));
-            if (String.IsNullOrWhiteSpace(Book.ExtendedProperties.CoverUrl))
+            if (Book.Cover != "1")
             {
                 BookCoverNotLoadedDueToOfflineMode = false;
                 BookCoverLoading = false;
@@ -158,8 +165,9 @@ namespace LibgenDesktop.ViewModels
                 {
                     try
                     {
+                        string bookCoverUrl = String.Concat(Book.LibgenId / 1000 * 1000, "/", Book.Md5Hash, ".jpg");
                         WebClient webClient = new WebClient();
-                        byte[] imageData = await webClient.DownloadDataTaskAsync(new Uri(Constants.BOOK_COVER_URL_PREFIX + Book.ExtendedProperties.CoverUrl));
+                        byte[] imageData = await webClient.DownloadDataTaskAsync(new Uri(Constants.FICTION_COVER_URL_PREFIX + bookCoverUrl));
                         BitmapImage bitmapImage = new BitmapImage();
                         using (MemoryStream memoryStream = new MemoryStream(imageData))
                         {
@@ -183,18 +191,18 @@ namespace LibgenDesktop.ViewModels
 
         private void DownloadBook()
         {
-            Process.Start(Constants.BOOK_DOWNLOAD_URL_PREFIX + Book.ExtendedProperties.Md5Hash);
+            Process.Start(Constants.FICTION_DOWNLOAD_URL_PREFIX + Book.Md5Hash);
         }
 
         private void CloseWindow()
         {
-            IWindowContext currentWindowContext = WindowManager.GetCreatedWindowContext(this);
+            IWindowContext currentWindowContext = WindowManager.GetWindowContext(this);
             currentWindowContext.CloseDialog(false);
         }
 
         private void WindowClosed()
         {
-            mainModel.AppSettings.BookWindow = new AppSettings.BookWindowSettings
+            mainModel.AppSettings.Fiction.DetailsWindow = new AppSettings.FictionDetailsWindowSettings
             {
                 Width = WindowWidth,
                 Height = WindowHeight

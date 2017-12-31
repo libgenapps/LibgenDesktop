@@ -1,0 +1,80 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.Tabs.SciMagSearchResultsTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:const="clr-namespace:LibgenDesktop.Common"
+             xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
+             mc:Ignorable="d" 
+             d:DesignWidth="600" d:DesignHeight="400"
+             u:EventListenerExtensions.EventProvider="{Binding Events}">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SciMagSearchResultsTabStyles.xaml" />
+    </UserControl.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBox Name="searchTextBox" Grid.Row="0" Style="{StaticResource SearchTextBox}"
+                 md:HintAssist.Hint="Поиск" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                 ToolTipService.ToolTip="Поиск по наименованию, авторам, журналу, DOI, Pubmed ID и ISSN (p/e)">
+            <TextBox.InputBindings>
+                <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
+            </TextBox.InputBindings>
+        </TextBox>
+        <DataGrid Name="articleGrid" Grid.Row="1" ItemsSource="{Binding Path=Articles}" SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
+                  Visibility="{Binding IsArticleGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                  Style="{StaticResource ArticleDataGrid}">
+            <DataGrid.Resources>
+                <u:BindingProxy x:Key="dataGridViewModel" DataContext="{Binding}" />
+            </DataGrid.Resources>
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+                    <Setter Property="u:DataGridExtensions.DoubleClickCommand" Value="{Binding ElementName=articleGrid, Path=DataContext.OpenDetailsCommand}"/>
+                </Style>
+            </DataGrid.RowStyle>
+            <DataGrid.InputBindings>
+                <KeyBinding Command="{Binding ArticleDataGridEnterKeyCommand}" Key="Enter" />
+            </DataGrid.InputBindings>
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding Title}" Header="Наименование"
+                                    Width="{Binding DataContext.TitleColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_TITLE_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource TitleColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding Authors}" Header="Авторы"
+                                    Width="{Binding DataContext.AuthorsColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_AUTHORS_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource AuthorsColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding Journal}" Header="Журнал"
+                                    Width="{Binding DataContext.JournalColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_JOURNAL_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource JournalColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding Year}" Header="Год"
+                                    Width="{Binding DataContext.YearColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_YEAR_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource YearColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding FileSizeString}" Header="Размер файла" SortMemberPath="SizeInBytes"
+                                    Width="{Binding DataContext.FileSizeColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_FILESIZE_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource FileSizeColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding DoiString}" Header="DOI"
+                                    Width="{Binding DataContext.DoiColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_DOI_COLUMN_MIN_WIDTH}}"
+                                    ElementStyle="{StaticResource DoiColumnStyle}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Grid.Row="1" Style="{StaticResource ArticleSearchProgressPanel}"
+                    Visibility="{Binding IsSearchProgressPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <StackPanel Style="{StaticResource SearchProgressHeader}">
+                <ProgressBar Style="{StaticResource SearchProgressHeaderProgressBar}" />
+                <TextBlock Text="Идет поиск..." Style="{StaticResource SearchProgressHeaderLabel}" />
+            </StackPanel>
+            <TextBlock Text="{Binding SearchProgressStatus}" Style="{StaticResource SearchProgressStatus}" />
+        </StackPanel>
+        <TextBlock Grid.Row="2" Text="{Binding ArticleCount}" Style="{StaticResource StatusBarText}"
+                   Visibility="{Binding IsStatusBarVisible, Converter={StaticResource booleanToCollapsedConverter}}"/>
+    </Grid>
+</UserControl>

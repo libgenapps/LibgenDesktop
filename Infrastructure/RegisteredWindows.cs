@@ -10,9 +10,13 @@ namespace LibgenDesktop.Infrastructure
         internal enum WindowKey
         {
             MAIN_WINDOW = 1,
-            BOOK_DETAILS_WINDOW,
+            NON_FICTION_DETAILS_WINDOW,
+            FICTION_DETAILS_WINDOW,
+            SCI_MAG_DETAILS_WINDOW,
             ERROR_WINDOW,
-            SQL_DUMP_IMPORT_WINDOW
+            IMPORT_WINDOW,
+            CREATE_DATABASE_WINDOW,
+            SETTINGS_WINDOW
         }
 
         internal class RegisteredWindow
@@ -31,15 +35,22 @@ namespace LibgenDesktop.Infrastructure
 
         static RegisteredWindows()
         {
-            AllWindows = new Dictionary<WindowKey, RegisteredWindow>
-            {
-                { WindowKey.MAIN_WINDOW, new RegisteredWindow(WindowKey.MAIN_WINDOW, typeof(MainWindow), typeof(MainWindowViewModel)) },
-                { WindowKey.BOOK_DETAILS_WINDOW, new RegisteredWindow(WindowKey.BOOK_DETAILS_WINDOW, typeof(BookDetailsWindow), typeof(BookDetailsWindowViewModel)) },
-                { WindowKey.ERROR_WINDOW, new RegisteredWindow(WindowKey.ERROR_WINDOW, typeof(ErrorWindow), typeof(ErrorWindowViewModel)) },
-                { WindowKey.SQL_DUMP_IMPORT_WINDOW, new RegisteredWindow(WindowKey.SQL_DUMP_IMPORT_WINDOW, typeof(SqlDumpImportWindow), typeof(SqlDumpImportWindowViewModel)) }
-            };
+            AllWindows = new Dictionary<WindowKey, RegisteredWindow>();
+            RegisterWindow(WindowKey.MAIN_WINDOW, typeof(MainWindow), typeof(MainWindowViewModel));
+            RegisterWindow(WindowKey.NON_FICTION_DETAILS_WINDOW, typeof(NonFictionDetailsWindow), typeof(NonFictionDetailsWindowViewModel));
+            RegisterWindow(WindowKey.FICTION_DETAILS_WINDOW, typeof(FictionDetailsWindow), typeof(FictionDetailsWindowViewModel));
+            RegisterWindow(WindowKey.SCI_MAG_DETAILS_WINDOW, typeof(SciMagDetailsWindow), typeof(SciMagDetailsWindowViewModel));
+            RegisterWindow(WindowKey.ERROR_WINDOW, typeof(ErrorWindow), typeof(ErrorWindowViewModel));
+            RegisterWindow(WindowKey.IMPORT_WINDOW, typeof(ImportWindow), typeof(ImportWindowViewModel));
+            RegisterWindow(WindowKey.CREATE_DATABASE_WINDOW, typeof(CreateDatabaseWindow), typeof(CreateDatabaseViewModel));
+            RegisterWindow(WindowKey.SETTINGS_WINDOW, typeof(SettingsWindow), typeof(SettingsWindowViewModel));
         }
 
         public static Dictionary<WindowKey, RegisteredWindow> AllWindows { get; }
+
+        private static void RegisterWindow(WindowKey windowKey, Type windowType, Type viewModelType)
+        {
+            AllWindows.Add(windowKey, new RegisteredWindow(windowKey, windowType, viewModelType));
+        }
     }
 }

@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.Tabs.DownloadManagerTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
+             mc:Ignorable="d" 
+             d:DesignWidth="1000" d:DesignHeight="600"
+             u:EventListenerExtensions.EventProvider="{Binding Events}">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/DownloadManagerTabStyles.xaml" />
+    </UserControl.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <TextBlock Text="Менеджер загрузок еще не сделан." Style="{StaticResource NotImplementedText}" />
+    </Grid>
+</UserControl>

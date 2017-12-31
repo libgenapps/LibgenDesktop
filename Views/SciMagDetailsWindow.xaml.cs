@@ -1,8 +1,8 @@
 ﻿namespace LibgenDesktop.Views
 {
-    public partial class BookDetailsWindow
+    public partial class SciMagDetailsWindow
     {
-        public BookDetailsWindow()
+        public SciMagDetailsWindow()
         {
             InitializeComponent();
         }

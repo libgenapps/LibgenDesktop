@@ -1,0 +1,34 @@
+﻿<RadioButton x:Class="LibgenDesktop.Views.Controls.PressedSwitch"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             SnapsToDevicePixels="True">
+    <RadioButton.Template>
+        <ControlTemplate TargetType="RadioButton">
+            <Grid Cursor="Hand">
+                <Border Name="LightBorder" CornerRadius="5" BorderThickness="0,0,1,1" BorderBrush="White" Background="#EDEDED" />
+                <Border Name="DarkBorder" CornerRadius="5" BorderThickness="1,1,0,0" BorderBrush="#D8D8D8" />
+                <Border Name="NonCheckedBackground" Background="{StaticResource MaterialDesignPaper}" Visibility="Hidden" />
+                <ContentPresenter Margin="16,8" />
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter TargetName="LightBorder" Property="Visibility" Value="Hidden" />
+                    <Setter TargetName="DarkBorder" Property="Visibility" Value="Hidden" />
+                    <Setter TargetName="NonCheckedBackground" Property="Visibility" Value="Visible" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="TextBlock.Foreground" Value="Black" />
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="False">
+                    <Setter Property="TextBlock.Foreground" Value="{StaticResource MaterialDesignBody}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="LightBorder" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="DarkBorder" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="NonCheckedBackground" Property="Visibility" Value="Hidden" />
+                    <Setter TargetName="LightBorder" Property="Background" Value="#E8E8E8" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </RadioButton.Template>
+</RadioButton>

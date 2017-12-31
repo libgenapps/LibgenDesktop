@@ -1,0 +1,21 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="TabStyles.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <Style x:Key="BookDataGrid" TargetType="DataGrid" BasedOn="{StaticResource SearchResultsDataGrid}" />
+    <Style x:Key="TitleColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
+    <Style x:Key="AuthorsColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
+    <Style x:Key="SeriesColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
+    <Style x:Key="YearColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
+    <Style x:Key="PublisherColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
+    <Style x:Key="FormatColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="FileSizeColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style x:Key="BookSearchProgressPanel" TargetType="StackPanel" BasedOn="{StaticResource SearchProgressPanel}">
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+</ResourceDictionary>

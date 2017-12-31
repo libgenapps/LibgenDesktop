@@ -80,16 +80,21 @@ namespace LibgenDesktop.Infrastructure
             return result;
         }
 
-        public static IWindowContext GetCreatedWindowContext(object viewModel)
+        public static IWindowContext GetWindowContext(object viewModel)
         {
             return createdWindowContexts.FirstOrDefault(windowContext => ReferenceEquals(windowContext.DataContext, viewModel));
+        }
+
+        public static void ShowMessageBox(string title, string text)
+        {
+            MessageBox.Show(text, title);
         }
 
         public static OpenFileDialogResult ShowOpenFileDialog(OpenFileDialogParameters openFileDialogParameters)
         {
             if (openFileDialogParameters == null)
             {
-                throw new ArgumentNullException("openFileDialogParameters");
+                throw new ArgumentNullException(nameof(openFileDialogParameters));
             }
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (!String.IsNullOrEmpty(openFileDialogParameters.DialogTitle))
@@ -108,6 +113,36 @@ namespace LibgenDesktop.Infrastructure
             OpenFileDialogResult result = new OpenFileDialogResult();
             result.DialogResult = openFileDialog.ShowDialog() == true;
             result.SelectedFilePaths = result.DialogResult ? openFileDialog.FileNames.ToList() : new List<string>();
+            return result;
+        }
+
+        public static SaveFileDialogResult ShowSaveFileDialog(SaveFileDialogParameters saveFileDialogParameters)
+        {
+            if (saveFileDialogParameters == null)
+            {
+                throw new ArgumentNullException(nameof(saveFileDialogParameters));
+            }
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (!String.IsNullOrEmpty(saveFileDialogParameters.DialogTitle))
+            {
+                saveFileDialog.Title = saveFileDialogParameters.DialogTitle;
+            }
+            if (!String.IsNullOrEmpty(saveFileDialogParameters.Filter))
+            {
+                saveFileDialog.Filter = saveFileDialogParameters.Filter;
+            }
+            saveFileDialog.OverwritePrompt = saveFileDialogParameters.OverwritePrompt;
+            if (!String.IsNullOrEmpty(saveFileDialogParameters.InitialDirectory))
+            {
+                saveFileDialog.InitialDirectory = saveFileDialogParameters.InitialDirectory;
+            }
+            if (!String.IsNullOrEmpty(saveFileDialogParameters.InitialFileName))
+            {
+                saveFileDialog.FileName = saveFileDialogParameters.InitialFileName;
+            }
+            SaveFileDialogResult result = new SaveFileDialogResult();
+            result.DialogResult = saveFileDialog.ShowDialog() == true;
+            result.SelectedFilePath = result.DialogResult ? saveFileDialog.FileName : null;
             return result;
         }
 
@@ -131,18 +166,18 @@ namespace LibgenDesktop.Infrastructure
             SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
         }
 
-        private static void WindowContext_Closed(object sender, EventArgs e)
-        {
-            WindowContext closedWindowContext = (WindowContext)sender;
-            createdWindowContexts.Remove(closedWindowContext);
-            closedWindowContext.Closed -= WindowContext_Closed;
-        }
-
         private static void RemoveWindowStyle(Window window, int styleAttribute)
         {
             IntPtr windowHandle = new WindowInteropHelper(window).Handle;
             int windowStyle = GetWindowLong(windowHandle, GWL_STYLE);
             SetWindowLong(windowHandle, GWL_STYLE, windowStyle & ~styleAttribute);
+        }
+
+        private static void WindowContext_Closed(object sender, EventArgs e)
+        {
+            WindowContext closedWindowContext = (WindowContext)sender;
+            createdWindowContexts.Remove(closedWindowContext);
+            closedWindowContext.Closed -= WindowContext_Closed;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace LibgenDesktop.Models.Settings
                         result = jsonSerializer.Deserialize<AppSettings>(jsonTextReader);
                     }
                 }
-                AppSettings.ValidateAndCorrect(result);
+                result = AppSettings.ValidateAndCorrect(result);
             }
             catch
             {

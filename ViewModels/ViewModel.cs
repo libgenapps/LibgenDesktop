@@ -7,6 +7,14 @@ namespace LibgenDesktop.ViewModels
 {
     internal abstract class ViewModel : INotifyPropertyChanged
     {
+        protected IWindowContext CurrentWindowContext
+        {
+            get
+            {
+                return WindowManager.GetWindowContext(this);
+            }
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void NotifyPropertyChanged([CallerMemberName]string propertyName = "")
@@ -16,10 +24,10 @@ namespace LibgenDesktop.ViewModels
 
         protected void ShowErrorWindow(Exception exception)
         {
-            IWindowContext currentWindowContext = WindowManager.GetCreatedWindowContext(this);
+            IWindowContext currentWindowContext = WindowManager.GetWindowContext(this);
             ErrorWindowViewModel errorWindowViewModel = new ErrorWindowViewModel(exception.ToString());
-            IWindowContext bookDetailsWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.ERROR_WINDOW, errorWindowViewModel, currentWindowContext);
-            bookDetailsWindowContext.ShowDialog();
+            IWindowContext errorWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.ERROR_WINDOW, errorWindowViewModel, currentWindowContext);
+            errorWindowContext.ShowDialog();
         }
     }
 }
