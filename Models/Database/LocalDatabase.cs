@@ -773,29 +773,7 @@ namespace LibgenDesktop.Models.Database
 
         private string EscapeSearchQuery(string originalSearchQuery)
         {
-            List<string> searchQueryBuilder = new List<string>();
-            foreach (string searchQueryPart in originalSearchQuery.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                switch (searchQueryPart)
-                {
-                    case "AND":
-                    case "OR":
-                    case "NOT":
-                        searchQueryBuilder.Add(searchQueryPart);
-                        continue;
-                    default:
-                        if (searchQueryPart.Length > 1 && searchQueryPart.EndsWith("*"))
-                        {
-                            searchQueryBuilder.Add($"\"{searchQueryPart.Substring(0, searchQueryPart.Length - 1)}\"*");
-                        }
-                        else
-                        {
-                            searchQueryBuilder.Add($"\"{searchQueryPart}\"");
-                        }
-                        break;
-                }
-            }
-            return String.Join(" ", searchQueryBuilder);
+            return SearchQueryParser.GetEscapedQuery(originalSearchQuery);
         }
 
         private string GetSearchCommandWithLimit(string searchCommand, int? resultLimit)

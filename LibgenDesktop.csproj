@@ -95,6 +95,7 @@
     <Compile Include="Infrastructure\ViewModelEvent.cs" />
     <Compile Include="Infrastructure\WindowContext.cs" />
     <Compile Include="Infrastructure\WindowManager.cs" />
+    <Compile Include="Models\Database\SearchQueryParser.cs" />
     <Compile Include="Models\Entities\DatabaseMetadata.cs" />
     <Compile Include="Models\Entities\FictionBook.cs" />
     <Compile Include="Models\Entities\SciMagArticle.cs" />
