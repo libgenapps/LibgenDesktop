@@ -166,6 +166,11 @@ namespace LibgenDesktop.Infrastructure
             SetWindowPos(windowHandle, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
         }
 
+        public static void SetClipboardText(string text)
+        {
+            Clipboard.SetDataObject(text);
+        }
+
         private static void RemoveWindowStyle(Window window, int styleAttribute)
         {
             IntPtr windowHandle = new WindowInteropHelper(window).Handle;

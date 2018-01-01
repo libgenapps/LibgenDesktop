@@ -17,7 +17,7 @@ namespace LibgenDesktop.ViewModels
 
         private void CopyErrorToClipboard()
         {
-            Clipboard.SetText(Error);
+            WindowManager.SetClipboardText(Error);
         }
     }
 }

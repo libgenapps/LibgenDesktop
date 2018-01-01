@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.ViewModels;
@@ -10,6 +12,7 @@ namespace LibgenDesktop
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            SetupExceptionHandlers();
             MainModel mainModel = new MainModel();
             if (mainModel.LocalDatabaseStatus == MainModel.DatabaseStatus.OPENED)
             {
@@ -42,6 +45,28 @@ namespace LibgenDesktop
             {
                 Shutdown();
             }
+        }
+
+        private void SetupExceptionHandlers()
+        {
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) => ShowErrorWindow(e.ExceptionObject as Exception);
+            DispatcherUnhandledException += (sender, e) =>
+            {
+                ShowErrorWindow(e.Exception);
+                e.Handled = true;
+            };
+            TaskScheduler.UnobservedTaskException += (sender, e) =>
+            {
+                ShowErrorWindow(e.Exception);
+                e.SetObserved();
+            };
+        }
+
+        private void ShowErrorWindow(Exception exception)
+        {
+            ErrorWindowViewModel errorWindowViewModel = new ErrorWindowViewModel(exception?.ToString() ?? "(null)");
+            IWindowContext errorWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.ERROR_WINDOW, errorWindowViewModel);
+            errorWindowContext.ShowDialog();
         }
     }
 }

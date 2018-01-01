@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using LibgenDesktop.Infrastructure;
 
 namespace LibgenDesktop.Views.Controls
 {
@@ -16,7 +17,7 @@ namespace LibgenDesktop.Views.Controls
 
         private void CopyMenuItemClick(object sender, RoutedEventArgs e)
         {
-            Clipboard.SetText(Text);
+            WindowManager.SetClipboardText(Text);
         }
 
         private void TextChanged(object sender, EventArgs e)
