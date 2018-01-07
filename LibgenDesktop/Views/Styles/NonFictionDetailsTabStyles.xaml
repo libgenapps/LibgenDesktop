@@ -1,0 +1,60 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="TopContainer" TargetType="Grid">
+        <Setter Property="Margin" Value="12" />
+    </Style>
+    <Style x:Key="BookCover" TargetType="Image">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+    </Style>
+    <Style x:Key="BookCoverNotification" TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="TextAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="BookAttributesScrollViewer" TargetType="ScrollViewer">
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="Padding" Value="0,0,8,0" />
+    </Style>
+    <Style x:Key="BootAttributesLeftColumn" TargetType="Grid">
+        <Setter Property="Margin" Value="8,0" />
+    </Style>
+    <Style x:Key="BookAttributesRightColumn" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Vertical" />
+    </Style>
+    <Style x:Key="ExtraAttributesContainer" TargetType="Grid">
+        <Setter Property="Margin" Value="0,16,0,0" />
+    </Style>
+    <Style x:Key="AttributeHeaderLabel" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Margin" Value="0,3,6,3" />
+    </Style>
+    <Style x:Key="AttributeValueLabel" TargetType="TextBlock">
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="Margin" Value="0,3" />
+    </Style>
+    <Style x:Key="AttributeBlockHeaderLabel" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Medium" />
+    </Style>
+    <Style x:Key="AttributeBlockHeaderLine" TargetType="Rectangle">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Fill" Value="{StaticResource MaterialDesignBody}" />
+        <Setter Property="Margin" Value="0,2" />
+    </Style>
+    <Style x:Key="ButtonStackPanel" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Margin" Value="0,8,0,0" />
+    </Style>
+    <Style x:Key="DownloadButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="Margin" Value="0,0,8,0" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Setter Property="ToolTipService.Placement" Value="Mouse" />
+    </Style>
+    <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource PrimaryHueMidBrush}" />
+    </Style>
+</ResourceDictionary>

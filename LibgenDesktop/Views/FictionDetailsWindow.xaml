@@ -1,0 +1,11 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.FictionDetailsWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       xmlns:tabs="clr-namespace:LibgenDesktop.Views.Tabs"
+                       Style="{StaticResource FictionDetailsWindow}"
+                       Title="{Binding WindowTitle}"
+                       Width="{Binding WindowWidth, Mode=TwoWay}" Height="{Binding WindowHeight, Mode=TwoWay}"
+                       ClosedCommand="{Binding WindowClosedCommand}">
+    <tabs:FictionDetailsTab DataContext="{Binding TabViewModel}" />
+</c:LibgenDesktopWindow>
