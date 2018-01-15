@@ -24,12 +24,16 @@
             <c:SettingsTabHeader IsChecked="{Binding IsSearchTabSelected}">
                 <TextBlock Text="Поиск" />
             </c:SettingsTabHeader>
+            <c:SettingsTabHeader IsChecked="{Binding IsAdvancedTabSelected}">
+                <TextBlock Text="Дополнительно" />
+            </c:SettingsTabHeader>
         </StackPanel>
         <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsNetworkTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
               Style="{StaticResource NetworkTabContent}">
             <Grid.RowDefinitions>
-                <RowDefinition Height="36" />
-                <RowDefinition Height="36" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -37,8 +41,8 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Автономный режим" />
             <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding NetworkIsOfflineModeOn}" />
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Зеркало библиотеки" />
-            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding NetworkMirrors}" Text="{Binding NetworkSelectedMirror, Mode=TwoWay}"
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Зеркало библиотеки" />
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding NetworkMirrors}" Text="{Binding NetworkSelectedMirror, Mode=TwoWay}"
                       IsEnabled="{Binding NetworkIsOfflineModeOn, Converter={StaticResource booleanInverseConverter}}"
                       Style="{StaticResource NetworkMirrorsComboBox}">
                 <ComboBox.ItemsPanel>
@@ -87,6 +91,18 @@
                     </RadioButton>
                 </StackPanel>
             </StackPanel>
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsAdvancedTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource AdvancedTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Записывать отладочную информацию в файл" />
+            <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding AdvancedIsLoggingEnabled}" />
         </Grid>
         <UniformGrid Grid.Row="1" Grid.Column="1" Rows="1" Columns="2" Style="{StaticResource ButtonPanel}">
             <Button Content="OK" Command="{Binding OkCommand}" IsEnabled="{Binding IsOkButtonEnabled}" Style="{StaticResource OkButton}" />

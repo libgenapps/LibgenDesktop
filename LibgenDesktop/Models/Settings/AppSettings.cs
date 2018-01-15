@@ -264,6 +264,22 @@ namespace LibgenDesktop.Models.Settings
             public DetailsMode OpenDetailsMode { get; set; }
         }
 
+        internal class AdvancedSettings
+        {
+            public static AdvancedSettings Default
+            {
+                get
+                {
+                    return new AdvancedSettings
+                    {
+                        LoggingEnabled = false
+                    };
+                }
+            }
+
+            public bool LoggingEnabled { get; set; }
+        }
+
         public static AppSettings Default
         {
             get
@@ -276,7 +292,8 @@ namespace LibgenDesktop.Models.Settings
                     Fiction = FictionSettings.Default,
                     SciMag = SciMagSettings.Default,
                     Network = NetworkSettings.Default,
-                    Search = SearchSettings.Default
+                    Search = SearchSettings.Default,
+                    Advanced = AdvancedSettings.Default
                 };
             }
         }
@@ -288,6 +305,7 @@ namespace LibgenDesktop.Models.Settings
         public SciMagSettings SciMag { get; set; }
         public NetworkSettings Network { get; set; }
         public SearchSettings Search { get; set; }
+        public AdvancedSettings Advanced { get; set; }
 
         public static AppSettings ValidateAndCorrect(AppSettings appSettings)
         {
@@ -304,6 +322,7 @@ namespace LibgenDesktop.Models.Settings
                 appSettings.ValidateAndCorrectNetworkSettings();
                 appSettings.ValidateAndCorrectSearchSettings();
                 appSettings.ValidateAndCorrectSciMagSettings();
+                appSettings.ValidateAndCorrectAdvancedSettings();
                 return appSettings;
             }
         }
@@ -573,5 +592,14 @@ namespace LibgenDesktop.Models.Settings
                 }
             }
         }
+
+        private void ValidateAndCorrectAdvancedSettings()
+        {
+            if (Advanced == null)
+            {
+                Advanced = AdvancedSettings.Default;
+            }
+        }
+
     }
 }

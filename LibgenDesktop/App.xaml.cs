@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using LibgenDesktop.Common;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.ViewModels;
@@ -27,6 +28,7 @@ namespace LibgenDesktop
             }
             catch (Exception exception)
             {
+                Logger.EnableLogging();
                 ShowErrorWindow(exception);
                 Shutdown();
             }
@@ -72,6 +74,7 @@ namespace LibgenDesktop
 
         private void ShowErrorWindow(Exception exception)
         {
+            Logger.Exception(exception);
             ErrorWindowViewModel errorWindowViewModel = new ErrorWindowViewModel(exception?.ToString() ?? "(null)");
             IWindowContext errorWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.ERROR_WINDOW, errorWindowViewModel);
             errorWindowContext.ShowDialog();

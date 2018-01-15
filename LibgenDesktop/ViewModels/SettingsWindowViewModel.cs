@@ -17,6 +17,7 @@ namespace LibgenDesktop.ViewModels
         private readonly Dictionary<string, string> errors;
         private bool isNetworkTabSelected;
         private bool isSearchTabSelected;
+        private bool isAdvancedTabSelected;
         private bool networkIsOfflineModeOn;
         private ObservableCollection<string> networkMirrors;
         private string networkSelectedMirror;
@@ -26,6 +27,7 @@ namespace LibgenDesktop.ViewModels
         private bool searchIsOpenInModalWindowSelected;
         private bool searchIsOpenInNonModalWindowSelected;
         private bool searchIsOpenInNewTabSelected;
+        private bool advancedIsLoggingEnabled;
         private bool isOkButtonEnabled;
         private bool settingsChanged;
 
@@ -75,6 +77,19 @@ namespace LibgenDesktop.ViewModels
             {
                 networkIsOfflineModeOn = value;
                 settingsChanged = true;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsAdvancedTabSelected
+        {
+            get
+            {
+                return isAdvancedTabSelected;
+            }
+            set
+            {
+                isAdvancedTabSelected = value;
                 NotifyPropertyChanged();
             }
         }
@@ -191,6 +206,19 @@ namespace LibgenDesktop.ViewModels
             }
         }
 
+        public bool AdvancedIsLoggingEnabled
+        {
+            get
+            {
+                return advancedIsLoggingEnabled;
+            }
+            set
+            {
+                advancedIsLoggingEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public bool IsOkButtonEnabled
         {
             get
@@ -241,6 +269,7 @@ namespace LibgenDesktop.ViewModels
             settingsChanged = false;
             isNetworkTabSelected = true;
             isSearchTabSelected = false;
+            isAdvancedTabSelected = false;
             networkIsOfflineModeOn = appSettings.Network.OfflineMode;
             networkMirrors = new ObservableCollection<string>(mainModel.Mirrors.Keys);
             networkSelectedMirror = appSettings.Network.MirrorName;
@@ -262,6 +291,7 @@ namespace LibgenDesktop.ViewModels
                     searchIsOpenInNewTabSelected = true;
                     break;
             }
+            advancedIsLoggingEnabled = appSettings.Advanced.LoggingEnabled;
             Validate();
         }
 
@@ -309,6 +339,18 @@ namespace LibgenDesktop.ViewModels
             else if (SearchIsOpenInNewTabSelected)
             {
                 mainModel.AppSettings.Search.OpenDetailsMode = AppSettings.SearchSettings.DetailsMode.NEW_TAB;
+            }
+            if (advancedIsLoggingEnabled != mainModel.AppSettings.Advanced.LoggingEnabled)
+            {
+                mainModel.AppSettings.Advanced.LoggingEnabled = advancedIsLoggingEnabled;
+                if (advancedIsLoggingEnabled)
+                {
+                    mainModel.EnableLogging();
+                }
+                else
+                {
+                    mainModel.DisableLogging();
+                }
             }
             mainModel.SaveSettings();
             settingsChanged = false;

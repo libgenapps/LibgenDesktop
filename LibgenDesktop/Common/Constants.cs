@@ -2,7 +2,7 @@
 {
     internal static class Constants
     {
-        public const string CURRENT_VERSION = "0.9";
+        public const string CURRENT_VERSION = "0.9.1";
         public const string CURRENT_DATABASE_VERSION = "0.7";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
@@ -44,9 +44,9 @@
         public const int IMPORT_WINDOW_MIN_WIDTH = 500;
         public const int IMPORT_WINDOW_MIN_HEIGHT = 400;
         public const int CREATE_DATABASE_WINDOW_WIDTH = 500;
-        public const int SETTINGS_WINDOW_DEFAULT_WIDTH = 700;
+        public const int SETTINGS_WINDOW_DEFAULT_WIDTH = 750;
         public const int SETTINGS_WINDOW_DEFAULT_HEIGHT = 450;
-        public const int SETTINGS_WINDOW_MIN_WIDTH = 650;
+        public const int SETTINGS_WINDOW_MIN_WIDTH = 710;
         public const int SETTINGS_WINDOW_MIN_HEIGHT = 450;
         public const int SYNCHRONIZATION_WINDOW_MIN_WIDTH = 500;
         public const int SYNCHRONIZATION_WINDOW_MIN_HEIGHT = 400;

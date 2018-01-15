@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using LibgenDesktop.Common;
 using LibgenDesktop.Models.Entities;
 using Newtonsoft.Json;
 using static LibgenDesktop.Common.Constants;
@@ -35,25 +36,33 @@ namespace LibgenDesktop.Models.JsonApi
         public async Task<List<NonFictionBook>> DownloadNextBatchAsync(CancellationToken cancellationToken)
         {
             string url = $"{JSON_API_URL}?fields={FIELD_LIST}&timenewer={lastModifiedDateTime.ToString("yyyy-MM-dd HH:mm:ss")}&idnewer={lastLibgenId}&mode=newer";
+            Logger.Debug($"Sending a request to {url}");
             HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
+            Logger.Debug($"Response status code: {response.StatusCode}.");
+            Logger.Debug("Response headers:", response.Headers.ToString().TrimEnd());
             if (response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception($"JSON API returned {response.StatusCode}.");
             }
-            Stream responseStream = await response.Content.ReadAsStreamAsync();
-            using (StreamReader streamReader = new StreamReader(responseStream, Encoding.UTF8))
+            string responseContent = await response.Content.ReadAsStringAsync();
+            Logger.Debug("Response content:", responseContent);
+            List<JsonApiNonFictionBook> books;
+            try
             {
-                JsonSerializer jsonSerializer = new JsonSerializer();
-                List<JsonApiNonFictionBook> books =
-                    jsonSerializer.Deserialize(streamReader, typeof(List<JsonApiNonFictionBook>)) as List<JsonApiNonFictionBook>;
-                List<NonFictionBook> result = books.Select(ConvertToNonFictionBook).ToList();
-                if (result.Any())
-                {
-                    lastModifiedDateTime = result.Last().LastModifiedDateTime;
-                    lastLibgenId = result.Last().LibgenId;
-                }
-                return result;
+                books = JsonConvert.DeserializeObject<List<JsonApiNonFictionBook>>(responseContent);
             }
+            catch (Exception exception)
+            {
+                throw new Exception("Server response is not a valid JSON string.", exception);
+            }
+            Logger.Debug($"{books.Count} books have been parsed from the server response.");
+            List<NonFictionBook> result = books.Select(ConvertToNonFictionBook).ToList();
+            if (result.Any())
+            {
+                lastModifiedDateTime = result.Last().LastModifiedDateTime;
+                lastLibgenId = result.Last().LibgenId;
+            }
+            return result;
         }
 
         private NonFictionBook ConvertToNonFictionBook(JsonApiNonFictionBook jsonApiNonFictionBook)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using LibgenDesktop.Common;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
@@ -174,6 +175,7 @@ namespace LibgenDesktop.ViewModels
 
         private void OpenNonFictionDetailsRequested(object sender, NonFictionSearchResultsTabViewModel.OpenNonFictionDetailsEventArgs e)
         {
+            Logger.Debug($"Opening non-fiction book with ID = {e.NonFictionBook.Id}, Libgen ID = {e.NonFictionBook.LibgenId}.");
             SearchSettings.DetailsMode openDetailsMode = mainModel.AppSettings.Search.OpenDetailsMode;
             if (openDetailsMode == SearchSettings.DetailsMode.NEW_TAB)
             {
@@ -202,6 +204,7 @@ namespace LibgenDesktop.ViewModels
 
         private void OpenFictionDetailsRequested(object sender, FictionSearchResultsTabViewModel.OpenFictionDetailsEventArgs e)
         {
+            Logger.Debug($"Opening fiction book with ID = {e.FictionBook.Id}, Libgen ID = {e.FictionBook.LibgenId}.");
             SearchSettings.DetailsMode openDetailsMode = mainModel.AppSettings.Search.OpenDetailsMode;
             if (openDetailsMode == SearchSettings.DetailsMode.NEW_TAB)
             {
@@ -229,6 +232,7 @@ namespace LibgenDesktop.ViewModels
 
         private void OpenSciMagDetailsRequested(object sender, SciMagSearchResultsTabViewModel.OpenSciMagDetailsEventArgs e)
         {
+            Logger.Debug($"Opening article with ID = {e.SciMagArticle.Id}, Libgen ID = {e.SciMagArticle.LibgenId}.");
             SearchSettings.DetailsMode openDetailsMode = mainModel.AppSettings.Search.OpenDetailsMode;
             if (openDetailsMode == SearchSettings.DetailsMode.NEW_TAB)
             {

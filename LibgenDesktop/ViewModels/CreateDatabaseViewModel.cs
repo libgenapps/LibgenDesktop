@@ -4,6 +4,7 @@ using System.Linq;
 using LibgenDesktop.Common;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
+using Environment = LibgenDesktop.Common.Environment;
 
 namespace LibgenDesktop.ViewModels
 {
@@ -124,7 +125,7 @@ namespace LibgenDesktop.ViewModels
                 }
                 else
                 {
-                    saveFileDialogParameters.InitialDirectory = mainModel.AppDataDirectory;
+                    saveFileDialogParameters.InitialDirectory = Environment.AppDataDirectory;
                     saveFileDialogParameters.InitialFileName = Constants.DEFAULT_DATABASE_FILE_NAME;
                 }
                 SaveFileDialogResult saveFileDialogResult = WindowManager.ShowSaveFileDialog(saveFileDialogParameters);

@@ -67,6 +67,9 @@
       <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="SharpCompress">
       <HintPath>..\packages\SharpCompress.0.19.2\lib\net45\SharpCompress.dll</HintPath>
       <Private>True</Private>
@@ -78,6 +81,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
@@ -101,6 +105,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\Environment.cs" />
     <Compile Include="Infrastructure\EventProvider.cs" />
     <Compile Include="Infrastructure\FuncCommand.cs" />
     <Compile Include="Infrastructure\IEventListener.cs" />
@@ -113,6 +118,7 @@
     <Compile Include="Infrastructure\ViewModelEvent.cs" />
     <Compile Include="Infrastructure\WindowContext.cs" />
     <Compile Include="Infrastructure\WindowManager.cs" />
+    <Compile Include="Common\Logger.cs" />
     <Compile Include="Models\Database\SearchQueryParser.cs" />
     <Compile Include="Models\Entities\DatabaseMetadata.cs" />
     <Compile Include="Models\Entities\FictionBook.cs" />

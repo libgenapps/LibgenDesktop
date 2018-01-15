@@ -21,6 +21,7 @@ namespace LibgenDesktop.Setup
                 "MaterialDesignColors.dll",
                 "Dragablz.dll",
                 "System.Data.SQLite.dll",
+                "NLog.dll",
                 (is64Bit ? "x64" : "x86") + @"\SQLite.Interop.dll",
                 "mirrors.config"
             };

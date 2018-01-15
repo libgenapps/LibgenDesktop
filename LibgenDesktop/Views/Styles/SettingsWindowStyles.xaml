@@ -5,7 +5,7 @@
     </Style>
     <Style x:Key="TabsPanel" TargetType="StackPanel">
         <Setter Property="Orientation" Value="Vertical" />
-        <Setter Property="Width" Value="100" />
+        <Setter Property="Width" Value="160" />
         <Setter Property="Margin" Value="0,0,24,0" />
     </Style>
     <Style x:Key="TabContent" TargetType="Grid">
@@ -18,7 +18,7 @@
                 <Setter Property="HorizontalAlignment" Value="Right" />
             </Style>
         </Style.Resources>
-        <Setter Property="Margin" Value="0,0,8,0" />
+        <Setter Property="Margin" Value="0,8,8,0" />
     </Style>
     <Style x:Key="NetworkTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <Style x:Key="NetworkMirrorsComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
@@ -59,6 +59,7 @@
         <Setter Property="Orientation" Value="Vertical" />
         <Setter Property="Margin" Value="24,3,0,0" />
     </Style>
+    <Style x:Key="AdvancedTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <Style x:Key="ButtonPanel" TargetType="UniformGrid">
         <Setter Property="Margin" Value="0,16,0,0" />
         <Setter Property="HorizontalAlignment" Value="Right" />

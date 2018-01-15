@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using LibgenDesktop.Common;
 using LibgenDesktop.Models.Database;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Import;
@@ -14,6 +14,7 @@ using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.SqlDump;
 using static LibgenDesktop.Common.Constants;
+using Environment = LibgenDesktop.Common.Environment;
 
 namespace LibgenDesktop.Models
 {
@@ -42,57 +43,20 @@ namespace LibgenDesktop.Models
 
         private const double SEARCH_PROGRESS_UPDATE_INTERVAL = 0.1;
 
-        private readonly string settingsFilePath;
         private LocalDatabase localDatabase;
 
         public MainModel()
         {
-            AppBinariesDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            AppDataDirectory = AppBinariesDirectory;
-            settingsFilePath = Path.Combine(AppDataDirectory, APP_SETTINGS_FILE_NAME);
-            if (File.Exists(settingsFilePath))
+            AppSettings = SettingsStorage.LoadSettings(Environment.AppSettingsFilePath);
+            if (AppSettings.Advanced.LoggingEnabled)
             {
-                AppSettings = SettingsStorage.LoadSettings(settingsFilePath);
-                IsInPortableMode = true;
+                EnableLogging();
             }
-            else
-            {
-                try
-                {
-                    using (FileStream fileStream = File.Create(settingsFilePath))
-                    {
-                        fileStream.Close();
-                    }
-                    IsInPortableMode = true;
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    IsInPortableMode = false;
-                }
-                if (IsInPortableMode)
-                {
-                    AppSettings = AppSettings.Default;
-                    SaveSettings();
-                }
-                else
-                {
-                    AppDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "LibgenDesktop");
-                    if (!Directory.Exists(AppDataDirectory))
-                    {
-                        Directory.CreateDirectory(AppDataDirectory);
-                    }
-                    settingsFilePath = Path.Combine(AppDataDirectory, APP_SETTINGS_FILE_NAME);
-                    AppSettings = SettingsStorage.LoadSettings(settingsFilePath);
-                }
-            }
+            Mirrors = MirrorStorage.LoadMirrors(Environment.MirrorsFilePath);
             OpenDatabase(AppSettings.DatabaseFileName);
-            Mirrors = MirrorStorage.LoadMirrors(Path.Combine(AppBinariesDirectory, MIRRORS_FILE_NAME));
         }
 
         public AppSettings AppSettings { get; }
-        public string AppBinariesDirectory { get; }
-        public string AppDataDirectory { get; }
-        public bool IsInPortableMode { get; }
         public DatabaseStatus LocalDatabaseStatus { get; private set; }
         public DatabaseMetadata DatabaseMetadata { get; private set; }
         public Mirrors Mirrors { get; }
@@ -115,33 +79,39 @@ namespace LibgenDesktop.Models
         public Task<ObservableCollection<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
         {
+            Logger.Debug($@"Search query = ""{searchQuery}"".");
             return SearchItemsAsync(localDatabase.SearchNonFictionBooks, searchQuery, progressHandler, cancellationToken);
         }
 
         public Task<NonFictionBook> LoadNonFictionBookAsync(int bookId)
         {
+            Logger.Debug($"Loading non-fiction book with ID = {bookId}.");
             return LoadItemAsync(localDatabase.GetNonFictionBookById, bookId);
         }
 
         public Task<ObservableCollection<FictionBook>> SearchFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
         {
+            Logger.Debug($@"Search query = ""{searchQuery}"".");
             return SearchItemsAsync(localDatabase.SearchFictionBooks, searchQuery, progressHandler, cancellationToken);
         }
 
         public Task<FictionBook> LoadFictionBookAsync(int bookId)
         {
+            Logger.Debug($"Loading fiction book with ID = {bookId}.");
             return LoadItemAsync(localDatabase.GetFictionBookById, bookId);
         }
 
         public Task<ObservableCollection<SciMagArticle>> SearchSciMagAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
         {
+            Logger.Debug($@"Search query = ""{searchQuery}"".");
             return SearchItemsAsync(localDatabase.SearchSciMagArticles, searchQuery, progressHandler, cancellationToken);
         }
 
         public Task<SciMagArticle> LoadSciMagArticleAsync(int articleId)
         {
+            Logger.Debug($"Loading article with ID = {articleId}.");
             return LoadItemAsync(localDatabase.GetSciMagArticleById, articleId);
         }
 
@@ -149,6 +119,7 @@ namespace LibgenDesktop.Models
         {
             return Task.Run(() =>
             {
+                Logger.Debug("SQL dump import has started.");
                 using (SqlDumpReader sqlDumpReader = new SqlDumpReader(sqlDumpFilePath))
                 {
                     while (true)
@@ -158,10 +129,12 @@ namespace LibgenDesktop.Models
                         {
                             if (cancellationToken.IsCancellationRequested)
                             {
+                                Logger.Debug("SQL dump import has been cancelled.");
                                 return ImportSqlDumpResult.CANCELLED;
                             }
                             if (sqlDumpReader.CurrentLineCommand == SqlDumpReader.LineCommand.CREATE_TABLE)
                             {
+                                Logger.Debug("CREATE TABLE statement found.");
                                 tableFound = true;
                                 break;
                             }
@@ -169,10 +142,12 @@ namespace LibgenDesktop.Models
                         }
                         if (!tableFound)
                         {
+                            Logger.Debug("CREATE TABLE statement was not found.");
                             return ImportSqlDumpResult.DATA_NOT_FOUND;
                         }
                         if (cancellationToken.IsCancellationRequested)
                         {
+                            Logger.Debug("SQL dump import has been cancelled.");
                             return ImportSqlDumpResult.CANCELLED;
                         }
                         SqlDumpReader.ParsedTableDefinition parsedTableDefinition = sqlDumpReader.ParseTableDefinition();
@@ -187,22 +162,27 @@ namespace LibgenDesktop.Models
                         {
                             if (cancellationToken.IsCancellationRequested)
                             {
+                                Logger.Debug("SQL dump import has been cancelled.");
                                 return ImportSqlDumpResult.CANCELLED;
                             }
                             if (sqlDumpReader.CurrentLineCommand == SqlDumpReader.LineCommand.INSERT)
                             {
+                                Logger.Debug("INSERT statement found.");
                                 insertFound = true;
                                 break;
                             }
                         }
                         if (!insertFound)
                         {
+                            Logger.Debug("INSERT statement was not found.");
                             return ImportSqlDumpResult.DATA_NOT_FOUND;
                         }
                         if (cancellationToken.IsCancellationRequested)
                         {
+                            Logger.Debug("SQL dump import has been cancelled.");
                             return ImportSqlDumpResult.CANCELLED;
                         }
+                        Logger.Debug($"Table type is {tableType}.");
                         Importer importer;
                         switch (tableType)
                         {
@@ -244,8 +224,10 @@ namespace LibgenDesktop.Models
                         }
                         if (cancellationToken.IsCancellationRequested)
                         {
+                            Logger.Debug("SQL dump import has been cancelled.");
                             return ImportSqlDumpResult.CANCELLED;
                         }
+                        Logger.Debug("Importing data.");
                         importer.Import(sqlDumpReader, progressHandler, cancellationToken, parsedTableDefinition);
                         switch (tableType)
                         {
@@ -261,8 +243,10 @@ namespace LibgenDesktop.Models
                         }
                         if (cancellationToken.IsCancellationRequested)
                         {
+                            Logger.Debug("SQL dump import has been cancelled.");
                             return ImportSqlDumpResult.CANCELLED;
                         }
+                        Logger.Debug("SQL dump import has been completed successfully.");
                         return ImportSqlDumpResult.COMPLETED;
                     }
                 }
@@ -273,6 +257,7 @@ namespace LibgenDesktop.Models
         {
             return Task.Run(async () =>
             {
+                Logger.Debug("Synchronization has started.");
                 if (NonFictionBookCount == 0)
                 {
                     throw new Exception("Non-fiction table must not be empty.");
@@ -280,9 +265,12 @@ namespace LibgenDesktop.Models
                 CheckAndCreateNonFictionIndexes(progressHandler, cancellationToken);
                 if (cancellationToken.IsCancellationRequested)
                 {
+                    Logger.Debug("Synchronization has been cancelled.");
                     return SynchronizationResult.CANCELLED;
                 }
+                Logger.Debug("Loading last non-fiction book.");
                 NonFictionBook lastModifiedNonFictionBook = localDatabase.GetLastModifiedNonFictionBook();
+                Logger.Debug($"Last non-fiction book: Libgen ID = {lastModifiedNonFictionBook.LibgenId}, last modified date/time = {lastModifiedNonFictionBook.LastModifiedDateTime}.");
                 JsonApiClient jsonApiClient = new JsonApiClient(lastModifiedNonFictionBook.LastModifiedDateTime, lastModifiedNonFictionBook.LibgenId);
                 List<NonFictionBook> downloadedBooks = new List<NonFictionBook>();
                 progressHandler.Report(new JsonApiDownloadProgress(0));
@@ -291,45 +279,53 @@ namespace LibgenDesktop.Models
                     List<NonFictionBook> currentBatch;
                     try
                     {
+                        Logger.Debug("Downloading next batch from the server.");
                         currentBatch = await jsonApiClient.DownloadNextBatchAsync(cancellationToken);
                     }
                     catch (TaskCanceledException)
                     {
+                        Logger.Debug("Synchronization has been cancelled.");
                         return SynchronizationResult.CANCELLED;
                     }
                     if (!currentBatch.Any())
                     {
+                        Logger.Debug("Current batch is empty, download is complete.");
                         break;
                     }
                     downloadedBooks.AddRange(currentBatch);
+                    Logger.Debug($"{downloadedBooks.Count} books have been downloaded so far.");
                     progressHandler.Report(new JsonApiDownloadProgress(downloadedBooks.Count));
                     if (cancellationToken.IsCancellationRequested)
                     {
+                        Logger.Debug("Synchronization has been cancelled.");
                         return SynchronizationResult.CANCELLED;
                     }
                 }
                 NonFictionImporter importer = new NonFictionImporter(localDatabase, lastModifiedNonFictionBook);
+                Logger.Debug("Importing data.");
                 importer.Import(downloadedBooks, progressHandler, cancellationToken);
                 if (cancellationToken.IsCancellationRequested)
                 {
+                    Logger.Debug("Synchronization has been cancelled.");
                     return SynchronizationResult.CANCELLED;
                 }
+                Logger.Debug("Synchronization has been completed successfully.");
                 return SynchronizationResult.COMPLETED;
             });
         }
 
         public void SaveSettings()
         {
-            SettingsStorage.SaveSettings(AppSettings, settingsFilePath);
+            SettingsStorage.SaveSettings(AppSettings, Environment.AppSettingsFilePath);
         }
 
         public string GetDatabaseNormalizedPath(string databaseFullPath)
         {
-            if (IsInPortableMode)
+            if (Environment.IsInPortableMode)
             {
-                if (databaseFullPath.ToLower().StartsWith(AppDataDirectory.ToLower()))
+                if (databaseFullPath.ToLower().StartsWith(Environment.AppDataDirectory.ToLower()))
                 {
-                    return databaseFullPath.Substring(AppDataDirectory.Length + 1);
+                    return databaseFullPath.Substring(Environment.AppDataDirectory.Length + 1);
                 }
                 else
                 {
@@ -350,7 +346,7 @@ namespace LibgenDesktop.Models
             }
             else
             {
-                return Path.GetFullPath(Path.Combine(AppDataDirectory, databaseNormalizedPath));
+                return Path.GetFullPath(Path.Combine(Environment.AppDataDirectory, databaseNormalizedPath));
             }
         }
 
@@ -434,6 +430,16 @@ namespace LibgenDesktop.Models
             }
         }
 
+        public void EnableLogging()
+        {
+            Logger.EnableLogging();
+        }
+
+        public void DisableLogging()
+        {
+            Logger.DisableLogging();
+        }
+
         private Task<ObservableCollection<T>> SearchItemsAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction, string searchQuery,
             IProgress<SearchProgress> progressHandler, CancellationToken cancellationToken)
         {
@@ -450,6 +456,7 @@ namespace LibgenDesktop.Models
                 {
                     if (cancellationToken.IsCancellationRequested)
                     {
+                        Logger.Debug("Search has been cancelled.");
                         return null;
                     }
                     result.Add(item);
@@ -461,6 +468,7 @@ namespace LibgenDesktop.Models
                     }
                 }
                 progressHandler.Report(new SearchProgress(result.Count));
+                Logger.Debug($"Search complete, returning {result.Count} items.");
                 return result;
             });
         }
@@ -495,44 +503,57 @@ namespace LibgenDesktop.Models
 
         private void CheckAndCreateNonFictionIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)
         {
+            Logger.Debug("Retrieving the list of non-fiction table indexes.");
             List<string> nonFictionIndexes = localDatabase.GetNonFictionIndexList();
             if (cancellationToken.IsCancellationRequested)
             {
+                Logger.Debug("Index check has been cancelled.");
                 return;
             }
+            Logger.Debug("Checking the index on LastModifiedDateTime column.");
             CheckAndCreateIndex(nonFictionIndexes, SqlScripts.NON_FICTION_INDEX_PREFIX, "LastModifiedDateTime", progressHandler,
                 localDatabase.CreateNonFictionLastModifiedDateTimeIndex);
             if (cancellationToken.IsCancellationRequested)
             {
+                Logger.Debug("Index check has been cancelled.");
                 return;
             }
+            Logger.Debug("Checking the index on LibgenId column.");
             CheckAndCreateIndex(nonFictionIndexes, SqlScripts.NON_FICTION_INDEX_PREFIX, "LibgenId", progressHandler,
                 localDatabase.CreateNonFictionLibgenIdIndex);
         }
 
         private void CheckAndCreateFictionIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)
         {
+            Logger.Debug("Retrieving the list of fiction table indexes.");
             List<string> fictionIndexes = localDatabase.GetFictionIndexList();
             if (cancellationToken.IsCancellationRequested)
             {
+                Logger.Debug("Index check has been cancelled.");
                 return;
             }
+            Logger.Debug("Checking the index on LastModifiedDateTime column.");
             CheckAndCreateIndex(fictionIndexes, SqlScripts.FICTION_INDEX_PREFIX, "LastModifiedDateTime", progressHandler,
                 localDatabase.CreateFictionLastModifiedDateTimeIndex);
             if (cancellationToken.IsCancellationRequested)
             {
+                Logger.Debug("Index check has been cancelled.");
                 return;
             }
+            Logger.Debug("Checking the index on LibgenId column.");
             CheckAndCreateIndex(fictionIndexes, SqlScripts.FICTION_INDEX_PREFIX, "LibgenId", progressHandler, localDatabase.CreateFictionLibgenIdIndex);
         }
 
         private void CheckAndCreateSciMagIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)
         {
+            Logger.Debug("Retrieving the list of scimag table indexes.");
             List<string> sciMagIndexes = localDatabase.GetSciMagIndexList();
             if (cancellationToken.IsCancellationRequested)
             {
+                Logger.Debug("Index check has been cancelled.");
                 return;
             }
+            Logger.Debug("Checking the index on AddedDateTime column.");
             CheckAndCreateIndex(sciMagIndexes, SqlScripts.SCIMAG_INDEX_PREFIX, "AddedDateTime", progressHandler, localDatabase.CreateSciMagAddedDateTimeIndex);
         }
 
@@ -541,24 +562,32 @@ namespace LibgenDesktop.Models
         {
             if (!existingIndexes.Contains(prefix + fieldName))
             {
+                Logger.Debug($"Index on {fieldName} doesn't exist, creating it.");
                 progressHandler.Report(new ImportCreateIndexProgress(fieldName));
                 createIndexAction();
+                Logger.Debug("Index has been created.");
             }
         }
 
         private void UpdateNonFictionBookCount()
         {
+            Logger.Debug("Updating non-fiction book count.");
             NonFictionBookCount = localDatabase.CountNonFictionBooks();
+            Logger.Debug($"Non-fiction book count = {NonFictionBookCount}.");
         }
 
         private void UpdateFictionBookCount()
         {
+            Logger.Debug("Updating fiction book count.");
             FictionBookCount = localDatabase.CountFictionBooks();
+            Logger.Debug($"Fiction book count = {FictionBookCount}.");
         }
 
         private void UpdateSciMagArticleCount()
         {
+            Logger.Debug("Updating article count.");
             SciMagArticleCount = localDatabase.CountSciMagArticles();
+            Logger.Debug($"Article count = {SciMagArticleCount}.");
         }
     }
 }
