@@ -169,7 +169,7 @@ namespace LibgenDesktop.Models.SqlDump
             return result;
         }
 
-        public IEnumerable<T> ParseImportObjects<T>(List<Action<T, string>> objectSetters) where T : new()
+        public IEnumerable<T> ParseImportObjects<T>(List<Action<T, string>> objectSetters) where T : LibgenObject, new()
         {
             do
             {

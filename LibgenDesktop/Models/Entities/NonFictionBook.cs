@@ -4,9 +4,8 @@ using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.Models.Entities
 {
-    internal class NonFictionBook
+    internal class NonFictionBook : LibgenObject
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public string VolumeInfo { get; set; }
         public string Series { get; set; }
@@ -53,7 +52,6 @@ namespace LibgenDesktop.Models.Entities
         public string CoverUrl { get; set; }
         public string Tags { get; set; }
         public string IdentifierPlain { get; set; }
-        public int LibgenId { get; set; }
 
         public string FileSizeString => Formatters.FileSizeToString(SizeInBytes, false);
         public string FileSizeWithBytesString => Formatters.FileSizeToString(SizeInBytes, true);

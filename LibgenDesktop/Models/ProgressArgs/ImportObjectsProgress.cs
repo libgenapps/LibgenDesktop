@@ -2,11 +2,13 @@
 {
     internal class ImportObjectsProgress
     {
-        public ImportObjectsProgress(int objectsImported)
+        public ImportObjectsProgress(int objectsAdded, int objectsUpdated)
         {
-            ObjectsImported = objectsImported;
+            ObjectsAdded = objectsAdded;
+            ObjectsUpdated = objectsUpdated;
         }
 
-        public int ObjectsImported { get; }
+        public int ObjectsAdded { get; }
+        public int ObjectsUpdated { get; }
     }
 }

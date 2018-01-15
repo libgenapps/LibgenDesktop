@@ -1,0 +1,17 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.MessageBoxWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       Style="{StaticResource MessageBoxWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="Styles\MessageBoxWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Name="messageTextBlock" Style="{StaticResource MessageText}" />
+        <StackPanel Grid.Row="1" Name="buttonPanel" Style="{StaticResource ButtonPanel}" />
+    </Grid>
+</c:LibgenDesktopWindow>

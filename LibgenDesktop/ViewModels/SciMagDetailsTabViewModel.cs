@@ -3,6 +3,7 @@ using System.Diagnostics;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.ViewModels
 {
@@ -94,10 +95,10 @@ namespace LibgenDesktop.ViewModels
             }
             else
             {
-                if (!String.IsNullOrWhiteSpace(MainModel.CurrentMirror.SciMagDownloadUrl))
+                articleDownloadUrl = UrlGenerator.GetSciMagDownloadUrl(MainModel.CurrentMirror, Article);
+                if (articleDownloadUrl != null)
                 {
                     IsDownloadButtonEnabled = true;
-                    articleDownloadUrl = MainModel.CurrentMirror.SciMagDownloadUrl + Article.Doi;
                 }
                 else
                 {

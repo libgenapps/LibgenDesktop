@@ -11,17 +11,17 @@ using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class ImportWindowViewModel : ViewModel
+    internal class SynchronizationWindowViewModel : ViewModel
     {
         private enum Step
         {
-            SEARCHING_TABLE_DEFINITION = 1,
+            PREPARATION = 1,
             CREATING_INDEXES,
+            DOWNLOADING_BOOKS,
             IMPORTING_DATA
         }
 
         private readonly MainModel mainModel;
-        private readonly string dumpFilePath;
         private readonly CancellationTokenSource cancellationTokenSource;
         private readonly Timer elapsedTimer;
         private bool isInProgress;
@@ -39,15 +39,12 @@ namespace LibgenDesktop.ViewModels
         private Step currentStep;
         private int currentStepIndex;
         private int totalSteps;
-        private decimal lastScannedPercentage;
-        private TableType tableType;
         private DateTime startDateTime;
         private TimeSpan lastElapsedTime;
 
-        public ImportWindowViewModel(MainModel mainModel, string dumpFilePath)
+        public SynchronizationWindowViewModel(MainModel mainModel)
         {
             this.mainModel = mainModel;
-            this.dumpFilePath = dumpFilePath;
             cancellationTokenSource = new CancellationTokenSource();
             elapsedTimer = new Timer(state => UpdateElapsedTime());
             CancelCommand = new Command(Cancel);
@@ -228,10 +225,10 @@ namespace LibgenDesktop.ViewModels
         private void Initialize()
         {
             isInProgress = true;
-            currentStep = Step.SEARCHING_TABLE_DEFINITION;
+            currentStep = Step.PREPARATION;
             currentStepIndex = 1;
             totalSteps = 2;
-            UpdateStatus("Поиск данных для импорта");
+            UpdateStatus("Подготовка к синхронизации");
             logs = new ObservableCollection<ProgressLogItemViewModel>();
             isResultLogLineVisible = false;
             isErrorLogLineVisible = false;
@@ -243,51 +240,42 @@ namespace LibgenDesktop.ViewModels
             isCancelButtonVisible = true;
             isCancelButtonEnabled = true;
             isCloseButtonVisible = false;
-            lastScannedPercentage = 0;
-            ProgressLogItemViewModel searchHeaderLogItem = new ProgressLogItemViewModel(currentStepIndex, "Поиск данных для импорта в файле");
-            searchHeaderLogItem.LogLine = "Идет сканирование файла...";
-            logs.Add(searchHeaderLogItem);
-            Import();
+            Syncrhonize();
         }
 
-        private async void Import()
+        private async void Syncrhonize()
         {
-            Progress<object> importProgressHandler = new Progress<object>(HandleImportProgress);
+            Progress<object> synchronizationProgressHandler = new Progress<object>(HandleSynchronizationProgress);
             CancellationToken cancellationToken = cancellationTokenSource.Token;
-            MainModel.ImportSqlDumpResult importResult;
+            MainModel.SynchronizationResult synchronizationResult;
             try
             {
-                importResult = await mainModel.ImportSqlDumpAsync(dumpFilePath, importProgressHandler, cancellationToken);
+                synchronizationResult = await mainModel.SynchronizeNonFiction(synchronizationProgressHandler, cancellationToken);
             }
             catch (Exception exception)
             {
                 elapsedTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-                ErrorLogLine = "Импорт завершился с ошибками.";
+                ErrorLogLine = "Синхронизация завершилась с ошибками.";
                 IsErrorLogLineVisible = true;
                 IsInProgress = false;
-                Status = "Импорт завершен с ошибками";
+                Status = "Синхронизация завершилась с ошибками";
                 IsCancelButtonVisible = false;
                 IsCloseButtonVisible = true;
                 ShowErrorWindow(exception);
                 return;
             }
             elapsedTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-            switch (importResult)
+            switch (synchronizationResult)
             {
-                case MainModel.ImportSqlDumpResult.COMPLETED:
-                    ResultLogLine = "Импорт выполнен успешно.";
+                case MainModel.SynchronizationResult.COMPLETED:
+                    ResultLogLine = "Синхронизация выполнена успешно.";
                     IsResultLogLineVisible = true;
-                    Status = "Импорт завершен";
+                    Status = "Синхронизация завершена";
                     break;
-                case MainModel.ImportSqlDumpResult.CANCELLED:
-                    ErrorLogLine = "Импорт был прерван пользователем.";
+                case MainModel.SynchronizationResult.CANCELLED:
+                    ErrorLogLine = "Синхронизация была прервана пользователем.";
                     IsErrorLogLineVisible = true;
-                    Status = "Импорт прерван";
-                    break;
-                case MainModel.ImportSqlDumpResult.DATA_NOT_FOUND:
-                    ErrorLogLine = "Не найдены данные для импорта.";
-                    IsErrorLogLineVisible = true;
-                    Status = "Данные не найдены";
+                    Status = "Синхронизация прервана";
                     break;
             }
             IsInProgress = false;
@@ -295,50 +283,34 @@ namespace LibgenDesktop.ViewModels
             IsCloseButtonVisible = true;
         }
 
-        private void HandleImportProgress(object progress)
+        private void HandleSynchronizationProgress(object progress)
         {
             try
             {
                 switch (progress)
                 {
-                    case ImportSearchTableDefinitionProgress searchTableDefinitionProgress:
-                        if (searchTableDefinitionProgress.TotalBytes != 0)
-                        {
-                            decimal scannedPercentage = Math.Round((decimal)searchTableDefinitionProgress.BytesParsed * 100 / searchTableDefinitionProgress.TotalBytes, 1);
-                            if (scannedPercentage != lastScannedPercentage)
-                            {
-                                CurrentLogItem.LogLine = GetScannedPercentageStatusString(scannedPercentage);
-                                lastScannedPercentage = scannedPercentage;
-                            }
-                        }
-                        break;
-                    case ImportTableDefinitionFoundProgress tableDefinitionFoundProgress:
-                        tableType = tableDefinitionFoundProgress.TableFound;
-                        string tableFoundStatusString = "Найдена таблица с ";
-                        switch (tableDefinitionFoundProgress.TableFound)
-                        {
-                            case TableType.NON_FICTION:
-                                tableFoundStatusString += "нехудожественными книгами";
-                                break;
-                            case TableType.FICTION:
-                                tableFoundStatusString += "художественными книгами";
-                                break;
-                            case TableType.SCI_MAG:
-                                tableFoundStatusString += "научными статьями";
-                                break;
-                        }
-                        CurrentLogItem.LogLine = tableFoundStatusString + ".";
-                        break;
                     case ImportCreateIndexProgress createIndexProgress:
                         if (currentStep != Step.CREATING_INDEXES)
                         {
                             currentStep = Step.CREATING_INDEXES;
-                            currentStepIndex++;
                             totalSteps++;
                             UpdateStatus("Создание индексов");
                             logs.Add(new ProgressLogItemViewModel(currentStepIndex, "Создание недостающих индексов"));
                         }
                         CurrentLogItem.LogLines.Add($"Создается индекс для столбца {createIndexProgress.ColumnName}...");
+                        break;
+                    case JsonApiDownloadProgress jsonApiDownloadProgress:
+                        if (currentStep != Step.DOWNLOADING_BOOKS)
+                        {
+                            if (currentStep == Step.CREATING_INDEXES)
+                            {
+                                currentStepIndex++;
+                            }
+                            currentStep = Step.DOWNLOADING_BOOKS;
+                            UpdateStatus("Скачивание данных");
+                            logs.Add(new ProgressLogItemViewModel(currentStepIndex, "Скачивание информации о новых книгах"));
+                        }
+                        CurrentLogItem.LogLine = $"Скачано книг: {jsonApiDownloadProgress.BooksDownloaded}.";
                         break;
                     case ImportObjectsProgress importObjectsProgress:
                         if (currentStep != Step.IMPORTING_DATA)
@@ -348,7 +320,7 @@ namespace LibgenDesktop.ViewModels
                             UpdateStatus("Импорт данных");
                             logs.Add(new ProgressLogItemViewModel(currentStepIndex, "Импорт данных"));
                         }
-                        string logLine = GetImportedObjectCountLogLine(importObjectsProgress.ObjectsAdded, importObjectsProgress.ObjectsUpdated);
+                        string logLine = GetSynchronizedBookCountLogLine(importObjectsProgress.ObjectsAdded, importObjectsProgress.ObjectsUpdated);
                         CurrentLogItem.LogLine = logLine;
                         break;
                 }
@@ -392,36 +364,14 @@ namespace LibgenDesktop.ViewModels
             Status = $"Шаг {currentStepIndex} из {totalSteps}. {statusDescription}...";
         }
 
-        private string GetScannedPercentageStatusString(decimal scannedPercentage)
+        private string GetSynchronizedBookCountLogLine(int addedObjectCount, int updatedObjectCount)
         {
-            return $"Просканировано {scannedPercentage}% файла...";
-        }
-
-        private string GetImportedObjectCountLogLine(int addedObjectCount, int updatedObjectCount)
-        {
-            string objectType;
-            switch (tableType)
-            {
-                case TableType.NON_FICTION:
-                case TableType.FICTION:
-                    objectType = "книг";
-                    break;
-                case TableType.SCI_MAG:
-                    objectType = "статей";
-                    break;
-                default:
-                    throw new Exception($"Unknown table type: {tableType}.");
-            }
             StringBuilder resultBuilder = new StringBuilder();
-            resultBuilder.Append("Добавлено ");
-            resultBuilder.Append(objectType);
-            resultBuilder.Append(": ");
+            resultBuilder.Append("Добавлено книг: ");
             resultBuilder.Append(addedObjectCount.ToFormattedString());
             if (updatedObjectCount > 0)
             {
-                resultBuilder.Append(", обновлено ");
-                resultBuilder.Append(objectType);
-                resultBuilder.Append(": ");
+                resultBuilder.Append(", обновлено книг: ");
                 resultBuilder.Append(updatedObjectCount.ToFormattedString());
             }
             resultBuilder.Append(".");

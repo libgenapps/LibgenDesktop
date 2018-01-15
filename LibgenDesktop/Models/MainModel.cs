@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using LibgenDesktop.Models.Database;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Import;
+using LibgenDesktop.Models.JsonApi;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.SqlDump;
@@ -29,11 +31,15 @@ namespace LibgenDesktop.Models
         {
             COMPLETED = 1,
             CANCELLED,
-            DATA_NOT_FOUND,
-            EXCEPTION
+            DATA_NOT_FOUND
         }
 
-        private const double IMPORT_PROGRESS_UPDATE_INTERVAL = 0.5;
+        internal enum SynchronizationResult
+        {
+            COMPLETED = 1,
+            CANCELLED
+        }
+
         private const double SEARCH_PROGRESS_UPDATE_INTERVAL = 0.1;
 
         private readonly string settingsFilePath;
@@ -41,7 +47,8 @@ namespace LibgenDesktop.Models
 
         public MainModel()
         {
-            AppDataDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            AppBinariesDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            AppDataDirectory = AppBinariesDirectory;
             settingsFilePath = Path.Combine(AppDataDirectory, APP_SETTINGS_FILE_NAME);
             if (File.Exists(settingsFilePath))
             {
@@ -79,10 +86,11 @@ namespace LibgenDesktop.Models
                 }
             }
             OpenDatabase(AppSettings.DatabaseFileName);
-            Mirrors = MirrorStorage.LoadMirrors(Path.Combine(AppDataDirectory, MIRRORS_FILE_NAME));
+            Mirrors = MirrorStorage.LoadMirrors(Path.Combine(AppBinariesDirectory, MIRRORS_FILE_NAME));
         }
 
         public AppSettings AppSettings { get; }
+        public string AppBinariesDirectory { get; }
         public string AppDataDirectory { get; }
         public bool IsInPortableMode { get; }
         public DatabaseStatus LocalDatabaseStatus { get; private set; }
@@ -163,6 +171,10 @@ namespace LibgenDesktop.Models
                         {
                             return ImportSqlDumpResult.DATA_NOT_FOUND;
                         }
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return ImportSqlDumpResult.CANCELLED;
+                        }
                         SqlDumpReader.ParsedTableDefinition parsedTableDefinition = sqlDumpReader.ParseTableDefinition();
                         TableType tableType = DetectImportTableType(parsedTableDefinition);
                         if (tableType == TableType.UNKNOWN)
@@ -187,33 +199,63 @@ namespace LibgenDesktop.Models
                         {
                             return ImportSqlDumpResult.DATA_NOT_FOUND;
                         }
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return ImportSqlDumpResult.CANCELLED;
+                        }
+                        Importer importer;
                         switch (tableType)
                         {
                             case TableType.NON_FICTION:
                                 if (NonFictionBookCount != 0)
                                 {
-                                    throw new Exception("Update-импорт пока не поддерживается.");
+                                    CheckAndCreateNonFictionIndexes(progressHandler, cancellationToken);
+                                    if (cancellationToken.IsCancellationRequested)
+                                    {
+                                        return ImportSqlDumpResult.CANCELLED;
+                                    }
                                 }
-                                ImportObjects(sqlDumpReader, progressHandler, cancellationToken, TableDefinitions.NonFiction,
-                                    parsedTableDefinition, localDatabase.AddNonFictionBooks);
-                                UpdateNonFictionBookCount();
+                                importer = new NonFictionImporter(localDatabase, isUpdateMode: NonFictionBookCount != 0);
                                 break;
                             case TableType.FICTION:
                                 if (FictionBookCount != 0)
                                 {
-                                    throw new Exception("Update-импорт пока не поддерживается.");
+                                    CheckAndCreateFictionIndexes(progressHandler, cancellationToken);
+                                    if (cancellationToken.IsCancellationRequested)
+                                    {
+                                        return ImportSqlDumpResult.CANCELLED;
+                                    }
                                 }
-                                ImportObjects(sqlDumpReader, progressHandler, cancellationToken, TableDefinitions.Fiction,
-                                    parsedTableDefinition, localDatabase.AddFictionBooks);
-                                UpdateFictionBookCount();
+                                importer = new FictionImporter(localDatabase, isUpdateMode: FictionBookCount != 0);
                                 break;
                             case TableType.SCI_MAG:
                                 if (SciMagArticleCount != 0)
                                 {
-                                    throw new Exception("Update-импорт пока не поддерживается.");
+                                    CheckAndCreateSciMagIndexes(progressHandler, cancellationToken);
+                                    if (cancellationToken.IsCancellationRequested)
+                                    {
+                                        return ImportSqlDumpResult.CANCELLED;
+                                    }
                                 }
-                                ImportObjects(sqlDumpReader, progressHandler, cancellationToken, TableDefinitions.SciMag,
-                                    parsedTableDefinition, localDatabase.AddSciMagArticles);
+                                importer = new SciMagImporter(localDatabase, isUpdateMode: SciMagArticleCount != 0);
+                                break;
+                            default:
+                                throw new Exception($"Unknown table type: {tableType}.");
+                        }
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            return ImportSqlDumpResult.CANCELLED;
+                        }
+                        importer.Import(sqlDumpReader, progressHandler, cancellationToken, parsedTableDefinition);
+                        switch (tableType)
+                        {
+                            case TableType.NON_FICTION:
+                                UpdateNonFictionBookCount();
+                                break;
+                            case TableType.FICTION:
+                                UpdateFictionBookCount();
+                                break;
+                            case TableType.SCI_MAG:
                                 UpdateSciMagArticleCount();
                                 break;
                         }
@@ -224,6 +266,55 @@ namespace LibgenDesktop.Models
                         return ImportSqlDumpResult.COMPLETED;
                     }
                 }
+            });
+        }
+
+        public Task<SynchronizationResult> SynchronizeNonFiction(IProgress<object> progressHandler, CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                if (NonFictionBookCount == 0)
+                {
+                    throw new Exception("Non-fiction table must not be empty.");
+                }
+                CheckAndCreateNonFictionIndexes(progressHandler, cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return SynchronizationResult.CANCELLED;
+                }
+                NonFictionBook lastModifiedNonFictionBook = localDatabase.GetLastModifiedNonFictionBook();
+                JsonApiClient jsonApiClient = new JsonApiClient(lastModifiedNonFictionBook.LastModifiedDateTime, lastModifiedNonFictionBook.LibgenId);
+                List<NonFictionBook> downloadedBooks = new List<NonFictionBook>();
+                progressHandler.Report(new JsonApiDownloadProgress(0));
+                while (true)
+                {
+                    List<NonFictionBook> currentBatch;
+                    try
+                    {
+                        currentBatch = await jsonApiClient.DownloadNextBatchAsync(cancellationToken);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        return SynchronizationResult.CANCELLED;
+                    }
+                    if (!currentBatch.Any())
+                    {
+                        break;
+                    }
+                    downloadedBooks.AddRange(currentBatch);
+                    progressHandler.Report(new JsonApiDownloadProgress(downloadedBooks.Count));
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return SynchronizationResult.CANCELLED;
+                    }
+                }
+                NonFictionImporter importer = new NonFictionImporter(localDatabase, lastModifiedNonFictionBook);
+                importer.Import(downloadedBooks, progressHandler, cancellationToken);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return SynchronizationResult.CANCELLED;
+                }
+                return SynchronizationResult.COMPLETED;
             });
         }
 
@@ -402,39 +493,57 @@ namespace LibgenDesktop.Models
             return TableType.UNKNOWN;
         }
 
-        private void ImportObjects<T>(SqlDumpReader sqlDumpReader, IProgress<object> progressHandler, CancellationToken cancellationToken,
-            TableDefinition<T> tableDefinition, SqlDumpReader.ParsedTableDefinition parsedTableDefinition, Action<List<T>> databaseBatchImportAction)
-            where T : new()
+        private void CheckAndCreateNonFictionIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)
         {
-            DateTime lastUpdateDateTime = DateTime.Now;
-            int importedObjectCount = 0;
-            List<T> currentBatchObjects = new List<T>(INSERT_TRANSACTION_BATCH);
-            List<Action<T, string>> sortedColumnSetters = tableDefinition.GetSortedColumnSetters(parsedTableDefinition.Columns.Select(column => column.ColumnName));
-            foreach (T importingObject in sqlDumpReader.ParseImportObjects(sortedColumnSetters))
+            List<string> nonFictionIndexes = localDatabase.GetNonFictionIndexList();
+            if (cancellationToken.IsCancellationRequested)
             {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return;
-                }
-                currentBatchObjects.Add(importingObject);
-                importedObjectCount++;
-                if (currentBatchObjects.Count == INSERT_TRANSACTION_BATCH)
-                {
-                    databaseBatchImportAction(currentBatchObjects);
-                    currentBatchObjects.Clear();
-                    DateTime now = DateTime.Now;
-                    if ((now - lastUpdateDateTime).TotalSeconds > IMPORT_PROGRESS_UPDATE_INTERVAL)
-                    {
-                        progressHandler.Report(new ImportObjectsProgress(importedObjectCount));
-                        lastUpdateDateTime = now;
-                    }
-                }
+                return;
             }
-            if (currentBatchObjects.Any())
+            CheckAndCreateIndex(nonFictionIndexes, SqlScripts.NON_FICTION_INDEX_PREFIX, "LastModifiedDateTime", progressHandler,
+                localDatabase.CreateNonFictionLastModifiedDateTimeIndex);
+            if (cancellationToken.IsCancellationRequested)
             {
-                databaseBatchImportAction(currentBatchObjects);
+                return;
             }
-            progressHandler.Report(new ImportObjectsProgress(importedObjectCount));
+            CheckAndCreateIndex(nonFictionIndexes, SqlScripts.NON_FICTION_INDEX_PREFIX, "LibgenId", progressHandler,
+                localDatabase.CreateNonFictionLibgenIdIndex);
+        }
+
+        private void CheckAndCreateFictionIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)
+        {
+            List<string> fictionIndexes = localDatabase.GetFictionIndexList();
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            CheckAndCreateIndex(fictionIndexes, SqlScripts.FICTION_INDEX_PREFIX, "LastModifiedDateTime", progressHandler,
+                localDatabase.CreateFictionLastModifiedDateTimeIndex);
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            CheckAndCreateIndex(fictionIndexes, SqlScripts.FICTION_INDEX_PREFIX, "LibgenId", progressHandler, localDatabase.CreateFictionLibgenIdIndex);
+        }
+
+        private void CheckAndCreateSciMagIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)
+        {
+            List<string> sciMagIndexes = localDatabase.GetSciMagIndexList();
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            CheckAndCreateIndex(sciMagIndexes, SqlScripts.SCIMAG_INDEX_PREFIX, "AddedDateTime", progressHandler, localDatabase.CreateSciMagAddedDateTimeIndex);
+        }
+
+        private void CheckAndCreateIndex(List<string> existingIndexes, string prefix, string fieldName, IProgress<object> progressHandler,
+            Action createIndexAction)
+        {
+            if (!existingIndexes.Contains(prefix + fieldName))
+            {
+                progressHandler.Report(new ImportCreateIndexProgress(fieldName));
+                createIndexAction();
+            }
         }
 
         private void UpdateNonFictionBookCount()

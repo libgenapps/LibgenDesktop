@@ -76,6 +76,11 @@
 
         public const string GET_NON_FICTION_BY_ID = "SELECT * FROM non_fiction WHERE Id = @Id";
 
+        public const string GET_NON_FICTION_ID_BY_LIBGENID = "SELECT Id FROM non_fiction WHERE LibgenId=@LibgenId LIMIT 1";
+
+        public const string GET_LAST_MODIFIED_NON_FICTION =
+            "SELECT * FROM non_fiction WHERE LastModifiedDateTime = (SELECT MAX(LastModifiedDateTime) FROM non_fiction) ORDER BY LibgenId DESC LIMIT 1";
+
         public const string SEARCH_NON_FICTION = "SELECT * FROM non_fiction " +
             "WHERE Id IN (SELECT rowid FROM non_fiction_fts WHERE non_fiction_fts MATCH @SearchQuery) ORDER BY Id";
 
@@ -86,8 +91,73 @@
                 "@Searchable,@SizeInBytes,@Format,@Md5Hash,@Generic,@Visible,@Locator,@Local,@AddedDateTime," +
                 "@LastModifiedDateTime,@CoverUrl,@Tags,@IdentifierPlain,@LibgenId)";
 
-        public const string INSERT_NON_FICTION_FTS =
+        public const string UPDATE_NON_FICTION =
+            "UPDATE non_fiction SET " +
+                "Title=@Title," +
+                "VolumeInfo=@VolumeInfo," +
+                "Series=@Series," +
+                "Periodical=@Periodical," +
+                "Authors=@Authors," +
+                "Year=@Year," +
+                "Edition=@Edition," +
+                "Publisher=@Publisher," +
+                "City=@City," +
+                "Pages=@Pages," +
+                "PagesInFile=@PagesInFile," +
+                "Language=@Language," +
+                "Topic=@Topic," +
+                "Library=@Library," +
+                "Issue=@Issue," +
+                "Identifier=@Identifier," +
+                "Issn=@Issn," +
+                "Asin=@Asin," +
+                "Udc=@Udc," +
+                "Lbc=@Lbc," +
+                "Ddc=@Ddc," +
+                "Lcc=@Lcc," +
+                "Doi=@Doi," +
+                "GoogleBookId=@GoogleBookId," +
+                "OpenLibraryId=@OpenLibraryId," +
+                "Commentary=@Commentary," +
+                "Dpi=@Dpi," +
+                "Color=@Color," +
+                "Cleaned=@Cleaned," +
+                "Orientation=@Orientation," +
+                "Paginated=@Paginated," +
+                "Scanned=@Scanned," +
+                "Bookmarked=@Bookmarked," +
+                "Searchable=@Searchable," +
+                "SizeInBytes=@SizeInBytes," +
+                "Format=@Format," +
+                "Md5Hash=@Md5Hash," +
+                "Generic=@Generic," +
+                "Visible=@Visible," +
+                "Locator=@Locator," +
+                "Local=@Local," +
+                "AddedDateTime=@AddedDateTime," +
+                "LastModifiedDateTime=@LastModifiedDateTime," +
+                "CoverUrl=@CoverUrl," +
+                "Tags=@Tags," +
+                "IdentifierPlain=@IdentifierPlain " +
+                "WHERE Id=@Id";
+
+        public const string INSERT_NON_FICTION_FTS_WITHOUT_ID =
             "INSERT INTO non_fiction_fts VALUES (@Title,@Series,@Authors,@Publisher,@IdentifierPlain)";
+
+        public const string INSERT_NON_FICTION_FTS_WITH_ID = "INSERT INTO non_fiction_fts (rowid,Title,Series,Authors,Publisher,IdentifierPlain) " +
+            "VALUES (@Id,@Title,@Series,@Authors,@Publisher,@IdentifierPlain)";
+
+        public const string DELETE_NON_FICTION_FTS = "INSERT INTO non_fiction_fts (non_fiction_fts,rowid,Title,Series,Authors,Publisher,IdentifierPlain) " +
+            "VALUES ('delete',@Id,@Title,@Series,@Authors,@Publisher,@IdentifierPlain)";
+
+        public const string GET_NON_FICTION_INDEX_LIST = "PRAGMA index_list(non_fiction)";
+
+        public const string NON_FICTION_INDEX_PREFIX = "IX_non_fiction_";
+
+        public const string CREATE_NON_FICTION_LASTMODIFIEDDATETIME_INDEX = "CREATE INDEX " + NON_FICTION_INDEX_PREFIX +
+            "LastModifiedDateTime ON non_fiction (LastModifiedDateTime DESC)";
+
+        public const string CREATE_NON_FICTION_LIBGENID_INDEX = "CREATE UNIQUE INDEX " + NON_FICTION_INDEX_PREFIX + "LibgenId ON non_fiction (LibgenId ASC)";
 
         public const string CREATE_FICTION_TABLE =
             "CREATE TABLE IF NOT EXISTS fiction (" +
@@ -153,6 +223,11 @@
 
         public const string GET_FICTION_BY_ID = "SELECT * FROM fiction WHERE Id = @Id";
 
+        public const string GET_FICTION_ID_BY_LIBGENID = "SELECT Id FROM fiction WHERE LibgenId=@LibgenId LIMIT 1";
+
+        public const string GET_LAST_MODIFIED_FICTION = 
+            "SELECT * FROM fiction WHERE LastModifiedDateTime = (SELECT MAX(LastModifiedDateTime) FROM fiction) ORDER BY LibgenId DESC LIMIT 1";
+
         public const string SEARCH_FICTION = "SELECT * FROM fiction WHERE Id IN (SELECT rowid FROM fiction_fts WHERE fiction_fts MATCH @SearchQuery) ORDER BY Id";
 
         public const string INSERT_FICTION =
@@ -161,11 +236,91 @@
                 "@Title,@Format,@Version,@SizeInBytes,@Md5Hash,@Path,@Language,@Pages,@Identifier,@Year,@Publisher,@Edition,@Commentary,@AddedDateTime,@LastModifiedDateTime," +
                 "@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname,@Cover,@GoogleBookId,@Asin,@AuthorHash,@TitleHash,@Visible,@LibgenId)";
 
-        public const string INSERT_FICTION_FTS =
+        public const string UPDATE_FICTION =
+            "UPDATE fiction SET " +
+                "AuthorFamily1=@AuthorFamily1," +
+                "AuthorName1=@AuthorName1," +
+                "AuthorSurname1=@AuthorSurname1," +
+                "Role1=@Role1," +
+                "Pseudonim1=@Pseudonim1," +
+                "AuthorFamily2=@AuthorFamily2," +
+                "AuthorName2=@AuthorName2," +
+                "AuthorSurname2=@AuthorSurname2," +
+                "Role2=@Role2," +
+                "Pseudonim2=@Pseudonim2," +
+                "AuthorFamily3=@AuthorFamily3," +
+                "AuthorName3=@AuthorName3," +
+                "AuthorSurname3=@AuthorSurname3," +
+                "Role3=@Role3," +
+                "Pseudonim3=@Pseudonim3," +
+                "AuthorFamily4=@AuthorFamily4," +
+                "AuthorName4=@AuthorName4," +
+                "AuthorSurname4=@AuthorSurname4," +
+                "Role4=@Role4," +
+                "Pseudonim4=@Pseudonim4," +
+                "Series1=@Series1," +
+                "Series2=@Series2," +
+                "Series3=@Series3," +
+                "Series4=@Series4," +
+                "Title=@Title," +
+                "Format=@Format," +
+                "Version=@Version," +
+                "SizeInBytes=@SizeInBytes," +
+                "Md5Hash=@Md5Hash," +
+                "Path=@Path," +
+                "Language=@Language," +
+                "Pages=@Pages," +
+                "Identifier=@Identifier," +
+                "Year=@Year," +
+                "Publisher=@Publisher," +
+                "Edition=@Edition," +
+                "Commentary=@Commentary," +
+                "AddedDateTime=@AddedDateTime," +
+                "LastModifiedDateTime=@LastModifiedDateTime," +
+                "RussianAuthorFamily=@RussianAuthorFamily," +
+                "RussianAuthorName=@RussianAuthorName," +
+                "RussianAuthorSurname=@RussianAuthorSurname," +
+                "Cover=@Cover," +
+                "GoogleBookId=@GoogleBookId," +
+                "Asin=@Asin," +
+                "AuthorHash=@AuthorHash," +
+                "TitleHash=@TitleHash," +
+                "Visible=@Visible," +
+                "WHERE Id=@Id";
+
+        public const string INSERT_FICTION_FTS_WITHOUT_ID =
             "INSERT INTO fiction_fts VALUES (@Title,@AuthorFamily1,@AuthorName1,@AuthorSurname1,@Pseudonim1," +
-                "@AuthorFamily2, @AuthorName2, @AuthorSurname2, @Pseudonim2, @AuthorFamily3, @AuthorName3, @AuthorSurname3, @Pseudonim3, " +
-                "@AuthorFamily4, @AuthorName4, @AuthorSurname4, @Pseudonim4, @RussianAuthorFamily, @RussianAuthorName, @RussianAuthorSurname, " +
-                "@Series1, @Series2, @Series3, @Series4, @Publisher, @Identifier)";
+                "@AuthorFamily2,@AuthorName2,@AuthorSurname2,@Pseudonim2,@AuthorFamily3,@AuthorName3,@AuthorSurname3,@Pseudonim3," +
+                "@AuthorFamily4,@AuthorName4,@AuthorSurname4,@Pseudonim4,@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname," +
+                "@Series1,@Series2,@Series3,@Series4,@Publisher,@Identifier)";
+
+        public const string INSERT_FICTION_FTS_WITH_ID =
+            "INSERT INTO fiction_fts (rowid,Title,AuthorFamily1,AuthorName1,AuthorSurname1,Pseudonim1," +
+                "AuthorFamily2,AuthorName2,AuthorSurname2,Pseudonim2,AuthorFamily3,AuthorName3,AuthorSurname3,Pseudonim3," +
+                "AuthorFamily4,AuthorName4,AuthorSurname4,Pseudonim4,RussianAuthorFamily,RussianAuthorName,RussianAuthorSurname," +
+                "Series1,Series2,Series3,Series4,Publisher,Identifier) VALUES (@Id,@Title,@AuthorFamily1,@AuthorName1,@AuthorSurname1,@Pseudonim1," +
+                "@AuthorFamily2,@AuthorName2,@AuthorSurname2,@Pseudonim2,@AuthorFamily3,@AuthorName3,@AuthorSurname3,@Pseudonim3," +
+                "@AuthorFamily4,@AuthorName4,@AuthorSurname4,@Pseudonim4,@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname," +
+                "@Series1,@Series2,@Series3,@Series4,@Publisher,@Identifier)";
+
+        public const string DELETE_FICTION_FTS =
+            "INSERT INTO fiction_fts (fiction_fts,rowid,Title,AuthorFamily1,AuthorName1,AuthorSurname1,Pseudonim1," +
+                "AuthorFamily2,AuthorName2,AuthorSurname2,Pseudonim2,AuthorFamily3,AuthorName3,AuthorSurname3,Pseudonim3," +
+                "AuthorFamily4,AuthorName4,AuthorSurname4,Pseudonim4,RussianAuthorFamily,RussianAuthorName,RussianAuthorSurname," +
+                "Series1,Series2,Series3,Series4,Publisher,Identifier) "+
+                "VALUES ('delete',@Id,@Title,@AuthorFamily1,@AuthorName1,@AuthorSurname1,@Pseudonim1," +
+                "@AuthorFamily2,@AuthorName2,@AuthorSurname2,@Pseudonim2,@AuthorFamily3,@AuthorName3,@AuthorSurname3,@Pseudonim3," +
+                "@AuthorFamily4,@AuthorName4,@AuthorSurname4,@Pseudonim4,@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname," +
+                "@Series1,@Series2,@Series3,@Series4,@Publisher,@Identifier)";
+
+        public const string GET_FICTION_INDEX_LIST = "PRAGMA index_list(fiction)";
+
+        public const string FICTION_INDEX_PREFIX = "IX_fiction_";
+
+        public const string CREATE_FICTION_LASTMODIFIEDDATETIME_INDEX = "CREATE INDEX " + FICTION_INDEX_PREFIX +
+            "LastModifiedDateTime ON fiction (LastModifiedDateTime DESC)";
+
+        public const string CREATE_FICTION_LIBGENID_INDEX = "CREATE UNIQUE INDEX " + FICTION_INDEX_PREFIX + "LibgenId ON fiction (LibgenId ASC)";
 
         public const string CREATE_SCIMAG_TABLE =
             "CREATE TABLE IF NOT EXISTS scimag (" +
@@ -203,12 +358,17 @@
                 "LibgenId INTEGER NOT NULL" +
             ")";
 
-        public const string CREATE_SCIMAG_FTS_TABLE =
-            "CREATE VIRTUAL TABLE IF NOT EXISTS scimag_fts USING fts5 (Title, Authors, Doi, Doi2, PubmedId, Journal, Issnp, Issne, content=scimag, content_rowid=Id)";
+        public const string CREATE_SCIMAG_FTS_TABLE = "CREATE VIRTUAL TABLE IF NOT EXISTS scimag_fts USING fts5 "+
+            "(Title, Authors, Doi, Doi2, PubmedId, Journal, Issnp, Issne, content=scimag, content_rowid=Id)";
 
         public const string COUNT_SCIMAG = "SELECT MAX(Id) FROM scimag LIMIT 1";
 
         public const string GET_SCIMAG_BY_ID = "SELECT * FROM scimag WHERE Id = @Id";
+
+        public const string GET_SCIMAG_ID_BY_LIBGENID = "SELECT Id FROM scimag WHERE LibgenId=@LibgenId LIMIT 1";
+
+        public const string GET_LAST_ADDED_SCIMAG =
+            "SELECT * FROM scimag WHERE AddedDateTime = (SELECT MAX(AddedDateTime) FROM scimag) ORDER BY LibgenId DESC LIMIT 1";
 
         public const string SEARCH_SCIMAG = "SELECT * FROM scimag WHERE Id IN (SELECT rowid FROM scimag_fts WHERE scimag_fts MATCH @SearchQuery) ORDER BY Id";
 
@@ -217,7 +377,12 @@
                 "@Md5Hash,@SizeInBytes,@AddedDateTime,@JournalId,@AbstractUrl,@Attribute1,@Attribute2,@Attribute3,@Attribute4,@Attribute5,@Attribute6," +
                 "@Visible,@PubmedId,@Pmc,@Pii,@LibgenId)";
 
-        public const string INSERT_SCIMAG_FTS =
-            "INSERT INTO scimag_fts VALUES (@Title,@Authors,@Doi,@Doi2,@PubmedId,@Journal,@Issnp,@Issne)";
+        public const string INSERT_SCIMAG_FTS_WITHOUT_ID = "INSERT INTO scimag_fts VALUES (@Title,@Authors,@Doi,@Doi2,@PubmedId,@Journal,@Issnp,@Issne)";
+
+        public const string GET_SCIMAG_INDEX_LIST = "PRAGMA index_list(scimag)";
+
+        public const string SCIMAG_INDEX_PREFIX = "IX_scimag_";
+
+        public const string CREATE_SCIMAG_ADDEDDATETIME_INDEX = "CREATE INDEX " + SCIMAG_INDEX_PREFIX + "AddedDateTime ON scimag (AddedDateTime DESC)";
     }
 }

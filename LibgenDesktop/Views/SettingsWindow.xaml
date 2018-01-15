@@ -1,11 +1,9 @@
 ﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.SettingsWindow"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                        xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
-                       mc:Ignorable="d"
                        Title="Настройки"
+                       ClosingCommand="{Binding WindowClosingCommand}"
                        Style="{StaticResource SettingsWindow}">
     <Window.Resources>
         <ResourceDictionary Source="Styles\SettingsWindowStyles.xaml" />
@@ -91,8 +89,8 @@
             </StackPanel>
         </Grid>
         <UniformGrid Grid.Row="1" Grid.Column="1" Rows="1" Columns="2" Style="{StaticResource ButtonPanel}">
-            <Button Content="OK" Command="{Binding OkCommand}" IsEnabled="{Binding IsOkButtonEnabled}" />
-            <Button Content="ОТМЕНА" Command="{Binding CancelCommand}" />
+            <Button Content="OK" Command="{Binding OkCommand}" IsEnabled="{Binding IsOkButtonEnabled}" Style="{StaticResource OkButton}" />
+            <Button Content="ОТМЕНА" Command="{Binding CancelCommand}" Style="{StaticResource CancelButton}" />
         </UniformGrid>
     </Grid>
 </c:LibgenDesktopWindow>

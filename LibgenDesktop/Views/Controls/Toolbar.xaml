@@ -10,7 +10,7 @@
         <md:PopupBox Style="{StaticResource PopupBox}">
             <StackPanel>
                 <Button Content="Импорт..." Command="{Binding ImportCommand}" />
-                <Button Content="Синхронизация..." IsEnabled="False" />
+                <Button Content="Синхронизация..." Command="{Binding SynchronizeCommand}" />
                 <Button Content="Настройки" Command="{Binding SettingsCommand}" />
             </StackPanel>
         </md:PopupBox>

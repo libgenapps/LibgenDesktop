@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using Microsoft.Win32;
 
 namespace LibgenDesktop.Infrastructure
@@ -85,9 +86,33 @@ namespace LibgenDesktop.Infrastructure
             return createdWindowContexts.FirstOrDefault(windowContext => ReferenceEquals(windowContext.DataContext, viewModel));
         }
 
-        public static void ShowMessageBox(string title, string text)
+        public static void ExecuteActionInBackground(Action action)
         {
-            MessageBox.Show(text, title);
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, action);
+        }
+
+        public static void ShowMessageBox(string title, string text, IWindowContext parentWindowContext = null)
+        {
+            if (parentWindowContext != null)
+            {
+                MessageBox.Show((parentWindowContext as WindowContext)?.Window, text, title);
+            }
+            else
+            {
+                MessageBox.Show(text, title);
+            }
+        }
+
+        public static bool ShowPrompt(string title, string text, IWindowContext parentWindowContext = null)
+        {
+            if (parentWindowContext != null)
+            {
+                return MessageBox.Show((parentWindowContext as WindowContext)?.Window, text, title, MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+            }
+            else
+            {
+                return MessageBox.Show(text, title, MessageBoxButton.YesNo) == MessageBoxResult.Yes;
+            }
         }
 
         public static OpenFileDialogResult ShowOpenFileDialog(OpenFileDialogParameters openFileDialogParameters)

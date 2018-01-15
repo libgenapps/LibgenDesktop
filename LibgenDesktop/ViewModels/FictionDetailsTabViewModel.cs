@@ -6,6 +6,7 @@ using System.Windows.Media.Imaging;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.ViewModels
 {
@@ -166,10 +167,10 @@ namespace LibgenDesktop.ViewModels
             }
             else
             {
-                if (!String.IsNullOrWhiteSpace(MainModel.CurrentMirror.FictionDownloadUrl))
+                bookDownloadUrl = UrlGenerator.GetFictionDownloadUrl(MainModel.CurrentMirror, Book);
+                if (bookDownloadUrl != null)
                 {
                     IsDownloadButtonEnabled = true;
-                    bookDownloadUrl = MainModel.CurrentMirror.FictionDownloadUrl + Book.Md5Hash;
                 }
                 else
                 {
@@ -178,15 +179,15 @@ namespace LibgenDesktop.ViewModels
                 }
                 if (hasCover)
                 {
-                    if (!String.IsNullOrWhiteSpace(MainModel.CurrentMirror.FictionCoverUrl))
+                    string bookCoverUrl = UrlGenerator.GetFictionCoverUrl(MainModel.CurrentMirror, Book);
+                    if (bookCoverUrl != null)
                     {
                         BookCoverNotification = "Обложка загружается...";
                         IsBookCoverNotificationVisible = true;
                         try
                         {
-                            string bookCoverUrl = String.Concat(Book.LibgenId / 1000 * 1000, "/", Book.Md5Hash, ".jpg");
                             WebClient webClient = new WebClient();
-                            byte[] imageData = await webClient.DownloadDataTaskAsync(new Uri(MainModel.CurrentMirror.FictionCoverUrl + bookCoverUrl));
+                            byte[] imageData = await webClient.DownloadDataTaskAsync(new Uri(bookCoverUrl));
                             BitmapImage bitmapImage = new BitmapImage();
                             using (MemoryStream memoryStream = new MemoryStream(imageData))
                             {

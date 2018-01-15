@@ -6,6 +6,7 @@ using System.Windows.Media.Imaging;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.ViewModels
 {
@@ -166,10 +167,10 @@ namespace LibgenDesktop.ViewModels
             }
             else
             {
-                if (!String.IsNullOrWhiteSpace(MainModel.CurrentMirror.NonFictionDownloadUrl))
+                bookDownloadUrl = UrlGenerator.GetNonFictionDownloadUrl(MainModel.CurrentMirror, Book);
+                if (bookDownloadUrl != null)
                 {
                     IsDownloadButtonEnabled = true;
-                    bookDownloadUrl = MainModel.CurrentMirror.NonFictionDownloadUrl + Book.Md5Hash;
                 }
                 else
                 {
@@ -178,14 +179,15 @@ namespace LibgenDesktop.ViewModels
                 }
                 if (hasCover)
                 {
-                    if (!String.IsNullOrWhiteSpace(MainModel.CurrentMirror.NonFictionCoverUrl))
+                    string bookCoverUrl = UrlGenerator.GetNonFictionCoverUrl(MainModel.CurrentMirror, Book);
+                    if (bookCoverUrl != null)
                     {
                         BookCoverNotification = "Обложка загружается...";
                         IsBookCoverNotificationVisible = true;
                         try
                         {
                             WebClient webClient = new WebClient();
-                            byte[] imageData = await webClient.DownloadDataTaskAsync(new Uri(MainModel.CurrentMirror.NonFictionCoverUrl + Book.CoverUrl));
+                            byte[] imageData = await webClient.DownloadDataTaskAsync(bookCoverUrl);
                             BitmapImage bitmapImage = new BitmapImage();
                             using (MemoryStream memoryStream = new MemoryStream(imageData))
                             {

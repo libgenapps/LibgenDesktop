@@ -25,6 +25,7 @@
         <Setter Property="IsEditable" Value="False" />
         <Setter Property="IsTextSearchEnabled" Value="True" />
         <Setter Property="MinWidth" Value="160" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource MaterialDesignComboBoxItemStyle}" />
     </Style>
     <Style x:Key="SearchTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <Style x:Key="SearchResultCountComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
@@ -59,12 +60,14 @@
         <Setter Property="Margin" Value="24,3,0,0" />
     </Style>
     <Style x:Key="ButtonPanel" TargetType="UniformGrid">
-        <Style.Resources>
-            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
-                <Setter Property="Margin" Value="8,0,0,0" />
-            </Style>
-        </Style.Resources>
         <Setter Property="Margin" Value="0,16,0,0" />
         <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style x:Key="OkButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="Margin" Value="8,0,0,0" />
+    </Style>
+    <Style x:Key="CancelButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="Margin" Value="8,0,0,0" />
+        <Setter Property="IsCancel" Value="True" />
     </Style>
 </ResourceDictionary>

@@ -21,6 +21,7 @@ namespace LibgenDesktop.Setup
         private static void BuildSetupPackage(bool is64Bit, string projectGuid)
         {
             string productTitle = String.Format(Constants.PRODUCT_TITLE_FORMAT, is64Bit ? 64 : 32);
+            string shortcutTitle = String.Format(Constants.SHORTCUT_TITLE_FORMAT, is64Bit ? 64 : 32);
             string normalizedCurrentVersion = Constants.CURRENT_VERSION.Count(c => c == '.') > 1 ? Constants.CURRENT_VERSION : Constants.CURRENT_VERSION + ".0";
             string installerFileName = String.Format(Constants.INSTALLER_FILE_NAME_FORMAT, is64Bit ? 64 : 32);
             Project project = new Project(productTitle, new Dir(@"%ProgramFiles%\Libgen Desktop"));
@@ -33,7 +34,7 @@ namespace LibgenDesktop.Setup
                 {
                     file.Shortcuts = new[]
                     {
-                        new FileShortcut(productTitle, "%ProgramMenu%")
+                        new FileShortcut(shortcutTitle, "%ProgramMenu%")
                     };
                 }
                 targetDirectory.AddFile(file);
@@ -65,10 +66,7 @@ namespace LibgenDesktop.Setup
             project.CustomUI = new DialogSequence()
                 .On(NativeDialogs.WelcomeDlg, Buttons.Next, new ShowDialog(NativeDialogs.InstallDirDlg))
                 .On(NativeDialogs.InstallDirDlg, Buttons.Back, new ShowDialog(NativeDialogs.WelcomeDlg));
-            project.PreserveTempFiles = false;
-            project.PreserveDbgFiles = false;
             project.BuildMsi(installerFileName);
-            Utils.DeleteTempFiles("*.wixobj", "*.wixpdb", "*.wxs");
             Utils.MoveFile($"{installerFileName}.msi", @"..\Release");
         }
     }

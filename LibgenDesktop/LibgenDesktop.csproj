@@ -47,6 +47,9 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Dragablz">
       <HintPath>..\packages\Dragablz.0.0.3.197\lib\net45\Dragablz.dll</HintPath>
@@ -75,6 +78,9 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -110,21 +116,33 @@
     <Compile Include="Models\Database\SearchQueryParser.cs" />
     <Compile Include="Models\Entities\DatabaseMetadata.cs" />
     <Compile Include="Models\Entities\FictionBook.cs" />
+    <Compile Include="Models\Entities\LibgenObject.cs" />
     <Compile Include="Models\Entities\SciMagArticle.cs" />
+    <Compile Include="Models\Import\FictionImporter.cs" />
+    <Compile Include="Models\Import\SciMagImporter.cs" />
+    <Compile Include="Models\JsonApi\JsonApiClient.cs" />
+    <Compile Include="Models\JsonApi\JsonApiNonFictionBook.cs" />
+    <Compile Include="Models\ProgressArgs\ImportCreateIndexProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportObjectsProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportSearchTableDefinitionProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportTableDefinitionFoundProgress.cs" />
+    <Compile Include="Models\ProgressArgs\JsonApiDownloadProgress.cs" />
     <Compile Include="Models\ProgressArgs\SearchProgress.cs" />
     <Compile Include="Models\Settings\Mirrors.cs" />
     <Compile Include="Models\Settings\MirrorStorage.cs" />
     <Compile Include="Models\SqlDump\ColumnDefinition.cs" />
     <Compile Include="Models\SqlDump\ColumnType.cs" />
+    <Compile Include="Models\Import\Importer.cs" />
+    <Compile Include="Models\Import\NonFictionImporter.cs" />
     <Compile Include="Models\SqlDump\ParsedTableDefinition.cs" />
     <Compile Include="Models\SqlDump\SqlDumpReader.cs" />
     <Compile Include="Models\SqlDump\TableDefinition.cs" />
     <Compile Include="Models\SqlDump\TableDefinitions.cs" />
     <Compile Include="Models\SqlDump\TableType.cs" />
+    <Compile Include="Models\Utils\UrlGenerator.cs" />
     <Compile Include="ViewModels\FictionDetailsTabViewModel.cs" />
+    <Compile Include="ViewModels\ProgressLogItemViewModel.cs" />
+    <Compile Include="ViewModels\SynchronizationWindowViewModel.cs" />
     <Compile Include="ViewModels\NonFictionDetailsTabViewModel.cs" />
     <Compile Include="ViewModels\SciMagDetailsTabViewModel.cs" />
     <Compile Include="ViewModels\SciMagDetailsWindowViewModel.cs" />
@@ -148,6 +166,12 @@
       <DependentUpon>CloseTabButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\TabControl.cs" />
+    <Compile Include="Views\MessageBoxWindow.xaml.cs">
+      <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SynchronizationWindow.xaml.cs">
+      <DependentUpon>SynchronizationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SciMagDetailsWindow.xaml.cs">
       <DependentUpon>SciMagDetailsWindow.xaml</DependentUpon>
     </Compile>
@@ -222,6 +246,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\MessageBoxWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Styles\MessageBoxWindowStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Styles\SynchronizationWindowStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SynchronizationWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\SciMagDetailsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -276,9 +316,7 @@
     <Compile Include="Models\MainModel.cs" />
     <Compile Include="Models\Settings\AppSettings.cs" />
     <Compile Include="Models\Settings\SettingsStorage.cs" />
-    <Compile Include="Models\Utils\AsyncBookCollection.cs" />
     <Compile Include="Models\Utils\Formatters.cs" />
-    <Compile Include="Models\Utils\RangeCollection.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Compile Include="ViewModels\ViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
@@ -412,12 +450,16 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <EmbeddedResource Include="Resources\default_mirrors.config" />
+    <ContentWithTargetPath Include="Resources\mirrors.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>mirrors.config</TargetPath>
+    </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

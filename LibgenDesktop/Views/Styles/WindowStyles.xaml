@@ -71,4 +71,22 @@
         <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
         <Setter Property="Window.FontSize" Value="18" />
     </Style>
+    <Style x:Key="SynchronizationWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.SYNCHRONIZATION_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.Height" Value="{Binding Source={x:Static const:Constants.SYNCHRONIZATION_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.SYNCHRONIZATION_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.SYNCHRONIZATION_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="MessageBoxWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="NoResize" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.MESSAGE_BOX_WINDOW_WIDTH}}" />
+        <Setter Property="Window.SizeToContent" Value="Height" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
 </ResourceDictionary>

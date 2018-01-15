@@ -2,7 +2,7 @@
 
 namespace LibgenDesktop.Infrastructure
 {
-    internal interface IWindowContext
+    public interface IWindowContext
     {
         object DataContext { get; }
 

@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Settings;
+using LibgenDesktop.Views;
 
 namespace LibgenDesktop.ViewModels
 {
@@ -28,6 +27,7 @@ namespace LibgenDesktop.ViewModels
         private bool searchIsOpenInNonModalWindowSelected;
         private bool searchIsOpenInNewTabSelected;
         private bool isOkButtonEnabled;
+        private bool settingsChanged;
 
         public SettingsWindowViewModel(MainModel mainModel)
         {
@@ -35,6 +35,7 @@ namespace LibgenDesktop.ViewModels
             errors = new Dictionary<string, string>();
             OkCommand = new Command(OkButtonClick);
             CancelCommand = new Command(CancelButtonClick);
+            WindowClosingCommand = new FuncCommand<bool>(WindowClosing);
             Initialize();
         }
 
@@ -73,6 +74,7 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 networkIsOfflineModeOn = value;
+                settingsChanged = true;
                 NotifyPropertyChanged();
             }
         }
@@ -99,6 +101,7 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 networkSelectedMirror = value;
+                settingsChanged = true;
                 NotifyPropertyChanged();
             }
         }
@@ -112,6 +115,7 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchIsLimitResultsOn = value;
+                settingsChanged = true;
                 NotifyPropertyChanged();
                 Validate();
             }
@@ -139,6 +143,7 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchMaximumResultCount = value;
+                settingsChanged = true;
                 NotifyPropertyChanged();
                 Validate();
             }
@@ -153,6 +158,7 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchIsOpenInModalWindowSelected = value;
+                settingsChanged = true;
                 NotifyPropertyChanged();
             }
         }
@@ -166,6 +172,7 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchIsOpenInNonModalWindowSelected = value;
+                settingsChanged = true;
                 NotifyPropertyChanged();
             }
         }
@@ -179,6 +186,7 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchIsOpenInNewTabSelected = value;
+                settingsChanged = true;
                 NotifyPropertyChanged();
             }
         }
@@ -200,6 +208,7 @@ namespace LibgenDesktop.ViewModels
 
         public Command OkCommand { get; }
         public Command CancelCommand { get; }
+        public FuncCommand<bool> WindowClosingCommand { get; }
 
         private int? SearchMaximumResultCountValue
         {
@@ -229,6 +238,7 @@ namespace LibgenDesktop.ViewModels
         private void Initialize()
         {
             AppSettings appSettings = mainModel.AppSettings;
+            settingsChanged = false;
             isNetworkTabSelected = true;
             isSearchTabSelected = false;
             networkIsOfflineModeOn = appSettings.Network.OfflineMode;
@@ -301,12 +311,18 @@ namespace LibgenDesktop.ViewModels
                 mainModel.AppSettings.Search.OpenDetailsMode = AppSettings.SearchSettings.DetailsMode.NEW_TAB;
             }
             mainModel.SaveSettings();
+            settingsChanged = false;
             CurrentWindowContext.CloseDialog(true);
         }
 
         private void CancelButtonClick()
         {
-            CurrentWindowContext.CloseDialog(false);
+            CurrentWindowContext.CloseDialog(true);
+        }
+
+        private bool WindowClosing()
+        {
+            return !settingsChanged || MessageBoxWindow.ShowPrompt("Отменить изменения?", "Настройки были изменены. Вы действительно хотите отменить сделанные изменения?", CurrentWindowContext);
         }
     }
 }

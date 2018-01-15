@@ -5,7 +5,7 @@ using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.Models.Entities
 {
-    internal class FictionBook
+    internal class FictionBook : LibgenObject
     {
         private string authors;
         private string series;
@@ -18,7 +18,6 @@ namespace LibgenDesktop.Models.Entities
             russianAuthor = null;
         }
 
-        public int Id { get; set; }
         public string AuthorFamily1 { get; set; }
         public string AuthorName1 { get; set; }
         public string AuthorSurname1 { get; set; }
@@ -67,7 +66,6 @@ namespace LibgenDesktop.Models.Entities
         public string AuthorHash { get; set; }
         public string TitleHash { get; set; }
         public string Visible { get; set; }
-        public int LibgenId { get; set; }
 
         public string YearString => Year != "0" ? Year : String.Empty;
         public string PagesString => Pages != "0" ? Pages : "неизвестно";

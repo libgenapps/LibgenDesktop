@@ -1,12 +1,12 @@
-﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.ImportWindow"
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.SynchronizationWindow"
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
-                       Title="Импорт из SQL-дампа"
+                       Title="Синхронизация списка нехудожественной литературы"
                        ClosedCommand="{Binding WindowClosedCommand}"
-                       Style="{StaticResource ImportWindow}">
+                       Style="{StaticResource SynchronizationWindow}">
     <Window.Resources>
-        <ResourceDictionary Source="Styles\ImportWindowStyles.xaml" />
+        <ResourceDictionary Source="Styles\SynchronizationWindowStyles.xaml" />
     </Window.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>

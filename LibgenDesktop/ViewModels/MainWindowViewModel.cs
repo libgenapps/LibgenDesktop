@@ -5,6 +5,7 @@ using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Settings;
+using LibgenDesktop.Views;
 using static LibgenDesktop.Models.Settings.AppSettings;
 
 namespace LibgenDesktop.ViewModels
@@ -23,6 +24,7 @@ namespace LibgenDesktop.ViewModels
             CloseCurrentTabCommand = new Command(CloseCurrentTab);
             DownloadManagerCommand = new Command(ShowDownloadManager);
             ImportCommand = new Command(Import);
+            SynchronizeCommand = new Command(Synchronize);
             SettingsCommand = new Command(SettingsMenuItemClick);
             WindowClosedCommand = new Command(WindowClosed);
             DefaultSearchTabViewModel = new SearchTabViewModel(mainModel);
@@ -93,6 +95,7 @@ namespace LibgenDesktop.ViewModels
         public Command CloseCurrentTabCommand { get; }
         public Command DownloadManagerCommand { get; }
         public Command ImportCommand { get; }
+        public Command SynchronizeCommand { get; }
         public Command SettingsCommand { get; }
         public Command WindowClosedCommand { get; }
 
@@ -355,6 +358,41 @@ namespace LibgenDesktop.ViewModels
                     {
                         searchTabViewModel.Refresh(setFocus: searchTabViewModel == SelectedTabViewModel);
                     }
+                }
+            }
+        }
+
+        public void Synchronize()
+        {
+            if (mainModel.NonFictionBookCount == 0)
+            {
+                MessageBoxWindow.ShowMessage("Ошибка", @"Перед синхронизацией списка нехудожественной литературы необходимо выполнить импорт из дампа базы данных (пункт ""Импорт"" в меню.", CurrentWindowContext);
+                return;
+            }
+            if (mainModel.AppSettings.Network.OfflineMode)
+            {
+                if (MessageBoxWindow.ShowPrompt("Автономный режим", "Синхронизация невозможна при включенном автономном режиме. Выключить автономный режим?", CurrentWindowContext))
+                {
+                    mainModel.AppSettings.Network.OfflineMode = false;
+                    mainModel.SaveSettings();
+                }
+                else
+                {
+                    return;
+                }
+            }
+            SynchronizationWindowViewModel synchronizationWindowViewModel = new SynchronizationWindowViewModel(mainModel);
+            IWindowContext synchronizationWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.SYNCHRONIZATION_WINDOW, synchronizationWindowViewModel, CurrentWindowContext);
+            synchronizationWindowContext.ShowDialog();
+            if (IsDefaultSearchTabVisible)
+            {
+                DefaultSearchTabViewModel.SetFocus();
+            }
+            else
+            {
+                if (SelectedTabViewModel is SearchTabViewModel searchTabViewModel)
+                {
+                    searchTabViewModel.SetFocus();
                 }
             }
         }

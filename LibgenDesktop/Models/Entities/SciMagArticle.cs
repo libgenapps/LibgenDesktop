@@ -3,7 +3,7 @@ using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.Models.Entities
 {
-    internal class SciMagArticle
+    internal class SciMagArticle : LibgenObject
     {
         private string doiString;
 
@@ -12,7 +12,6 @@ namespace LibgenDesktop.Models.Entities
             doiString = null;
         }
 
-        public int Id { get; set; }
         public string Doi { get; set; }
         public string Doi2 { get; set; }
         public string Title { get; set; }
@@ -43,7 +42,6 @@ namespace LibgenDesktop.Models.Entities
         public string PubmedId { get; set; }
         public string Pmc { get; set; }
         public string Pii { get; set; }
-        public int LibgenId { get; set; }
 
         public string FileSizeString => Formatters.FileSizeToString(SizeInBytes, false);
         public string FileSizeWithBytesString => Formatters.FileSizeToString(SizeInBytes, true);

@@ -25,7 +25,7 @@
                 <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
             </TextBox.InputBindings>
         </TextBox>
-        <DataGrid Name="articleGrid" Grid.Row="1" ItemsSource="{Binding Path=Articles}" SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
+        <DataGrid Name="articleGrid" Grid.Row="1" ItemsSource="{Binding Path=Articles, IsAsync=True}" SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
                   Visibility="{Binding IsArticleGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
                   Style="{StaticResource ArticleDataGrid}">
             <DataGrid.Resources>

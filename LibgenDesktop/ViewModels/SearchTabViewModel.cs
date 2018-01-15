@@ -284,7 +284,7 @@ namespace LibgenDesktop.ViewModels
                 IsLibrarySelectorVisible = availableLibraryCount > 1;
                 if (setFocus)
                 {
-                    Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
+                    SetFocus();
                 }
             }
             else
@@ -292,6 +292,11 @@ namespace LibgenDesktop.ViewModels
                 IsSearchBlockVisible = false;
                 IsImportBlockVisible = true;
             }
+        }
+
+        public void SetFocus()
+        {
+            Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
         }
 
         private void Initialize()

@@ -14,13 +14,15 @@ namespace LibgenDesktop.Setup
             return new[]
             {
                 Constants.MAIN_EXECUTABLE_NAME,
+                "System.ValueTuple.dll",
                 "Newtonsoft.Json.dll",
                 "SharpCompress.dll",
                 "MaterialDesignThemes.Wpf.dll",
                 "MaterialDesignColors.dll",
                 "Dragablz.dll",
                 "System.Data.SQLite.dll",
-                (is64Bit ? "x64" : "x86") + @"\SQLite.Interop.dll"
+                (is64Bit ? "x64" : "x86") + @"\SQLite.Interop.dll",
+                "mirrors.config"
             };
         }
     }

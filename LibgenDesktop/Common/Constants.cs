@@ -2,6 +2,7 @@
 {
     internal static class Constants
     {
+        public const string CURRENT_VERSION = "0.9";
         public const string CURRENT_DATABASE_VERSION = "0.7";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
@@ -47,6 +48,9 @@
         public const int SETTINGS_WINDOW_DEFAULT_HEIGHT = 450;
         public const int SETTINGS_WINDOW_MIN_WIDTH = 650;
         public const int SETTINGS_WINDOW_MIN_HEIGHT = 450;
+        public const int SYNCHRONIZATION_WINDOW_MIN_WIDTH = 500;
+        public const int SYNCHRONIZATION_WINDOW_MIN_HEIGHT = 400;
+        public const int MESSAGE_BOX_WINDOW_WIDTH = 500;
 
         public const string DEFAULT_DATABASE_FILE_NAME = "libgen.db";
         public const int DEFAULT_MAIN_WINDOW_WIDTH = 1000;
@@ -82,6 +86,9 @@
         public const int DEFAULT_MAXIMUM_SEARCH_RESULT_COUNT = 50000;
 
         public const int SEARCH_REPORT_PROGRESS_BATCH_SIZE = 2000;
-        public const int INSERT_TRANSACTION_BATCH = 500;
+        public const int DATABASE_TRANSACTION_BATCH = 500;
+
+        public const string JSON_API_URL = "http://gen.lib.rus.ec/json.php";
+        public const string USER_AGENT = "LibgenDesktop/" + CURRENT_VERSION;
     }
 }

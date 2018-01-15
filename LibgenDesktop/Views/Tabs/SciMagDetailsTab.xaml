@@ -137,7 +137,7 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="1" Style="{StaticResource ButtonStackPanel}">
-            <Button Content="{Binding DownloadButtonCaption}" Command="{Binding DownloadBookCommand}">
+            <Button Content="{Binding DownloadButtonCaption}" Command="{Binding DownloadArticleCommand}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource DownloadButton}">
                         <Style.Triggers>

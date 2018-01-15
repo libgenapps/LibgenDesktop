@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>bin\Debug x86\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -44,10 +44,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="BootstrapperCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\BootstrapperCore.dll</HintPath>
+      <HintPath>..\packages\WixSharp.bin.1.6.0.0\lib\BootstrapperCore.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Deployment.WindowsInstaller, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\Microsoft.Deployment.WindowsInstaller.dll</HintPath>
+      <HintPath>..\packages\WixSharp.bin.1.6.0.0\lib\Microsoft.Deployment.WindowsInstaller.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SharpCompress, Version=0.19.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpCompress.0.19.2\lib\net35\SharpCompress.dll</HintPath>
@@ -58,14 +60,14 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="WixSharp, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\WixSharp.dll</HintPath>
+    <Reference Include="WixSharp, Version=1.6.0.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixSharp.bin.1.6.0.0\lib\WixSharp.dll</HintPath>
     </Reference>
-    <Reference Include="WixSharp.Msi, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\WixSharp.Msi.dll</HintPath>
+    <Reference Include="WixSharp.Msi, Version=1.6.0.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixSharp.bin.1.6.0.0\lib\WixSharp.Msi.dll</HintPath>
     </Reference>
-    <Reference Include="WixSharp.UI, Version=1.5.0.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
-      <HintPath>..\packages\WixSharp.bin.1.5.0.0\lib\WixSharp.UI.dll</HintPath>
+    <Reference Include="WixSharp.UI, Version=1.6.0.0, Culture=neutral, PublicKeyToken=3775edd25acc43c2, processorArchitecture=MSIL">
+      <HintPath>..\packages\WixSharp.bin.1.6.0.0\lib\WixSharp.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -78,22 +80,12 @@
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <!--   <ItemGroup>
-    <PackageReference Include="WixSharp">
-      <Version>1.4.8.0</Version>
-    </PackageReference>
-  </ItemGroup> -->
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\WixSharp.1.5.0.0\build\WixSharp.targets" Condition="Exists('..\packages\WixSharp.1.5.0.0\build\WixSharp.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\WixSharp.1.5.0.0\build\WixSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WixSharp.1.5.0.0\build\WixSharp.targets'))" />
-  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -101,5 +93,12 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <UsingTask AssemblyFile="$(SolutionDir)packages\WixSharp.1.5.0.0\build\SetEnvVar.dll" TaskName="SetEnvVar" />
+  <Import Project="..\packages\WixSharp.1.6.0.0\build\WixSharp.targets" Condition="Exists('..\packages\WixSharp.1.6.0.0\build\WixSharp.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\WixSharp.1.6.0.0\build\WixSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WixSharp.1.6.0.0\build\WixSharp.targets'))" />
+  </Target>
+  <UsingTask AssemblyFile="$(SolutionDir)packages\WixSharp.1.6.0.0\build\SetEnvVar.dll" TaskName="SetEnvVar" />
 </Project>
