@@ -21,7 +21,35 @@
         <Setter Property="Margin" Value="0,8,8,0" />
     </Style>
     <Style x:Key="NetworkTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
-    <Style x:Key="NetworkMirrorsComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
+    <SolidColorBrush x:Key="MaterialDesignTextFieldBoxDisabledBackground">Transparent</SolidColorBrush>
+    <Style x:Key="MirrorProxyLabel" TargetType="TextBlock">
+        <Setter Property="Margin" Value="24,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="NetworkProxyField" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+        <Setter Property="Width" Value="220" />
+        <Setter Property="Background" Value="Transparent" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="True">
+                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="MirrorsTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <Style x:Key="MirrorSectionHeader" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="#707070" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+    <Style x:Key="MirrorType" TargetType="TextBlock">
+        <Setter Property="Margin" Value="24,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="MirrorComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
+        <Setter Property="Margin" Value="0,6" />
         <Setter Property="IsEditable" Value="False" />
         <Setter Property="IsTextSearchEnabled" Value="True" />
         <Setter Property="MinWidth" Value="160" />

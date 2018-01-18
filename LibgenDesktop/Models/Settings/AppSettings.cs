@@ -228,13 +228,47 @@ namespace LibgenDesktop.Models.Settings
                     return new NetworkSettings
                     {
                         OfflineMode = true,
-                        MirrorName = DEFAULT_MIRROR_NAME
+                        UseProxy = false,
+                        ProxyAddress = null,
+                        ProxyPort = null,
+                        ProxyUserName = null,
+                        ProxyPassword = null
                     };
                 }
             }
 
             public bool OfflineMode { get; set; }
-            public string MirrorName { get; set; }
+            public bool UseProxy { get; set; }
+            public string ProxyAddress { get; set; }
+            public int? ProxyPort { get; set; }
+            public string ProxyUserName { get; set; }
+            public string ProxyPassword { get; set; }
+        }
+
+        internal class MirrorSettings
+        {
+            public static MirrorSettings Default
+            {
+                get
+                {
+                    return new MirrorSettings
+                    {
+                        NonFictionBooksMirrorName = DEFAULT_MIRROR_NAME,
+                        NonFictionCoversMirrorName = DEFAULT_MIRROR_NAME,
+                        NonFictionSynchronizationMirrorName = DEFAULT_MIRROR_NAME,
+                        FictionBooksMirrorName = DEFAULT_MIRROR_NAME,
+                        FictionCoversMirrorName = DEFAULT_MIRROR_NAME,
+                        ArticlesMirrorMirrorName = DEFAULT_MIRROR_NAME
+                    };
+                }
+            }
+
+            public string NonFictionBooksMirrorName { get; set; }
+            public string NonFictionCoversMirrorName { get; set; }
+            public string NonFictionSynchronizationMirrorName { get; set; }
+            public string FictionBooksMirrorName { get; set; }
+            public string FictionCoversMirrorName { get; set; }
+            public string ArticlesMirrorMirrorName { get; set; }
         }
 
         internal class SearchSettings
@@ -292,6 +326,7 @@ namespace LibgenDesktop.Models.Settings
                     Fiction = FictionSettings.Default,
                     SciMag = SciMagSettings.Default,
                     Network = NetworkSettings.Default,
+                    Mirrors = MirrorSettings.Default,
                     Search = SearchSettings.Default,
                     Advanced = AdvancedSettings.Default
                 };
@@ -304,6 +339,7 @@ namespace LibgenDesktop.Models.Settings
         public FictionSettings Fiction { get; set; }
         public SciMagSettings SciMag { get; set; }
         public NetworkSettings Network { get; set; }
+        public MirrorSettings Mirrors { get; set; }
         public SearchSettings Search { get; set; }
         public AdvancedSettings Advanced { get; set; }
 
@@ -320,6 +356,7 @@ namespace LibgenDesktop.Models.Settings
                 appSettings.ValidateAndCorrectNonFictionSettings();
                 appSettings.ValidateAndCorrectFictionSettings();
                 appSettings.ValidateAndCorrectNetworkSettings();
+                appSettings.ValidateAndCorrectMirrorSettings();
                 appSettings.ValidateAndCorrectSearchSettings();
                 appSettings.ValidateAndCorrectSciMagSettings();
                 appSettings.ValidateAndCorrectAdvancedSettings();
@@ -567,10 +604,23 @@ namespace LibgenDesktop.Models.Settings
             }
             else
             {
-                if (String.IsNullOrWhiteSpace(Network.MirrorName))
+                if (String.IsNullOrWhiteSpace(Network.ProxyAddress))
                 {
-                    Network.MirrorName = DEFAULT_MIRROR_NAME;
+                    Network.UseProxy = false;
                 }
+                if (Network.ProxyPort.HasValue && (Network.ProxyPort.Value < MIN_PROXY_PORT || Network.ProxyPort.Value > MAX_PROXY_PORT))
+                {
+                    Network.ProxyPort = null;
+                    Network.UseProxy = false;
+                }
+            }
+        }
+
+        private void ValidateAndCorrectMirrorSettings()
+        {
+            if (Mirrors == null)
+            {
+                Mirrors = MirrorSettings.Default;
             }
         }
 

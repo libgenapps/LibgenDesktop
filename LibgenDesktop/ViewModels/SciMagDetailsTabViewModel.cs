@@ -86,24 +86,28 @@ namespace LibgenDesktop.ViewModels
 
         private void Initialize()
         {
-            DownloadButtonCaption = "СКАЧАТЬ С " + MainModel.AppSettings.Network.MirrorName.ToUpper();
-            articleDownloadUrl = null;
-            if (MainModel.AppSettings.Network.OfflineMode)
+            bool isInOfflineMode = MainModel.AppSettings.Network.OfflineMode;
+            string downloadMirrorName = MainModel.AppSettings.Mirrors.ArticlesMirrorMirrorName;
+            if (downloadMirrorName == null)
             {
+                DownloadButtonCaption = "СКАЧАТЬ";
                 IsDownloadButtonEnabled = false;
-                DisabledDownloadButtonTooltip = "Включен автономный режим";
+                DisabledDownloadButtonTooltip = "Не выбрано зеркало для загрузки статей";
+                articleDownloadUrl = null;
             }
             else
             {
-                articleDownloadUrl = UrlGenerator.GetSciMagDownloadUrl(MainModel.CurrentMirror, Article);
-                if (articleDownloadUrl != null)
+                DownloadButtonCaption = "СКАЧАТЬ С " + downloadMirrorName.ToUpper();
+                if (isInOfflineMode)
                 {
-                    IsDownloadButtonEnabled = true;
+                    IsDownloadButtonEnabled = false;
+                    DisabledDownloadButtonTooltip = "Включен автономный режим";
+                    articleDownloadUrl = null;
                 }
                 else
                 {
-                    IsDownloadButtonEnabled = false;
-                    DisabledDownloadButtonTooltip = "Выбранное зеркало не поддерживает загрузку статей";
+                    IsDownloadButtonEnabled = true;
+                    articleDownloadUrl = UrlGenerator.GetSciMagDownloadUrl(MainModel.Mirrors[downloadMirrorName], Article);
                 }
             }
         }

@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using LibgenDesktop.Common;
@@ -22,23 +20,24 @@ namespace LibgenDesktop.Models.JsonApi
             "scanned,bookmarked,searchable,filesize,extension,md5,generic,visible,locator,local,timeadded,timelastmodified,coverurl,tags,identifierwodash";
 
         private readonly HttpClient httpClient;
+        private readonly string jsonApiUrl;
         private DateTime lastModifiedDateTime;
         private int lastLibgenId;
 
-        public JsonApiClient(DateTime lastModifiedDateTime, int lastLibgenId)
+        public JsonApiClient(HttpClient httpClient, string jsonApiUrl, DateTime lastModifiedDateTime, int lastLibgenId)
         {
-            httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(USER_AGENT);
+            this.httpClient = httpClient;
+            this.jsonApiUrl = jsonApiUrl;
             this.lastModifiedDateTime = lastModifiedDateTime;
             this.lastLibgenId = lastLibgenId;
         }
 
         public async Task<List<NonFictionBook>> DownloadNextBatchAsync(CancellationToken cancellationToken)
         {
-            string url = $"{JSON_API_URL}?fields={FIELD_LIST}&timenewer={lastModifiedDateTime.ToString("yyyy-MM-dd HH:mm:ss")}&idnewer={lastLibgenId}&mode=newer";
+            string url = $"{jsonApiUrl}?fields={FIELD_LIST}&timenewer={lastModifiedDateTime.ToString("yyyy-MM-dd HH:mm:ss")}&idnewer={lastLibgenId}&mode=newer";
             Logger.Debug($"Sending a request to {url}");
             HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
-            Logger.Debug($"Response status code: {response.StatusCode}.");
+            Logger.Debug($"Response status code: {(int)response.StatusCode} {response.StatusCode}.");
             Logger.Debug("Response headers:", response.Headers.ToString().TrimEnd());
             if (response.StatusCode != HttpStatusCode.OK)
             {

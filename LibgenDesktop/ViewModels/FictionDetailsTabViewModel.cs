@@ -145,8 +145,31 @@ namespace LibgenDesktop.ViewModels
 
         private async void Initialize()
         {
-            DownloadButtonCaption = "СКАЧАТЬ С " + MainModel.AppSettings.Network.MirrorName.ToUpper();
-            bookDownloadUrl = null;
+            bool isInOfflineMode = MainModel.AppSettings.Network.OfflineMode;
+            string downloadMirrorName = MainModel.AppSettings.Mirrors.FictionBooksMirrorName;
+            string coverMirrorName = MainModel.AppSettings.Mirrors.FictionCoversMirrorName;
+            if (downloadMirrorName == null)
+            {
+                DownloadButtonCaption = "СКАЧАТЬ";
+                IsDownloadButtonEnabled = false;
+                DisabledDownloadButtonTooltip = "Не выбрано зеркало для загрузки книг";
+                bookDownloadUrl = null;
+            }
+            else
+            {
+                DownloadButtonCaption = "СКАЧАТЬ С " + downloadMirrorName.ToUpper();
+                if (isInOfflineMode)
+                {
+                    IsDownloadButtonEnabled = false;
+                    DisabledDownloadButtonTooltip = "Включен автономный режим";
+                    bookDownloadUrl = null;
+                }
+                else
+                {
+                    IsDownloadButtonEnabled = true;
+                    bookDownloadUrl = UrlGenerator.GetFictionDownloadUrl(MainModel.Mirrors[downloadMirrorName], Book);
+                }
+            }
             BookCoverVisible = false;
             BookCover = null;
             bool hasCover = Book.Cover == "1";
@@ -155,39 +178,28 @@ namespace LibgenDesktop.ViewModels
                 BookCoverNotification = "Обложка отсутствует";
                 IsBookCoverNotificationVisible = true;
             }
-            if (MainModel.AppSettings.Network.OfflineMode)
-            {
-                IsDownloadButtonEnabled = false;
-                DisabledDownloadButtonTooltip = "Включен автономный режим";
-                if (hasCover)
-                {
-                    BookCoverNotification = "Обложка не загружена, потому что\r\nвключен автономный режим";
-                    IsBookCoverNotificationVisible = true;
-                }
-            }
             else
             {
-                bookDownloadUrl = UrlGenerator.GetFictionDownloadUrl(MainModel.CurrentMirror, Book);
-                if (bookDownloadUrl != null)
+                if (coverMirrorName == null)
                 {
-                    IsDownloadButtonEnabled = true;
+                    BookCoverNotification = "Не выбрано зеркало\r\nдля загрузки обложек";
+                    IsBookCoverNotificationVisible = true;
                 }
                 else
                 {
-                    IsDownloadButtonEnabled = false;
-                    DisabledDownloadButtonTooltip = "Выбранное зеркало не поддерживает загрузку художественной литературы";
-                }
-                if (hasCover)
-                {
-                    string bookCoverUrl = UrlGenerator.GetFictionCoverUrl(MainModel.CurrentMirror, Book);
-                    if (bookCoverUrl != null)
+                    if (isInOfflineMode)
                     {
+                        BookCoverNotification = "Обложка не загружена, потому что\r\nвключен автономный режим";
+                        IsBookCoverNotificationVisible = true;
+                    }
+                    else
+                    {
+                        string bookCoverUrl = UrlGenerator.GetFictionCoverUrl(MainModel.Mirrors[coverMirrorName], Book);
                         BookCoverNotification = "Обложка загружается...";
                         IsBookCoverNotificationVisible = true;
                         try
                         {
-                            WebClient webClient = new WebClient();
-                            byte[] imageData = await webClient.DownloadDataTaskAsync(new Uri(bookCoverUrl));
+                            byte[] imageData = await MainModel.HttpClient.GetByteArrayAsync(bookCoverUrl);
                             BitmapImage bitmapImage = new BitmapImage();
                             using (MemoryStream memoryStream = new MemoryStream(imageData))
                             {
@@ -205,11 +217,6 @@ namespace LibgenDesktop.ViewModels
                         {
                             BookCoverNotification = "Не удалось загрузить обложку";
                         }
-                    }
-                    else
-                    {
-                        BookCoverNotification = "Выбранное зеркало не поддерживает\r\nзагрузку обложек для\r\nхудожественной литературы";
-                        IsBookCoverNotificationVisible = true;
                     }
                 }
             }

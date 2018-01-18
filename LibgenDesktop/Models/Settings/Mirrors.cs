@@ -8,6 +8,7 @@ namespace LibgenDesktop.Models.Settings
         {
             public string NonFictionDownloadUrl { get; set; }
             public string NonFictionCoverUrl { get; set; }
+            public string NonFictionSynchronizationUrl { get; set; }
             public string FictionDownloadUrl { get; set; }
             public string FictionCoverUrl { get; set; }
             public string SciMagDownloadUrl { get; set; }

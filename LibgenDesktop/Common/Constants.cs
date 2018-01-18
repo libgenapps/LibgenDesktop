@@ -2,7 +2,7 @@
 {
     internal static class Constants
     {
-        public const string CURRENT_VERSION = "0.9.1";
+        public const string CURRENT_VERSION = "0.10";
         public const string CURRENT_DATABASE_VERSION = "0.7";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
@@ -45,9 +45,9 @@
         public const int IMPORT_WINDOW_MIN_HEIGHT = 400;
         public const int CREATE_DATABASE_WINDOW_WIDTH = 500;
         public const int SETTINGS_WINDOW_DEFAULT_WIDTH = 750;
-        public const int SETTINGS_WINDOW_DEFAULT_HEIGHT = 450;
-        public const int SETTINGS_WINDOW_MIN_WIDTH = 710;
-        public const int SETTINGS_WINDOW_MIN_HEIGHT = 450;
+        public const int SETTINGS_WINDOW_DEFAULT_HEIGHT = 550;
+        public const int SETTINGS_WINDOW_MIN_WIDTH = 750;
+        public const int SETTINGS_WINDOW_MIN_HEIGHT = 550;
         public const int SYNCHRONIZATION_WINDOW_MIN_WIDTH = 500;
         public const int SYNCHRONIZATION_WINDOW_MIN_HEIGHT = 400;
         public const int MESSAGE_BOX_WINDOW_WIDTH = 500;
@@ -88,7 +88,8 @@
         public const int SEARCH_REPORT_PROGRESS_BATCH_SIZE = 2000;
         public const int DATABASE_TRANSACTION_BATCH = 500;
 
-        public const string JSON_API_URL = "http://gen.lib.rus.ec/json.php";
         public const string USER_AGENT = "LibgenDesktop/" + CURRENT_VERSION;
+        public const int MIN_PROXY_PORT = 1;
+        public const int MAX_PROXY_PORT = 65535;
     }
 }

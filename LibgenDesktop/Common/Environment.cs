@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Management;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.Common
@@ -45,8 +44,9 @@ namespace LibgenDesktop.Common
             LogFilePath = Path.Combine(AppDataDirectory, logFileName);
             AppSettingsFilePath = Path.Combine(AppDataDirectory, APP_SETTINGS_FILE_NAME);
             MirrorsFilePath = Path.Combine(AppBinariesDirectory, MIRRORS_FILE_NAME);
-            OsName = GetOsName();
-            IsIn64BitProcess = System.Environment.Is64BitProcess;
+            OsVersion = RuntimeInformation.OSDescription + RuntimeInformation.OSArchitecture;
+            NetFrameworkVersion = RuntimeInformation.FrameworkDescription;
+            IsIn64BitProcess = RuntimeInformation.ProcessArchitecture == Architecture.X64;
         }
 
         public static string AppBinariesDirectory { get; }
@@ -54,21 +54,9 @@ namespace LibgenDesktop.Common
         public static string LogFilePath { get; }
         public static string AppSettingsFilePath { get; }
         public static string MirrorsFilePath { get; }
-        public static string OsName { get; }
+        public static string OsVersion { get; }
+        public static string NetFrameworkVersion { get; }
         public static bool IsInPortableMode { get; }
         public static bool IsIn64BitProcess { get; }
-
-        private static string GetOsName()
-        {
-            ManagementObject osInfo = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem").Get().OfType<ManagementObject>().FirstOrDefault();
-            if (osInfo != null)
-            {
-                return $"{osInfo.Properties["Caption"].Value.ToString()} {osInfo.Properties["Version"].Value.ToString()} {osInfo.Properties["OSArchitecture"].Value.ToString()}";
-            }
-            else
-            {
-                return "Unknown";
-            }
-        }
     }
 }

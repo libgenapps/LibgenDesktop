@@ -370,7 +370,12 @@ namespace LibgenDesktop.ViewModels
         {
             if (mainModel.NonFictionBookCount == 0)
             {
-                MessageBoxWindow.ShowMessage("Ошибка", @"Перед синхронизацией списка нехудожественной литературы необходимо выполнить импорт из дампа базы данных (пункт ""Импорт"" в меню.", CurrentWindowContext);
+                MessageBoxWindow.ShowMessage("Ошибка", @"Перед синхронизацией списка нехудожественной литературы необходимо выполнить импорт из дампа базы данных (пункт ""Импорт"" в меню).", CurrentWindowContext);
+                return;
+            }
+            if (mainModel.AppSettings.Mirrors.NonFictionSynchronizationMirrorName == null)
+            {
+                MessageBoxWindow.ShowMessage("Ошибка", @"Не выбрано зеркало для синхронизации списка нехудожественной литературы.", CurrentWindowContext);
                 return;
             }
             if (mainModel.AppSettings.Network.OfflineMode)

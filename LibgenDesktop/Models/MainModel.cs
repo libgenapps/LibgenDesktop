@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using LibgenDesktop.Common;
@@ -53,6 +55,8 @@ namespace LibgenDesktop.Models
                 EnableLogging();
             }
             Mirrors = MirrorStorage.LoadMirrors(Environment.MirrorsFilePath);
+            ValidateAndCorrectSelectedMirrors();
+            CreateNewHttpClient();
             OpenDatabase(AppSettings.DatabaseFileName);
         }
 
@@ -60,21 +64,10 @@ namespace LibgenDesktop.Models
         public DatabaseStatus LocalDatabaseStatus { get; private set; }
         public DatabaseMetadata DatabaseMetadata { get; private set; }
         public Mirrors Mirrors { get; }
+        public HttpClient HttpClient { get; private set; }
         public int NonFictionBookCount { get; private set; }
         public int FictionBookCount { get; private set; }
         public int SciMagArticleCount { get; private set; }
-
-        public Mirrors.MirrorConfiguration CurrentMirror
-        {
-            get
-            {
-                if (Mirrors != null && Mirrors.TryGetValue(AppSettings.Network.MirrorName, out Mirrors.MirrorConfiguration mirrorConfiguration))
-                {
-                    return mirrorConfiguration;
-                }
-                return null;
-            }
-        }
 
         public Task<ObservableCollection<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
@@ -271,7 +264,13 @@ namespace LibgenDesktop.Models
                 Logger.Debug("Loading last non-fiction book.");
                 NonFictionBook lastModifiedNonFictionBook = localDatabase.GetLastModifiedNonFictionBook();
                 Logger.Debug($"Last non-fiction book: Libgen ID = {lastModifiedNonFictionBook.LibgenId}, last modified date/time = {lastModifiedNonFictionBook.LastModifiedDateTime}.");
-                JsonApiClient jsonApiClient = new JsonApiClient(lastModifiedNonFictionBook.LastModifiedDateTime, lastModifiedNonFictionBook.LibgenId);
+                string jsonApiUrl = Mirrors[AppSettings.Mirrors.NonFictionSynchronizationMirrorName].NonFictionSynchronizationUrl;
+                if (jsonApiUrl == null)
+                {
+                    throw new Exception("JSON API URL is null.");
+                }
+                JsonApiClient jsonApiClient = new JsonApiClient(HttpClient, jsonApiUrl, lastModifiedNonFictionBook.LastModifiedDateTime,
+                    lastModifiedNonFictionBook.LibgenId);
                 List<NonFictionBook> downloadedBooks = new List<NonFictionBook>();
                 progressHandler.Report(new JsonApiDownloadProgress(0));
                 while (true)
@@ -428,6 +427,31 @@ namespace LibgenDesktop.Models
                 LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
                 return false;
             }
+        }
+
+        public void CreateNewHttpClient()
+        {
+            AppSettings.NetworkSettings networkSettings = AppSettings.Network;
+            WebProxy webProxy;
+            if (networkSettings.UseProxy)
+            {
+                webProxy = new WebProxy(networkSettings.ProxyAddress, networkSettings.ProxyPort.Value);
+                if (!String.IsNullOrEmpty(networkSettings.ProxyUserName))
+                {
+                    webProxy.Credentials = new NetworkCredential(networkSettings.ProxyUserName, networkSettings.ProxyPassword);
+                }
+            }
+            else
+            {
+                webProxy = new WebProxy();
+            }
+            HttpClientHandler httpClientHandler = new HttpClientHandler
+            {
+                Proxy = webProxy,
+                UseProxy = true
+            };
+            HttpClient = new HttpClient(httpClientHandler);
+            HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(USER_AGENT);
         }
 
         public void EnableLogging()
@@ -588,6 +612,33 @@ namespace LibgenDesktop.Models
             Logger.Debug("Updating article count.");
             SciMagArticleCount = localDatabase.CountSciMagArticles();
             Logger.Debug($"Article count = {SciMagArticleCount}.");
+        }
+
+        private void ValidateAndCorrectSelectedMirrors()
+        {
+            AppSettings.MirrorSettings mirrorSettings = AppSettings.Mirrors;
+            mirrorSettings.NonFictionBooksMirrorName =
+                ValidateAndCorrectSelectedMirror(mirrorSettings.NonFictionBooksMirrorName, mirror => mirror.NonFictionDownloadUrl);
+            mirrorSettings.NonFictionCoversMirrorName =
+                ValidateAndCorrectSelectedMirror(mirrorSettings.NonFictionCoversMirrorName, mirror => mirror.NonFictionCoverUrl);
+            mirrorSettings.NonFictionSynchronizationMirrorName =
+                ValidateAndCorrectSelectedMirror(mirrorSettings.NonFictionSynchronizationMirrorName, mirror => mirror.NonFictionSynchronizationUrl);
+            mirrorSettings.FictionBooksMirrorName =
+                ValidateAndCorrectSelectedMirror(mirrorSettings.FictionBooksMirrorName, mirror => mirror.FictionDownloadUrl);
+            mirrorSettings.FictionCoversMirrorName =
+                ValidateAndCorrectSelectedMirror(mirrorSettings.FictionCoversMirrorName, mirror => mirror.FictionCoverUrl);
+            mirrorSettings.ArticlesMirrorMirrorName =
+                ValidateAndCorrectSelectedMirror(mirrorSettings.ArticlesMirrorMirrorName, mirror => mirror.SciMagDownloadUrl);
+        }
+
+        private string ValidateAndCorrectSelectedMirror(string selectedMirrorName, Func<Mirrors.MirrorConfiguration, string> mirrorProperty)
+        {
+            if (selectedMirrorName != null && Mirrors.ContainsKey(selectedMirrorName) &&
+                !String.IsNullOrWhiteSpace(mirrorProperty(Mirrors[selectedMirrorName])))
+            {
+                return selectedMirrorName;
+            }
+            return null;
         }
     }
 }
