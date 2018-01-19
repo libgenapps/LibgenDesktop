@@ -1,13 +1,17 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Management;
 using System.Reflection;
-using System.Runtime.InteropServices;
+using Microsoft.Win32;
 using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.Common
 {
     internal static class Environment
     {
+        private const string NET_FRAMEWORK_REGISTRY_KEY = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
+
         static Environment()
         {
             AppBinariesDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -44,9 +48,73 @@ namespace LibgenDesktop.Common
             LogFilePath = Path.Combine(AppDataDirectory, logFileName);
             AppSettingsFilePath = Path.Combine(AppDataDirectory, APP_SETTINGS_FILE_NAME);
             MirrorsFilePath = Path.Combine(AppBinariesDirectory, MIRRORS_FILE_NAME);
-            OsVersion = RuntimeInformation.OSDescription + RuntimeInformation.OSArchitecture;
-            NetFrameworkVersion = RuntimeInformation.FrameworkDescription;
-            IsIn64BitProcess = RuntimeInformation.ProcessArchitecture == Architecture.X64;
+            OsVersion = GetOsVersion();
+            NetFrameworkVersion = GetNetFrameworkVersion();
+            IsIn64BitProcess = System.Environment.Is64BitProcess;
+        }
+
+        private static string GetOsVersion()
+        {
+            ManagementObject osInfo = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem").Get().OfType<ManagementObject>().FirstOrDefault();
+            if (osInfo != null)
+            {
+                return $"{osInfo.Properties["Caption"].Value.ToString()}{osInfo.Properties["Version"].Value.ToString()} {osInfo.Properties["OSArchitecture"].Value.ToString()}";
+            }
+            else
+            {
+                return "Unknown";
+            }
+        }
+
+        private static string GetNetFrameworkVersion()
+        {
+            using (RegistryKey netFrameworkRegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).
+                OpenSubKey(NET_FRAMEWORK_REGISTRY_KEY))
+            {
+                if (netFrameworkRegistryKey != null)
+                {
+                    object releaseValue = netFrameworkRegistryKey.GetValue("Release");
+                    if (releaseValue != null)
+                    {
+                        if (Int32.TryParse(releaseValue.ToString(), out int releaseNumber))
+                        {
+                            if (releaseNumber >= 461308)
+                            {
+                                return "4.7.1 or later";
+                            }
+                            else if (releaseNumber >= 460798)
+                            {
+                                return "4.7";
+                            }
+                            else if (releaseNumber >= 394802)
+                            {
+                                return "4.6.2";
+                            }
+                            else if (releaseNumber >= 394254)
+                            {
+                                return "4.6.1";
+                            }
+                            else if (releaseNumber >= 393295)
+                            {
+                                return "4.6";
+                            }
+                            else if (releaseNumber >= 379893)
+                            {
+                                return "4.5.2";
+                            }
+                            else if (releaseNumber >= 378675)
+                            {
+                                return "4.5.1";
+                            }
+                            else if (releaseNumber >= 378389)
+                            {
+                                return "4.5";
+                            }
+                        }
+                    }
+                }
+                return "unknown";
+            }
         }
 
         public static string AppBinariesDirectory { get; }

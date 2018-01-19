@@ -2,7 +2,7 @@
 {
     internal static class Constants
     {
-        public const string CURRENT_VERSION = "0.10";
+        public const string CURRENT_VERSION = "0.10.1";
         public const string CURRENT_DATABASE_VERSION = "0.7";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
