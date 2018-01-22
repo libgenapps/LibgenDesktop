@@ -10,7 +10,7 @@ using static LibgenDesktop.Models.Settings.AppSettings;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class FictionSearchResultsTabViewModel : TabViewModel
+    internal class FictionSearchResultsTabViewModel : SearchResultsTabViewModel
     {
         internal class OpenFictionDetailsEventArgs : EventArgs
         {
@@ -30,13 +30,17 @@ namespace LibgenDesktop.ViewModels
         private bool isSearchProgressPanelVisible;
         private string searchProgressStatus;
         private bool isStatusBarVisible;
+        private bool isExportPanelVisible;
 
-        public FictionSearchResultsTabViewModel(MainModel mainModel, string searchQuery, ObservableCollection<FictionBook> searchResults)
-            : base(mainModel, searchQuery)
+        public FictionSearchResultsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, string searchQuery,
+            ObservableCollection<FictionBook> searchResults)
+            : base(mainModel, parentWindowContext, searchQuery)
         {
             columnSettings = mainModel.AppSettings.Fiction.Columns;
             this.searchQuery = searchQuery;
             books = searchResults;
+            ExportPanelViewModel = new ExportPanelViewModel(mainModel, LibgenObjectType.FICTION_BOOK, parentWindowContext);
+            ExportPanelViewModel.ClosePanel += CloseExportPanel;
             OpenDetailsCommand = new Command(param => OpenDetails(param as FictionBook));
             SearchCommand = new Command(Search);
             BookDataGridEnterKeyCommand = new Command(BookDataGridEnterKeyPressed);
@@ -53,6 +57,10 @@ namespace LibgenDesktop.ViewModels
             {
                 searchQuery = value;
                 NotifyPropertyChanged();
+                if (IsExportPanelVisible)
+                {
+                    ExportPanelViewModel.UpdateSearchQuery(value);
+                }
             }
         }
 
@@ -218,19 +226,47 @@ namespace LibgenDesktop.ViewModels
             }
         }
 
+        public bool IsExportPanelVisible
+        {
+            get
+            {
+                return isExportPanelVisible;
+            }
+            set
+            {
+                isExportPanelVisible = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ExportPanelViewModel ExportPanelViewModel { get; }
+
         public FictionBook SelectedBook { get; set; }
 
         public Command OpenDetailsCommand { get; }
         public Command SearchCommand { get; }
+        public Command ExportCommand { get; }
         public Command BookDataGridEnterKeyCommand { get; }
 
         public event EventHandler<OpenFictionDetailsEventArgs> OpenFictionDetailsRequested;
+
+        public override void ShowExportPanel()
+        {
+            if (IsBookGridVisible)
+            {
+                IsBookGridVisible = false;
+                IsStatusBarVisible = false;
+                IsExportPanelVisible = true;
+                ExportPanelViewModel.ShowPanel(SearchQuery);
+            }
+        }
 
         private void Initialize()
         {
             isBookGridVisible = true;
             isStatusBarVisible = true;
             isSearchProgressPanelVisible = false;
+            isExportPanelVisible = false;
             UpdateBookCount();
             Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
         }
@@ -252,7 +288,7 @@ namespace LibgenDesktop.ViewModels
 
         private async void Search()
         {
-            if (!String.IsNullOrWhiteSpace(SearchQuery) && !IsSearchProgressPanelVisible)
+            if (!String.IsNullOrWhiteSpace(SearchQuery) && !IsSearchProgressPanelVisible && !IsExportPanelVisible)
             {
                 Title = SearchQuery;
                 IsBookGridVisible = false;
@@ -268,7 +304,7 @@ namespace LibgenDesktop.ViewModels
                 }
                 catch (Exception exception)
                 {
-                    ShowErrorWindow(exception);
+                    ShowErrorWindow(exception, ParentWindowContext);
                 }
                 Books = result;
                 UpdateBookCount();
@@ -286,6 +322,13 @@ namespace LibgenDesktop.ViewModels
         private void UpdateSearchProgressStatus(int booksFound)
         {
             SearchProgressStatus = $"Найдено книг: {booksFound.ToFormattedString()}";
+        }
+
+        private void CloseExportPanel(object sender, EventArgs e)
+        {
+            IsExportPanelVisible = false;
+            IsBookGridVisible = true;
+            IsStatusBarVisible = true;
         }
     }
 }

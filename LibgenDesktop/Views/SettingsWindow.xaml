@@ -28,6 +28,9 @@
             <c:SettingsTabHeader IsChecked="{Binding IsSearchTabSelected}">
                 <TextBlock Text="Поиск" />
             </c:SettingsTabHeader>
+            <c:SettingsTabHeader IsChecked="{Binding IsExportTabSelected}">
+                <TextBlock Text="Экспорт" />
+            </c:SettingsTabHeader>
             <c:SettingsTabHeader IsChecked="{Binding IsAdvancedTabSelected}">
                 <TextBlock Text="Дополнительно" />
             </c:SettingsTabHeader>
@@ -39,6 +42,8 @@
                 <RowDefinition Height="16" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="8" />
                 <RowDefinition Height="Auto" />
@@ -68,6 +73,7 @@
             <PasswordBox Grid.Row="10" Grid.Column="1"
                          u:PasswordBoxExtensions.PasswordBinding="{Binding NetworkProxyPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                          IsEnabled="{Binding NetworkUseProxy}" />
+            <TextBlock Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource NetworkProxyNote}" Text="Хранить здесь пароль небезопасно." />
         </Grid>
         <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsMirrorsTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
               Style="{StaticResource MirrorsTabContent}">
@@ -128,7 +134,7 @@
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Максимальное количество результатов" IsEnabled="{Binding SearchIsLimitResultsOn}" />
             <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding SearchMaximumResultCountDefaultValues}"
                       Text="{Binding SearchMaximumResultCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      c:ControlExtensions.MaxLength="9" IsEnabled="{Binding SearchIsLimitResultsOn}" Style="{StaticResource SearchResultCountComboBox}" />
+                      c:ControlExtensions.MaxLength="9" IsEnabled="{Binding SearchIsLimitResultsOn}" Style="{StaticResource EditableComboBox}" />
             <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SearchOpenDetailsPanel}">
                 <TextBlock Text="Открывать детали книги / статьи:" />
                 <StackPanel Style="{StaticResource SearchOpenDetailsRadioButtonsPanel}">
@@ -143,6 +149,33 @@
                     </RadioButton>
                 </StackPanel>
             </StackPanel>
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsExportTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource ExportTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="140" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Открывать результат после экспорта" />
+            <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding ExportIsOpenResultsAfterExportEnabled}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Делить на несколько файлов" />
+            <ToggleButton Grid.Row="2" Grid.Column="1" IsChecked="{Binding ExportIsSplitIntoMultipleFilesEnabled}" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="Максимальное количество строк в файле" IsEnabled="{Binding ExportIsSplitIntoMultipleFilesEnabled}" />
+            <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding ExportMaximumRowsPerFileDefaultValues}"
+                      Text="{Binding ExportMaximumRowsPerFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      c:ControlExtensions.MaxLength="9" IsEnabled="{Binding ExportIsSplitIntoMultipleFilesEnabled}"
+                      Style="{StaticResource EditableComboBox}" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Note}"
+                       Text="Примечание: Microsoft Excel не поддерживает файлы более 1 048 576 строк." />
         </Grid>
         <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsAdvancedTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
               Style="{StaticResource AdvancedTabContent}">

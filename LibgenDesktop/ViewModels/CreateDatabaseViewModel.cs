@@ -4,11 +4,12 @@ using System.Linq;
 using LibgenDesktop.Common;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
+using LibgenDesktop.Views;
 using Environment = LibgenDesktop.Common.Environment;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class CreateDatabaseViewModel : ViewModel
+    internal class CreateDatabaseViewModel : LibgenWindowViewModel
     {
         internal enum EventType
         {
@@ -139,7 +140,7 @@ namespace LibgenDesktop.ViewModels
                     }
                     else
                     {
-                        WindowManager.ShowMessageBox("Ошибка", "Не удалось создать базу данных.");
+                        MessageBoxWindow.ShowMessage("Ошибка", "Не удалось создать базу данных.", CurrentWindowContext);
                     }
                 }
             }

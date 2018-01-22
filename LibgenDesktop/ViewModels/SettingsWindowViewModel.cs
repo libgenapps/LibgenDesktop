@@ -12,7 +12,7 @@ using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class SettingsWindowViewModel : ViewModel, INotifyDataErrorInfo
+    internal class SettingsWindowViewModel : LibgenWindowViewModel, INotifyDataErrorInfo
     {
         private const string NULL_MIRROR_NAME = "нет";
 
@@ -21,6 +21,7 @@ namespace LibgenDesktop.ViewModels
         private bool isNetworkTabSelected;
         private bool isMirrorsTabSelected;
         private bool isSearchTabSelected;
+        private bool isExportTabSelected;
         private bool isAdvancedTabSelected;
         private bool networkIsOfflineModeOn;
         private bool networkUseProxy;
@@ -46,6 +47,10 @@ namespace LibgenDesktop.ViewModels
         private bool searchIsOpenInModalWindowSelected;
         private bool searchIsOpenInNonModalWindowSelected;
         private bool searchIsOpenInNewTabSelected;
+        private bool exportIsOpenResultsAfterExportEnabled;
+        private bool exportIsSplitIntoMultipleFilesEnabled;
+        private ObservableCollection<string> exportMaximumRowsPerFileDefaultValues;
+        private string exportMaximumRowsPerFile;
         private bool advancedIsLoggingEnabled;
         private bool isOkButtonEnabled;
         private bool settingsChanged;
@@ -95,6 +100,19 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 isSearchTabSelected = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsExportTabSelected
+        {
+            get
+            {
+                return isExportTabSelected;
+            }
+            set
+            {
+                isExportTabSelected = value;
                 NotifyPropertyChanged();
             }
         }
@@ -446,6 +464,63 @@ namespace LibgenDesktop.ViewModels
             }
         }
 
+        public bool ExportIsOpenResultsAfterExportEnabled
+        {
+            get
+            {
+                return exportIsOpenResultsAfterExportEnabled;
+            }
+            set
+            {
+                exportIsOpenResultsAfterExportEnabled = value;
+                NotifyPropertyChanged();
+                settingsChanged = true;
+            }
+        }
+
+        public bool ExportIsSplitIntoMultipleFilesEnabled
+        {
+            get
+            {
+                return exportIsSplitIntoMultipleFilesEnabled;
+            }
+            set
+            {
+                exportIsSplitIntoMultipleFilesEnabled = value;
+                NotifyPropertyChanged();
+                settingsChanged = true;
+                Validate();
+            }
+        }
+
+        public ObservableCollection<string> ExportMaximumRowsPerFileDefaultValues
+        {
+            get
+            {
+                return exportMaximumRowsPerFileDefaultValues;
+            }
+            set
+            {
+                exportMaximumRowsPerFileDefaultValues = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string ExportMaximumRowsPerFile
+        {
+            get
+            {
+                return exportMaximumRowsPerFile;
+            }
+            set
+            {
+                exportMaximumRowsPerFile = value;
+                settingsChanged = true;
+                NotifyPropertyChanged();
+                Validate();
+            }
+        }
+
         public bool AdvancedIsLoggingEnabled
         {
             get
@@ -456,6 +531,7 @@ namespace LibgenDesktop.ViewModels
             {
                 advancedIsLoggingEnabled = value;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -508,6 +584,21 @@ namespace LibgenDesktop.ViewModels
             }
         }
 
+        private int? ExportMaximumRowsPerFileValue
+        {
+            get
+            {
+                if (Int32.TryParse(ExportMaximumRowsPerFile, out int value))
+                {
+                    if (value > 0 && value <= MAX_EXPORT_ROWS_PER_FILE)
+                    {
+                        return value;
+                    }
+                }
+                return null;
+            }
+        }
+
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
         public IEnumerable GetErrors(string propertyName)
@@ -525,6 +616,7 @@ namespace LibgenDesktop.ViewModels
             isNetworkTabSelected = true;
             isMirrorsTabSelected = false;
             isSearchTabSelected = false;
+            isExportTabSelected = false;
             isAdvancedTabSelected = false;
             networkIsOfflineModeOn = appSettings.Network.OfflineMode;
             networkUseProxy = appSettings.Network.UseProxy;
@@ -562,6 +654,10 @@ namespace LibgenDesktop.ViewModels
                     searchIsOpenInNewTabSelected = true;
                     break;
             }
+            exportIsOpenResultsAfterExportEnabled = appSettings.Export.OpenResultsAfterExport;
+            exportIsSplitIntoMultipleFilesEnabled = appSettings.Export.SplitIntoMultipleFiles;
+            exportMaximumRowsPerFileDefaultValues = new ObservableCollection<string> { "50000", "100000", "250000", "500000", "1000000" };
+            exportMaximumRowsPerFile = appSettings.Export.MaximumRowsPerFile.ToString();
             advancedIsLoggingEnabled = appSettings.Advanced.LoggingEnabled;
             Validate();
         }
@@ -577,10 +673,12 @@ namespace LibgenDesktop.ViewModels
             bool networkProxyAddressValid = !NetworkUseProxy || !String.IsNullOrWhiteSpace(NetworkProxyAddress);
             bool networkProxyPortValid = !NetworkUseProxy || NetworkProxyPortValue.HasValue;
             bool searchMaximumResultCountValid = !SearchIsLimitResultsOn || SearchMaximumResultCountValue.HasValue;
+            bool exportMaximumRowsPerFileValid = !ExportIsSplitIntoMultipleFilesEnabled || ExportMaximumRowsPerFileValue.HasValue;
             UpdateValidationState(nameof(NetworkProxyAddress), networkProxyAddressValid, "Обязательное поле");
             UpdateValidationState(nameof(NetworkProxyPort), networkProxyPortValid, $"Числа от {MIN_PROXY_PORT} до {MAX_PROXY_PORT}");
             UpdateValidationState(nameof(SearchMaximumResultCount), searchMaximumResultCountValid, "Только положительные числа");
-            IsOkButtonEnabled = networkProxyAddressValid && networkProxyPortValid && searchMaximumResultCountValid;
+            UpdateValidationState(nameof(ExportMaximumRowsPerFile), exportMaximumRowsPerFileValid, $"Числа от 1 до {MAX_EXPORT_ROWS_PER_FILE}");
+            IsOkButtonEnabled = networkProxyAddressValid && networkProxyPortValid && searchMaximumResultCountValid && exportMaximumRowsPerFileValid;
         }
 
         private void UpdateValidationState(string propertyName, bool isValid, string errorText)
@@ -634,6 +732,12 @@ namespace LibgenDesktop.ViewModels
             {
                 mainModel.AppSettings.Search.OpenDetailsMode = AppSettings.SearchSettings.DetailsMode.NEW_TAB;
             }
+            mainModel.AppSettings.Export = new AppSettings.ExportSettings
+            {
+                OpenResultsAfterExport = ExportIsOpenResultsAfterExportEnabled,
+                SplitIntoMultipleFiles = ExportIsSplitIntoMultipleFilesEnabled,
+                MaximumRowsPerFile = ExportMaximumRowsPerFileValue ?? MAX_EXPORT_ROWS_PER_FILE
+            };
             if (advancedIsLoggingEnabled != mainModel.AppSettings.Advanced.LoggingEnabled)
             {
                 mainModel.AppSettings.Advanced.LoggingEnabled = advancedIsLoggingEnabled;

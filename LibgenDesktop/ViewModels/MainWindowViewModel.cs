@@ -11,7 +11,7 @@ using static LibgenDesktop.Models.Settings.AppSettings;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class MainWindowViewModel : ViewModel
+    internal class MainWindowViewModel : LibgenWindowViewModel
     {
         private readonly MainModel mainModel;
         private SearchTabViewModel defaultSearchTabViewModel;
@@ -20,15 +20,16 @@ namespace LibgenDesktop.ViewModels
         public MainWindowViewModel(MainModel mainModel)
         {
             this.mainModel = mainModel;
+            defaultSearchTabViewModel = null;
             NewTabCommand = new Command(NewTab);
             CloseTabCommand = new Command(param => CloseTab(param as TabViewModel));
             CloseCurrentTabCommand = new Command(CloseCurrentTab);
+            ExportCommand = new Command(Export);
             DownloadManagerCommand = new Command(ShowDownloadManager);
             ImportCommand = new Command(Import);
             SynchronizeCommand = new Command(Synchronize);
             SettingsCommand = new Command(SettingsMenuItemClick);
             WindowClosedCommand = new Command(WindowClosed);
-            DefaultSearchTabViewModel = new SearchTabViewModel(mainModel);
             TabViewModels = new ObservableCollection<TabViewModel>();
             Initialize();
         }
@@ -45,12 +46,11 @@ namespace LibgenDesktop.ViewModels
         {
             get
             {
+                if (defaultSearchTabViewModel == null)
+                {
+                    defaultSearchTabViewModel = new SearchTabViewModel(mainModel, CurrentWindowContext);
+                }
                 return defaultSearchTabViewModel;
-            }
-            set
-            {
-                defaultSearchTabViewModel = value;
-                NotifyPropertyChanged();
             }
         }
 
@@ -94,6 +94,7 @@ namespace LibgenDesktop.ViewModels
         public Command NewTabCommand { get; }
         public Command CloseTabCommand { get; }
         public Command CloseCurrentTabCommand { get; }
+        public Command ExportCommand { get; }
         public Command DownloadManagerCommand { get; }
         public Command ImportCommand { get; }
         public Command SynchronizeCommand { get; }
@@ -124,21 +125,23 @@ namespace LibgenDesktop.ViewModels
         private void SearchTabNonFictionSearchComplete(object sender, SearchTabViewModel.SearchCompleteEventArgs<NonFictionBook> e)
         {
             NonFictionSearchResultsTabViewModel nonFictionSearchResultsTabViewModel =
-                new NonFictionSearchResultsTabViewModel(mainModel, e.SearchQuery, e.SearchResult);
+                new NonFictionSearchResultsTabViewModel(mainModel, CurrentWindowContext, e.SearchQuery, e.SearchResult);
             nonFictionSearchResultsTabViewModel.OpenNonFictionDetailsRequested += OpenNonFictionDetailsRequested;
             ShowSearchResults(sender as SearchTabViewModel, nonFictionSearchResultsTabViewModel);
         }
 
         private void SearchTabFictionSearchComplete(object sender, SearchTabViewModel.SearchCompleteEventArgs<FictionBook> e)
         {
-            FictionSearchResultsTabViewModel fictionSearchResultsTabViewModel = new FictionSearchResultsTabViewModel(mainModel, e.SearchQuery, e.SearchResult);
+            FictionSearchResultsTabViewModel fictionSearchResultsTabViewModel =
+                new FictionSearchResultsTabViewModel(mainModel, CurrentWindowContext, e.SearchQuery, e.SearchResult);
             fictionSearchResultsTabViewModel.OpenFictionDetailsRequested += OpenFictionDetailsRequested;
             ShowSearchResults(sender as SearchTabViewModel, fictionSearchResultsTabViewModel);
         }
 
         private void SearchTabSciMagSearchComplete(object sender, SearchTabViewModel.SearchCompleteEventArgs<SciMagArticle> e)
         {
-            SciMagSearchResultsTabViewModel sciMagSearchResultsTabViewModel = new SciMagSearchResultsTabViewModel(mainModel, e.SearchQuery, e.SearchResult);
+            SciMagSearchResultsTabViewModel sciMagSearchResultsTabViewModel =
+                new SciMagSearchResultsTabViewModel(mainModel, CurrentWindowContext, e.SearchQuery, e.SearchResult);
             sciMagSearchResultsTabViewModel.OpenSciMagDetailsRequested += OpenSciMagDetailsRequested;
             ShowSearchResults(sender as SearchTabViewModel, sciMagSearchResultsTabViewModel);
         }
@@ -163,7 +166,7 @@ namespace LibgenDesktop.ViewModels
         {
             if (IsNewTabButtonVisible)
             {
-                SearchTabViewModel searchTabViewModel = new SearchTabViewModel(mainModel);
+                SearchTabViewModel searchTabViewModel = new SearchTabViewModel(mainModel, CurrentWindowContext);
                 searchTabViewModel.NonFictionSearchComplete += SearchTabNonFictionSearchComplete;
                 searchTabViewModel.FictionSearchComplete += SearchTabFictionSearchComplete;
                 searchTabViewModel.SciMagSearchComplete += SearchTabSciMagSearchComplete;
@@ -180,7 +183,7 @@ namespace LibgenDesktop.ViewModels
             if (openDetailsMode == SearchSettings.DetailsMode.NEW_TAB)
             {
                 NonFictionDetailsTabViewModel nonFictionDetailsTabViewModel =
-                    new NonFictionDetailsTabViewModel(mainModel, e.NonFictionBook, isInModalWindow: false);
+                    new NonFictionDetailsTabViewModel(mainModel, CurrentWindowContext, e.NonFictionBook, isInModalWindow: false);
                 nonFictionDetailsTabViewModel.CloseTabRequested += NonFictionDetailsCloseTabRequested;
                 TabViewModels.Add(nonFictionDetailsTabViewModel);
                 SelectedTabViewModel = nonFictionDetailsTabViewModel;
@@ -208,7 +211,8 @@ namespace LibgenDesktop.ViewModels
             SearchSettings.DetailsMode openDetailsMode = mainModel.AppSettings.Search.OpenDetailsMode;
             if (openDetailsMode == SearchSettings.DetailsMode.NEW_TAB)
             {
-                FictionDetailsTabViewModel fictionDetailsTabViewModel = new FictionDetailsTabViewModel(mainModel, e.FictionBook, isInModalWindow: false);
+                FictionDetailsTabViewModel fictionDetailsTabViewModel
+                    = new FictionDetailsTabViewModel(mainModel, CurrentWindowContext, e.FictionBook, isInModalWindow: false);
                 fictionDetailsTabViewModel.CloseTabRequested += FictionDetailsCloseTabRequested;
                 TabViewModels.Add(fictionDetailsTabViewModel);
                 SelectedTabViewModel = fictionDetailsTabViewModel;
@@ -236,7 +240,8 @@ namespace LibgenDesktop.ViewModels
             SearchSettings.DetailsMode openDetailsMode = mainModel.AppSettings.Search.OpenDetailsMode;
             if (openDetailsMode == SearchSettings.DetailsMode.NEW_TAB)
             {
-                SciMagDetailsTabViewModel sciMagDetailsTabViewModel = new SciMagDetailsTabViewModel(mainModel, e.SciMagArticle, isInModalWindow: false);
+                SciMagDetailsTabViewModel sciMagDetailsTabViewModel =
+                    new SciMagDetailsTabViewModel(mainModel, CurrentWindowContext, e.SciMagArticle, isInModalWindow: false);
                 sciMagDetailsTabViewModel.CloseTabRequested += SciMagDetailsCloseTabRequested;
                 TabViewModels.Add(sciMagDetailsTabViewModel);
                 SelectedTabViewModel = sciMagDetailsTabViewModel;
@@ -278,6 +283,14 @@ namespace LibgenDesktop.ViewModels
             if (TabViewModels.Any())
             {
                 CloseTab(SelectedTabViewModel);
+            }
+        }
+
+        private void Export()
+        {
+            if (SelectedTabViewModel is SearchResultsTabViewModel searchResultsTabViewModel)
+            {
+                searchResultsTabViewModel.ShowExportPanel();
             }
         }
 
@@ -325,7 +338,7 @@ namespace LibgenDesktop.ViewModels
             DownloadManagerTabViewModel downloadManagerTabViewModel = TabViewModels.OfType<DownloadManagerTabViewModel>().FirstOrDefault();
             if (downloadManagerTabViewModel == null)
             {
-                downloadManagerTabViewModel = new DownloadManagerTabViewModel(mainModel);
+                downloadManagerTabViewModel = new DownloadManagerTabViewModel(mainModel, CurrentWindowContext);
                 TabViewModels.Add(downloadManagerTabViewModel);
                 SelectedTabViewModel = downloadManagerTabViewModel;
                 NotifyPropertyChanged(nameof(IsDefaultSearchTabVisible));

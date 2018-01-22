@@ -30,6 +30,41 @@ namespace LibgenDesktop.Models.Settings
             public int Height { get; set; }
         }
 
+        internal class ExportPanelSettngs
+        {
+            internal enum ExportFormat
+            {
+                XLSX = 1,
+                CSV
+            }
+
+            internal enum CsvSeparator
+            {
+                COMMA = 1,
+                SEMICOLON,
+                TAB
+            }
+
+            public static ExportPanelSettngs Default
+            {
+                get
+                {
+                    return new ExportPanelSettngs
+                    {
+                        ExportDirectory = null,
+                        Format = ExportFormat.XLSX,
+                        Separator = CsvSeparator.COMMA,
+                        LimitSearchResults = false
+                    };
+                }
+            }
+
+            public string ExportDirectory { get; set; }
+            public ExportFormat Format { get; set; }
+            public CsvSeparator Separator { get; set; }
+            public bool LimitSearchResults { get; set; }
+        }
+
         internal abstract class DetailsWindowSettings
         {
             public int Width { get; set; }
@@ -90,13 +125,15 @@ namespace LibgenDesktop.Models.Settings
                     return new NonFictionSettings
                     {
                         DetailsWindow = NonFictionDetailsWindowSettings.Default,
-                        Columns = NonFictionColumnSettings.Default
+                        Columns = NonFictionColumnSettings.Default,
+                        ExportPanel = ExportPanelSettngs.Default
                     };
                 }
             }
 
             public NonFictionDetailsWindowSettings DetailsWindow { get; set; }
             public NonFictionColumnSettings Columns { get; set; }
+            public ExportPanelSettngs ExportPanel { get; set; }
         }
 
         internal class FictionDetailsWindowSettings : DetailsWindowSettings
@@ -151,13 +188,15 @@ namespace LibgenDesktop.Models.Settings
                     return new FictionSettings
                     {
                         DetailsWindow = FictionDetailsWindowSettings.Default,
-                        Columns = FictionColumnSettings.Default
+                        Columns = FictionColumnSettings.Default,
+                        ExportPanel = ExportPanelSettngs.Default
                     };
                 }
             }
 
             public FictionDetailsWindowSettings DetailsWindow { get; set; }
             public FictionColumnSettings Columns { get; set; }
+            public ExportPanelSettngs ExportPanel { get; set; }
         }
 
         internal class SciMagDetailsWindowSettings : DetailsWindowSettings
@@ -210,13 +249,15 @@ namespace LibgenDesktop.Models.Settings
                     return new SciMagSettings
                     {
                         DetailsWindow = SciMagDetailsWindowSettings.Default,
-                        Columns = SciMagColumnSettings.Default
+                        Columns = SciMagColumnSettings.Default,
+                        ExportPanel = ExportPanelSettngs.Default
                     };
                 }
             }
 
             public SciMagDetailsWindowSettings DetailsWindow { get; set; }
             public SciMagColumnSettings Columns { get; set; }
+            public ExportPanelSettngs ExportPanel { get; set; }
         }
 
         internal class NetworkSettings
@@ -298,6 +339,26 @@ namespace LibgenDesktop.Models.Settings
             public DetailsMode OpenDetailsMode { get; set; }
         }
 
+        internal class ExportSettings
+        {
+            public static ExportSettings Default
+            {
+                get
+                {
+                    return new ExportSettings
+                    {
+                        OpenResultsAfterExport = false,
+                        SplitIntoMultipleFiles = false,
+                        MaximumRowsPerFile = MAX_EXPORT_ROWS_PER_FILE
+                    };
+                }
+            }
+
+            public bool OpenResultsAfterExport { get; set; }
+            public bool SplitIntoMultipleFiles { get; set; }
+            public int MaximumRowsPerFile { get; set; }
+        }
+
         internal class AdvancedSettings
         {
             public static AdvancedSettings Default
@@ -328,6 +389,7 @@ namespace LibgenDesktop.Models.Settings
                     Network = NetworkSettings.Default,
                     Mirrors = MirrorSettings.Default,
                     Search = SearchSettings.Default,
+                    Export = ExportSettings.Default,
                     Advanced = AdvancedSettings.Default
                 };
             }
@@ -341,6 +403,7 @@ namespace LibgenDesktop.Models.Settings
         public NetworkSettings Network { get; set; }
         public MirrorSettings Mirrors { get; set; }
         public SearchSettings Search { get; set; }
+        public ExportSettings Export { get; set; }
         public AdvancedSettings Advanced { get; set; }
 
         public static AppSettings ValidateAndCorrect(AppSettings appSettings)
@@ -359,6 +422,7 @@ namespace LibgenDesktop.Models.Settings
                 appSettings.ValidateAndCorrectMirrorSettings();
                 appSettings.ValidateAndCorrectSearchSettings();
                 appSettings.ValidateAndCorrectSciMagSettings();
+                appSettings.ValidateAndCorrectExportSettings();
                 appSettings.ValidateAndCorrectAdvancedSettings();
                 return appSettings;
             }
@@ -471,6 +535,7 @@ namespace LibgenDesktop.Models.Settings
                         nonFictionColumns.OcrColumnWidth = NON_FICTION_GRID_OCR_COLUMN_MIN_WIDTH;
                     }
                 }
+                NonFiction.ExportPanel = ValidateAndCorrectExportPanelSettings(NonFiction.ExportPanel);
             }
         }
 
@@ -534,6 +599,7 @@ namespace LibgenDesktop.Models.Settings
                         fictionColumns.FileSizeColumnWidth = FICTION_GRID_FILESIZE_COLUMN_MIN_WIDTH;
                     }
                 }
+                Fiction.ExportPanel = ValidateAndCorrectExportPanelSettings(Fiction.ExportPanel);
             }
         }
 
@@ -593,7 +659,28 @@ namespace LibgenDesktop.Models.Settings
                         sciMagColumns.DoiColumnWidth = SCI_MAG_GRID_DOI_COLUMN_MIN_WIDTH;
                     }
                 }
+                SciMag.ExportPanel = ValidateAndCorrectExportPanelSettings(SciMag.ExportPanel);
             }
+        }
+
+        private ExportPanelSettngs ValidateAndCorrectExportPanelSettings(ExportPanelSettngs exportPanelSettngs)
+        {
+            if (exportPanelSettngs == null)
+            {
+                exportPanelSettngs = ExportPanelSettngs.Default;
+            }
+            else
+            {
+                if (!Enum.IsDefined(typeof(ExportPanelSettngs.ExportFormat), exportPanelSettngs.Format))
+                {
+                    exportPanelSettngs.Format = ExportPanelSettngs.ExportFormat.XLSX;
+                }
+                if (!Enum.IsDefined(typeof(ExportPanelSettngs.CsvSeparator), exportPanelSettngs.Separator))
+                {
+                    exportPanelSettngs.Separator = ExportPanelSettngs.CsvSeparator.COMMA;
+                }
+            }
+            return exportPanelSettngs;
         }
 
         private void ValidateAndCorrectNetworkSettings()
@@ -643,6 +730,21 @@ namespace LibgenDesktop.Models.Settings
             }
         }
 
+        private void ValidateAndCorrectExportSettings()
+        {
+            if (Export == null)
+            {
+                Export = ExportSettings.Default;
+            }
+            else
+            {
+                if (Export.MaximumRowsPerFile <= 0 || Export.MaximumRowsPerFile > MAX_EXPORT_ROWS_PER_FILE)
+                {
+                    Export.MaximumRowsPerFile = MAX_EXPORT_ROWS_PER_FILE;
+                }
+            }
+        }
+
         private void ValidateAndCorrectAdvancedSettings()
         {
             if (Advanced == null)
@@ -650,6 +752,5 @@ namespace LibgenDesktop.Models.Settings
                 Advanced = AdvancedSettings.Default;
             }
         }
-
     }
 }

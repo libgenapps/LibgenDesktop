@@ -5,8 +5,8 @@ namespace LibgenDesktop.ViewModels
 {
     internal class DownloadManagerTabViewModel : TabViewModel
     {
-        public DownloadManagerTabViewModel(MainModel mainModel)
-            : base(mainModel, "Загрузки")
+        public DownloadManagerTabViewModel(MainModel mainModel, IWindowContext parentWindowContext)
+            : base(mainModel, parentWindowContext, "Загрузки")
         {
         }
     }

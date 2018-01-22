@@ -10,7 +10,7 @@ using static LibgenDesktop.Models.Settings.AppSettings;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class SciMagSearchResultsTabViewModel : TabViewModel
+    internal class SciMagSearchResultsTabViewModel : SearchResultsTabViewModel
     {
         internal class OpenSciMagDetailsEventArgs : EventArgs
         {
@@ -30,13 +30,17 @@ namespace LibgenDesktop.ViewModels
         private bool isSearchProgressPanelVisible;
         private string searchProgressStatus;
         private bool isStatusBarVisible;
+        private bool isExportPanelVisible;
 
-        public SciMagSearchResultsTabViewModel(MainModel mainModel, string searchQuery, ObservableCollection<SciMagArticle> searchResults)
-            : base(mainModel, searchQuery)
+        public SciMagSearchResultsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, string searchQuery,
+            ObservableCollection<SciMagArticle> searchResults)
+            : base(mainModel, parentWindowContext, searchQuery)
         {
             columnSettings = mainModel.AppSettings.SciMag.Columns;
             this.searchQuery = searchQuery;
             articles = searchResults;
+            ExportPanelViewModel = new ExportPanelViewModel(mainModel, LibgenObjectType.SCIMAG_ARTICLE, parentWindowContext);
+            ExportPanelViewModel.ClosePanel += CloseExportPanel;
             OpenDetailsCommand = new Command(param => OpenDetails(param as SciMagArticle));
             SearchCommand = new Command(Search);
             ArticleDataGridEnterKeyCommand = new Command(ArticleDataGridEnterKeyPressed);
@@ -53,6 +57,10 @@ namespace LibgenDesktop.ViewModels
             {
                 searchQuery = value;
                 NotifyPropertyChanged();
+                if (IsExportPanelVisible)
+                {
+                    ExportPanelViewModel.UpdateSearchQuery(value);
+                }
             }
         }
 
@@ -206,19 +214,47 @@ namespace LibgenDesktop.ViewModels
             }
         }
 
+        public bool IsExportPanelVisible
+        {
+            get
+            {
+                return isExportPanelVisible;
+            }
+            set
+            {
+                isExportPanelVisible = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ExportPanelViewModel ExportPanelViewModel { get; }
+
         public SciMagArticle SelectedArticle { get; set; }
 
         public Command OpenDetailsCommand { get; }
         public Command SearchCommand { get; }
+        public Command ExportCommand { get; }
         public Command ArticleDataGridEnterKeyCommand { get; }
 
         public event EventHandler<OpenSciMagDetailsEventArgs> OpenSciMagDetailsRequested;
+
+        public override void ShowExportPanel()
+        {
+            if (IsArticleGridVisible)
+            {
+                IsArticleGridVisible = false;
+                IsStatusBarVisible = false;
+                IsExportPanelVisible = true;
+                ExportPanelViewModel.ShowPanel(SearchQuery);
+            }
+        }
 
         private void Initialize()
         {
             isArticleGridVisible = true;
             isStatusBarVisible = true;
             isSearchProgressPanelVisible = false;
+            isExportPanelVisible = false;
             UpdateArticleCount();
             Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
         }
@@ -240,7 +276,7 @@ namespace LibgenDesktop.ViewModels
 
         private async void Search()
         {
-            if (!String.IsNullOrWhiteSpace(SearchQuery) && !IsSearchProgressPanelVisible)
+            if (!String.IsNullOrWhiteSpace(SearchQuery) && !IsSearchProgressPanelVisible && !IsExportPanelVisible)
             {
                 Title = SearchQuery;
                 IsArticleGridVisible = false;
@@ -256,7 +292,7 @@ namespace LibgenDesktop.ViewModels
                 }
                 catch (Exception exception)
                 {
-                    ShowErrorWindow(exception);
+                    ShowErrorWindow(exception, ParentWindowContext);
                 }
                 Articles = result;
                 UpdateArticleCount();
@@ -274,6 +310,13 @@ namespace LibgenDesktop.ViewModels
         private void UpdateSearchProgressStatus(int articlesFound)
         {
             SearchProgressStatus = $"Найдено статей: {articlesFound.ToFormattedString()}";
+        }
+
+        private void CloseExportPanel(object sender, EventArgs e)
+        {
+            IsExportPanelVisible = false;
+            IsArticleGridVisible = true;
+            IsStatusBarVisible = true;
         }
     }
 }

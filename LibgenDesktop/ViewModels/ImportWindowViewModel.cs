@@ -11,7 +11,7 @@ using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class ImportWindowViewModel : ViewModel
+    internal class ImportWindowViewModel : LibgenWindowViewModel
     {
         private enum Step
         {
@@ -268,7 +268,7 @@ namespace LibgenDesktop.ViewModels
                 Status = "Импорт завершен с ошибками";
                 IsCancelButtonVisible = false;
                 IsCloseButtonVisible = true;
-                ShowErrorWindow(exception);
+                ShowErrorWindow(exception, CurrentWindowContext);
                 return;
             }
             elapsedTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
@@ -356,7 +356,7 @@ namespace LibgenDesktop.ViewModels
             catch (Exception exception)
             {
                 cancellationTokenSource.Cancel();
-                ShowErrorWindow(exception);
+                ShowErrorWindow(exception, CurrentWindowContext);
             }
         }
 

@@ -20,6 +20,23 @@
         </Style.Resources>
         <Setter Property="Margin" Value="0,8,8,0" />
     </Style>
+    <Style x:Key="EditableComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
+        <Setter Property="IsEditable" Value="True" />
+        <Setter Property="IsTextSearchEnabled" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Right" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="True">
+                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="Note" TargetType="TextBlock">
+        <Setter Property="Foreground" Value="Gray" />
+        <Setter Property="FontSize" Value="15" />
+    </Style>
     <Style x:Key="NetworkTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <SolidColorBrush x:Key="MaterialDesignTextFieldBoxDisabledBackground">Transparent</SolidColorBrush>
     <Style x:Key="MirrorProxyLabel" TargetType="TextBlock">
@@ -37,6 +54,9 @@
                 <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}"/>
             </Trigger>
         </Style.Triggers>
+    </Style>
+    <Style x:Key="NetworkProxyNote" TargetType="TextBlock" BasedOn="{StaticResource Note}">
+        <Setter Property="Margin" Value="24,0,0,0" />
     </Style>
     <Style x:Key="MirrorsTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <Style x:Key="MirrorSectionHeader" TargetType="TextBlock">
@@ -56,19 +76,6 @@
         <Setter Property="ItemContainerStyle" Value="{StaticResource MaterialDesignComboBoxItemStyle}" />
     </Style>
     <Style x:Key="SearchTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
-    <Style x:Key="SearchResultCountComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
-        <Setter Property="IsEditable" Value="True" />
-        <Setter Property="IsTextSearchEnabled" Value="False" />
-        <Setter Property="HorizontalContentAlignment" Value="Right" />
-        <Style.Triggers>
-            <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
-            </Trigger>
-            <Trigger Property="IsEnabled" Value="True">
-                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}"/>
-            </Trigger>
-        </Style.Triggers>
-    </Style>
     <Style x:Key="SearchOpenDetailsPanel" TargetType="StackPanel">
         <Setter Property="Orientation" Value="Vertical" />
     </Style>
@@ -87,6 +94,7 @@
         <Setter Property="Orientation" Value="Vertical" />
         <Setter Property="Margin" Value="24,3,0,0" />
     </Style>
+    <Style x:Key="ExportTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <Style x:Key="AdvancedTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <Style x:Key="ButtonPanel" TargetType="UniformGrid">
         <Setter Property="Margin" Value="0,16,0,0" />

@@ -55,6 +55,9 @@
       <HintPath>..\packages\Dragablz.0.0.3.197\lib\net45\Dragablz.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EPPlus, Version=4.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.1.1\lib\net40\EPPlus.dll</HintPath>
+    </Reference>
     <Reference Include="MaterialDesignColors">
       <HintPath>..\packages\MaterialDesignColors.1.1.3\lib\net45\MaterialDesignColors.dll</HintPath>
       <Private>True</Private>
@@ -123,7 +126,19 @@
     <Compile Include="Models\Entities\DatabaseMetadata.cs" />
     <Compile Include="Models\Entities\FictionBook.cs" />
     <Compile Include="Models\Entities\LibgenObject.cs" />
+    <Compile Include="Models\Entities\LibgenObjectType.cs" />
     <Compile Include="Models\Entities\SciMagArticle.cs" />
+    <Compile Include="Models\Export\XlsxExporter.cs" />
+    <Compile Include="Models\Export\CsvExporter.cs" />
+    <Compile Include="Models\Export\XlsxExportWriter.cs" />
+    <Compile Include="Models\Export\CsvExportWriter.cs" />
+    <Compile Include="Models\Export\Exporter.cs" />
+    <Compile Include="Models\Export\ExportObject.cs" />
+    <Compile Include="Models\Export\ExportResult.cs" />
+    <Compile Include="Models\Export\ExportWriter.cs" />
+    <Compile Include="Models\Export\SciMagExportObject.cs" />
+    <Compile Include="Models\Export\FictionExportObject.cs" />
+    <Compile Include="Models\Export\NonFictionExportObject.cs" />
     <Compile Include="Models\Import\FictionImporter.cs" />
     <Compile Include="Models\Import\SciMagImporter.cs" />
     <Compile Include="Models\JsonApi\JsonApiClient.cs" />
@@ -133,6 +148,7 @@
     <Compile Include="Models\ProgressArgs\ImportSearchTableDefinitionProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportTableDefinitionFoundProgress.cs" />
     <Compile Include="Models\ProgressArgs\JsonApiDownloadProgress.cs" />
+    <Compile Include="Models\ProgressArgs\ExportProgress.cs" />
     <Compile Include="Models\ProgressArgs\SearchProgress.cs" />
     <Compile Include="Models\Settings\Mirrors.cs" />
     <Compile Include="Models\Settings\MirrorStorage.cs" />
@@ -146,8 +162,11 @@
     <Compile Include="Models\SqlDump\TableDefinitions.cs" />
     <Compile Include="Models\SqlDump\TableType.cs" />
     <Compile Include="Models\Utils\UrlGenerator.cs" />
+    <Compile Include="ViewModels\ExportPanelViewModel.cs" />
     <Compile Include="ViewModels\FictionDetailsTabViewModel.cs" />
+    <Compile Include="ViewModels\LibgenWindowViewModel.cs" />
     <Compile Include="ViewModels\ProgressLogItemViewModel.cs" />
+    <Compile Include="ViewModels\SearchResultsTabViewModel.cs" />
     <Compile Include="ViewModels\SynchronizationWindowViewModel.cs" />
     <Compile Include="ViewModels\NonFictionDetailsTabViewModel.cs" />
     <Compile Include="ViewModels\SciMagDetailsTabViewModel.cs" />
@@ -170,6 +189,9 @@
     </Compile>
     <Compile Include="Views\Controls\CloseTabButton.xaml.cs">
       <DependentUpon>CloseTabButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\ExportPanel.xaml.cs">
+      <DependentUpon>ExportPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\TabControl.cs" />
     <Compile Include="Views\MessageBoxWindow.xaml.cs">
@@ -253,9 +275,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Controls\ExportPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MessageBoxWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Styles\ExportPanelStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Styles\MessageBoxWindowStyles.xaml">
       <Generator>MSBuild:Compile</Generator>

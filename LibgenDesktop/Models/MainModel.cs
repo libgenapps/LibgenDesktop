@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using LibgenDesktop.Common;
 using LibgenDesktop.Models.Database;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Export;
 using LibgenDesktop.Models.Import;
 using LibgenDesktop.Models.JsonApi;
 using LibgenDesktop.Models.ProgressArgs;
@@ -43,8 +44,6 @@ namespace LibgenDesktop.Models
             CANCELLED
         }
 
-        private const double SEARCH_PROGRESS_UPDATE_INTERVAL = 0.1;
-
         private LocalDatabase localDatabase;
 
         public MainModel()
@@ -72,8 +71,21 @@ namespace LibgenDesktop.Models
         public Task<ObservableCollection<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
         {
-            Logger.Debug($@"Search query = ""{searchQuery}"".");
             return SearchItemsAsync(localDatabase.SearchNonFictionBooks, searchQuery, progressHandler, cancellationToken);
+        }
+
+        public Task<ExportResult> ExportNonFictionToXlsxAsync(string filePathTemplate, string fileExtension, string searchQuery,
+            int? searchResultLimit, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            return ExportToXlsxAsync(localDatabase.SearchNonFictionBooks, filePathTemplate, fileExtension,
+                xlsxExporter => xlsxExporter.ExportNonFiction, searchQuery, searchResultLimit, progressHandler, cancellationToken);
+        }
+
+        public Task<ExportResult> ExportNonFictionToCsvAsync(string filePathTemplate, string fileExtension, char separator, string searchQuery,
+            int? searchResultLimit, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            return ExportToCsvAsync(localDatabase.SearchNonFictionBooks, filePathTemplate, fileExtension, separator,
+                csvExporter => csvExporter.ExportNonFiction, searchQuery, searchResultLimit, progressHandler, cancellationToken);
         }
 
         public Task<NonFictionBook> LoadNonFictionBookAsync(int bookId)
@@ -85,8 +97,21 @@ namespace LibgenDesktop.Models
         public Task<ObservableCollection<FictionBook>> SearchFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
         {
-            Logger.Debug($@"Search query = ""{searchQuery}"".");
             return SearchItemsAsync(localDatabase.SearchFictionBooks, searchQuery, progressHandler, cancellationToken);
+        }
+
+        public Task<ExportResult> ExportFictionToXlsxAsync(string filePathTemplate, string fileExtension, string searchQuery,
+            int? searchResultLimit, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            return ExportToXlsxAsync(localDatabase.SearchFictionBooks, filePathTemplate, fileExtension, xlsxExporter => xlsxExporter.ExportFiction,
+                searchQuery, searchResultLimit, progressHandler, cancellationToken);
+        }
+
+        public Task<ExportResult> ExportFictionToCsvAsync(string filePathTemplate, string fileExtension, char separator, string searchQuery,
+            int? searchResultLimit, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            return ExportToCsvAsync(localDatabase.SearchFictionBooks, filePathTemplate, fileExtension, separator, csvExporter => csvExporter.ExportFiction,
+                searchQuery, searchResultLimit, progressHandler, cancellationToken);
         }
 
         public Task<FictionBook> LoadFictionBookAsync(int bookId)
@@ -98,8 +123,21 @@ namespace LibgenDesktop.Models
         public Task<ObservableCollection<SciMagArticle>> SearchSciMagAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
         {
-            Logger.Debug($@"Search query = ""{searchQuery}"".");
             return SearchItemsAsync(localDatabase.SearchSciMagArticles, searchQuery, progressHandler, cancellationToken);
+        }
+
+        public Task<ExportResult> ExportSciMagToXlsxAsync(string filePathTemplate, string fileExtension, string searchQuery,
+            int? searchResultLimit, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            return ExportToXlsxAsync(localDatabase.SearchSciMagArticles, filePathTemplate, fileExtension, xlsxExporter => xlsxExporter.ExportSciMag,
+                searchQuery, searchResultLimit, progressHandler, cancellationToken);
+        }
+
+        public Task<ExportResult> ExportSciMagToCsvAsync(string filePathTemplate, string fileExtension, char separator, string searchQuery,
+            int? searchResultLimit, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            return ExportToCsvAsync(localDatabase.SearchSciMagArticles, filePathTemplate, fileExtension, separator, csvExporter => csvExporter.ExportSciMag,
+                searchQuery, searchResultLimit, progressHandler, cancellationToken);
         }
 
         public Task<SciMagArticle> LoadSciMagArticleAsync(int articleId)
@@ -474,8 +512,9 @@ namespace LibgenDesktop.Models
                 {
                     resultLimit = AppSettings.Search.MaximumResultCount;
                 }
+                Logger.Debug($@"Search query = ""{searchQuery}"", result limit = {resultLimit?.ToString() ?? "none"}, object type = {typeof(T).Name}.");
                 ObservableCollection<T> result = new ObservableCollection<T>();
-                DateTime lastUpdateDateTime = DateTime.Now;
+                DateTime lastReportDateTime = DateTime.Now;
                 foreach (T item in searchFunction(searchQuery, resultLimit))
                 {
                     if (cancellationToken.IsCancellationRequested)
@@ -485,15 +524,64 @@ namespace LibgenDesktop.Models
                     }
                     result.Add(item);
                     DateTime now = DateTime.Now;
-                    if ((now - lastUpdateDateTime).TotalSeconds > SEARCH_PROGRESS_UPDATE_INTERVAL)
+                    if ((now - lastReportDateTime).TotalSeconds > SEARCH_PROGRESS_REPORT_INTERVAL)
                     {
                         progressHandler.Report(new SearchProgress(result.Count));
-                        lastUpdateDateTime = now;
+                        lastReportDateTime = now;
                     }
                 }
                 progressHandler.Report(new SearchProgress(result.Count));
                 Logger.Debug($"Search complete, returning {result.Count} items.");
                 return result;
+            });
+        }
+
+        private Task<ExportResult> ExportToXlsxAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction, string filePathTemplate, string fileExtension,
+            Func<XlsxExporter, Func<IEnumerable<T>, IProgress<ExportProgress>, CancellationToken, ExportResult>> xlsxExporterFunction,
+            string searchQuery, int? searchResultLimit, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            bool splitIntoMultipleFiles = AppSettings.Export.SplitIntoMultipleFiles;
+            int? rowsPerFile;
+            if (splitIntoMultipleFiles)
+            {
+                rowsPerFile = AppSettings.Export.MaximumRowsPerFile;
+            }
+            else
+            {
+                rowsPerFile = MAX_EXPORT_ROWS_PER_FILE;
+            }
+            XlsxExporter xlsxExporter = new XlsxExporter(filePathTemplate, fileExtension, rowsPerFile, splitIntoMultipleFiles);
+            Func<IEnumerable<T>, IProgress<ExportProgress>, CancellationToken, ExportResult> exportFunction = xlsxExporterFunction(xlsxExporter);
+            return ExportAsync(searchFunction, exportFunction, searchQuery, searchResultLimit, progressHandler, cancellationToken);
+        }
+
+        private Task<ExportResult> ExportToCsvAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction, string filePathTemplate, string fileExtension,
+            char separator, Func<CsvExporter, Func<IEnumerable<T>, IProgress<ExportProgress>, CancellationToken, ExportResult>> csvExporterFunction,
+            string searchQuery, int? searchResultLimit, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            bool splitIntoMultipleFiles = AppSettings.Export.SplitIntoMultipleFiles;
+            int? rowsPerFile;
+            if (splitIntoMultipleFiles)
+            {
+                rowsPerFile = AppSettings.Export.MaximumRowsPerFile;
+            }
+            else
+            {
+                rowsPerFile = null;
+            }
+            CsvExporter csvExporter = new CsvExporter(filePathTemplate, fileExtension, rowsPerFile, splitIntoMultipleFiles, separator);
+            Func<IEnumerable<T>, IProgress<ExportProgress>, CancellationToken, ExportResult> exportFunction = csvExporterFunction(csvExporter);
+            return ExportAsync(searchFunction, exportFunction, searchQuery, searchResultLimit, progressHandler, cancellationToken);
+        }
+
+        private Task<ExportResult> ExportAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction,
+            Func<IEnumerable<T>, IProgress<ExportProgress>, CancellationToken, ExportResult> exportFunction,
+            string searchQuery, int? searchResultLimit, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
+        {
+            return Task.Run(() =>
+            {
+                Logger.Debug($@"Export query = ""{searchQuery}"", search result limit = {searchResultLimit?.ToString() ?? "none"}, object type = {typeof(T).Name}.");
+                return exportFunction(searchFunction(searchQuery, searchResultLimit), progressHandler, cancellationToken);
             });
         }
 

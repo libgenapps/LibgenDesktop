@@ -15,8 +15,8 @@ namespace LibgenDesktop.ViewModels
         private string disabledDownloadButtonTooltip;
         private string articleDownloadUrl;
 
-        public SciMagDetailsTabViewModel(MainModel mainModel, SciMagArticle article, bool isInModalWindow)
-            : base(mainModel, article.Title)
+        public SciMagDetailsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, SciMagArticle article, bool isInModalWindow)
+            : base(mainModel, parentWindowContext, article.Title)
         {
             this.article = article;
             IsInModalWindow = isInModalWindow;

@@ -39,8 +39,8 @@ namespace LibgenDesktop.ViewModels
         private string searchProgressStatus;
         private bool isImportBlockVisible;
 
-        public SearchTabViewModel(MainModel mainModel)
-            : base(mainModel, "Поиск")
+        public SearchTabViewModel(MainModel mainModel, IWindowContext parentWindowContext)
+            : base(mainModel, parentWindowContext, "Поиск")
         {
             ImportCommand = new Command(Import);
             SearchCommand = new Command(Search);
@@ -371,7 +371,7 @@ namespace LibgenDesktop.ViewModels
             }
             catch (Exception exception)
             {
-                ShowErrorWindow(exception);
+                ShowErrorWindow(exception, ParentWindowContext);
                 error = true;
             }
             IsSearchProgressPanelVisible = false;

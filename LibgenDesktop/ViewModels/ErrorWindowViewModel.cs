@@ -3,7 +3,7 @@ using LibgenDesktop.Infrastructure;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class ErrorWindowViewModel : ViewModel
+    internal class ErrorWindowViewModel : LibgenWindowViewModel
     {
         public ErrorWindowViewModel(string error)
         {

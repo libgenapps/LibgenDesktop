@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using LibgenDesktop.Models.Entities;
 
 namespace LibgenDesktop.Models.SqlDump
 {
@@ -47,7 +48,7 @@ namespace LibgenDesktop.Models.SqlDump
         }
     }
 
-    internal abstract class TableDefinition<T> : TableDefinition
+    internal abstract class TableDefinition<T> : TableDefinition where T : LibgenObject
     {
         public TableDefinition(string tableName, TableType tableType)
             : base(tableName, tableType)

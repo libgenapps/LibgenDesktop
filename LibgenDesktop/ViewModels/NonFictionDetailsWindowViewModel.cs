@@ -6,27 +6,41 @@ using LibgenDesktop.Models.Settings;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class NonFictionDetailsWindowViewModel : ViewModel
+    internal class NonFictionDetailsWindowViewModel : LibgenWindowViewModel
     {
         private readonly MainModel mainModel;
+        private readonly NonFictionBook book;
         private readonly bool modalWindow;
+        private NonFictionDetailsTabViewModel tabViewModel;
 
         public NonFictionDetailsWindowViewModel(MainModel mainModel, NonFictionBook book, bool modalWindow)
         {
             this.mainModel = mainModel;
+            this.book = book;
             this.modalWindow = modalWindow;
+            tabViewModel = null;
             WindowTitle = book.Title;
             WindowWidth = mainModel.AppSettings.NonFiction.DetailsWindow.Width;
             WindowHeight = mainModel.AppSettings.NonFiction.DetailsWindow.Height;
             WindowClosedCommand = new Command(WindowClosed);
-            TabViewModel = new NonFictionDetailsTabViewModel(mainModel, book, modalWindow);
-            TabViewModel.CloseTabRequested += CloseTabRequested;
         }
 
         public string WindowTitle { get; private set; }
         public int WindowWidth { get; set; }
         public int WindowHeight { get; set; }
-        public NonFictionDetailsTabViewModel TabViewModel { get; }
+
+        public NonFictionDetailsTabViewModel TabViewModel
+        {
+            get
+            {
+                if (tabViewModel == null)
+                {
+                    tabViewModel = new NonFictionDetailsTabViewModel(mainModel, CurrentWindowContext, book, modalWindow);
+                    tabViewModel.CloseTabRequested += CloseTabRequested;
+                }
+                return tabViewModel;
+            }
+        }
 
         public Command WindowClosedCommand { get; }
 

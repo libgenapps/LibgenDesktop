@@ -22,8 +22,8 @@ namespace LibgenDesktop.ViewModels
         private string disabledDownloadButtonTooltip;
         private string bookDownloadUrl;
 
-        public FictionDetailsTabViewModel(MainModel mainModel, FictionBook book, bool isInModalWindow)
-            : base(mainModel, book.Title)
+        public FictionDetailsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, FictionBook book, bool isInModalWindow)
+            : base(mainModel, parentWindowContext, book.Title)
         {
             this.book = book;
             IsInModalWindow = isInModalWindow;

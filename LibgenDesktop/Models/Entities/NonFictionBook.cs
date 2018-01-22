@@ -66,19 +66,20 @@ namespace LibgenDesktop.Models.Entities
         public string ColorString => StringBooleanToLabelString(Color, "да", "нет", "неизвестно");
         public string CleanedString => StringBooleanToLabelString(Cleaned, "да", "нет", "неизвестно");
 
+        public string ContentPageCountString
+        {
+            get
+            {
+                return !String.IsNullOrWhiteSpace(Pages) ? Pages : "неизвестно";
+            }
+        }
+
         public string PagesString
         {
             get
             {
                 StringBuilder resultBuilder = new StringBuilder();
-                if (!String.IsNullOrWhiteSpace(Pages))
-                {
-                    resultBuilder.Append(Pages);
-                }
-                else
-                {
-                    resultBuilder.Append("неизвестно");
-                }
+                resultBuilder.Append(ContentPageCountString);
                 resultBuilder.Append(" (содержательная часть) / ");
                 resultBuilder.Append(PagesInFile.ToString());
                 resultBuilder.Append(" (всего в файле)");

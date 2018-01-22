@@ -1,13 +1,10 @@
 ﻿<UserControl x:Class="LibgenDesktop.Views.Tabs.SciMagSearchResultsTab"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
              xmlns:const="clr-namespace:LibgenDesktop.Common"
              xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
-             mc:Ignorable="d" 
-             d:DesignWidth="600" d:DesignHeight="400"
              u:EventListenerExtensions.EventProvider="{Binding Events}">
     <UserControl.Resources>
         <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SciMagSearchResultsTabStyles.xaml" />
@@ -18,13 +15,21 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBox Name="searchTextBox" Grid.Row="0" Style="{StaticResource SearchTextBox}"
-                 md:HintAssist.Hint="Поиск" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                 ToolTipService.ToolTip="Поиск по наименованию, авторам, журналу, DOI, Pubmed ID и ISSN (p/e)">
-            <TextBox.InputBindings>
-                <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
-            </TextBox.InputBindings>
-        </TextBox>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Name="searchTextBox" Grid.Column="0" Style="{StaticResource SearchTextBox}"
+                     md:HintAssist.Hint="Поиск" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                     ToolTipService.ToolTip="Поиск по наименованию, авторам, журналу, DOI, Pubmed ID и ISSN (p/e)">
+                <TextBox.InputBindings>
+                    <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
+                </TextBox.InputBindings>
+            </TextBox>
+            <Button Grid.Column="1" Command="{Binding ExportCommand}" Style="{StaticResource ExportButton}"
+                    IsEnabled="{Binding IsExportPanelVisible, Converter={StaticResource booleanInverseConverter}}" />
+        </Grid>
         <DataGrid Name="articleGrid" Grid.Row="1" ItemsSource="{Binding Path=Articles, IsAsync=True}" SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
                   Visibility="{Binding IsArticleGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
                   Style="{StaticResource ArticleDataGrid}">
@@ -76,5 +81,7 @@
         </StackPanel>
         <TextBlock Grid.Row="2" Text="{Binding ArticleCount}" Style="{StaticResource StatusBarText}"
                    Visibility="{Binding IsStatusBarVisible, Converter={StaticResource booleanToCollapsedConverter}}"/>
+        <c:ExportPanel Grid.Row="1" Grid.RowSpan="2" DataContext="{Binding ExportPanelViewModel}"
+                       Visibility="{Binding DataContext.IsExportPanelVisible, Converter={StaticResource booleanToCollapsedConverter}, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}" />
     </Grid>
 </UserControl>

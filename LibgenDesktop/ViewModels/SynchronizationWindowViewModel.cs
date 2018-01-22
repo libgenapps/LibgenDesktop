@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.ProgressArgs;
-using LibgenDesktop.Models.SqlDump;
 using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class SynchronizationWindowViewModel : ViewModel
+    internal class SynchronizationWindowViewModel : LibgenWindowViewModel
     {
         private enum Step
         {
@@ -261,7 +259,7 @@ namespace LibgenDesktop.ViewModels
                 Status = "Синхронизация завершилась с ошибками";
                 IsCancelButtonVisible = false;
                 IsCloseButtonVisible = true;
-                ShowErrorWindow(exception);
+                ShowErrorWindow(exception, CurrentWindowContext);
                 return;
             }
             elapsedTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
@@ -328,7 +326,7 @@ namespace LibgenDesktop.ViewModels
             catch (Exception exception)
             {
                 cancellationTokenSource.Cancel();
-                ShowErrorWindow(exception);
+                ShowErrorWindow(exception, CurrentWindowContext);
             }
         }
 

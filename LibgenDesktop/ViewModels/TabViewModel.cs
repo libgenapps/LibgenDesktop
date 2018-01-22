@@ -7,9 +7,10 @@ namespace LibgenDesktop.ViewModels
     {
         private string title;
 
-        protected TabViewModel(MainModel mainModel, string title)
+        protected TabViewModel(MainModel mainModel, IWindowContext parentWindowContext, string title)
         {
             MainModel = mainModel;
+            ParentWindowContext = parentWindowContext;
             this.title = title;
             Events = new EventProvider();
         }
@@ -30,5 +31,6 @@ namespace LibgenDesktop.ViewModels
         public EventProvider Events { get; }
 
         protected MainModel MainModel { get; }
+        protected IWindowContext ParentWindowContext { get; }
     }
 }

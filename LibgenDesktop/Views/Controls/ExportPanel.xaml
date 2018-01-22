@@ -1,0 +1,92 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.Controls.ExportPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/ExportPanelStyles.xaml" />
+    </UserControl.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="Экспорт результатов поиска в файл" Style="{StaticResource Header}" />
+        <Grid Grid.Row="1" Visibility="{Binding IsSettingsPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Формат:" Style="{StaticResource SelectorPanelHeader}" />
+            <StackPanel Grid.Row="0" Grid.Column="1" Style="{StaticResource SelectorPanel}">
+                <RadioButton IsChecked="{Binding IsXlsxSelected}">
+                    <TextBlock Text="Файл Microsoft Excel 2007-2016 (XLSX)" />
+                </RadioButton>
+                <RadioButton IsChecked="{Binding IsCsvSelected}">
+                    <TextBlock Text="Текстовый файл с разделителями (CSV)" />
+                </RadioButton>
+            </StackPanel>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Разделитель:" Style="{StaticResource SelectorPanelHeader}"
+                   Visibility="{Binding IsSeparatorPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+            <StackPanel Grid.Row="1" Grid.Column="1" Style="{StaticResource SelectorPanel}"
+                    Visibility="{Binding IsSeparatorPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+                <RadioButton IsChecked="{Binding IsCommaSeparatorSelected}">
+                    <TextBlock Text="Запятая" />
+                </RadioButton>
+                <RadioButton IsChecked="{Binding IsSemicolonSeparatorSelected}">
+                    <TextBlock Text="Точка с запятой" />
+                </RadioButton>
+                <RadioButton IsChecked="{Binding IsTabSeparatorSelected}">
+                    <TextBlock Text="Знак табуляции" />
+                </RadioButton>
+            </StackPanel>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Сохранить в:" Style="{StaticResource PathPanelHeader}" />
+            <Grid Grid.Row="2" Grid.Column="1" Style="{StaticResource PathPanel}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Text="{Binding FilePathTemplate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Column="1" Content="Выбрать..." Command="{Binding SelectPathCommand}" />
+            </Grid>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Экспортировать:" Style="{StaticResource SelectorPanelHeader}"
+                   Visibility="{Binding IsLimitPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+            <StackPanel Grid.Row="3" Grid.Column="1" Style="{StaticResource SelectorPanel}"
+                        Visibility="{Binding IsLimitPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+                <RadioButton IsChecked="{Binding IsNoLimitSelected}">
+                    <TextBlock Text="все" />
+                </RadioButton>
+                <RadioButton IsChecked="{Binding IsLimitSelected}">
+                    <TextBlock Text="{Binding LimitString}" />
+                </RadioButton>
+            </StackPanel>
+            <UniformGrid Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Rows="1" Columns="2" Style="{StaticResource SettingsButtonPanel}">
+                <Button Content="ЭКСПОРТ" Command="{Binding ExportCommand}" IsEnabled="{Binding IsExportButtonEnabled}" />
+                <Button Content="ОТМЕНА" Command="{Binding CancelCommand}" />
+            </UniformGrid>
+        </Grid>
+        <Grid Grid.Row="1" Style="{StaticResource ProgressPanel}"
+              Visibility="{Binding IsProgressPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="{Binding ProgressStatus}" Style="{StaticResource ProgressStatus}" />
+            <Button Grid.Row="1" Content="{Binding CancelExportButtonText}" Command="{Binding CancelExportCommand}"
+                    Style="{StaticResource CancelExportButton}" IsEnabled="{Binding IsCancelExportButtonEnabled}"
+                    Visibility="{Binding IsCancelExportButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+            <StackPanel Grid.Row="1" Style="{StaticResource ProgressButtonPanel}"
+                        Visibility="{Binding AreExportResultButtonsVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+                <Button Content="ПОСМОТРЕТЬ РЕЗУЛЬТАТ" Command="{Binding ShowResultCommand}"
+                        Visibility="{Binding IsShowResultButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+                <Button Content="ЗАКРЫТЬ" Command="{Binding CloseCommand}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>
