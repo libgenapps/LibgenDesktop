@@ -13,10 +13,11 @@ namespace LibgenDesktop.Models.Entities
                     { "Md5Hash", "md5"},
                     { "CoverUrl", "cover-url"},
                     { "Format", "ext" },
+                    { "Doi", "doi"}, // to protect existing config
                 };
 
         private MatchEvaluator env_me;
-        private static Regex env_rx = new Regex(@"{(\S+?)}");
+        private static Regex env_rx = new Regex(@"{([^{}]+)}");
         private string envRep(Match match)
         {
             string name = match.Groups[1].Value;
