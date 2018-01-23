@@ -29,7 +29,8 @@ namespace LibgenDesktop.Models.Import
 
         protected override void UpdateBatch(List<SciMagArticle> objectBatch)
         {
-            throw new Exception("Updating is not supported for articles.");
+            if (objectBatch.Count > 0)
+                throw new Exception("Updating is not supported for articles.");
         }
 
         protected override bool IsNewObject(SciMagArticle importingObject)

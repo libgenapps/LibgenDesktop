@@ -125,6 +125,7 @@
     <Compile Include="Models\Database\SearchQueryParser.cs" />
     <Compile Include="Models\Entities\DatabaseMetadata.cs" />
     <Compile Include="Models\Entities\FictionBook.cs" />
+    <Compile Include="Models\Entities\LibgenEnv.cs" />
     <Compile Include="Models\Entities\LibgenObject.cs" />
     <Compile Include="Models\Entities\LibgenObjectType.cs" />
     <Compile Include="Models\Entities\SciMagArticle.cs" />
@@ -161,7 +162,6 @@
     <Compile Include="Models\SqlDump\TableDefinition.cs" />
     <Compile Include="Models\SqlDump\TableDefinitions.cs" />
     <Compile Include="Models\SqlDump\TableType.cs" />
-    <Compile Include="Models\Utils\UrlGenerator.cs" />
     <Compile Include="ViewModels\ExportPanelViewModel.cs" />
     <Compile Include="ViewModels\FictionDetailsTabViewModel.cs" />
     <Compile Include="ViewModels\LibgenWindowViewModel.cs" />

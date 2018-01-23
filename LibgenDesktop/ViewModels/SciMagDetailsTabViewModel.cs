@@ -107,7 +107,7 @@ namespace LibgenDesktop.ViewModels
                 else
                 {
                     IsDownloadButtonEnabled = true;
-                    articleDownloadUrl = UrlGenerator.GetSciMagDownloadUrl(MainModel.Mirrors[downloadMirrorName], Article);
+                    articleDownloadUrl = Article.Env(MainModel.Mirrors[downloadMirrorName].SciMagDownloadUrl);
                 }
             }
         }
