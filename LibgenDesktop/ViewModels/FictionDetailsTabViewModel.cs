@@ -167,7 +167,7 @@ namespace LibgenDesktop.ViewModels
                 else
                 {
                     IsDownloadButtonEnabled = true;
-                    bookDownloadUrl = UrlGenerator.GetFictionDownloadUrl(MainModel.Mirrors[downloadMirrorName], Book);
+                    bookDownloadUrl = Book.Env(MainModel.Mirrors[downloadMirrorName].FictionDownloadUrl);
                 }
             }
             BookCoverVisible = false;
@@ -194,7 +194,7 @@ namespace LibgenDesktop.ViewModels
                     }
                     else
                     {
-                        string bookCoverUrl = UrlGenerator.GetFictionCoverUrl(MainModel.Mirrors[coverMirrorName], Book);
+                        string bookCoverUrl = Book.Env(MainModel.Mirrors[coverMirrorName].FictionCoverUrl);
                         BookCoverNotification = "Обложка загружается...";
                         IsBookCoverNotificationVisible = true;
                         try
