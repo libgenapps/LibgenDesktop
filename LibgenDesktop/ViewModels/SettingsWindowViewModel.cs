@@ -9,6 +9,7 @@ using LibgenDesktop.Models;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Views;
 using static LibgenDesktop.Common.Constants;
+using static LibgenDesktop.Models.Settings.AppSettings;
 
 namespace LibgenDesktop.ViewModels
 {
@@ -18,11 +19,16 @@ namespace LibgenDesktop.ViewModels
 
         private readonly MainModel mainModel;
         private readonly Dictionary<string, string> errors;
+        private bool isGeneralTabSelected;
         private bool isNetworkTabSelected;
         private bool isMirrorsTabSelected;
         private bool isSearchTabSelected;
         private bool isExportTabSelected;
         private bool isAdvancedTabSelected;
+        private Dictionary<string, string> generalLanguagesList;
+        private KeyValuePair<string, string> generalSelectedLanguage;
+        private Dictionary<GeneralSettings.UpdateCheckInterval, string> generalUpdateCheckIntervalList;
+        private KeyValuePair<GeneralSettings.UpdateCheckInterval, string> generalSelectedUpdateCheckInterval;
         private bool networkIsOfflineModeOn;
         private bool networkUseProxy;
         private string networkProxyAddress;
@@ -63,6 +69,19 @@ namespace LibgenDesktop.ViewModels
             CancelCommand = new Command(CancelButtonClick);
             WindowClosingCommand = new FuncCommand<bool>(WindowClosing);
             Initialize();
+        }
+
+        public bool IsGeneralTabSelected
+        {
+            get
+            {
+                return isGeneralTabSelected;
+            }
+            set
+            {
+                isGeneralTabSelected = value;
+                NotifyPropertyChanged();
+            }
         }
 
         public bool IsNetworkTabSelected
@@ -130,6 +149,60 @@ namespace LibgenDesktop.ViewModels
             }
         }
 
+        public Dictionary<string, string> GeneralLanguagesList
+        {
+            get
+            {
+                return generalLanguagesList;
+            }
+            set
+            {
+                generalLanguagesList = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public KeyValuePair<string, string> GeneralSelectedLanguage
+        {
+            get
+            {
+                return generalSelectedLanguage;
+            }
+            set
+            {
+                generalSelectedLanguage = value;
+                NotifyPropertyChanged();
+                settingsChanged = true;
+            }
+        }
+
+        public Dictionary<GeneralSettings.UpdateCheckInterval, string> GeneralUpdateCheckIntervalList
+        {
+            get
+            {
+                return generalUpdateCheckIntervalList;
+            }
+            set
+            {
+                generalUpdateCheckIntervalList = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public KeyValuePair<GeneralSettings.UpdateCheckInterval, string> GeneralSelectedUpdateCheckInterval
+        {
+            get
+            {
+                return generalSelectedUpdateCheckInterval;
+            }
+            set
+            {
+                generalSelectedUpdateCheckInterval = value;
+                NotifyPropertyChanged();
+                settingsChanged = true;
+            }
+        }
+
         public bool NetworkIsOfflineModeOn
         {
             get
@@ -139,8 +212,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 networkIsOfflineModeOn = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -153,8 +226,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 networkUseProxy = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
                 Validate();
             }
         }
@@ -168,8 +241,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 networkProxyAddress = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
                 Validate();
             }
         }
@@ -183,8 +256,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 networkProxyPort = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
                 Validate();
             }
         }
@@ -198,8 +271,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 networkProxyUserName = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -212,8 +285,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 networkProxyPassword = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -239,8 +312,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 mirrorsSelectedNonFictionBooksMirror = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -266,8 +339,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 mirrorsSelectedNonFictionCoversMirror = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -293,8 +366,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 mirrorsSelectedNonFictionSynchronizationMirror = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -320,8 +393,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 mirrorsSelectedFictionBooksMirror = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -347,8 +420,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 mirrorsSelectedFictionCoversMirror = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -374,8 +447,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 mirrorsSelectedArticlesMirror = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -388,8 +461,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchIsLimitResultsOn = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
                 Validate();
             }
         }
@@ -416,8 +489,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchMaximumResultCount = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
                 Validate();
             }
         }
@@ -431,8 +504,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchIsOpenInModalWindowSelected = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -445,8 +518,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchIsOpenInNonModalWindowSelected = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -459,8 +532,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 searchIsOpenInNewTabSelected = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
             }
         }
 
@@ -515,8 +588,8 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 exportMaximumRowsPerFile = value;
-                settingsChanged = true;
                 NotifyPropertyChanged();
+                settingsChanged = true;
                 Validate();
             }
         }
@@ -613,11 +686,22 @@ namespace LibgenDesktop.ViewModels
         {
             AppSettings appSettings = mainModel.AppSettings;
             settingsChanged = false;
-            isNetworkTabSelected = true;
+            isGeneralTabSelected = true;
+            isNetworkTabSelected = false;
             isMirrorsTabSelected = false;
             isSearchTabSelected = false;
             isExportTabSelected = false;
             isAdvancedTabSelected = false;
+            generalLanguagesList = mainModel.Languages;
+            generalSelectedLanguage = generalLanguagesList.First(language => language.Key == appSettings.General.Language);
+            generalUpdateCheckIntervalList = new Dictionary<AppSettings.GeneralSettings.UpdateCheckInterval, string>
+            {
+                { GeneralSettings.UpdateCheckInterval.NEVER, "никогда" },
+                { GeneralSettings.UpdateCheckInterval.DAILY, "один раз в день" },
+                { GeneralSettings.UpdateCheckInterval.WEEKLY, "один раз в неделю" },
+                { GeneralSettings.UpdateCheckInterval.MONTHLY, "один раз в месяц" }
+            };
+            generalSelectedUpdateCheckInterval = generalUpdateCheckIntervalList.First(interval => interval.Key == appSettings.General.UpdateCheck);
             networkIsOfflineModeOn = appSettings.Network.OfflineMode;
             networkUseProxy = appSettings.Network.UseProxy;
             networkProxyAddress = appSettings.Network.ProxyAddress;
@@ -644,13 +728,13 @@ namespace LibgenDesktop.ViewModels
             searchIsOpenInNewTabSelected = false;
             switch (appSettings.Search.OpenDetailsMode)
             {
-                case AppSettings.SearchSettings.DetailsMode.NEW_MODAL_WINDOW:
+                case SearchSettings.DetailsMode.NEW_MODAL_WINDOW:
                     searchIsOpenInModalWindowSelected = true;
                     break;
-                case AppSettings.SearchSettings.DetailsMode.NEW_NON_MODAL_WINDOW:
+                case SearchSettings.DetailsMode.NEW_NON_MODAL_WINDOW:
                     searchIsOpenInNonModalWindowSelected = true;
                     break;
-                case AppSettings.SearchSettings.DetailsMode.NEW_TAB:
+                case SearchSettings.DetailsMode.NEW_TAB:
                     searchIsOpenInNewTabSelected = true;
                     break;
             }
@@ -697,7 +781,12 @@ namespace LibgenDesktop.ViewModels
 
         private void OkButtonClick()
         {
-            mainModel.AppSettings.Network = new AppSettings.NetworkSettings
+            mainModel.AppSettings.General = new GeneralSettings
+            {
+                Language = GeneralSelectedLanguage.Key,
+                UpdateCheck = GeneralSelectedUpdateCheckInterval.Key
+            };
+            mainModel.AppSettings.Network = new NetworkSettings
             {
                 OfflineMode = NetworkIsOfflineModeOn,
                 UseProxy = NetworkUseProxy,
@@ -706,7 +795,7 @@ namespace LibgenDesktop.ViewModels
                 ProxyUserName = NetworkProxyUserName,
                 ProxyPassword = NetworkProxyPassword
             };
-            mainModel.AppSettings.Mirrors = new AppSettings.MirrorSettings
+            mainModel.AppSettings.Mirrors = new MirrorSettings
             {
                 NonFictionBooksMirrorName = ParseDisplayMirrorName(MirrorsSelectedNonFictionBooksMirror),
                 NonFictionCoversMirrorName = ParseDisplayMirrorName(MirrorsSelectedNonFictionCoversMirror),
@@ -715,24 +804,24 @@ namespace LibgenDesktop.ViewModels
                 FictionCoversMirrorName = ParseDisplayMirrorName(MirrorsSelectedFictionCoversMirror),
                 ArticlesMirrorMirrorName = ParseDisplayMirrorName(MirrorsSelectedArticlesMirror)
             };
-            mainModel.AppSettings.Search = new AppSettings.SearchSettings
+            mainModel.AppSettings.Search = new SearchSettings
             {
                 LimitResults = SearchIsLimitResultsOn,
                 MaximumResultCount = SearchMaximumResultCountValue ?? DEFAULT_MAXIMUM_SEARCH_RESULT_COUNT
             };
             if (SearchIsOpenInModalWindowSelected)
             {
-                mainModel.AppSettings.Search.OpenDetailsMode = AppSettings.SearchSettings.DetailsMode.NEW_MODAL_WINDOW;
+                mainModel.AppSettings.Search.OpenDetailsMode = SearchSettings.DetailsMode.NEW_MODAL_WINDOW;
             }
             else if (SearchIsOpenInNonModalWindowSelected)
             {
-                mainModel.AppSettings.Search.OpenDetailsMode = AppSettings.SearchSettings.DetailsMode.NEW_NON_MODAL_WINDOW;
+                mainModel.AppSettings.Search.OpenDetailsMode = SearchSettings.DetailsMode.NEW_NON_MODAL_WINDOW;
             }
             else if (SearchIsOpenInNewTabSelected)
             {
-                mainModel.AppSettings.Search.OpenDetailsMode = AppSettings.SearchSettings.DetailsMode.NEW_TAB;
+                mainModel.AppSettings.Search.OpenDetailsMode = SearchSettings.DetailsMode.NEW_TAB;
             }
-            mainModel.AppSettings.Export = new AppSettings.ExportSettings
+            mainModel.AppSettings.Export = new ExportSettings
             {
                 OpenResultsAfterExport = ExportIsOpenResultsAfterExportEnabled,
                 SplitIntoMultipleFiles = ExportIsSplitIntoMultipleFilesEnabled,
@@ -752,6 +841,7 @@ namespace LibgenDesktop.ViewModels
             }
             mainModel.SaveSettings();
             mainModel.CreateNewHttpClient();
+            mainModel.ConfigureUpdater();
             settingsChanged = false;
             CurrentWindowContext.CloseDialog(true);
         }

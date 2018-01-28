@@ -23,11 +23,28 @@ namespace LibgenDesktop.Models.Entities
         {
             FieldDefinitions = new Dictionary<string, FieldDefinition>();
             AddField("Version", metadata => metadata.Version, (metadata, value) => metadata.Version = value);
+            AddField("NonFictionFirstImportComplete", metadata => metadata.NonFictionFirstImportComplete.ToString(),
+                (metadata, value) => metadata.NonFictionFirstImportComplete = value == Boolean.TrueString);
+            AddField("FictionFirstImportComplete", metadata => metadata.FictionFirstImportComplete.ToString(),
+                (metadata, value) => metadata.FictionFirstImportComplete = value == Boolean.TrueString);
+            AddField("SciMagFirstImportComplete", metadata => metadata.SciMagFirstImportComplete.ToString(),
+                (metadata, value) => metadata.SciMagFirstImportComplete = value == Boolean.TrueString);
+        }
+
+        public DatabaseMetadata()
+        {
+            Version = null;
+            NonFictionFirstImportComplete = null;
+            FictionFirstImportComplete = null;
+            SciMagFirstImportComplete = null;
         }
 
         public static Dictionary<string, FieldDefinition> FieldDefinitions { get; }
 
         public string Version { get; set; }
+        public bool? NonFictionFirstImportComplete { get; set; }
+        public bool? FictionFirstImportComplete { get; set; }
+        public bool? SciMagFirstImportComplete { get; set; }
 
         private static void AddField(string fieldName, Func<DatabaseMetadata, string> getter, Action<DatabaseMetadata, string> setter)
         {

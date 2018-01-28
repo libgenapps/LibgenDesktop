@@ -43,6 +43,7 @@ namespace LibgenDesktop.ViewModels
             ExportPanelViewModel.ClosePanel += CloseExportPanel;
             OpenDetailsCommand = new Command(param => OpenDetails(param as SciMagArticle));
             SearchCommand = new Command(Search);
+            ExportCommand = new Command(ShowExportPanel);
             ArticleDataGridEnterKeyCommand = new Command(ArticleDataGridEnterKeyPressed);
             Initialize();
         }

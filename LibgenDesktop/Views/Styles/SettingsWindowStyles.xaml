@@ -33,9 +33,18 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+    <Style x:Key="NonEditableComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
+        <Setter Property="IsEditable" Value="False" />
+        <Setter Property="IsTextSearchEnabled" Value="True" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource MaterialDesignComboBoxItemStyle}" />
+    </Style>
     <Style x:Key="Note" TargetType="TextBlock">
         <Setter Property="Foreground" Value="Gray" />
         <Setter Property="FontSize" Value="15" />
+    </Style>
+    <Style x:Key="GeneralTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <Style x:Key="GeneralComboBox" TargetType="ComboBox" BasedOn="{StaticResource NonEditableComboBox}">
+        <Setter Property="MinWidth" Value="200" />
     </Style>
     <Style x:Key="NetworkTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <SolidColorBrush x:Key="MaterialDesignTextFieldBoxDisabledBackground">Transparent</SolidColorBrush>
@@ -68,12 +77,9 @@
         <Setter Property="Margin" Value="24,0,0,0" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
-    <Style x:Key="MirrorComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
+    <Style x:Key="MirrorComboBox" TargetType="ComboBox" BasedOn="{StaticResource NonEditableComboBox}">
         <Setter Property="Margin" Value="0,6" />
-        <Setter Property="IsEditable" Value="False" />
-        <Setter Property="IsTextSearchEnabled" Value="True" />
         <Setter Property="MinWidth" Value="160" />
-        <Setter Property="ItemContainerStyle" Value="{StaticResource MaterialDesignComboBoxItemStyle}" />
     </Style>
     <Style x:Key="SearchTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <Style x:Key="SearchOpenDetailsPanel" TargetType="StackPanel">

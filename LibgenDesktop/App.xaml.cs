@@ -44,8 +44,8 @@ namespace LibgenDesktop
 
         private void ShowCreateDatabaseWindow(MainModel mainModel)
         {
-            CreateDatabaseViewModel createDatabaseViewModel = new CreateDatabaseViewModel(mainModel);
-            IWindowContext windowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.CREATE_DATABASE_WINDOW, createDatabaseViewModel);
+            CreateDatabaseWindowViewModel createDatabaseWindowViewModel = new CreateDatabaseWindowViewModel(mainModel);
+            IWindowContext windowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.CREATE_DATABASE_WINDOW, createDatabaseWindowViewModel);
             bool? result = windowContext.ShowDialog();
             if (result == true)
             {

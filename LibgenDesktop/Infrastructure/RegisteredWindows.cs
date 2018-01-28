@@ -17,7 +17,8 @@ namespace LibgenDesktop.Infrastructure
             IMPORT_WINDOW,
             CREATE_DATABASE_WINDOW,
             SETTINGS_WINDOW,
-            SYNCHRONIZATION_WINDOW
+            SYNCHRONIZATION_WINDOW,
+            APPLICATION_UPDATE_WINDOW
         }
 
         internal class RegisteredWindow
@@ -43,9 +44,10 @@ namespace LibgenDesktop.Infrastructure
             RegisterWindow(WindowKey.SCI_MAG_DETAILS_WINDOW, typeof(SciMagDetailsWindow), typeof(SciMagDetailsWindowViewModel));
             RegisterWindow(WindowKey.ERROR_WINDOW, typeof(ErrorWindow), typeof(ErrorWindowViewModel));
             RegisterWindow(WindowKey.IMPORT_WINDOW, typeof(ImportWindow), typeof(ImportWindowViewModel));
-            RegisterWindow(WindowKey.CREATE_DATABASE_WINDOW, typeof(CreateDatabaseWindow), typeof(CreateDatabaseViewModel));
+            RegisterWindow(WindowKey.CREATE_DATABASE_WINDOW, typeof(CreateDatabaseWindow), typeof(CreateDatabaseWindowViewModel));
             RegisterWindow(WindowKey.SETTINGS_WINDOW, typeof(SettingsWindow), typeof(SettingsWindowViewModel));
             RegisterWindow(WindowKey.SYNCHRONIZATION_WINDOW, typeof(SynchronizationWindow), typeof(SynchronizationWindowViewModel));
+            RegisterWindow(WindowKey.APPLICATION_UPDATE_WINDOW, typeof(ApplicationUpdateWindow), typeof(ApplicationUpdateWindowViewModel));
         }
 
         public static Dictionary<WindowKey, RegisteredWindow> AllWindows { get; }

@@ -18,33 +18,7 @@
             <ProgressBar Visibility="{Binding IsInProgress, Converter={StaticResource booleanToCollapsedConverter}}" Style="{StaticResource StatusProgressBar}" />
             <TextBlock Text="{Binding Status}" Style="{StaticResource StatusDescription}" />
         </StackPanel>
-        <ScrollViewer Grid.Row="1" Style="{StaticResource LogScrollViewer}">
-            <StackPanel Style="{StaticResource LogContentPanel}">
-                <ItemsControl ItemsSource="{Binding Logs}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Style="{StaticResource LogLine}">
-                                <TextBlock>
-                                    <Run Text="{Binding Step}" Style="{StaticResource LogLineStep}" />
-                                    <Run Text="{Binding Header}" />
-                                </TextBlock>
-                                <ItemsControl ItemsSource="{Binding LogLines}">
-                                    <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding}" Style="{StaticResource LogLineStatus}" />
-                                        </DataTemplate>
-                                    </ItemsControl.ItemTemplate>
-                                </ItemsControl>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                <TextBlock Text="{Binding ResultLogLine}" Visibility="{Binding IsResultLogLineVisible, Converter={StaticResource booleanToCollapsedConverter}}"
-                           Style="{StaticResource ResultLogLine}" />
-                <TextBlock Text="{Binding ErrorLogLine}" Visibility="{Binding IsErrorLogLineVisible, Converter={StaticResource booleanToCollapsedConverter}}"
-                           Style="{StaticResource ErrorLogLine}" />
-            </StackPanel>
-        </ScrollViewer>
+        <c:ImportLogPanel Grid.Row="1" DataContext="{Binding Logs}" />
         <Grid Grid.Row="2" Style="{StaticResource BottomPanel}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />

@@ -43,6 +43,7 @@ namespace LibgenDesktop.ViewModels
             ExportPanelViewModel.ClosePanel += CloseExportPanel;
             OpenDetailsCommand = new Command(param => OpenDetails(param as FictionBook));
             SearchCommand = new Command(Search);
+            ExportCommand = new Command(ShowExportPanel);
             BookDataGridEnterKeyCommand = new Command(BookDataGridEnterKeyPressed);
             Initialize();
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using LibgenDesktop.Models.Database;
 using LibgenDesktop.Models.Entities;
@@ -11,10 +12,10 @@ namespace LibgenDesktop.Models.Import
         private readonly DateTime lastAddedDateTime;
         private readonly int lastModifiedLibgenId;
 
-        public SciMagImporter(LocalDatabase localDatabase, bool isUpdateMode)
-            : base(localDatabase, isUpdateMode, TableDefinitions.SciMag)
+        public SciMagImporter(LocalDatabase localDatabase, BitArray existingLibgenIds)
+            : base(localDatabase, existingLibgenIds, TableDefinitions.SciMag)
         {
-            if (isUpdateMode)
+            if (IsUpdateMode)
             {
                 SciMagArticle lastAddedSciMagArticle = LocalDatabase.GetLastAddedSciMagArticle();
                 lastAddedDateTime = lastAddedSciMagArticle.AddedDateTime ?? DateTime.MinValue;

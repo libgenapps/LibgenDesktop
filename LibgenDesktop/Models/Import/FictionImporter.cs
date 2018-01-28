@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using LibgenDesktop.Models.Database;
 using LibgenDesktop.Models.Entities;
@@ -11,10 +12,10 @@ namespace LibgenDesktop.Models.Import
         private readonly DateTime lastModifiedDateTime;
         private readonly int lastModifiedLibgenId;
 
-        public FictionImporter(LocalDatabase localDatabase, bool isUpdateMode)
-            : base(localDatabase, isUpdateMode, TableDefinitions.Fiction)
+        public FictionImporter(LocalDatabase localDatabase, BitArray existingLibgenIds)
+            : base(localDatabase, existingLibgenIds, TableDefinitions.Fiction)
         {
-            if (isUpdateMode)
+            if (IsUpdateMode)
             {
                 FictionBook lastModifiedFictionBook = LocalDatabase.GetLastModifiedFictionBook();
                 lastModifiedDateTime = lastModifiedFictionBook.LastModifiedDateTime;

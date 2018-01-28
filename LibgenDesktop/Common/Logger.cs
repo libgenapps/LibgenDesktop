@@ -64,6 +64,7 @@ namespace LibgenDesktop.Common
         private static void LogEnvironmentInformation()
         {
             logger.Debug("Libgen Desktop " + CURRENT_VERSION);
+            logger.Debug("Release: " + CURRENT_GITHUB_RELEASE_NAME);
             logger.Debug("OS: " + Environment.OsVersion);
             logger.Debug(".NET Framework: " + Environment.NetFrameworkVersion);
             logger.Debug("Is in 64-bit process: " + Environment.IsIn64BitProcess);

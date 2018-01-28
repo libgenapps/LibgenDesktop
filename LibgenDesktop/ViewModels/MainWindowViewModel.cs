@@ -16,22 +16,26 @@ namespace LibgenDesktop.ViewModels
         private readonly MainModel mainModel;
         private SearchTabViewModel defaultSearchTabViewModel;
         private TabViewModel selectedTabViewModel;
+        private bool isApplicationUpdateAvailable;
 
         public MainWindowViewModel(MainModel mainModel)
         {
             this.mainModel = mainModel;
             defaultSearchTabViewModel = null;
+            Events = new EventProvider();
             NewTabCommand = new Command(NewTab);
             CloseTabCommand = new Command(param => CloseTab(param as TabViewModel));
             CloseCurrentTabCommand = new Command(CloseCurrentTab);
             ExportCommand = new Command(Export);
             DownloadManagerCommand = new Command(ShowDownloadManager);
+            ShowApplicationUpdateCommand = new Command(ShowApplicationUpdate);
             ImportCommand = new Command(Import);
             SynchronizeCommand = new Command(Synchronize);
             SettingsCommand = new Command(SettingsMenuItemClick);
             WindowClosedCommand = new Command(WindowClosed);
             TabViewModels = new ObservableCollection<TabViewModel>();
             Initialize();
+            mainModel.ApplicationUpdateCheckCompleted += ApplicationUpdateCheckCompleted;
         }
 
         public int WindowWidth { get; set; }
@@ -39,7 +43,7 @@ namespace LibgenDesktop.ViewModels
         public int WindowLeft { get; set; }
         public int WindowTop { get; set; }
         public bool IsWindowMaximized { get; set; }
-
+        public EventProvider Events { get; }
         public ObservableCollection<TabViewModel> TabViewModels { get; }
 
         public SearchTabViewModel DefaultSearchTabViewModel
@@ -91,11 +95,25 @@ namespace LibgenDesktop.ViewModels
             }
         }
 
+        public bool IsApplicationUpdateAvailable
+        {
+            get
+            {
+                return isApplicationUpdateAvailable;
+            }
+            set
+            {
+                isApplicationUpdateAvailable = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public Command NewTabCommand { get; }
         public Command CloseTabCommand { get; }
         public Command CloseCurrentTabCommand { get; }
         public Command ExportCommand { get; }
         public Command DownloadManagerCommand { get; }
+        public Command ShowApplicationUpdateCommand { get; }
         public Command ImportCommand { get; }
         public Command SynchronizeCommand { get; }
         public Command SettingsCommand { get; }
@@ -104,7 +122,7 @@ namespace LibgenDesktop.ViewModels
         private void Initialize()
         {
             AppSettings appSettings = mainModel.AppSettings;
-            AppSettings.MainWindowSettings mainWindowSettings = appSettings.MainWindow;
+            MainWindowSettings mainWindowSettings = appSettings.MainWindow;
             WindowWidth = mainWindowSettings.Width;
             WindowHeight = mainWindowSettings.Height;
             WindowLeft = mainWindowSettings.Left;
@@ -115,6 +133,7 @@ namespace LibgenDesktop.ViewModels
             DefaultSearchTabViewModel.FictionSearchComplete += SearchTabFictionSearchComplete;
             DefaultSearchTabViewModel.SciMagSearchComplete += SearchTabSciMagSearchComplete;
             selectedTabViewModel = null;
+            isApplicationUpdateAvailable = false;
         }
 
         private void DefaultSearchTabViewModel_ImportRequested(object sender, EventArgs e)
@@ -351,6 +370,20 @@ namespace LibgenDesktop.ViewModels
             }
         }
 
+        private void ShowApplicationUpdate()
+        {
+            ApplicationUpdateWindowViewModel applicationUpdateWindowViewModel =
+                new ApplicationUpdateWindowViewModel(mainModel, mainModel.LastApplicationUpdateCheckResult);
+            applicationUpdateWindowViewModel.ApplicationShutdownRequested += Shutdown;
+            IWindowContext applicationUpdateWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.APPLICATION_UPDATE_WINDOW,
+                applicationUpdateWindowViewModel, CurrentWindowContext);
+            if (applicationUpdateWindowContext.ShowDialog() == true)
+            {
+                IsApplicationUpdateAvailable = false;
+            }
+            applicationUpdateWindowViewModel.ApplicationShutdownRequested -= Shutdown;
+        }
+
         private void Import()
         {
             OpenFileDialogParameters selectSqlDumpFileDialogParameters = new OpenFileDialogParameters
@@ -381,7 +414,7 @@ namespace LibgenDesktop.ViewModels
 
         public void Synchronize()
         {
-            if (mainModel.NonFictionBookCount == 0)
+            if (mainModel.DatabaseMetadata.NonFictionFirstImportComplete != true)
             {
                 MessageBoxWindow.ShowMessage("Ошибка", @"Перед синхронизацией списка нехудожественной литературы необходимо выполнить импорт из дампа базы данных (пункт ""Импорт"" в меню).", CurrentWindowContext);
                 return;
@@ -426,9 +459,19 @@ namespace LibgenDesktop.ViewModels
             settingsWindowContext.ShowDialog();
         }
 
+        private void ApplicationUpdateCheckCompleted(object sender, EventArgs e)
+        {
+            IsApplicationUpdateAvailable = mainModel.LastApplicationUpdateCheckResult != null;
+        }
+
+        private void Shutdown(object sender, EventArgs e)
+        {
+            CurrentWindowContext.Close();
+        }
+
         private void WindowClosed()
         {
-            mainModel.AppSettings.MainWindow = new AppSettings.MainWindowSettings
+            mainModel.AppSettings.MainWindow = new MainWindowSettings
             {
                 Width = WindowWidth,
                 Height = WindowHeight,

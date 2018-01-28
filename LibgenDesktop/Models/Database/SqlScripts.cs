@@ -12,6 +12,10 @@
 
         public const string GET_ALL_METADATA_ITEMS = "SELECT Key,Value FROM metadata";
 
+        public const string CHECK_IF_METADATA_ITEM_EXIST = "SELECT COUNT(*) FROM metadata WHERE Key = @Key";
+
+        public const string GET_METADATA_ITEM = "SELECT Value FROM metadata WHERE Key = @Key";
+
         public const string INSERT_METADATA_ITEM = "INSERT INTO metadata VALUES (@Key,@Value)";
 
         public const string UPDATE_METADATA_ITEM = "UPDATE metadata SET Value = @Value WHERE Key = @Key";
@@ -72,6 +76,8 @@
             "CREATE VIRTUAL TABLE IF NOT EXISTS non_fiction_fts USING fts5 (Title, Series, Authors, Publisher, IdentifierPlain, " +
                 "content=non_fiction, content_rowid=Id)";
 
+        public const string GET_ALL_NON_FICTION_LIBGEN_IDS = "SELECT LibgenId FROM non_fiction";
+
         public const string COUNT_NON_FICTION = "SELECT MAX(Id) FROM non_fiction LIMIT 1";
 
         public const string GET_NON_FICTION_BY_ID = "SELECT * FROM non_fiction WHERE Id = @Id";
@@ -80,6 +86,8 @@
 
         public const string GET_LAST_MODIFIED_NON_FICTION =
             "SELECT * FROM non_fiction WHERE LastModifiedDateTime = (SELECT MAX(LastModifiedDateTime) FROM non_fiction) ORDER BY LibgenId DESC LIMIT 1";
+
+        public const string GET_NON_FICTION_MAX_LIBGEN_ID = "SELECT MAX(LibgenId) FROM non_fiction LIMIT 1";
 
         public const string SEARCH_NON_FICTION = "SELECT * FROM non_fiction " +
             "WHERE Id IN (SELECT rowid FROM non_fiction_fts WHERE non_fiction_fts MATCH @SearchQuery) ORDER BY Id";
@@ -219,6 +227,8 @@
                 "AuthorFamily4, AuthorName4, AuthorSurname4, Pseudonim4, RussianAuthorFamily, RussianAuthorName, RussianAuthorSurname, " +
                 "Series1, Series2, Series3, Series4, Publisher, Identifier, content=fiction, content_rowid=Id)";
 
+        public const string GET_ALL_FICTION_LIBGEN_IDS = "SELECT LibgenId FROM fiction";
+
         public const string COUNT_FICTION = "SELECT MAX(Id) FROM fiction LIMIT 1";
 
         public const string GET_FICTION_BY_ID = "SELECT * FROM fiction WHERE Id = @Id";
@@ -227,6 +237,8 @@
 
         public const string GET_LAST_MODIFIED_FICTION = 
             "SELECT * FROM fiction WHERE LastModifiedDateTime = (SELECT MAX(LastModifiedDateTime) FROM fiction) ORDER BY LibgenId DESC LIMIT 1";
+
+        public const string GET_FICTION_MAX_LIBGEN_ID = "SELECT MAX(LibgenId) FROM fiction LIMIT 1";
 
         public const string SEARCH_FICTION = "SELECT * FROM fiction WHERE Id IN (SELECT rowid FROM fiction_fts WHERE fiction_fts MATCH @SearchQuery) ORDER BY Id";
 
@@ -361,6 +373,8 @@
         public const string CREATE_SCIMAG_FTS_TABLE = "CREATE VIRTUAL TABLE IF NOT EXISTS scimag_fts USING fts5 "+
             "(Title, Authors, Doi, Doi2, PubmedId, Journal, Issnp, Issne, content=scimag, content_rowid=Id)";
 
+        public const string GET_ALL_SCIMAG_LIBGEN_IDS = "SELECT LibgenId FROM scimag";
+
         public const string COUNT_SCIMAG = "SELECT MAX(Id) FROM scimag LIMIT 1";
 
         public const string GET_SCIMAG_BY_ID = "SELECT * FROM scimag WHERE Id = @Id";
@@ -369,6 +383,8 @@
 
         public const string GET_LAST_ADDED_SCIMAG =
             "SELECT * FROM scimag WHERE AddedDateTime = (SELECT MAX(AddedDateTime) FROM scimag) ORDER BY LibgenId DESC LIMIT 1";
+
+        public const string GET_SCIMAG_MAX_LIBGEN_ID = "SELECT MAX(LibgenId) FROM scimag LIMIT 1";
 
         public const string SEARCH_SCIMAG = "SELECT * FROM scimag WHERE Id IN (SELECT rowid FROM scimag_fts WHERE scimag_fts MATCH @SearchQuery) ORDER BY Id";
 

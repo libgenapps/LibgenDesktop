@@ -9,7 +9,7 @@ using Environment = LibgenDesktop.Common.Environment;
 
 namespace LibgenDesktop.ViewModels
 {
-    internal class CreateDatabaseViewModel : LibgenWindowViewModel
+    internal class CreateDatabaseWindowViewModel : LibgenWindowViewModel
     {
         internal enum EventType
         {
@@ -24,7 +24,7 @@ namespace LibgenDesktop.ViewModels
         private bool isCreateDatabaseSelected;
         private bool isOpenDatabaseSelected;
 
-        public CreateDatabaseViewModel(MainModel mainModel)
+        public CreateDatabaseWindowViewModel(MainModel mainModel)
         {
             this.mainModel = mainModel;
             OkButtonCommand = new Command(OkButtonClick);

@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace LibgenDesktop.Views.Controls
 {
@@ -15,6 +17,43 @@ namespace LibgenDesktop.Views.Controls
         public static void SetMaxLength(DependencyObject dependencyObject, int value)
         {
             dependencyObject.SetValue(MaxLengthProperty, value);
+        }
+
+        public static T FindChild<T>(this DependencyObject parent, string childName = null) where T : DependencyObject
+        {
+            if (parent == null)
+            {
+                return null;
+            }
+            T result = null;
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                T childType = child as T;
+                if (childType == null)
+                {
+                    result = FindChild<T>(child, childName);
+                    if (result != null)
+                    {
+                        break;
+                    }
+                }
+                else if (!String.IsNullOrEmpty(childName))
+                {
+                    if (child is FrameworkElement frameworkElement && frameworkElement.Name == childName)
+                    {
+                        result = (T)child;
+                        break;
+                    }
+                }
+                else
+                {
+                    result = (T)child;
+                    break;
+                }
+            }
+            return result;
         }
 
         private static void OnMaxLengthChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)

@@ -1,0 +1,35 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.Controls.ImportLogPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/ImportLogPanelStyles.xaml" />
+    </UserControl.Resources>
+    <ScrollViewer Style="{StaticResource LogScrollViewer}">
+        <StackPanel Style="{StaticResource LogContentPanel}">
+            <ItemsControl ItemsSource="{Binding LogItems}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Style="{StaticResource LogLine}">
+                            <StackPanel Style="{StaticResource LogLineStepPanel}">
+                                <TextBlock Text="{Binding StepIndex}" Style="{StaticResource LogLineStep}"
+                                           Visibility="{Binding IsStepIndexVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+                                <TextBlock Text="{Binding HeaderText}" />
+                            </StackPanel>
+                            <ItemsControl ItemsSource="{Binding LogLines}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" Style="{StaticResource LogLineStatus}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{Binding ResultLogLine}" Visibility="{Binding IsResultLogLineVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                           Style="{StaticResource ResultLogLine}" />
+            <TextBlock Text="{Binding ErrorLogLine}" Visibility="{Binding IsErrorLogLineVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                           Style="{StaticResource ErrorLogLine}" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -260,6 +260,50 @@ namespace LibgenDesktop.Models.Settings
             public ExportPanelSettngs ExportPanel { get; set; }
         }
 
+        internal class LastUpdateSettings
+        {
+            public static LastUpdateSettings Default
+            {
+                get
+                {
+                    return new LastUpdateSettings
+                    {
+                        LastCheckedAt = null,
+                        IgnoreReleaseName = null
+                    };
+                }
+            }
+
+            public DateTime? LastCheckedAt { get; set; }
+            public string IgnoreReleaseName { get; set; }
+        }
+
+        internal class GeneralSettings
+        {
+            internal enum UpdateCheckInterval
+            {
+                NEVER = 1,
+                DAILY,
+                WEEKLY,
+                MONTHLY
+            }
+
+            public static GeneralSettings Default
+            {
+                get
+                {
+                    return new GeneralSettings
+                    {
+                        Language = null,
+                        UpdateCheck = UpdateCheckInterval.NEVER
+                    };
+                }
+            }
+
+            public string Language { get; set; }
+            public UpdateCheckInterval UpdateCheck { get; set; }
+        }
+
         internal class NetworkSettings
         {
             public static NetworkSettings Default
@@ -386,6 +430,8 @@ namespace LibgenDesktop.Models.Settings
                     NonFiction = NonFictionSettings.Default,
                     Fiction = FictionSettings.Default,
                     SciMag = SciMagSettings.Default,
+                    LastUpdate = LastUpdateSettings.Default,
+                    General = GeneralSettings.Default,
                     Network = NetworkSettings.Default,
                     Mirrors = MirrorSettings.Default,
                     Search = SearchSettings.Default,
@@ -400,6 +446,8 @@ namespace LibgenDesktop.Models.Settings
         public NonFictionSettings NonFiction { get; set; }
         public FictionSettings Fiction { get; set; }
         public SciMagSettings SciMag { get; set; }
+        public LastUpdateSettings LastUpdate { get; set; }
+        public GeneralSettings General { get; set; }
         public NetworkSettings Network { get; set; }
         public MirrorSettings Mirrors { get; set; }
         public SearchSettings Search { get; set; }
@@ -418,10 +466,12 @@ namespace LibgenDesktop.Models.Settings
                 appSettings.ValidateAndCorrectMainWindowSettings();
                 appSettings.ValidateAndCorrectNonFictionSettings();
                 appSettings.ValidateAndCorrectFictionSettings();
+                appSettings.ValidateAndCorrectSciMagSettings();
+                appSettings.ValidateAndCorrectLastUpdateSettings();
+                appSettings.ValidateAndCorrectGeneralSettings();
                 appSettings.ValidateAndCorrectNetworkSettings();
                 appSettings.ValidateAndCorrectMirrorSettings();
                 appSettings.ValidateAndCorrectSearchSettings();
-                appSettings.ValidateAndCorrectSciMagSettings();
                 appSettings.ValidateAndCorrectExportSettings();
                 appSettings.ValidateAndCorrectAdvancedSettings();
                 return appSettings;
@@ -681,6 +731,29 @@ namespace LibgenDesktop.Models.Settings
                 }
             }
             return exportPanelSettngs;
+        }
+
+        private void ValidateAndCorrectLastUpdateSettings()
+        {
+            if (LastUpdate == null)
+            {
+                LastUpdate = LastUpdateSettings.Default;
+            }
+        }
+
+        private void ValidateAndCorrectGeneralSettings()
+        {
+            if (General == null)
+            {
+                General = GeneralSettings.Default;
+            }
+            else
+            {
+                if (!Enum.IsDefined(typeof(GeneralSettings.UpdateCheckInterval), General.UpdateCheck))
+                {
+                    General.UpdateCheck = GeneralSettings.UpdateCheckInterval.NEVER;
+                }
+            }
         }
 
         private void ValidateAndCorrectNetworkSettings()

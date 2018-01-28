@@ -143,13 +143,16 @@
     <Compile Include="Models\Import\SciMagImporter.cs" />
     <Compile Include="Models\JsonApi\JsonApiClient.cs" />
     <Compile Include="Models\JsonApi\JsonApiNonFictionBook.cs" />
+    <Compile Include="Models\Localization\LocalizationStorage.cs" />
+    <Compile Include="Models\ProgressArgs\DownloadFileProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportCreateIndexProgress.cs" />
+    <Compile Include="Models\ProgressArgs\ImportLoadLibgenIdsProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportObjectsProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportSearchTableDefinitionProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportTableDefinitionFoundProgress.cs" />
-    <Compile Include="Models\ProgressArgs\JsonApiDownloadProgress.cs" />
     <Compile Include="Models\ProgressArgs\ExportProgress.cs" />
     <Compile Include="Models\ProgressArgs\SearchProgress.cs" />
+    <Compile Include="Models\ProgressArgs\SynchronizationProgress.cs" />
     <Compile Include="Models\Settings\Mirrors.cs" />
     <Compile Include="Models\Settings\MirrorStorage.cs" />
     <Compile Include="Models\SqlDump\ColumnDefinition.cs" />
@@ -161,11 +164,14 @@
     <Compile Include="Models\SqlDump\TableDefinition.cs" />
     <Compile Include="Models\SqlDump\TableDefinitions.cs" />
     <Compile Include="Models\SqlDump\TableType.cs" />
+    <Compile Include="Models\Update\GitHubApiRelease.cs" />
+    <Compile Include="Models\Update\Updater.cs" />
     <Compile Include="Models\Utils\UrlGenerator.cs" />
+    <Compile Include="ViewModels\ApplicationUpdateWindowViewModel.cs" />
     <Compile Include="ViewModels\ExportPanelViewModel.cs" />
     <Compile Include="ViewModels\FictionDetailsTabViewModel.cs" />
+    <Compile Include="ViewModels\ImportLogPanelViewModel.cs" />
     <Compile Include="ViewModels\LibgenWindowViewModel.cs" />
-    <Compile Include="ViewModels\ProgressLogItemViewModel.cs" />
     <Compile Include="ViewModels\SearchResultsTabViewModel.cs" />
     <Compile Include="ViewModels\SynchronizationWindowViewModel.cs" />
     <Compile Include="ViewModels\NonFictionDetailsTabViewModel.cs" />
@@ -175,7 +181,7 @@
     <Compile Include="ViewModels\SciMagSearchResultsTabViewModel.cs" />
     <Compile Include="ViewModels\NonFictionDetailsWindowViewModel.cs" />
     <Compile Include="Infrastructure\Command.cs" />
-    <Compile Include="ViewModels\CreateDatabaseViewModel.cs" />
+    <Compile Include="ViewModels\CreateDatabaseWindowViewModel.cs" />
     <Compile Include="ViewModels\ErrorWindowViewModel.cs" />
     <Compile Include="ViewModels\ImportWindowViewModel.cs" />
     <Compile Include="ViewModels\FictionSearchResultsTabViewModel.cs" />
@@ -184,6 +190,9 @@
     <Compile Include="ViewModels\SearchTabViewModel.cs" />
     <Compile Include="ViewModels\SettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\TabViewModel.cs" />
+    <Compile Include="Views\ApplicationUpdateWindow.xaml.cs">
+      <DependentUpon>ApplicationUpdateWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\AddTabButton.xaml.cs">
       <DependentUpon>AddTabButton.xaml</DependentUpon>
     </Compile>
@@ -192,6 +201,9 @@
     </Compile>
     <Compile Include="Views\Controls\ExportPanel.xaml.cs">
       <DependentUpon>ExportPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\ImportLogPanel.xaml.cs">
+      <DependentUpon>ImportLogPanel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\TabControl.cs" />
     <Compile Include="Views\MessageBoxWindow.xaml.cs">
@@ -267,6 +279,10 @@
     <Compile Include="Views\Utils\DataGridLengthConverter.cs" />
     <Compile Include="Views\Utils\EventListenerExtensions.cs" />
     <Compile Include="Views\Utils\PasswordBoxExtensions.cs" />
+    <Page Include="Views\ApplicationUpdateWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Controls\AddTabButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -279,11 +295,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Controls\ImportLogPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\MessageBoxWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Styles\ApplicationUpdateWindowStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Styles\ExportPanelStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Styles\ImportLogPanelStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

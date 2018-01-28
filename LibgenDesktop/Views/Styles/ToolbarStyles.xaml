@@ -6,12 +6,15 @@
         <Setter Property="Orientation" Value="Horizontal" />
         <Setter Property="HorizontalAlignment" Value="Right" />
     </Style>
-    <Style x:Key="DownloadManagerButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+    <Style x:Key="ToolbarButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Padding" Value="8" />
+    </Style>
+    <Style x:Key="DownloadManagerButton" TargetType="Button" BasedOn="{StaticResource ToolbarButton}">
         <Setter Property="Content">
             <Setter.Value>
-                <md:PackIcon Kind="Download" Height="24" Width="24" Foreground="{Binding IconForeground, RelativeSource={RelativeSource FindAncestor, AncestorType=c:Toolbar}}" />
+                <md:PackIcon Kind="Download" Height="24" Width="24"
+                             Foreground="{Binding IconForeground, RelativeSource={RelativeSource FindAncestor, AncestorType=c:Toolbar}}" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -19,5 +22,26 @@
         <Setter Property="PlacementMode" Value="BottomAndAlignRightEdges" />
         <Setter Property="StaysOpen" Value="False" />
         <Setter Property="Foreground" Value="{Binding IconForeground, RelativeSource={RelativeSource FindAncestor, AncestorType=c:Toolbar}}" />
+        <Setter Property="ToggleContent">
+            <Setter.Value>
+                <Path Data="M3,6H15V8H3V6M3,11H15V13H3V11M3,16H15V18H3V16Z" Width="24" Height="24" Margin="-5,-4,-5,0"
+                      Fill="{Binding IconForeground, RelativeSource={RelativeSource FindAncestor, AncestorType=c:Toolbar}}" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="PopupBoxItem" TargetType="StackPanel">
+        <Style.Resources>
+            <Style TargetType="md:PackIcon">
+                <Setter Property="Margin" Value="0,0,6,0" />
+                <Setter Property="Width" Value="24" />
+                <Setter Property="Height" Value="24" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="TextBlock">
+                <Setter Property="Margin" Value="0,1,0,0" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+        </Style.Resources>
+        <Setter Property="Orientation" Value="Horizontal" />
     </Style>
 </ResourceDictionary>

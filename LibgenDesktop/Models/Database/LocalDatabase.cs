@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
@@ -57,7 +58,7 @@ namespace LibgenDesktop.Models.Database
 
         public bool CheckIfMetadataExists()
         {
-            return ExecuteScalarCommand(SqlScripts.CHECK_IF_METADATA_TABLE_EXIST) == 1;
+            return ExecuteIntScalarCommand(SqlScripts.CHECK_IF_METADATA_TABLE_EXIST) == 1;
         }
 
         public DatabaseMetadata GetMetadata()
@@ -96,6 +97,36 @@ namespace LibgenDesktop.Models.Database
             }
         }
 
+        public void UpdateMetadata(DatabaseMetadata newMetadata)
+        {
+            DatabaseMetadata oldMetadata = GetMetadata();
+            foreach (DatabaseMetadata.FieldDefinition fieldDefinition in DatabaseMetadata.FieldDefinitions.Values)
+            {
+                if (fieldDefinition.Getter(oldMetadata) != fieldDefinition.Getter(newMetadata))
+                {
+                    SetMetadataValue(newMetadata, fieldDefinition);
+                }
+            }
+        }
+
+        public void SetMetadataValue(DatabaseMetadata databaseMetadata, DatabaseMetadata.FieldDefinition field)
+        {
+            bool metadataItemExist;
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = SqlScripts.CHECK_IF_METADATA_ITEM_EXIST;
+                command.Parameters.AddWithValue("Key", field.FieldName);
+                metadataItemExist = ParseIntScalarResult(command.ExecuteScalar()) == 1;
+            }
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = metadataItemExist ? SqlScripts.UPDATE_METADATA_ITEM : SqlScripts.INSERT_METADATA_ITEM;
+                command.Parameters.AddWithValue("Key", field.FieldName);
+                command.Parameters.AddWithValue("Value", field.Getter(databaseMetadata));
+                command.ExecuteNonQuery();
+            }
+        }
+
         public void CreateNonFictionTables()
         {
             ExecuteCommands(SqlScripts.CREATE_NON_FICTION_TABLE);
@@ -112,9 +143,14 @@ namespace LibgenDesktop.Models.Database
             ExecuteCommands(SqlScripts.CREATE_NON_FICTION_LIBGENID_INDEX);
         }
 
+        public BitArray GetNonFictionLibgenIdsBitArray()
+        {
+            return GetLibgenIdsBitArray(SqlScripts.GET_ALL_NON_FICTION_LIBGEN_IDS, GetNonFictionMaxLibgenId());
+        }
+
         public int CountNonFictionBooks()
         {
-            return ExecuteScalarCommand(SqlScripts.COUNT_NON_FICTION);
+            return ExecuteIntScalarCommand(SqlScripts.COUNT_NON_FICTION);
         }
 
         public NonFictionBook GetNonFictionBookById(int id)
@@ -149,6 +185,11 @@ namespace LibgenDesktop.Models.Database
                     return book;
                 }
             }
+        }
+
+        public int GetNonFictionMaxLibgenId()
+        {
+            return ExecuteIntScalarCommand(SqlScripts.GET_NON_FICTION_MAX_LIBGEN_ID);
         }
 
         public IEnumerable<NonFictionBook> SearchNonFictionBooks(string searchQuery, int? resultLimit)
@@ -454,9 +495,14 @@ namespace LibgenDesktop.Models.Database
             ExecuteCommands(SqlScripts.CREATE_FICTION_LIBGENID_INDEX);
         }
 
+        public BitArray GetFictionLibgenIdsBitArray()
+        {
+            return GetLibgenIdsBitArray(SqlScripts.GET_ALL_FICTION_LIBGEN_IDS, GetFictionMaxLibgenId());
+        }
+
         public int CountFictionBooks()
         {
-            return ExecuteScalarCommand(SqlScripts.COUNT_FICTION);
+            return ExecuteIntScalarCommand(SqlScripts.COUNT_FICTION);
         }
 
         public FictionBook GetFictionBookById(int id)
@@ -491,6 +537,11 @@ namespace LibgenDesktop.Models.Database
                     return book;
                 }
             }
+        }
+
+        public int GetFictionMaxLibgenId()
+        {
+            return ExecuteIntScalarCommand(SqlScripts.GET_FICTION_MAX_LIBGEN_ID);
         }
 
         public IEnumerable<FictionBook> SearchFictionBooks(string searchQuery, int? resultLimit)
@@ -925,9 +976,14 @@ namespace LibgenDesktop.Models.Database
             ExecuteCommands(SqlScripts.CREATE_SCIMAG_ADDEDDATETIME_INDEX);
         }
 
+        public BitArray GetSciMagLibgenIdsBitArray()
+        {
+            return GetLibgenIdsBitArray(SqlScripts.GET_ALL_SCIMAG_LIBGEN_IDS, GetSciMagMaxLibgenId());
+        }
+
         public int CountSciMagArticles()
         {
-            return ExecuteScalarCommand(SqlScripts.COUNT_SCIMAG);
+            return ExecuteIntScalarCommand(SqlScripts.COUNT_SCIMAG);
         }
 
         public SciMagArticle GetSciMagArticleById(int id)
@@ -962,6 +1018,11 @@ namespace LibgenDesktop.Models.Database
                     return article;
                 }
             }
+        }
+
+        public int GetSciMagMaxLibgenId()
+        {
+            return ExecuteIntScalarCommand(SqlScripts.GET_SCIMAG_MAX_LIBGEN_ID);
         }
 
         public IEnumerable<SciMagArticle> SearchSciMagArticles(string searchQuery, int? resultLimit)
@@ -1258,14 +1319,33 @@ namespace LibgenDesktop.Models.Database
             }
         }
 
-        private int ExecuteScalarCommand(string commandText)
+        private int ExecuteIntScalarCommand(string commandText)
+        {
+            return ParseIntScalarResult(ExecuteScalarCommand(commandText));
+        }
+
+        private string ExecuteStringScalarCommand(string commandText)
+        {
+            return ParseStringScalarResult(ExecuteScalarCommand(commandText));
+        }
+
+        private object ExecuteScalarCommand(string commandText)
         {
             using (SQLiteCommand command = connection.CreateCommand())
             {
                 command.CommandText = commandText;
-                object objectResult = command.ExecuteScalar();
-                return objectResult != DBNull.Value ? (int)(long)objectResult : 0;
+                return command.ExecuteScalar();
             }
+        }
+
+        private int ParseIntScalarResult(object objectResult)
+        {
+            return objectResult != DBNull.Value ? (int)(long)objectResult : 0;
+        }
+
+        private string ParseStringScalarResult(object objectResult)
+        {
+            return objectResult != DBNull.Value ? objectResult.ToString() : null;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -1323,6 +1403,23 @@ namespace LibgenDesktop.Models.Database
                     }
                 }
             }
+        }
+
+        private BitArray GetLibgenIdsBitArray(string query, int maxLibgenId)
+        {
+            BitArray result = new BitArray(maxLibgenId + 1);
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = query;
+                using (SQLiteDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        result[dataReader.GetInt32(0)] = true;
+                    }
+                }
+            }
+            return result;
         }
     }
 }

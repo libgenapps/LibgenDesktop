@@ -19,6 +19,9 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource TabsPanel}">
+            <c:SettingsTabHeader IsChecked="{Binding IsGeneralTabSelected}">
+                <TextBlock Text="Общие" />
+            </c:SettingsTabHeader>
             <c:SettingsTabHeader IsChecked="{Binding IsNetworkTabSelected}">
                 <TextBlock Text="Сеть" />
             </c:SettingsTabHeader>
@@ -35,6 +38,24 @@
                 <TextBlock Text="Дополнительно" />
             </c:SettingsTabHeader>
         </StackPanel>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsGeneralTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource GeneralTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Язык интерфейса" />
+            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding GeneralLanguagesList}" DisplayMemberPath="Value"
+                      SelectedItem="{Binding GeneralSelectedLanguage, Mode=TwoWay}" Style="{StaticResource GeneralComboBox}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Проверять обновления программы" />
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding GeneralUpdateCheckIntervalList}" DisplayMemberPath="Value"
+                      SelectedItem="{Binding GeneralSelectedUpdateCheckInterval, Mode=TwoWay}" Style="{StaticResource GeneralComboBox}" />
+        </Grid>
         <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsNetworkTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
               Style="{StaticResource NetworkTabContent}">
             <Grid.RowDefinitions>

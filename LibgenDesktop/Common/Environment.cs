@@ -58,7 +58,7 @@ namespace LibgenDesktop.Common
             ManagementObject osInfo = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem").Get().OfType<ManagementObject>().FirstOrDefault();
             if (osInfo != null)
             {
-                return $"{osInfo.Properties["Caption"].Value.ToString()}{osInfo.Properties["Version"].Value.ToString()} {osInfo.Properties["OSArchitecture"].Value.ToString()}";
+                return $"{osInfo.Properties["Caption"].Value.ToString()} {osInfo.Properties["Version"].Value.ToString()} {osInfo.Properties["OSArchitecture"].Value.ToString()}";
             }
             else
             {

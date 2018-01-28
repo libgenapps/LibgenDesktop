@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using LibgenDesktop.Models.Database;
 using LibgenDesktop.Models.Entities;
@@ -11,10 +12,10 @@ namespace LibgenDesktop.Models.Import
         private readonly DateTime lastModifiedDateTime;
         private readonly int lastModifiedLibgenId;
 
-        public NonFictionImporter(LocalDatabase localDatabase, bool isUpdateMode)
-            : base(localDatabase, isUpdateMode, TableDefinitions.NonFiction)
+        public NonFictionImporter(LocalDatabase localDatabase, BitArray existingLibgenIds)
+            : base(localDatabase, existingLibgenIds, TableDefinitions.NonFiction)
         {
-            if (isUpdateMode)
+            if (IsUpdateMode)
             {
                 NonFictionBook lastModifiedNonFictionBook = LocalDatabase.GetLastModifiedNonFictionBook();
                 lastModifiedDateTime = lastModifiedNonFictionBook.LastModifiedDateTime;
@@ -22,8 +23,8 @@ namespace LibgenDesktop.Models.Import
             }
         }
 
-        public NonFictionImporter(LocalDatabase localDatabase, NonFictionBook lastModifiedNonFictionBook)
-            : base(localDatabase, true, TableDefinitions.NonFiction)
+        public NonFictionImporter(LocalDatabase localDatabase, BitArray existingLibgenIds, NonFictionBook lastModifiedNonFictionBook)
+            : base(localDatabase, existingLibgenIds, TableDefinitions.NonFiction)
         {
             lastModifiedDateTime = lastModifiedNonFictionBook.LastModifiedDateTime;
             lastModifiedLibgenId = lastModifiedNonFictionBook.LibgenId;

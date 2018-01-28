@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using LibgenDesktop.Infrastructure;
@@ -17,6 +15,7 @@ namespace LibgenDesktop.ViewModels
         {
             SEARCHING_TABLE_DEFINITION = 1,
             CREATING_INDEXES,
+            LOADING_EXISTING_IDS,
             IMPORTING_DATA
         }
 
@@ -26,11 +25,6 @@ namespace LibgenDesktop.ViewModels
         private readonly Timer elapsedTimer;
         private bool isInProgress;
         private string status;
-        private ObservableCollection<ProgressLogItemViewModel> logs;
-        private string resultLogLine;
-        private bool isResultLogLineVisible;
-        private string errorLogLine;
-        private bool isErrorLogLineVisible;
         private string elapsed;
         private string cancelButtonText;
         private bool isCancelButtonVisible;
@@ -50,11 +44,14 @@ namespace LibgenDesktop.ViewModels
             this.dumpFilePath = dumpFilePath;
             cancellationTokenSource = new CancellationTokenSource();
             elapsedTimer = new Timer(state => UpdateElapsedTime());
+            Logs = new ImportLogPanelViewModel();
             CancelCommand = new Command(Cancel);
             CloseCommand = new Command(Close);
             WindowClosedCommand = new Command(WindowClosed);
             Initialize();
         }
+
+        public ImportLogPanelViewModel Logs { get; }
 
         public bool IsInProgress
         {
@@ -78,71 +75,6 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 status = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<ProgressLogItemViewModel> Logs
-        {
-            get
-            {
-                return logs;
-            }
-            set
-            {
-                logs = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string ResultLogLine
-        {
-            get
-            {
-                return resultLogLine;
-            }
-            set
-            {
-                resultLogLine = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool IsResultLogLineVisible
-        {
-            get
-            {
-                return isResultLogLineVisible;
-            }
-            set
-            {
-                isResultLogLineVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string ErrorLogLine
-        {
-            get
-            {
-                return errorLogLine;
-            }
-            set
-            {
-                errorLogLine = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool IsErrorLogLineVisible
-        {
-            get
-            {
-                return isErrorLogLineVisible;
-            }
-            set
-            {
-                isErrorLogLineVisible = value;
                 NotifyPropertyChanged();
             }
         }
@@ -217,11 +149,11 @@ namespace LibgenDesktop.ViewModels
         public Command CloseCommand { get; }
         public Command WindowClosedCommand { get; }
 
-        private ProgressLogItemViewModel CurrentLogItem
+        private ImportLogPanelViewModel.ImportLogItemViewModel CurrentLogItem
         {
             get
             {
-                return logs[currentStepIndex - 1];
+                return Logs.LogItems[currentStepIndex - 1];
             }
         }
 
@@ -232,9 +164,6 @@ namespace LibgenDesktop.ViewModels
             currentStepIndex = 1;
             totalSteps = 2;
             UpdateStatus("Поиск данных для импорта");
-            logs = new ObservableCollection<ProgressLogItemViewModel>();
-            isResultLogLineVisible = false;
-            isErrorLogLineVisible = false;
             startDateTime = DateTime.Now;
             lastElapsedTime = TimeSpan.Zero;
             elapsedTimer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
@@ -244,9 +173,7 @@ namespace LibgenDesktop.ViewModels
             isCancelButtonEnabled = true;
             isCloseButtonVisible = false;
             lastScannedPercentage = 0;
-            ProgressLogItemViewModel searchHeaderLogItem = new ProgressLogItemViewModel(currentStepIndex, "Поиск данных для импорта в файле");
-            searchHeaderLogItem.LogLine = "Идет сканирование файла...";
-            logs.Add(searchHeaderLogItem);
+            Logs.AddLogItem(currentStepIndex, "Поиск данных для импорта в файле", "Идет сканирование файла...");
             Import();
         }
 
@@ -262,8 +189,7 @@ namespace LibgenDesktop.ViewModels
             catch (Exception exception)
             {
                 elapsedTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-                ErrorLogLine = "Импорт завершился с ошибками.";
-                IsErrorLogLineVisible = true;
+                Logs.ShowErrorLogLine("Импорт завершился с ошибками.");
                 IsInProgress = false;
                 Status = "Импорт завершен с ошибками";
                 IsCancelButtonVisible = false;
@@ -275,18 +201,15 @@ namespace LibgenDesktop.ViewModels
             switch (importResult)
             {
                 case MainModel.ImportSqlDumpResult.COMPLETED:
-                    ResultLogLine = "Импорт выполнен успешно.";
-                    IsResultLogLineVisible = true;
+                    Logs.ShowResultLogLine("Импорт выполнен успешно.");
                     Status = "Импорт завершен";
                     break;
                 case MainModel.ImportSqlDumpResult.CANCELLED:
-                    ErrorLogLine = "Импорт был прерван пользователем.";
-                    IsErrorLogLineVisible = true;
+                    Logs.ShowErrorLogLine("Импорт был прерван пользователем.");
                     Status = "Импорт прерван";
                     break;
                 case MainModel.ImportSqlDumpResult.DATA_NOT_FOUND:
-                    ErrorLogLine = "Не найдены данные для импорта.";
-                    IsErrorLogLineVisible = true;
+                    Logs.ShowErrorLogLine("Не найдены данные для импорта.");
                     Status = "Данные не найдены";
                     break;
             }
@@ -336,9 +259,20 @@ namespace LibgenDesktop.ViewModels
                             currentStepIndex++;
                             totalSteps++;
                             UpdateStatus("Создание индексов");
-                            logs.Add(new ProgressLogItemViewModel(currentStepIndex, "Создание недостающих индексов"));
+                            Logs.AddLogItem(currentStepIndex, "Создание недостающих индексов");
                         }
                         CurrentLogItem.LogLines.Add($"Создается индекс для столбца {createIndexProgress.ColumnName}...");
+                        break;
+                    case ImportLoadLibgenIdsProgress importLoadLibgenIdsProgress:
+                        if (currentStep != Step.LOADING_EXISTING_IDS)
+                        {
+                            currentStep = Step.LOADING_EXISTING_IDS;
+                            currentStepIndex++;
+                            totalSteps++;
+                            UpdateStatus("Загрузка идентификаторов");
+                            Logs.AddLogItem(currentStepIndex, "Загрузка идентификаторов существующих данных");
+                        }
+                        CurrentLogItem.LogLines.Add($"Загрузка значений столбца LibgenId...");
                         break;
                     case ImportObjectsProgress importObjectsProgress:
                         if (currentStep != Step.IMPORTING_DATA)
@@ -346,7 +280,7 @@ namespace LibgenDesktop.ViewModels
                             currentStep = Step.IMPORTING_DATA;
                             currentStepIndex++;
                             UpdateStatus("Импорт данных");
-                            logs.Add(new ProgressLogItemViewModel(currentStepIndex, "Импорт данных"));
+                            Logs.AddLogItem(currentStepIndex, "Импорт данных");
                         }
                         string logLine = GetImportedObjectCountLogLine(importObjectsProgress.ObjectsAdded, importObjectsProgress.ObjectsUpdated);
                         CurrentLogItem.LogLine = logLine;

@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using LibgenDesktop.Common;
 using LibgenDesktop.Models.Entities;
 using Newtonsoft.Json;
-using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.Models.JsonApi
 {
@@ -38,10 +37,10 @@ namespace LibgenDesktop.Models.JsonApi
             Logger.Debug($"Sending a request to {url}");
             HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
             Logger.Debug($"Response status code: {(int)response.StatusCode} {response.StatusCode}.");
-            Logger.Debug("Response headers:", response.Headers.ToString().TrimEnd());
+            Logger.Debug("Response headers:", response.Headers.ToString().TrimEnd(), response.Content.Headers.ToString().TrimEnd());
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                throw new Exception($"JSON API returned {response.StatusCode}.");
+                throw new Exception($"JSON API returned {(int)response.StatusCode} {response.StatusCode}.");
             }
             string responseContent = await response.Content.ReadAsStringAsync();
             Logger.Debug("Response content:", responseContent);

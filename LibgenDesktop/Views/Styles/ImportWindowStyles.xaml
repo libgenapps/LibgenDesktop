@@ -17,29 +17,6 @@
     <Style x:Key="StatusDescription" TargetType="TextBlock">
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
-    <Style x:Key="LogScrollViewer" TargetType="ScrollViewer">
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-    </Style>
-    <Style x:Key="LogContentPanel" TargetType="StackPanel">
-        <Setter Property="Orientation" Value="Vertical" />
-    </Style>
-    <Style x:Key="LogLine" TargetType="StackPanel">
-        <Setter Property="Margin" Value="0,0,0,6" />
-    </Style>
-    <Style x:Key="LogLineStep" TargetType="Run">
-        <Setter Property="FontWeight" Value="Medium" />
-    </Style>
-    <Style x:Key="LogLineStatus" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="Gray" />
-    </Style>
-    <Style x:Key="ResultLogLine" TargetType="TextBlock">
-        <Setter Property="FontWeight" Value="Medium" />
-        <Setter Property="Foreground" Value="DarkGreen" />
-    </Style>
-    <Style x:Key="ErrorLogLine" TargetType="TextBlock">
-        <Setter Property="FontWeight" Value="Medium" />
-        <Setter Property="Foreground" Value="Red" />
-    </Style>
     <Style x:Key="BottomPanel" TargetType="Grid">
         <Setter Property="Margin" Value="0,16,0,0" />
     </Style>

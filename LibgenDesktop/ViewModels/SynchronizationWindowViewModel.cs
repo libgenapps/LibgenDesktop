@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading;
 using LibgenDesktop.Infrastructure;
@@ -15,8 +14,8 @@ namespace LibgenDesktop.ViewModels
         {
             PREPARATION = 1,
             CREATING_INDEXES,
-            DOWNLOADING_BOOKS,
-            IMPORTING_DATA
+            LOADING_EXISTING_IDS,
+            SYNCHRONIZATION
         }
 
         private readonly MainModel mainModel;
@@ -24,11 +23,6 @@ namespace LibgenDesktop.ViewModels
         private readonly Timer elapsedTimer;
         private bool isInProgress;
         private string status;
-        private ObservableCollection<ProgressLogItemViewModel> logs;
-        private string resultLogLine;
-        private bool isResultLogLineVisible;
-        private string errorLogLine;
-        private bool isErrorLogLineVisible;
         private string elapsed;
         private string cancelButtonText;
         private bool isCancelButtonVisible;
@@ -45,11 +39,14 @@ namespace LibgenDesktop.ViewModels
             this.mainModel = mainModel;
             cancellationTokenSource = new CancellationTokenSource();
             elapsedTimer = new Timer(state => UpdateElapsedTime());
+            Logs = new ImportLogPanelViewModel();
             CancelCommand = new Command(Cancel);
             CloseCommand = new Command(Close);
             WindowClosedCommand = new Command(WindowClosed);
             Initialize();
         }
+
+        public ImportLogPanelViewModel Logs { get; }
 
         public bool IsInProgress
         {
@@ -73,71 +70,6 @@ namespace LibgenDesktop.ViewModels
             set
             {
                 status = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public ObservableCollection<ProgressLogItemViewModel> Logs
-        {
-            get
-            {
-                return logs;
-            }
-            set
-            {
-                logs = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string ResultLogLine
-        {
-            get
-            {
-                return resultLogLine;
-            }
-            set
-            {
-                resultLogLine = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool IsResultLogLineVisible
-        {
-            get
-            {
-                return isResultLogLineVisible;
-            }
-            set
-            {
-                isResultLogLineVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string ErrorLogLine
-        {
-            get
-            {
-                return errorLogLine;
-            }
-            set
-            {
-                errorLogLine = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool IsErrorLogLineVisible
-        {
-            get
-            {
-                return isErrorLogLineVisible;
-            }
-            set
-            {
-                isErrorLogLineVisible = value;
                 NotifyPropertyChanged();
             }
         }
@@ -212,11 +144,11 @@ namespace LibgenDesktop.ViewModels
         public Command CloseCommand { get; }
         public Command WindowClosedCommand { get; }
 
-        private ProgressLogItemViewModel CurrentLogItem
+        private ImportLogPanelViewModel.ImportLogItemViewModel CurrentLogItem
         {
             get
             {
-                return logs[currentStepIndex - 1];
+                return Logs.LogItems[currentStepIndex - 1];
             }
         }
 
@@ -224,12 +156,9 @@ namespace LibgenDesktop.ViewModels
         {
             isInProgress = true;
             currentStep = Step.PREPARATION;
-            currentStepIndex = 1;
+            currentStepIndex = 0;
             totalSteps = 2;
             UpdateStatus("Подготовка к синхронизации");
-            logs = new ObservableCollection<ProgressLogItemViewModel>();
-            isResultLogLineVisible = false;
-            isErrorLogLineVisible = false;
             startDateTime = DateTime.Now;
             lastElapsedTime = TimeSpan.Zero;
             elapsedTimer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
@@ -248,13 +177,12 @@ namespace LibgenDesktop.ViewModels
             MainModel.SynchronizationResult synchronizationResult;
             try
             {
-                synchronizationResult = await mainModel.SynchronizeNonFiction(synchronizationProgressHandler, cancellationToken);
+                synchronizationResult = await mainModel.SynchronizeNonFictionAsync(synchronizationProgressHandler, cancellationToken);
             }
             catch (Exception exception)
             {
                 elapsedTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-                ErrorLogLine = "Синхронизация завершилась с ошибками.";
-                IsErrorLogLineVisible = true;
+                Logs.ShowErrorLogLine("Синхронизация завершилась с ошибками.");
                 IsInProgress = false;
                 Status = "Синхронизация завершилась с ошибками";
                 IsCancelButtonVisible = false;
@@ -266,13 +194,11 @@ namespace LibgenDesktop.ViewModels
             switch (synchronizationResult)
             {
                 case MainModel.SynchronizationResult.COMPLETED:
-                    ResultLogLine = "Синхронизация выполнена успешно.";
-                    IsResultLogLineVisible = true;
+                    Logs.ShowResultLogLine("Синхронизация выполнена успешно.");
                     Status = "Синхронизация завершена";
                     break;
                 case MainModel.SynchronizationResult.CANCELLED:
-                    ErrorLogLine = "Синхронизация была прервана пользователем.";
-                    IsErrorLogLineVisible = true;
+                    Logs.ShowErrorLogLine("Синхронизация была прервана пользователем.");
                     Status = "Синхронизация прервана";
                     break;
             }
@@ -291,35 +217,38 @@ namespace LibgenDesktop.ViewModels
                         if (currentStep != Step.CREATING_INDEXES)
                         {
                             currentStep = Step.CREATING_INDEXES;
+                            currentStepIndex++;
                             totalSteps++;
                             UpdateStatus("Создание индексов");
-                            logs.Add(new ProgressLogItemViewModel(currentStepIndex, "Создание недостающих индексов"));
+                            Logs.AddLogItem(currentStepIndex, "Создание недостающих индексов");
                         }
                         CurrentLogItem.LogLines.Add($"Создается индекс для столбца {createIndexProgress.ColumnName}...");
                         break;
-                    case JsonApiDownloadProgress jsonApiDownloadProgress:
-                        if (currentStep != Step.DOWNLOADING_BOOKS)
+                    case ImportLoadLibgenIdsProgress importLoadLibgenIdsProgress:
+                        if (currentStep != Step.LOADING_EXISTING_IDS)
                         {
-                            if (currentStep == Step.CREATING_INDEXES)
-                            {
-                                currentStepIndex++;
-                            }
-                            currentStep = Step.DOWNLOADING_BOOKS;
-                            UpdateStatus("Скачивание данных");
-                            logs.Add(new ProgressLogItemViewModel(currentStepIndex, "Скачивание информации о новых книгах"));
-                        }
-                        CurrentLogItem.LogLine = $"Скачано книг: {jsonApiDownloadProgress.BooksDownloaded}.";
-                        break;
-                    case ImportObjectsProgress importObjectsProgress:
-                        if (currentStep != Step.IMPORTING_DATA)
-                        {
-                            currentStep = Step.IMPORTING_DATA;
+                            currentStep = Step.LOADING_EXISTING_IDS;
                             currentStepIndex++;
-                            UpdateStatus("Импорт данных");
-                            logs.Add(new ProgressLogItemViewModel(currentStepIndex, "Импорт данных"));
+                            UpdateStatus("Загрузка идентификаторов");
+                            Logs.AddLogItem(currentStepIndex, "Загрузка идентификаторов существующих данных");
                         }
-                        string logLine = GetSynchronizedBookCountLogLine(importObjectsProgress.ObjectsAdded, importObjectsProgress.ObjectsUpdated);
-                        CurrentLogItem.LogLine = logLine;
+                        CurrentLogItem.LogLines.Add($"Загрузка значений столбца LibgenId...");
+                        break;
+                    case SynchronizationProgress synchronizationProgress:
+                        string secondLogLine = GetSynchronizedBookCountLogLine(synchronizationProgress.ObjectsDownloaded, synchronizationProgress.ObjectsAdded,
+                            synchronizationProgress.ObjectsUpdated);
+                        if (currentStep != Step.SYNCHRONIZATION)
+                        {
+                            currentStep = Step.SYNCHRONIZATION;
+                            currentStepIndex++;
+                            Logs.AddLogItem(currentStepIndex, "Синхронизация списка книг", "Скачивание информации о новых книгах");
+                            CurrentLogItem.LogLines.Add(secondLogLine);
+                            UpdateStatus("Синхронизация");
+                        }
+                        else
+                        {
+                            CurrentLogItem.LogLines[1] = secondLogLine;
+                        }
                         break;
                 }
             }
@@ -359,14 +288,30 @@ namespace LibgenDesktop.ViewModels
 
         private void UpdateStatus(string statusDescription)
         {
-            Status = $"Шаг {currentStepIndex} из {totalSteps}. {statusDescription}...";
+            StringBuilder statusBuilder = new StringBuilder();
+            if (currentStepIndex > 0)
+            {
+                statusBuilder.Append("Шаг ");
+                statusBuilder.Append(currentStepIndex);
+                statusBuilder.Append(" из ");
+                statusBuilder.Append(totalSteps);
+                statusBuilder.Append(". ");
+            }
+            statusBuilder.Append(statusDescription);
+            statusBuilder.Append("...");
+            Status = statusBuilder.ToString();
         }
 
-        private string GetSynchronizedBookCountLogLine(int addedObjectCount, int updatedObjectCount)
+        private string GetSynchronizedBookCountLogLine(int downloadedObjectCount, int addedObjectCount, int updatedObjectCount)
         {
             StringBuilder resultBuilder = new StringBuilder();
-            resultBuilder.Append("Добавлено книг: ");
-            resultBuilder.Append(addedObjectCount.ToFormattedString());
+            resultBuilder.Append("Скачано книг: ");
+            resultBuilder.Append(downloadedObjectCount.ToFormattedString());
+            if (addedObjectCount > 0)
+            {
+                resultBuilder.Append(", добавлено книг: ");
+                resultBuilder.Append(addedObjectCount.ToFormattedString());
+            }
             if (updatedObjectCount > 0)
             {
                 resultBuilder.Append(", обновлено книг: ");

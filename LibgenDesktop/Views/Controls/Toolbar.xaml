@@ -6,13 +6,47 @@
         <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/ToolbarStyles.xaml" />
     </UserControl.Resources>
     <StackPanel Style="{StaticResource TopContainer}">
-        <Button	Style="{StaticResource DownloadManagerButton}" Command="{Binding DownloadManagerCommand}" />
-        <md:PopupBox Style="{StaticResource PopupBox}">
-            <StackPanel>
-                <Button Content="Импорт..." Command="{Binding ImportCommand}" />
-                <Button Content="Синхронизация..." Command="{Binding SynchronizeCommand}" />
-                <Button Content="Настройки" Command="{Binding SettingsCommand}" />
-            </StackPanel>
-        </md:PopupBox>
+        <Button	Style="{StaticResource DownloadManagerButton}" Command="{Binding DownloadManagerCommand}" ToolTip="Менеджер загрузок" />
+        <md:Badged Margin="9,10,9,0">
+            <md:Badged.Style>
+                <Style TargetType="md:Badged">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsApplicationUpdateAvailable}" Value="True">
+                            <Setter Property="Badge" Value="{md:PackIcon Kind=ArrowUpBold}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </md:Badged.Style>
+            <md:PopupBox Style="{StaticResource PopupBox}">
+                <StackPanel>
+                    <Button Command="{Binding ShowApplicationUpdateCommand}" Padding="16,0" VerticalContentAlignment="Center"
+                            Visibility="{Binding IsApplicationUpdateAvailable, Converter={StaticResource booleanToCollapsedConverter}}">
+                        <StackPanel Style="{StaticResource PopupBoxItem}">
+                            <md:PackIcon Kind="ArrowUpBold"  />
+                            <TextBlock Text="Обновление..." />
+                        </StackPanel>
+                    </Button>
+                    <Separator Visibility="{Binding IsApplicationUpdateAvailable, Converter={StaticResource booleanToCollapsedConverter}}" />
+                    <Button Command="{Binding ImportCommand}" Padding="16,0" VerticalContentAlignment="Center">
+                        <StackPanel Style="{StaticResource PopupBoxItem}">
+                            <md:PackIcon Kind="Import"  />
+                            <TextBlock Text="Импорт..." />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding SynchronizeCommand}" Padding="16,0" VerticalContentAlignment="Center">
+                        <StackPanel Style="{StaticResource PopupBoxItem}">
+                            <md:PackIcon Kind="Sync" />
+                            <TextBlock Text="Синхронизация..." />
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding SettingsCommand}" Padding="16,0" VerticalContentAlignment="Center">
+                        <StackPanel Style="{StaticResource PopupBoxItem}">
+                            <md:PackIcon Kind="Settings" />
+                            <TextBlock Text="Настройки" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </md:PopupBox>
+        </md:Badged>
     </StackPanel>
 </UserControl>

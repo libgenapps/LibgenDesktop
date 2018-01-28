@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -13,9 +14,11 @@ using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Export;
 using LibgenDesktop.Models.Import;
 using LibgenDesktop.Models.JsonApi;
+using LibgenDesktop.Models.Localization;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.SqlDump;
+using LibgenDesktop.Models.Update;
 using static LibgenDesktop.Common.Constants;
 using Environment = LibgenDesktop.Common.Environment;
 
@@ -44,6 +47,14 @@ namespace LibgenDesktop.Models
             CANCELLED
         }
 
+        internal enum DownloadFileResult
+        {
+            COMPLETED = 1,
+            INCOMPLETE,
+            CANCELLED
+        }
+
+        private Updater updater;
         private LocalDatabase localDatabase;
 
         public MainModel()
@@ -55,18 +66,28 @@ namespace LibgenDesktop.Models
             }
             Mirrors = MirrorStorage.LoadMirrors(Environment.MirrorsFilePath);
             ValidateAndCorrectSelectedMirrors();
+            Languages = LocalizationStorage.LoadLanguages();
+            AppSettings.General.Language = Languages.First().Key;
             CreateNewHttpClient();
             OpenDatabase(AppSettings.DatabaseFileName);
+            LastApplicationUpdateCheckResult = null;
+            updater = new Updater();
+            updater.UpdateCheck += ApplicationUpdateCheck;
+            ConfigureUpdater();
         }
 
         public AppSettings AppSettings { get; }
         public DatabaseStatus LocalDatabaseStatus { get; private set; }
         public DatabaseMetadata DatabaseMetadata { get; private set; }
         public Mirrors Mirrors { get; }
+        public Dictionary<string, string> Languages { get; }
         public HttpClient HttpClient { get; private set; }
         public int NonFictionBookCount { get; private set; }
         public int FictionBookCount { get; private set; }
         public int SciMagArticleCount { get; private set; }
+        public Updater.UpdateCheckResult LastApplicationUpdateCheckResult { get; set; }
+
+        public event EventHandler ApplicationUpdateCheckCompleted;
 
         public Task<ObservableCollection<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
@@ -215,6 +236,7 @@ namespace LibgenDesktop.Models
                         }
                         Logger.Debug($"Table type is {tableType}.");
                         Importer importer;
+                        BitArray existingLibgenIds = null;
                         switch (tableType)
                         {
                             case TableType.NON_FICTION:
@@ -225,8 +247,10 @@ namespace LibgenDesktop.Models
                                     {
                                         return ImportSqlDumpResult.CANCELLED;
                                     }
+                                    progressHandler.Report(new ImportLoadLibgenIdsProgress());
+                                    existingLibgenIds = localDatabase.GetNonFictionLibgenIdsBitArray();
                                 }
-                                importer = new NonFictionImporter(localDatabase, isUpdateMode: NonFictionBookCount != 0);
+                                importer = new NonFictionImporter(localDatabase, existingLibgenIds);
                                 break;
                             case TableType.FICTION:
                                 if (FictionBookCount != 0)
@@ -236,8 +260,10 @@ namespace LibgenDesktop.Models
                                     {
                                         return ImportSqlDumpResult.CANCELLED;
                                     }
+                                    progressHandler.Report(new ImportLoadLibgenIdsProgress());
+                                    existingLibgenIds = localDatabase.GetFictionLibgenIdsBitArray();
                                 }
-                                importer = new FictionImporter(localDatabase, isUpdateMode: FictionBookCount != 0);
+                                importer = new FictionImporter(localDatabase, existingLibgenIds);
                                 break;
                             case TableType.SCI_MAG:
                                 if (SciMagArticleCount != 0)
@@ -247,8 +273,10 @@ namespace LibgenDesktop.Models
                                     {
                                         return ImportSqlDumpResult.CANCELLED;
                                     }
+                                    progressHandler.Report(new ImportLoadLibgenIdsProgress());
+                                    existingLibgenIds = localDatabase.GetSciMagLibgenIdsBitArray();
                                 }
-                                importer = new SciMagImporter(localDatabase, isUpdateMode: SciMagArticleCount != 0);
+                                importer = new SciMagImporter(localDatabase, existingLibgenIds);
                                 break;
                             default:
                                 throw new Exception($"Unknown table type: {tableType}.");
@@ -258,8 +286,12 @@ namespace LibgenDesktop.Models
                             Logger.Debug("SQL dump import has been cancelled.");
                             return ImportSqlDumpResult.CANCELLED;
                         }
+                        Importer.ImportProgressReporter importProgressReporter = (int objectsAdded, int objectsUpdated) =>
+                        {
+                            progressHandler.Report(new ImportObjectsProgress(objectsAdded, objectsUpdated));
+                        };
                         Logger.Debug("Importing data.");
-                        importer.Import(sqlDumpReader, progressHandler, cancellationToken, parsedTableDefinition);
+                        importer.Import(sqlDumpReader, importProgressReporter, IMPORT_PROGRESS_UPDATE_INTERVAL, cancellationToken, parsedTableDefinition);
                         switch (tableType)
                         {
                             case TableType.NON_FICTION:
@@ -277,6 +309,19 @@ namespace LibgenDesktop.Models
                             Logger.Debug("SQL dump import has been cancelled.");
                             return ImportSqlDumpResult.CANCELLED;
                         }
+                        switch (tableType)
+                        {
+                            case TableType.NON_FICTION:
+                                DatabaseMetadata.NonFictionFirstImportComplete = true;
+                                break;
+                            case TableType.FICTION:
+                                DatabaseMetadata.FictionFirstImportComplete = true;
+                                break;
+                            case TableType.SCI_MAG:
+                                DatabaseMetadata.SciMagFirstImportComplete = true;
+                                break;
+                        }
+                        localDatabase.UpdateMetadata(DatabaseMetadata);
                         Logger.Debug("SQL dump import has been completed successfully.");
                         return ImportSqlDumpResult.COMPLETED;
                     }
@@ -284,7 +329,7 @@ namespace LibgenDesktop.Models
             });
         }
 
-        public Task<SynchronizationResult> SynchronizeNonFiction(IProgress<object> progressHandler, CancellationToken cancellationToken)
+        public Task<SynchronizationResult> SynchronizeNonFictionAsync(IProgress<object> progressHandler, CancellationToken cancellationToken)
         {
             return Task.Run(async () =>
             {
@@ -309,8 +354,18 @@ namespace LibgenDesktop.Models
                 }
                 JsonApiClient jsonApiClient = new JsonApiClient(HttpClient, jsonApiUrl, lastModifiedNonFictionBook.LastModifiedDateTime,
                     lastModifiedNonFictionBook.LibgenId);
-                List<NonFictionBook> downloadedBooks = new List<NonFictionBook>();
-                progressHandler.Report(new JsonApiDownloadProgress(0));
+                progressHandler.Report(new ImportLoadLibgenIdsProgress());
+                BitArray existingLibgenIds = localDatabase.GetNonFictionLibgenIdsBitArray();
+                NonFictionImporter importer = new NonFictionImporter(localDatabase, existingLibgenIds, lastModifiedNonFictionBook);
+                progressHandler.Report(new SynchronizationProgress(0, 0, 0));
+                int downloadedBookCount = 0;
+                int totalAddedBookCount = 0;
+                int totalUpdatedBookCount = 0;
+                Importer.ImportProgressReporter importProgressReporter = (int objectsAdded, int objectsUpdated) =>
+                {
+                    progressHandler.Report(new SynchronizationProgress(downloadedBookCount, totalAddedBookCount + objectsAdded,
+                        totalUpdatedBookCount + objectsUpdated));
+                };
                 while (true)
                 {
                     List<NonFictionBook> currentBatch;
@@ -329,25 +384,92 @@ namespace LibgenDesktop.Models
                         Logger.Debug("Current batch is empty, download is complete.");
                         break;
                     }
-                    downloadedBooks.AddRange(currentBatch);
-                    Logger.Debug($"{downloadedBooks.Count} books have been downloaded so far.");
-                    progressHandler.Report(new JsonApiDownloadProgress(downloadedBooks.Count));
+                    downloadedBookCount += currentBatch.Count;
+                    Logger.Debug($"Batch download is complete, {downloadedBookCount} books have been downloaded so far.");
+                    progressHandler.Report(new SynchronizationProgress(downloadedBookCount, totalAddedBookCount, totalUpdatedBookCount));
                     if (cancellationToken.IsCancellationRequested)
                     {
                         Logger.Debug("Synchronization has been cancelled.");
                         return SynchronizationResult.CANCELLED;
                     }
-                }
-                NonFictionImporter importer = new NonFictionImporter(localDatabase, lastModifiedNonFictionBook);
-                Logger.Debug("Importing data.");
-                importer.Import(downloadedBooks, progressHandler, cancellationToken);
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    Logger.Debug("Synchronization has been cancelled.");
-                    return SynchronizationResult.CANCELLED;
+                    Logger.Debug("Importing downloaded batch.");
+                    Importer.ImportResult importResult =
+                        importer.Import(currentBatch, importProgressReporter, SYNCHRONIZATION_PROGRESS_UPDATE_INTERVAL, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        Logger.Debug("Synchronization has been cancelled.");
+                        return SynchronizationResult.CANCELLED;
+                    }
+                    totalAddedBookCount += importResult.AddedObjectCount;
+                    totalUpdatedBookCount += importResult.UpdatedObjectCount;
+                    Logger.Debug($"Batch has been imported, total added book count = {totalAddedBookCount}, total updated book count = {totalUpdatedBookCount}.");
                 }
                 Logger.Debug("Synchronization has been completed successfully.");
                 return SynchronizationResult.COMPLETED;
+            });
+        }
+
+        public Task<DownloadFileResult> DownloadFileAsync(string fileUrl, string destinationPath, IProgress<object> progressHandler,
+            CancellationToken cancellationToken)
+        {
+            return Task.Run(async () =>
+            {
+                Logger.Debug($"Requesting {fileUrl}");
+                HttpResponseMessage response;
+                try
+                {
+                    response = await HttpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    Logger.Debug("File download has been cancelled.");
+                    return DownloadFileResult.CANCELLED;
+                }
+                Logger.Debug($"Response status code: {(int)response.StatusCode} {response.StatusCode}.");
+                Logger.Debug("Response headers:", response.Headers.ToString().TrimEnd(), response.Content.Headers.ToString().TrimEnd());
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    throw new Exception($"Server returned {(int)response.StatusCode} {response.StatusCode}.");
+                }
+                long? contentLength = response.Content.Headers.ContentLength;
+                if (!contentLength.HasValue)
+                {
+                    throw new Exception($"Server did not return Content-Length value.");
+                }
+                int fileSize = (int)contentLength.Value;
+                Logger.Debug($"File size is {fileSize} bytes.");
+                Stream downloadStream = await response.Content.ReadAsStreamAsync();
+                byte[] buffer = new byte[4096];
+                int downloadedBytes = 0;
+                using (FileStream destinationFileStream = new FileStream(destinationPath, FileMode.Create))
+                {
+                    while (true)
+                    {
+                        int bytesRead;
+                        try
+                        {
+                            bytesRead = downloadStream.Read(buffer, 0, buffer.Length);
+                        }
+                        catch
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                Logger.Debug("File download has been cancelled.");
+                                return DownloadFileResult.CANCELLED;
+                            }
+                            throw;
+                        }
+                        if (bytesRead == 0)
+                        {
+                            bool isCompleted = downloadedBytes == fileSize;
+                            Logger.Debug($"File download is {(isCompleted ? "complete" : "incomplete")}.");
+                            return isCompleted ? DownloadFileResult.COMPLETED : DownloadFileResult.INCOMPLETE;
+                        }
+                        destinationFileStream.Write(buffer, 0, bytesRead);
+                        downloadedBytes += bytesRead;
+                        progressHandler.Report(new DownloadFileProgress(downloadedBytes, fileSize));
+                    }
+                }
             });
         }
 
@@ -450,11 +572,14 @@ namespace LibgenDesktop.Models
                 localDatabase.CreateNonFictionTables();
                 localDatabase.CreateFictionTables();
                 localDatabase.CreateSciMagTables();
-                DatabaseMetadata databaseMetadata = new DatabaseMetadata
+                DatabaseMetadata = new DatabaseMetadata
                 {
-                    Version = CURRENT_DATABASE_VERSION
+                    Version = CURRENT_DATABASE_VERSION,
+                    NonFictionFirstImportComplete = false,
+                    FictionFirstImportComplete = false,
+                    SciMagFirstImportComplete = false
                 };
-                localDatabase.AddMetadata(databaseMetadata);
+                localDatabase.AddMetadata(DatabaseMetadata);
                 NonFictionBookCount = 0;
                 FictionBookCount = 0;
                 SciMagArticleCount = 0;
@@ -500,6 +625,41 @@ namespace LibgenDesktop.Models
         public void DisableLogging()
         {
             Logger.DisableLogging();
+        }
+
+        public void ConfigureUpdater()
+        {
+            DateTime? nextUpdateCheck;
+            if (AppSettings.General.UpdateCheck == AppSettings.GeneralSettings.UpdateCheckInterval.NEVER || AppSettings.Network.OfflineMode)
+            {
+                nextUpdateCheck = null;
+            }
+            else
+            {
+                DateTime? lastUpdateCheck = AppSettings.LastUpdate.LastCheckedAt;
+                if (!lastUpdateCheck.HasValue)
+                {
+                    nextUpdateCheck = DateTime.Now;
+                }
+                else
+                {
+                    switch (AppSettings.General.UpdateCheck)
+                    {
+                        case AppSettings.GeneralSettings.UpdateCheckInterval.DAILY:
+                            nextUpdateCheck = lastUpdateCheck.Value.AddDays(1);
+                            break;
+                        case AppSettings.GeneralSettings.UpdateCheckInterval.WEEKLY:
+                            nextUpdateCheck = lastUpdateCheck.Value.AddDays(7);
+                            break;
+                        case AppSettings.GeneralSettings.UpdateCheckInterval.MONTHLY:
+                            nextUpdateCheck = lastUpdateCheck.Value.AddMonths(1);
+                            break;
+                        default:
+                            throw new Exception($"Unexpected update check interval: {AppSettings.General.UpdateCheck}.");
+                    }
+                }
+            }
+            updater.Configure(HttpClient, nextUpdateCheck, AppSettings.LastUpdate.IgnoreReleaseName);
         }
 
         private Task<ObservableCollection<T>> SearchItemsAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction, string searchQuery,
@@ -727,6 +887,15 @@ namespace LibgenDesktop.Models
                 return selectedMirrorName;
             }
             return null;
+        }
+
+        private void ApplicationUpdateCheck(object sender, Updater.UpdateCheckEventArgs e)
+        {
+            LastApplicationUpdateCheckResult = e.Result;
+            ApplicationUpdateCheckCompleted?.Invoke(this, EventArgs.Empty);
+            AppSettings.LastUpdate.LastCheckedAt = DateTime.Now;
+            SaveSettings();
+            ConfigureUpdater();
         }
     }
 }
