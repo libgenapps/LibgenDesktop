@@ -9,7 +9,7 @@ namespace LibgenDesktop.Models.Download
     {
         private CancellationTokenSource cancellationTokenSource;
 
-        public DownloadItem(Guid id, string downloadPageUrl, string downloadDirectory, string fileName, string downloadTransformations)
+        public DownloadItem(Guid id, string downloadPageUrl, string downloadDirectory, string fileName, string downloadTransformations, string md5Hash)
         {
             cancellationTokenSource = new CancellationTokenSource();
             Id = id;
@@ -18,6 +18,7 @@ namespace LibgenDesktop.Models.Download
             Logs = new List<DownloadItemLogLine>();
             Cookies = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             DownloadTransformations = downloadTransformations;
+            Md5Hash = md5Hash;
             CancellationToken = cancellationTokenSource.Token;
             FileName = fileName;
             DirectFileUrl = null;
@@ -38,6 +39,7 @@ namespace LibgenDesktop.Models.Download
             Logs = source.Logs.ToList();
             Cookies = new Dictionary<string, string>(source.Cookies, StringComparer.OrdinalIgnoreCase);
             DownloadTransformations = source.DownloadTransformations;
+            Md5Hash = source.Md5Hash;
             FileName = source.FileName;
             DirectFileUrl = source.DirectFileUrl;
             Referer = source.Referer;
@@ -54,6 +56,7 @@ namespace LibgenDesktop.Models.Download
         public List<DownloadItemLogLine> Logs { get; }
         public Dictionary<string, string> Cookies { get; }
         public string DownloadTransformations { get; }
+        public string Md5Hash { get; }
         public CancellationToken CancellationToken { get; set; }
         public string FileName { get; set; }
         public string DirectFileUrl { get; set; }

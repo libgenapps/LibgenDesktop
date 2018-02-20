@@ -13,6 +13,7 @@ namespace LibgenDesktop.Models.Download
             public Guid Id { get; set; }
             public string FileName { get; set; }
             public DownloadItemStatus Status { get; set; }
+            public string Md5Hash { get; set; }
             public string DownloadPageUrl { get; set; }
             public string DirectFileUrl { get; set; }
             public string DownloadDirectory { get; set; }
@@ -80,6 +81,7 @@ namespace LibgenDesktop.Models.Download
                 Id = downloadItem.Id,
                 FileName = downloadItem.FileName,
                 Status = downloadItem.Status,
+                Md5Hash = downloadItem.Md5Hash,
                 DownloadPageUrl = downloadItem.DownloadPageUrl,
                 DirectFileUrl = downloadItem.DirectFileUrl,
                 DownloadDirectory = downloadItem.DownloadDirectory,
@@ -96,7 +98,7 @@ namespace LibgenDesktop.Models.Download
         private static DownloadItem FromStorageDownloadItem(StorageDownloadItem storageDownloadItem)
         {
             DownloadItem result = new DownloadItem(storageDownloadItem.Id, storageDownloadItem.DownloadPageUrl, storageDownloadItem.DownloadDirectory,
-                storageDownloadItem.FileName, storageDownloadItem.DownloadTransformations)
+                storageDownloadItem.FileName, storageDownloadItem.DownloadTransformations, storageDownloadItem.Md5Hash)
             {
                 Status = storageDownloadItem.Status,
                 DirectFileUrl = storageDownloadItem.DirectFileUrl,

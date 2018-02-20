@@ -96,7 +96,8 @@ namespace LibgenDesktop.Models.Download
             string fileName = String.Concat(FileUtils.RemoveInvalidFileNameCharacters(fileNameWithoutExtension, md5Hash), ".", fileExtension.ToLower());
             lock (downloadQueueLock)
             {
-                DownloadItem newDownloadItem = new DownloadItem(Guid.NewGuid(), downloadPageUrl, downloadSettings.DownloadDirectory, fileName, downloadTransformations);
+                DownloadItem newDownloadItem = new DownloadItem(Guid.NewGuid(), downloadPageUrl, downloadSettings.DownloadDirectory, fileName,
+                    downloadTransformations, md5Hash);
                 downloadQueue.Add(newDownloadItem);
                 eventQueue.Add(new DownloadItemAddedEventArgs(newDownloadItem));
                 AddLogLine(newDownloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineQueued);
@@ -479,7 +480,8 @@ namespace LibgenDesktop.Models.Download
                         ReportError(downloadItem, localization.GetLogLineCannotCreateDownloadDirectory(downloadItem.DownloadDirectory));
                     }
                 }
-                string fileName = downloadItem.FileCreated ? downloadItem.FileName : GenerateFileName(downloadItem.DownloadDirectory, downloadItem.FileName);
+                string fileName = downloadItem.FileCreated ? downloadItem.FileName : GenerateFileName(downloadItem.DownloadDirectory, downloadItem.FileName,
+                    downloadItem.Md5Hash);
                 string targetFilePath = Path.Combine(downloadItem.DownloadDirectory, fileName);
                 string partFilePath = targetFilePath + ".part";
                 bool isCompleted;
@@ -966,12 +968,25 @@ namespace LibgenDesktop.Models.Download
             }
         }
 
-        private string GenerateFileName(string directory, string fileNameTemplate)
+        private string GenerateFileName(string directory, string fileNameTemplate, string md5Hash)
         {
             string fileName = fileNameTemplate;
-            string filePath = Path.Combine(directory, fileName);
-            string fileNameWithoutExtension = null;
+            string filePath;
             string fileExtension = null;
+            bool isMd5HashFileName = false;
+            try
+            {
+                filePath = Path.GetFullPath(Path.Combine(directory, fileName));
+            }
+            catch (PathTooLongException)
+            {
+                fileExtension = Path.GetExtension(fileNameTemplate);
+                fileNameTemplate = md5Hash + fileExtension;
+                fileName = fileNameTemplate;
+                filePath = Path.Combine(directory, fileName);
+                isMd5HashFileName = true;
+            }
+            string fileNameWithoutExtension = null;
             int counter = 0;
             while (File.Exists(filePath) || File.Exists(filePath + ".part"))
             {
@@ -982,7 +997,23 @@ namespace LibgenDesktop.Models.Download
                 }
                 counter++;
                 fileName = $"{fileNameWithoutExtension} ({counter}){fileExtension}";
-                filePath = Path.Combine(directory, fileName);
+                try
+                {
+                    filePath = Path.GetFullPath(Path.Combine(directory, fileName));
+                }
+                catch (PathTooLongException)
+                {
+                    if (isMd5HashFileName)
+                    {
+                        throw;
+                    }
+                    fileExtension = Path.GetExtension(fileNameTemplate);
+                    fileName = md5Hash + fileExtension;
+                    filePath = Path.Combine(directory, fileName);
+                    counter = 0;
+                    fileNameWithoutExtension = null;
+                    isMd5HashFileName = true;
+                }
             }
             return fileName;
         }
