@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using SharpCompress.Archives;
 using SharpCompress.Archives.Zip;
 using SharpCompress.Common;
@@ -22,9 +21,9 @@ namespace LibgenDesktop.Setup
         {
             using (ZipArchive zipArchive = ZipArchive.Create())
             {
-                foreach (string fileName in AppFiles.GetFileList(is64Bit))
+                foreach (AppFile appFile in (is64Bit ? AppFiles.X64 : AppFiles.X86))
                 {
-                    zipArchive.AddEntry(Path.GetFileName(fileName), Utils.GetFullFilePath(AppFiles.GetBinariesDirectoryPath(is64Bit), fileName));
+                    zipArchive.AddEntry(appFile.TargetFilePath, Utils.GetFullFilePath(AppFiles.GetBinariesDirectoryPath(is64Bit), appFile.SourceFilePath));
                 }
                 string outputFilePath = Utils.GetFullFilePath(@"..\Release", String.Format(Constants.PORTABLE_PACKAGE_FILE_NAME_FORMAT, is64Bit ? 64 : 32));
                 zipArchive.SaveTo(outputFilePath, CompressionType.Deflate);

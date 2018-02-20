@@ -1,0 +1,667 @@
+﻿{
+    "General":
+    {
+        "Name": "English",
+        "LocalizedName": "US English",
+        "CultureCode": "en-US",
+        "TranslatorName": "Put your name here"
+    },
+    "Formatting":
+    {
+        "DecimalSeparator": ".",
+        "ThousandsSeparator": ",",
+        "DateFormat": "MM/dd/yyyy",
+        "TimeFormat": "hh:mm:ss tt",
+        "FileSizePostfixes":
+        {
+            "Byte": "bytes",
+            "Kilobyte": "KB",
+            "Megabyte": "MB",
+            "Gigabyte": "GB",
+            "Terabyte": "TB"
+        }
+    },
+    "MainWindow":
+    {
+        "WindowTitle": "Libgen Desktop",
+        "MainMenu":
+        {
+            "DownloadManagerTooltip": "Download Manager",
+            "Update": "Update...",
+            "Import": "Import...",
+            "Synchronize": "Synchronization...",
+            "Settings": "Settings"
+        }
+    },
+    "DatabaseWindow":
+    {
+        "WindowTitle": "Libgen Desktop",
+        "FirstRunMessage": "Добро пожаловать в Libgen Desktop.",
+        "DatabaseNotFound": "База данных {database} не найдена.",
+        "DatabaseCorrupted": "База данных {database} повреждена.",
+        "ChooseOption": "Выберите действие",
+        "CreateNewDatabase": "Создать новую базу данных",
+        "OpenExistingDatabase": "Открыть существующую базу данных",
+        "BrowseNewDatabaseDialogTitle": "Сохранение новой базы данных",
+        "BrowseExistingDatabaseDialogTitle": "Выбор базы данных",
+        "Databases": "Базы данных",
+        "AllFiles": "Все файлы",
+        "Error": "Ошибка",
+        "CannotCreateDatabase": "Не удалось создать базу данных.",
+        "Ok": "OK",
+        "Cancel": "ОТМЕНА"
+    },
+    "SearchTab":
+    {
+        "TabTitle": "Search",
+        "SearchPlaceHolder": "Search",
+        "NonFictionSelector": "Non-fiction books",
+        "FictionSelector": "Fiction books",
+        "SciMagSelector": "Scientific articles",
+        "NonFictionSearchBoxTooltip": "Search by title, authors, series, publisher, and ISBN without dashes",
+        "FictionSearchBoxTooltip": "Search by title, authors, series, publisher, and ISBN with dashes",
+        "SciMagSearchBoxTooltip": "Search by title, authors, magazine name, DOI, Pubmed ID, and ISSN (p/e)",
+        "SearchInProgress": "Search in progress...",
+        "NonFictionSearchProgress": "Books found: {count}",
+        "FictionSearchProgress": "Books found: {count}",
+        "SciMagSearchProgress": "Articles found: {count}",
+        "DatabaseIsEmpty": "The database is empty. Download a database dump from the Library Genesis web site and import it here.",
+        "ImportButton": "Import"
+    },
+    "SearchResultsTabs":
+    {
+        "SearchPlaceHolder": "Поиск",
+        "SearchInProgress": "Идет поиск...",
+        "ExportButtonTooltip": "Экспорт результатов поиска в файл"
+    },
+    "NonFictionSearchResultsTab":
+    {
+        "SearchBoxTooltip": "Поиск по наименованию, авторам, серии, издателю и ISBN без дефисов",
+        "SearchProgress": "Найдено книг: {count}",
+        "StatusBar": "Найдено книг: {count}",
+        "Columns":
+        {
+            "Title": "Наименование",
+            "Authors": "Авторы",
+            "Series": "Серия",
+            "Year": "Год",
+            "Publisher": "Издатель",
+            "Format": "Формат",
+            "FileSize": "Размер файла",
+            "Ocr": "OCR"
+        }
+    },
+    "FictionSearchResultsTab":
+    {
+        "SearchBoxTooltip": "Поиск по наименованию, авторам, серии, издателю и ISBN с дефисами",
+        "SearchProgress": "Найдено книг: {count}",
+        "StatusBar": "Найдено книг: {count}",
+        "Columns":
+        {
+            "Title": "Наименование",
+            "Authors": "Авторы",
+            "Series": "Серия",
+            "Year": "Год",
+            "Publisher": "Издатель",
+            "Format": "Формат",
+            "FileSize": "Размер файла"
+        }
+    },
+    "SciMagSearchResultsTab":
+    {
+        "SearchBoxTooltip": "Поиск по наименованию, авторам, журналу, DOI, Pubmed ID и ISSN (p/e)",
+        "SearchProgress": "Найдено статей: {count}",
+        "StatusBar": "Найдено статей: {count}",
+        "Columns":
+        {
+            "Title": "Наименование",
+            "Authors": "Авторы",
+            "Magazine": "Журнал",
+            "Year": "Год",
+            "FileSize": "Размер файла",
+            "Doi": "DOI"
+        }
+    },
+    "DetailsTabs":
+    {
+        "CoverIsLoading": "Обложка загружается...",
+        "NoCover": "Обложка отсутствует",
+        "NoCoverMirror": "Не выбрано зеркало{new-line}для загрузки обложек",
+        "NoCoverDueToOfflineMode": "Обложка не загружена, потому что{new-line}включен автономный режим",
+        "CoverLoadingError": "Не удалось загрузить обложку",
+        "Yes": "да",
+        "No": "нет",
+        "Unknown": "неизвестно",
+        "Portrait": "портретная",
+        "Landscape": "альбомная",
+        "CopyContextMenu": "Копировать \"{text}\"",
+        "Download": "СКАЧАТЬ",
+        "DownloadFromMirror": "СКАЧАТЬ С {mirror}",
+        "Queued": "В ОЧЕРЕДИ",
+        "Downloading": "ЗАГРУЖАЕТСЯ",
+        "Stopped": "ЗАГРУЗКА ОСТАНОВЛЕНА",
+        "Error": "ОШИБКА ЗАГРУЗКИ",
+        "Open": "ОТКРЫТЬ",
+        "ErrorMessageTitle": "Ошибка",
+        "FileNotFoundError": "Файл {file} не найден.",
+        "NoDownloadMirrorTooltip": "Не выбрано зеркало для загрузки книг",
+        "OfflineModeIsOnTooltip": "Включен автономный режим",
+        "Close": "ЗАКРЫТЬ"
+    },
+    "NonFictionDetailsTab":
+    {
+        "Title": "Наименование",
+        "Authors": "Авторы",
+        "Series": "Серия",
+        "Publisher": "Издатель",
+        "Year": "Год",
+        "Language": "Язык",
+        "Format": "Формат",
+        "Isbn": "ISBN",
+        "Added": "Добавлено",
+        "LastModified": "Обновлено",
+        "Library": "Библиотека",
+        "FileSize": "Размер файла",
+        "Topics": "Темы",
+        "Volume": "Том",
+        "Magazine": "Журнал",
+        "City": "Город",
+        "Edition": "Издание",
+        "Pages": "Страниц",
+        "BodyMatterPages": "содержательная часть",
+        "TotalPages": "всего в файле",
+        "Tags": "Теги",
+        "Md5Hash": "MD5-хэш",
+        "Comments": "Комментарий",
+        "Identifiers": "Идентификаторы",
+        "LibgenId": "Libgen ID",
+        "Issn": "ISSN",
+        "Udc": "UDC",
+        "Lbc": "LBC",
+        "Lcc": "LCC",
+        "Ddc": "DDC",
+        "Doi": "DOI",
+        "OpenLibraryId": "OpenLibraryID",
+        "GoogleBookId": "GoogleID",
+        "Asin": "ASIN",
+        "AdditionalAttributes": "Дополнительные атрибуты",
+        "Dpi": "DPI",
+        "Ocr": "OCR",
+        "TableOfContents": "Оглавление",
+        "Scanned": "Отсканирована",
+        "Orientation": "Ориентация",
+        "Paginated": "Постраничная",
+        "Colored": "Цветная",
+        "Cleaned": "Вычищенная"
+    },
+    "FictionDetailsTab":
+    {
+        "Title": "Наименование",
+        "Authors": "Авторы",
+        "RussianAuthor": "Автор (рус.)",
+        "Series": "Серия",
+        "Publisher": "Издатель",
+        "Edition": "Издание",
+        "Year": "Год",
+        "Language": "Язык",
+        "Format": "Формат",
+        "Pages": "Страниц",
+        "Version": "Версия",
+        "FileSize": "Размер файла",
+        "Added": "Добавлено",
+        "LastModified": "Обновлено",
+        "Md5Hash": "MD5-хэш",
+        "Comments": "Комментарий",
+        "Identifiers": "Идентификаторы",
+        "LibgenId": "Libgen ID",
+        "Isbn": "ISBN",
+        "GoogleBookId": "Google Books ID",
+        "Asin": "ASIN"
+    },
+    "SciMagDetailsTab":
+    {
+        "Title": "Наименование",
+        "Authors": "Авторы",
+        "Magazine": "Журнал",
+        "Year": "Год",
+        "Month": "Месяц",
+        "Day": "День",
+        "Volume": "Том",
+        "Issue": "Выпуск",
+        "Pages": "Страницы",
+        "FileSize": "Размер файла",
+        "AddedDateTime": "Добавлено",
+        "Md5Hash": "MD5-хэш",
+        "AbstractUrl": "Abstract URL",
+        "Identifiers": "Идентификаторы",
+        "LibgenId": "Libgen ID",
+        "Doi": "DOI",
+        "Isbn": "ISBN",
+        "MagazineId": "ID журнала",
+        "Issnp": "ISSN (p)",
+        "Issne": "ISSN (e)",
+        "PubmedId": "Pubmed ID",
+        "Pmc": "PMC",
+        "Pii": "PII",
+        "AdditionalAttributes": "Дополнительные атрибуты",
+        "Attribute1": "Атрибут 1",
+        "Attribute2": "Атрибут 2",
+        "Attribute3": "Атрибут 3",
+        "Attribute4": "Атрибут 4",
+        "Attribute5": "Атрибут 5",
+        "Attribute6": "Атрибут 6"
+    },
+    "Import":
+    {
+        "WindowTitle": "Импорт из SQL-дампа",
+        "BrowseImportFileDialogTitle": "Выбор SQL-дампа",
+        "AllSupportedFiles": "Все поддерживаемые файлы",
+        "SqlDumps": "SQL-дампы",
+        "Archives": "Архивы",
+        "AllFiles": "Все файлы",
+        "Elapsed": "Прошло {elapsed}",
+        "Interrupt": "ПРЕРВАТЬ",
+        "Interrupting": "ПРЕРЫВАЕТСЯ...",
+        "Close": "ЗАКРЫТЬ",
+        "StatusMessages":
+        {
+            "Step": "Шаг {current} из {total}.",
+            "DataLookup": "Поиск данных для импорта",
+            "CreatingIndexes": "Создание индексов",
+            "LoadingIds": "Загрузка идентификаторов",
+            "ImportingData": "Импорт данных",
+            "ImportComplete": "Импорт завершен",
+            "ImportCancelled": "Импорт прерван",
+            "DataNotFound": "Данные не найдены",
+            "ImportError": "Импорт завершен с ошибками"
+        },
+        "LogMessages":
+        {
+            "Step": "Шаг {step}",
+            "DataLookup": "Поиск данных для импорта в файле",
+            "Scanning": "Идет сканирование файла...",
+            "ScannedProgress": "Просканировано {percent}% файла...",
+            "NonFictionTableFound": "Найдена таблица с нехудожественными книгами.",
+            "FictionTableFound": "Найдена таблица с художественными книгами.",
+            "SciMagTableFound": "Найдена таблица с научными статьями.",
+            "CreatingIndexes": "Создание недостающих индексов",
+            "CreatingIndexForColumn": "Создается индекс для столбца {column}...",
+            "LoadingIds": "Загрузка идентификаторов существующих данных",
+            "LoadingColumnValues": "Загрузка значений столбца {column}...",
+            "ImportingData": "Импорт данных",
+            "ImportBooksProgressNoUpdate": "Добавлено книг: {added}.",
+            "ImportBooksProgressWithUpdate": "Добавлено книг: {added}, обновлено книг: {updated}.",
+            "ImportArticlesProgressNoUpdate": "Добавлено статей: {added}.",
+            "ImportArticlesProgressWithUpdate": "Добавлено статей: {added}, обновлено статей: {updated}.",
+            "ImportSuccessful": "Импорт выполнен успешно.",
+            "ImportCancelled": "Импорт был прерван пользователем.",
+            "DataNotFound": "Не найдены данные для импорта.",
+            "ImportError": "Импорт завершился с ошибками."
+        }
+    },
+    "ExportPanel":
+    {
+        "Header": "Экспорт результатов поиска в файл",
+        "Format": "Формат",
+        "Excel": "Файл Microsoft Excel 2007-2016 (XLSX)",
+        "Csv": "Текстовый файл с разделителями (CSV)",
+        "Separator": "Разделитель",
+        "Comma": "Запятая",
+        "Semicolon": "Точка с запятой",
+        "Tab": "Знак табуляции",
+        "SaveAs": "Сохранить в",
+        "Browse": "Выбрать...",
+        "BrowseDialogTitle": "Экспортировать результаты поиска",
+        "ExcelFiles": "Файлы Microsoft Excel",
+        "CsvFiles": "Файлы CSV",
+        "TsvFiles": "Файлы TSV",
+        "AllFiles": "Все файлы",
+        "ExportRange": "Экспортировать",
+        "NoLimit": "все",
+        "Limit": "только первые {count} результатов",
+        "Export": "ЭКСПОРТ",
+        "Cancel": "ОТМЕНА",
+        "SavingFile": "Сохранение файла.",
+        "RowCountSingleFile": "Экспортировано строк: {rows}.",
+        "RowCountMultipleFiles": "Экспортировано строк: {rows}, файлов создано: {files}.",
+        "ErrorWarningTitle": "Ошибка",
+        "InvalidExportPath": "Указанный путь файла для экспорта некорректен.",
+        "DirectoryNotFound": "Директория {directory} не существует.",
+        "InvalidExportFileName": "Указанное имя файла для экспорта некорректно.",
+        "OverwritePromptTitle": "Перезаписать файл?",
+        "OverwritePromptText": "Файл {file} существует. Вы действительно хотите перезаписать его?",
+        "RowLimitWarningTitle": "Предел количества строк",
+        "RowLimitWarningText": "Достигнут предел количества строк, допустимый для записи в файл Microsoft Excel. Дальнейший экспорт невозможен. Для экспорта большего числа строк включите опцию \"Делить на несколько файлов\" в настройках программы.",
+        "ExportError": "Экспорт завершился с ошибкой.",
+        "Interrupt": "ПРЕРВАТЬ",
+        "Interrupting": "ПРЕРЫВАЕТСЯ...",
+        "ExportInterrupted": "Экспорт прерван.",
+        "Results": "ПОСМОТРЕТЬ РЕЗУЛЬТАТ",
+        "Close": "ЗАКРЫТЬ"
+    },
+    "Exporter":
+    {
+        "Yes": "да",
+        "No": "нет",
+        "Unknown": "неизвестно",
+        "Portrait": "портретная",
+        "Landscape": "альбомная",
+        "NonFictionColumns":
+        {
+            "Id": "ID",
+            "Title": "Наименование",
+            "Authors": "Авторы",
+            "Series": "Серия",
+            "Publisher": "Издатель",
+            "Year": "Год",
+            "Language": "Язык",
+            "Format": "Формат",
+            "Isbn": "ISBN",
+            "Added": "Добавлено",
+            "LastModified": "Обновлено",
+            "Library": "Библиотека",
+            "FileSize": "Размер файла",
+            "Topics": "Темы",
+            "Volume": "Том",
+            "Magazine": "Журнал",
+            "City": "Город",
+            "Edition": "Издание",
+            "BodyMatterPages": "Страниц (содержательная часть)",
+            "TotalPages": "Страниц (всего в файле)",
+            "Tags": "Теги",
+            "Md5Hash": "MD5-хэш",
+            "Comments": "Комментарий",
+            "LibgenId": "Libgen ID",
+            "Issn": "ISSN",
+            "Udc": "UDC",
+            "Lbc": "LBC",
+            "Lcc": "LCC",
+            "Ddc": "DDC",
+            "Doi": "DOI",
+            "OpenLibraryId": "OpenLibraryID",
+            "GoogleBookId": "GoogleID",
+            "Asin": "ASIN",
+            "Dpi": "DPI",
+            "Ocr": "OCR",
+            "TableOfContents": "Оглавление",
+            "Scanned": "Отсканирована",
+            "Orientation": "Ориентация",
+            "Paginated": "Постраничная",
+            "Colored": "Цветная",
+            "Cleaned": "Вычищенная"
+        },
+        "FictionColumns":
+        {
+            "Id": "ID",
+            "Title": "Наименование",
+            "Authors": "Авторы",
+            "RussianAuthor": "Автор (рус.)",
+            "Series": "Серия",
+            "Publisher": "Издатель",
+            "Edition": "Издание",
+            "Year": "Год",
+            "Language": "Язык",
+            "Format": "Формат",
+            "Pages": "Страниц",
+            "Version": "Версия",
+            "FileSize": "Размер файла",
+            "Added": "Добавлено",
+            "LastModified": "Обновлено",
+            "Md5Hash": "MD5-хэш",
+            "Comments": "Комментарий",
+            "LibgenId": "Libgen ID",
+            "Isbn": "ISBN",
+            "GoogleBookId": "Google Books ID",
+            "Asin": "ASIN"
+        },
+        "SciMagColumns":
+        {
+            "Id": "ID",
+            "Title": "Наименование",
+            "Authors": "Авторы",
+            "Magazine": "Журнал",
+            "Year": "Год",
+            "Month": "Месяц",
+            "Day": "День",
+            "Volume": "Том",
+            "Issue": "Выпуск",
+            "Pages": "Страницы",
+            "FileSize": "Размер файла",
+            "AddedDateTime": "Добавлено",
+            "Md5Hash": "MD5-хэш",
+            "AbstractUrl": "Abstract URL",
+            "LibgenId": "Libgen ID",
+            "Doi1": "DOI 1",
+            "Doi2": "DOI 2",
+            "Isbn": "ISBN",
+            "MagazineId": "ID журнала",
+            "Issnp": "ISSN (p)",
+            "Issne": "ISSN (e)",
+            "PubmedId": "Pubmed ID",
+            "Pmc": "PMC",
+            "Pii": "PII",
+            "Attribute1": "Атрибут 1",
+            "Attribute2": "Атрибут 2",
+            "Attribute3": "Атрибут 3",
+            "Attribute4": "Атрибут 4",
+            "Attribute5": "Атрибут 5",
+            "Attribute6": "Атрибут 6"
+        }
+    },
+    "Synchronization":
+    {
+        "WindowTitle": "Синхронизация списка нехудожественной литературы",
+        "ErrorMessageTitle": "Ошибка",
+        "ImportRequired": "Перед синхронизацией списка нехудожественной литературы необходимо выполнить импорт из дампа базы данных (пункт \"Импорт\" в меню).",
+        "NoSynchronizationMirror": "Не выбрано зеркало для синхронизации списка нехудожественной литературы.",
+        "OfflineModePromptTitle": "Автономный режим",
+        "OfflineModePromptText": "Синхронизация невозможна при включенном автономном режиме. Выключить автономный режим?",
+        "Elapsed": "Прошло {elapsed}",
+        "Interrupt": "ПРЕРВАТЬ",
+        "Interrupting": "ПРЕРЫВАЕТСЯ...",
+        "Close": "ЗАКРЫТЬ",
+        "StatusMessages":
+        {
+            "Step": "Шаг {current} из {total}.",
+            "Preparation": "Подготовка к синхронизации",
+            "CreatingIndexes": "Создание индексов",
+            "LoadingIds": "Загрузка идентификаторов",
+            "SynchronizingData": "Синхронизация",
+            "SynchronizationComplete": "Синхронизация завершена",
+            "SynchronizationCancelled": "Синхронизация прервана",
+            "SynchronizationError": "Синхронизация завершилась с ошибками"
+        },
+        "LogMessages":
+        {
+            "Step": "Шаг {step}",
+            "CreatingIndexes": "Создание недостающих индексов",
+            "CreatingIndexForColumn": "Создается индекс для столбца {column}...",
+            "LoadingIds": "Загрузка идентификаторов существующих данных",
+            "LoadingColumnValues": "Загрузка значений столбца {column}...",
+            "SynchronizingBookList": "Синхронизация списка книг",
+            "DownloadingNewBooks": "Скачивание информации о новых книгах",
+            "SynchronizationProgressNoAddedNoUpdated": "Скачано книг: {downloaded}.",
+            "SynchronizationProgressAdded": "Скачано книг: {downloaded}, добавлено книг: {added}.",
+            "SynchronizationProgressUpdated": "Скачано книг: {downloaded}, обновлено книг: {updated}.",
+            "SynchronizationProgressAddedAndUpdated": "Скачано книг: {downloaded}, добавлено книг: {added}, обновлено книг: {updated}.",
+            "SynchronizationSuccessful": "Синхронизация выполнена успешно.",
+            "SynchronizationCancelled": "Синхронизация была прервана пользователем.",
+            "SynchronizationError": "Синхронизация завершилась с ошибками."
+        }
+    },
+    "DownloadManager":
+    {
+        "TabTitle": "Загрузки",
+        "Start": "ЗАПУСТИТЬ",
+        "Stop": "ОСТАНОВИТЬ",
+        "Remove": "УДАЛИТЬ",
+        "StartAll": "ЗАПУСТИТЬ ВСЕ",
+        "StopAll": "ОСТАНОВИТЬ ВСЕ",
+        "RemoveCompleted": "УДАЛИТЬ ЗАВЕРШЕННЫЕ",
+        "QueuedStatus": "В очереди",
+        "DownloadingStatus": "Загружается",
+        "StoppedStatus": "Остановлено",
+        "RetryDelayStatus": "Пауза",
+        "ErrorStatus": "Ошибка",
+        "DownloadProgressKnownFileSize": "Загружено: {downloaded} из {total} байт ({percent}%)",
+        "DownloadProgressUnknownFileSize": "Загружено: {downloaded} из неизвестно",
+        "Log": "Журнал",
+        "TechnicalDetails": "Технические детали",
+        "Copy": "Копировать",
+        "FileNotFoundErrorTitle": "Ошибка",
+        "FileNotFoundErrorText": "Файл {file} не найден.",
+        "LogMessages":
+        {
+            "Queued": "Загрузка добавлена в очередь.",
+            "Started": "Загрузка начата.",
+            "Stopped": "Загрузка остановлена.",
+            "RetryDelay": "Пауза {count} секунд...",
+            "Completed": "Загрузка завершена.",
+            "OfflineModeIsOn": "Включен автономный режим.",
+            "TransformationError": "Трансформация {transformation} завершилась с ошибкой.",
+            "TransformationReturnedIncorrectUrl": "Трансформация {transformation} вернула недопустимый URL.",
+            "Attempt": "Попытка {current} из {total}.",
+            "MaximumDownloadAttempts": "Достигнуто максимальное количество попыток загрузки.",
+            "DownloadingPage": "Загружается страница: {url}",
+            "DownloadingFile": "Загружается файл: {url}",
+            "StartingFileDownloadKnownFileSize": "Загрузка файла начата, размер файла: {size} байт.",
+            "StartingFileDownloadUnknownFileSize": "Загрузка файла начата, размер файла: неизвестно.",
+            "ResumingFileDownloadKnownFileSize": "Загрузка файла возобновлена, осталось загрузить: {remaining} байт.",
+            "ResumingFileDownloadUnknownFileSize": "Загрузка файла возобновлена, осталось загрузить: неизвестно.",
+            "Request": "Запрос",
+            "Response": "Ответ сервера",
+            "Redirect": "Переадресация на {url}",
+            "TooManyRedirects": "Сервер выполнил слишком много попыток переадресации.",
+            "NonSuccessfulStatusCode": "Сервер вернул код {status}.",
+            "CannotCreateDownloadDirectory": "Не удалось создать директорию {directory}",
+            "CannotCreateOrOpenFile": "Не удалось создать или открыть файл {file}",
+            "CannotRenamePartFile": "Ошибка переименования файла {source} в {destination}.",
+            "HtmlPageReturned": "Сервер вернул HTML-страницу вместо файла.",
+            "NoPartialDownloadSupport": "Сервер не поддерживает докачку.",
+            "NoContentLengthWarning": "Предупреждение: сервер не указал размер файла.",
+            "ServerResponseTimeout": "Превышено время ожидания ответа от сервера.",
+            "DownloadIncompleteError": "Загрузка завершена не полностью.",
+            "FileWriteError": "Ошибка записи файла на диск.",
+            "UnexpectedError": "Возникла непредвиденная ошибка."
+        }
+    },
+    "ApplicationUpdate":
+    {
+        "WindowTitle": "Обновление программы",
+        "UpdateAvailable": "Доступно обновление Libgen Desktop",
+        "NewVersion": "Новая версия: {version} от {date}",
+        "Download": "СКАЧАТЬ",
+        "DownloadAndInstall": "СКАЧАТЬ И УСТАНОВИТЬ",
+        "SkipThisVersion": "ПРОПУСТИТЬ ЭТУ ВЕРСИЮ",
+        "Cancel": "ОТМЕНА",
+        "Interrupt": "ПРЕРВАТЬ",
+        "Interrupting": "ПРЕРЫВАЕТСЯ...",
+        "InterruptPromptTitle": "Прервать загрузку?",
+        "InterruptPromptText": "Прервать загрузку обновления?",
+        "Error": "Ошибка",
+        "IncompleteDownload": "Файл обновления не был загружен полностью.",
+        "Close": "ЗАКРЫТЬ"
+    },
+    "Settings":
+    {
+        "WindowTitle": "Настройки",
+        "Ok": "OK",
+        "Cancel": "ОТМЕНА",
+        "DiscardChangesPromptTitle": "Отменить изменения?",
+        "DiscardChangesPromptText": "Настройки были изменены. Вы действительно хотите отменить сделанные изменения?",
+        "General":
+        {
+            "TabHeader": "Общие",
+            "Language": "Язык интерфейса",
+            "CheckUpdates": "Проверять обновления программы",
+            "UpdateCheckIntervals":
+            {
+                "Never": "никогда",
+                "Daily": "один раз в день",
+                "Weekly": "один раз в неделю",
+                "Monthly": "один раз в месяц"
+            }
+        },
+        "Network":
+        {
+            "TabHeader": "Сеть",
+            "OfflineMode": "Автономный режим",
+            "UseHttpProxy": "Использовать HTTP прокси-сервер",
+            "ProxyAddress": "Адрес",
+            "ProxyAddressRequired": "Обязательное поле",
+            "ProxyPort": "Порт",
+            "ProxyPortValidation": "Числа от {min} до {max}",
+            "ProxyUserName": "Имя пользователя",
+            "ProxyPassword": "Пароль",
+            "ProxyPasswordWarning": "Хранить здесь пароль небезопасно."
+        },
+        "Download":
+        {
+            "TabHeader": "Загрузки",
+            "DownloadMode": "При скачивании книги / статьи",
+            "OpenInBrowser": "открывать ссылку на скачивание в браузере",
+            "UseDownloadManager": "использовать встроенный менеджер загрузок",
+            "DownloadDirectory": "Загружать в",
+            "BrowseDirectoryDialogTitle": "Директория для загруженных файлов",
+            "DownloadDirectoryNotFound": "Директория не существует",
+            "Timeout": "Таймаут загрузки",
+            "TimeoutValidation": "Числа от {min} до {max}",
+            "Seconds": "секунд",
+            "DownloadAttempts": "Количество попыток",
+            "DownloadAttemptsValidation": "Числа от {min} до {max}",
+            "Times": "раз",
+            "RetryDelay": "Пауза между попытками",
+            "RetryDelayValidation": "Числа от {min} до {max}"
+        },
+        "Mirrors":
+        {
+            "TabHeader": "Зеркала",
+            "NonFiction": "Нехудожественная литература",
+            "Fiction": "Художественная литература",
+            "SciMagArticles": "Научные статьи",
+            "Books": "Книги",
+            "Articles": "Статьи",
+            "Covers": "Обложки",
+            "Synchronization": "Синхронизация",
+            "NoMirror": "нет"
+        },
+        "Search":
+        {
+            "TabHeader": "Поиск",
+            "LimitResults": "Ограничивать количество результатов",
+            "MaximumResults": "Максимальное количество результатов",
+            "PositiveNumbersOnly": "Только положительные числа",
+            "OpenDetails": "Открывать детали книги / статьи",
+            "InModalWindow": "в модальном окне",
+            "InNonModalWindow": "в немодальном окне",
+            "InNewTab": "в новой вкладке"
+        },
+        "Export":
+        {
+            "TabHeader": "Экспорт",
+            "OpenResults": "Открывать результат после экспорта",
+            "SplitIntoMultipleFiles": "Делить на несколько файлов",
+            "MaximumRowsPerFile": "Максимальное количество строк в файле",
+            "MaximumRowsPerFileValidation": "Числа от {min} до {max}",
+            "ExcelLimitNote": "Примечание: Microsoft Excel не поддерживает файлы более {count} строк."
+        },
+        "Advanced":
+        {
+            "TabHeader": "Дополнительно",
+            "UseLogging": "Записывать отладочную информацию в файл"
+        }
+    },
+    "MessageBox":
+    {
+        "Ok": "OK",
+        "Yes": "ДА",
+        "No": "НЕТ"
+    },
+    "ErrorWindow":
+    {
+        "WindowTitle": "Ошибка",
+        "UnexpectedError": "Возникла непредвиденная ошибка",
+        "Copy": "СКОПИРОВАТЬ В БУФЕР ОБМЕНА",
+        "Close": "ЗАКРЫТЬ"
+    }
+}

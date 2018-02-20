@@ -20,16 +20,35 @@
         </Style.Resources>
         <Setter Property="Margin" Value="0,8,8,0" />
     </Style>
+    <Style x:Key="TextBox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="True">
+                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
     <Style x:Key="EditableComboBox" TargetType="ComboBox" BasedOn="{StaticResource MaterialDesignComboBox}">
         <Setter Property="IsEditable" Value="True" />
         <Setter Property="IsTextSearchEnabled" Value="False" />
         <Setter Property="HorizontalContentAlignment" Value="Right" />
         <Style.Triggers>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="True">
-                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}"/>
+                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="SelectButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+        <Setter Property="Cursor" Value="Hand" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Cursor" Value="Arrow" />
+                <Setter Property="Opacity" Value="0.23" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -57,15 +76,43 @@
         <Setter Property="Background" Value="Transparent" />
         <Style.Triggers>
             <Trigger Property="IsEnabled" Value="False">
-                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="True">
-                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}"/>
+                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}" />
             </Trigger>
         </Style.Triggers>
     </Style>
     <Style x:Key="NetworkProxyNote" TargetType="TextBlock" BasedOn="{StaticResource Note}">
         <Setter Property="Margin" Value="24,0,0,0" />
+    </Style>
+    <Style x:Key="DownloadTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <Style x:Key="DownloadModeRadioButtonsPanel" TargetType="StackPanel">
+        <Style.Resources>
+            <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}">
+                <Style.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="0,0,0,4" />
+                    </Style>
+                </Style.Resources>
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,2" />
+            </Style>
+        </Style.Resources>
+        <Setter Property="Orientation" Value="Vertical" />
+        <Setter Property="Margin" Value="24,3,0,24" />
+    </Style>
+    <Style x:Key="DownloadDirectory" TargetType="TextBox" BasedOn="{StaticResource TextBox}">
+        <Setter Property="Margin" Value="24,0,8,0" />
+    </Style>
+    <Style x:Key="DownloadSelectDirectoryButton" TargetType="Button" BasedOn="{StaticResource SelectButton}">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="FontWeight" Value="Medium" />
+    </Style>
+    <Style x:Key="DownloadComboBox" TargetType="ComboBox" BasedOn="{StaticResource EditableComboBox}">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Margin" Value="8,0" />
+        <Setter Property="Width" Value="100" />
     </Style>
     <Style x:Key="MirrorsTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
     <Style x:Key="MirrorSectionHeader" TargetType="TextBlock">

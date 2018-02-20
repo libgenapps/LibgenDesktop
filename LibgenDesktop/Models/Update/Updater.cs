@@ -14,6 +14,11 @@ namespace LibgenDesktop.Models.Update
 {
     internal class Updater : IDisposable
     {
+        private const string ASSET_NAME_SETUP_64BIT = "LibgenDesktop.Setup.64-bit.msi";
+        private const string ASSET_NAME_SETUP_32BIT = "LibgenDesktop.Setup.32-bit.msi";
+        private const string ASSET_NAME_PORTABLE_64BIT = "LibgenDesktop.Portable.64-bit.zip";
+        private const string ASSET_NAME_PORTABLE_32BIT = "LibgenDesktop.Portable.32-bit.zip";
+
         internal class UpdateCheckResult
         {
             public UpdateCheckResult(string newReleaseName, DateTime publishedAt, string fileName, int fileSize, string downloadUrl)
@@ -65,7 +70,6 @@ namespace LibgenDesktop.Models.Update
             this.ignoreReleaseName = ignoreReleaseName;
             if (timer != null)
             {
-                return;
                 timer.Dispose();
                 timer = null;
             }
@@ -156,11 +160,11 @@ namespace LibgenDesktop.Models.Update
         {
             if (Environment.IsInPortableMode)
             {
-                return Environment.IsIn64BitProcess ? "LibgenDesktop.Portable.64-bit.zip" : "LibgenDesktop.Portable.32-bit.zip";
+                return Environment.IsIn64BitProcess ? ASSET_NAME_PORTABLE_64BIT : ASSET_NAME_PORTABLE_32BIT;
             }
             else
             {
-                return Environment.IsIn64BitProcess ? "LibgenDesktop.Setup.64-bit.msi" : "LibgenDesktop.Setup.32-bit.msi";
+                return Environment.IsIn64BitProcess ? ASSET_NAME_SETUP_64BIT : ASSET_NAME_SETUP_32BIT;
             }
         }
     }

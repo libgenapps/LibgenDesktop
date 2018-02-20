@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using LibgenDesktop.ViewModels;
-using LibgenDesktop.Views;
+using LibgenDesktop.ViewModels.Windows;
+using LibgenDesktop.Views.Windows;
 
 namespace LibgenDesktop.Infrastructure
 {
@@ -48,9 +48,11 @@ namespace LibgenDesktop.Infrastructure
             RegisterWindow(WindowKey.SETTINGS_WINDOW, typeof(SettingsWindow), typeof(SettingsWindowViewModel));
             RegisterWindow(WindowKey.SYNCHRONIZATION_WINDOW, typeof(SynchronizationWindow), typeof(SynchronizationWindowViewModel));
             RegisterWindow(WindowKey.APPLICATION_UPDATE_WINDOW, typeof(ApplicationUpdateWindow), typeof(ApplicationUpdateWindowViewModel));
+            MessageBox = new MessageBox();
         }
 
         public static Dictionary<WindowKey, RegisteredWindow> AllWindows { get; }
+        public static IMessageBox MessageBox { get; }
 
         private static void RegisterWindow(WindowKey windowKey, Type windowType, Type viewModelType)
         {

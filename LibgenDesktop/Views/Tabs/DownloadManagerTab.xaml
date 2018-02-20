@@ -1,12 +1,183 @@
 ﻿<UserControl x:Class="LibgenDesktop.Views.Tabs.DownloadManagerTab"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+             xmlns:const="clr-namespace:LibgenDesktop.Common"
+             xmlns:d="clr-namespace:LibgenDesktop.Models.Download"
              xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
              u:EventListenerExtensions.EventProvider="{Binding Events}">
     <UserControl.Resources>
         <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/DownloadManagerTabStyles.xaml" />
     </UserControl.Resources>
     <Grid Style="{StaticResource TopContainer}">
-        <TextBlock Text="Менеджер загрузок еще не сделан." Style="{StaticResource NotImplementedText}" />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition MinHeight="{Binding Source={x:Static const:Constants.DOWNLOAD_MANAGER_TAB_DOWNLOADS_PANEL_MIN_HEIGHT}}" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="{Binding LogPanelHeight, Mode=TwoWay, Converter={StaticResource gridLengthConverter}}"
+                           MinHeight="{Binding Source={x:Static const:Constants.DOWNLOAD_MANAGER_TAB_LOG_PANEL_MIN_HEIGHT}}" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Style="{StaticResource ButtonPanel}">
+            <Button IsEnabled="{Binding IsStartButtonEnabled}" Command="{Binding StartSelectedDownloadsCommand}">
+                <StackPanel>
+                    <md:PackIcon Kind="Play" />
+                    <TextBlock Text="{Binding Localization.Start}" />
+                </StackPanel>
+            </Button>
+            <Button IsEnabled="{Binding IsStopButtonEnabled}" Command="{Binding StopSelectedDownloadsCommand}">
+                <StackPanel>
+                    <md:PackIcon Kind="Stop" />
+                    <TextBlock Text="{Binding Localization.Stop}" />
+                </StackPanel>
+            </Button>
+            <Button IsEnabled="{Binding IsRemoveButtonEnabled}" Command="{Binding RemoveSelectedDownloadsCommand}">
+                <StackPanel>
+                    <md:PackIcon Kind="Close" />
+                    <TextBlock Text="{Binding Localization.Remove}" />
+                </StackPanel>
+            </Button>
+            <Button IsEnabled="{Binding IsStartAllButtonEnabled}" Command="{Binding StartAllDownloadsCommand}">
+                <StackPanel>
+                    <md:PackIcon Kind="PlayCircleOutline" />
+                    <TextBlock Text="{Binding Localization.StartAll}" />
+                </StackPanel>
+            </Button>
+            <Button IsEnabled="{Binding IsStopAllButtonEnabled}" Command="{Binding StopAllDownloadsCommand}">
+                <StackPanel>
+                    <md:PackIcon Kind="StopCircleOutline" />
+                    <TextBlock Text="{Binding Localization.StopAll}" />
+                </StackPanel>
+            </Button>
+            <Button IsEnabled="{Binding IsRemoveAllCompletedButtonEnabled}" Command="{Binding RemoveAllCompletedDownloadsCommand}">
+                <StackPanel>
+                    <md:PackIcon Kind="PlaylistRemove" />
+                    <TextBlock Text="{Binding Localization.RemoveCompleted}" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <c:DownloaderListBox Grid.Row="1" x:Name="downloaderListBox" ItemsSource="{Binding Downloads}"
+                             SelectionChangedCommand="{Binding SelectionChangedCommand}" DoubleClickCommand="{Binding DownloaderListBoxDoubleClickCommand}"
+                             Style="{StaticResource DownloaderListBox}">
+            <c:DownloaderListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem" BasedOn="{StaticResource DownloaderListBoxItem}">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                </Style>
+            </c:DownloaderListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <md:PackIcon Grid.Row="0" Grid.Column="0" Name="Icon" Style="{StaticResource DownloadItemIcon}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Style="{StaticResource DownloadItemName}" />
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ProgressText}" Style="{StaticResource DownloadItemProgressText}" />
+                        <ProgressBar Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="ProgressBar" Value="{Binding ProgressValue}"
+                                     Style="{StaticResource DownloadItemProgressBar}" />
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.QUEUED}">
+                            <Setter TargetName="Icon" Property="Kind" Value="Clock" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.DOWNLOADING}">
+                            <Setter TargetName="Icon" Property="Kind" Value="Play" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.STOPPED}">
+                            <Setter TargetName="Icon" Property="Kind" Value="Stop" />
+                            <Setter TargetName="ProgressBar" Property="Background" Value="{StaticResource StoppedProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="BorderBrush" Value="{StaticResource StoppedProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Foreground" Value="{StaticResource StoppedProgressBarForegroundBrush}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.RETRY_DELAY}">
+                            <Setter TargetName="Icon" Property="Kind" Value="Replay" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.ERROR}">
+                            <Setter TargetName="Icon" Property="Kind" Value="AlertCircle" />
+                            <Setter TargetName="Icon" Property="Foreground" Value="{StaticResource ErrorIconForegroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Background" Value="{StaticResource ErrorProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="BorderBrush" Value="{StaticResource ErrorProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Foreground" Value="{StaticResource ErrorProgressBarForegroundBrush}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.COMPLETED}">
+                            <Setter TargetName="Icon" Property="Kind" Value="Check" />
+                            <Setter TargetName="Icon" Property="Foreground" Value="{StaticResource CompletedIconForegroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Background" Value="{StaticResource CompletedProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="BorderBrush" Value="{StaticResource CompletedProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Foreground" Value="{StaticResource CompletedProgressBarForegroundBrush}" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ListBox.ItemTemplate>                                                                     
+        </c:DownloaderListBox>
+        <GridSplitter Grid.Row="2" Style="{StaticResource Splitter}" />
+        <Grid Grid.Row="3" Style="{StaticResource LogPanelHeader}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.Log}" Style="{StaticResource LogPanelHeaderCaption}" />
+            <c:PressedToggleButton Grid.Row="0" Grid.Column="1" Content="{Binding Localization.TechnicalDetails}" IsChecked="{Binding ShowDebugDownloadLogs}" />
+            <c:AutoScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource LogPanel}">
+                <ItemsControl ItemsSource="{Binding SelectedDownloadLogs}" Grid.IsSharedSizeScope="True">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Name="logLine">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition SharedSizeGroup="TimeStampColumn" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Name="timeStamp" Grid.Column="0" Text="{Binding TimeStamp}" Style="{StaticResource LogTimeStamp}" />
+                                <TextBlock Name="text" Grid.Column="1" Text="{Binding Text}" Style="{StaticResource LogText}" />
+                            </Grid>
+                            <DataTemplate.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Type}" Value="{x:Static d:DownloadItemLogLineType.DEBUG}" />
+                                        <Condition Binding="{Binding DataContext.ShowDebugDownloadLogs, RelativeSource={RelativeSource FindAncestor, AncestorType=c:AutoScrollViewer}}" Value="True" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter TargetName="timeStamp" Property="Foreground" Value="{StaticResource DebugLogItemForegroundBrush}" />
+                                    <Setter TargetName="text" Property="Foreground" Value="{StaticResource DebugLogItemForegroundBrush}" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Type}" Value="{x:Static d:DownloadItemLogLineType.DEBUG}" />
+                                        <Condition Binding="{Binding DataContext.ShowDebugDownloadLogs, RelativeSource={RelativeSource FindAncestor, AncestorType=c:AutoScrollViewer}}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter TargetName="logLine" Property="Visibility" Value="Collapsed" />
+                                </MultiDataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static d:DownloadItemLogLineType.ERROR}">
+                                    <Setter TargetName="timeStamp" Property="Foreground" Value="{StaticResource ErrorLogItemForegroundBrush}" />
+                                    <Setter TargetName="timeStamp" Property="FontWeight" Value="Medium" />
+                                    <Setter TargetName="text" Property="Foreground" Value="{StaticResource ErrorLogItemForegroundBrush}" />
+                                    <Setter TargetName="text" Property="FontWeight" Value="Medium" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Type}" Value="{x:Static d:DownloadItemLogLineType.COMPLETED}">
+                                    <Setter TargetName="timeStamp" Property="Foreground" Value="{StaticResource CompletedLogItemForegroundBrush}" />
+                                    <Setter TargetName="timeStamp" Property="FontWeight" Value="Medium" />
+                                    <Setter TargetName="text" Property="Foreground" Value="{StaticResource CompletedLogItemForegroundBrush}" />
+                                    <Setter TargetName="text" Property="FontWeight" Value="Medium" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                    <ItemsControl.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="{Binding Localization.Copy}" Command="{Binding CopyDownloadLogCommand}" />
+                        </ContextMenu>
+                    </ItemsControl.ContextMenu>
+                </ItemsControl>
+            </c:AutoScrollViewer>
+        </Grid>
     </Grid>
 </UserControl>

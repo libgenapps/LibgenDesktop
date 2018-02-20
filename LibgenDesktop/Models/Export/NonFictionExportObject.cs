@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Localization;
+using LibgenDesktop.Models.Localization.Localizators;
 
 namespace LibgenDesktop.Models.Export
 {
     internal class NonFictionExportObject : ExportObject<NonFictionBook>
     {
-        public NonFictionExportObject(ExportWriter exportWriter)
+        private NonFictionExporterLocalizator localization;
+
+        public NonFictionExportObject(ExportWriter exportWriter, Language currentLanguage)
             : base(exportWriter)
         {
+            localization = currentLanguage.NonFictionExporter;
         }
 
         public override IEnumerable<string> FieldList
@@ -16,47 +21,47 @@ namespace LibgenDesktop.Models.Export
             {
                 return new[]
                 {
-                    "ID",
-                    "Наименование",
-                    "Авторы",
-                    "Серия",
-                    "Издатель",
-                    "Год",
-                    "Язык",
-                    "Формат",
-                    "ISBN",
-                    "Добавлено",
-                    "Обновлено",
-                    "Библиотека",
-                    "Размер файла",
-                    "Темы",
-                    "Том",
-                    "Журнал",
-                    "Город",
-                    "Издание",
-                    "Страниц (содержательная часть)",
-                    "Страниц (всего в файле)",
-                    "Теги",
-                    "MD5-хэш",
-                    "Комментарий",
-                    "Libgen ID",
-                    "ISSN",
-                    "UDC",
-                    "LBC",
-                    "LCC",
-                    "DDC",
-                    "DOI",
-                    "OpenLibraryID",
-                    "GoogleID",
-                    "ASIN",
-                    "DPI",
-                    "OCR",
-                    "Оглавление",
-                    "Отсканирована",
-                    "Ориентация",
-                    "Постраничная",
-                    "Цветная",
-                    "Вычищенная"
+                    localization.Id,
+                    localization.Title,
+                    localization.Authors,
+                    localization.Series,
+                    localization.Publisher,
+                    localization.Year,
+                    localization.Language,
+                    localization.FormatHeader,
+                    localization.Isbn,
+                    localization.Added,
+                    localization.LastModified,
+                    localization.Library,
+                    localization.FileSize,
+                    localization.Topics,
+                    localization.Volume,
+                    localization.Magazine,
+                    localization.City,
+                    localization.Edition,
+                    localization.BodyMatterPages,
+                    localization.TotalPages,
+                    localization.Tags,
+                    localization.Md5Hash,
+                    localization.Comments,
+                    localization.LibgenId,
+                    localization.Issn,
+                    localization.Udc,
+                    localization.Lbc,
+                    localization.Lcc,
+                    localization.Ddc,
+                    localization.Doi,
+                    localization.OpenLibraryId,
+                    localization.GoogleBookId,
+                    localization.Asin,
+                    localization.Dpi,
+                    localization.Ocr,
+                    localization.TableOfContents,
+                    localization.Scanned,
+                    localization.Orientation,
+                    localization.Paginated,
+                    localization.Colored,
+                    localization.Cleaned
                 };
             }
         }
@@ -81,7 +86,7 @@ namespace LibgenDesktop.Models.Export
             WriteField(book.Periodical);
             WriteField(book.City);
             WriteField(book.Edition);
-            WriteField(book.ContentPageCountString);
+            WriteField(localization.GetBodyMatterPageCountString(book.Pages));
             WriteField(book.PagesInFile);
             WriteField(book.Tags);
             WriteField(book.Md5Hash);
@@ -97,13 +102,13 @@ namespace LibgenDesktop.Models.Export
             WriteField(book.GoogleBookId);
             WriteField(book.Asin);
             WriteField(book.Dpi);
-            WriteField(book.SearchableString);
-            WriteField(book.BookmarkedString);
-            WriteField(book.ScannedString);
-            WriteField(book.OrientationString);
-            WriteField(book.PaginatedString);
-            WriteField(book.ColorString);
-            WriteField(book.CleanedString);
+            WriteField(localization.GetOcrString(book.Searchable));
+            WriteField(localization.GetBookmarkedString(book.Bookmarked));
+            WriteField(localization.GetScannedString(book.Scanned));
+            WriteField(localization.GetOrientationString(book.Orientation));
+            WriteField(localization.GetPaginatedString(book.Paginated));
+            WriteField(localization.GetColorString(book.Color));
+            WriteField(localization.GetCleanedString(book.Cleaned));
         }
     }
 }

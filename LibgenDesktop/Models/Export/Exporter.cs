@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Localization;
 using LibgenDesktop.Models.ProgressArgs;
 using static LibgenDesktop.Common.Constants;
 
@@ -15,31 +16,33 @@ namespace LibgenDesktop.Models.Export
         private readonly int? rowsPerFile;
         private readonly bool splitIntoMultipleFiles;
         private readonly string fileExtension;
+        private readonly Language currentLanguage;
         private readonly Func<string, TExportWriter> exportWriterFactory;
 
-        public Exporter(string filePathTemplate, int? rowsPerFile, bool splitIntoMultipleFiles, string fileExtension,
+        public Exporter(string filePathTemplate, int? rowsPerFile, bool splitIntoMultipleFiles, string fileExtension, Language currentLanguage,
             Func<string, TExportWriter> exportWriterFactory)
         {
             this.filePathTemplate = filePathTemplate;
             this.rowsPerFile = rowsPerFile;
             this.splitIntoMultipleFiles = splitIntoMultipleFiles;
             this.fileExtension = fileExtension;
+            this.currentLanguage = currentLanguage;
             this.exportWriterFactory = exportWriterFactory;
         }
 
         public ExportResult ExportNonFiction(IEnumerable<NonFictionBook> books, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
         {
-            return Export(books, exportWriter => new NonFictionExportObject(exportWriter), progressHandler, cancellationToken);
+            return Export(books, exportWriter => new NonFictionExportObject(exportWriter, currentLanguage), progressHandler, cancellationToken);
         }
 
         public ExportResult ExportFiction(IEnumerable<FictionBook> books, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
         {
-            return Export(books, exportWriter => new FictionExportObject(exportWriter), progressHandler, cancellationToken);
+            return Export(books, exportWriter => new FictionExportObject(exportWriter, currentLanguage), progressHandler, cancellationToken);
         }
 
         public ExportResult ExportSciMag(IEnumerable<SciMagArticle> articles, IProgress<ExportProgress> progressHandler, CancellationToken cancellationToken)
         {
-            return Export(articles, exportWriter => new SciMagExportObject(exportWriter), progressHandler, cancellationToken);
+            return Export(articles, exportWriter => new SciMagExportObject(exportWriter, currentLanguage), progressHandler, cancellationToken);
         }
 
         private ExportResult Export<TLibgenObject, TExportObject>(IEnumerable<TLibgenObject> libgenObjects, Func<TExportWriter, TExportObject> exportObjectFactory,

@@ -7,11 +7,12 @@
     <Style x:Key="DefaultToolbar" TargetType="{x:Type c:Toolbar}">
         <Setter Property="Margin" Value="0,8,8,0" />
         <Setter Property="IconForeground" Value="{StaticResource MaterialDesignBody}" />
+        <Setter Property="HighlightedIconForeground" Value="#FF7526" />
     </Style>
     <Style x:Key="EmbeddedToolbar" TargetType="{x:Type c:Toolbar}">
         <Setter Property="Margin" Value="0,0,8,0" />
-        <Setter Property="IconForeground" Value="{StaticResource PrimaryHueMidForegroundBrush}" />
-        <Setter Property="Opacity" Value=".87" />
+        <Setter Property="IconForeground" Value="#DDFFFFFF" />
+        <Setter Property="HighlightedIconForeground" Value="#FFB27F" />
     </Style>
     <Style x:Key="TabTitle" TargetType="TextBlock">
         <Setter Property="MaxWidth" Value="100" />

@@ -71,6 +71,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppFile.cs" />
     <Compile Include="AppFiles.cs" />
     <Compile Include="AppSetup.cs" />
     <Compile Include="Constants.cs" />

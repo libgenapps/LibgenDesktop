@@ -4,19 +4,21 @@ using System.Windows;
 using LibgenDesktop.Common;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
-using LibgenDesktop.ViewModels;
+using LibgenDesktop.ViewModels.Windows;
 
 namespace LibgenDesktop
 {
     public partial class App : Application
     {
+        private MainModel mainModel;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             SetupExceptionHandlers();
             try
             {
-                MainModel mainModel = new MainModel();
+                mainModel = new MainModel();
                 if (mainModel.LocalDatabaseStatus == MainModel.DatabaseStatus.OPENED)
                 {
                     ShowMainWindow(mainModel);
@@ -30,7 +32,7 @@ namespace LibgenDesktop
             {
                 Logger.EnableLogging();
                 ShowErrorWindow(exception);
-                Shutdown();
+                Close();
             }
         }
 
@@ -38,7 +40,7 @@ namespace LibgenDesktop
         {
             MainWindowViewModel mainWindowViewModel = new MainWindowViewModel(mainModel);
             IWindowContext windowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.MAIN_WINDOW, mainWindowViewModel);
-            windowContext.Closed += (sender, args) => Shutdown();
+            windowContext.Closed += (sender, args) => Close();
             windowContext.Show();
         }
 
@@ -53,7 +55,7 @@ namespace LibgenDesktop
             }
             else
             {
-                Shutdown();
+                Close();
             }
         }
 
@@ -74,10 +76,34 @@ namespace LibgenDesktop
 
         private void ShowErrorWindow(Exception exception)
         {
-            Logger.Exception(exception);
-            ErrorWindowViewModel errorWindowViewModel = new ErrorWindowViewModel(exception?.ToString() ?? "(null)");
-            IWindowContext errorWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.ERROR_WINDOW, errorWindowViewModel);
-            errorWindowContext.ShowDialog();
+            if (!Dispatcher.CheckAccess())
+            {
+                Dispatcher.Invoke(() => ShowErrorWindow(exception));
+            }
+            else
+            {
+                Logger.Exception(exception);
+                try
+                {
+                    ErrorWindowViewModel errorWindowViewModel = new ErrorWindowViewModel(exception?.ToString() ?? "(null)",
+                        mainModel?.Localization?.CurrentLanguage);
+                    IWindowContext errorWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.ERROR_WINDOW, errorWindowViewModel);
+                    errorWindowContext.ShowDialog();
+                }
+                catch (Exception errorWindowException)
+                {
+                    Logger.Exception(errorWindowException);
+                }
+            }
+        }
+
+        private void Close()
+        {
+            if (mainModel != null)
+            {
+                mainModel.Downloader.Shutdown();
+            }
+            Shutdown();
         }
     }
 }

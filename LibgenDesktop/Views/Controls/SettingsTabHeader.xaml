@@ -4,12 +4,12 @@
              Cursor="Hand">
     <RadioButton.Template>
         <ControlTemplate TargetType="RadioButton">
-            <Border Name="OuterBorder" BorderThickness="0,0,2,0">
+            <Border Name="outerBorder" BorderThickness="0,0,2,0">
                 <ContentPresenter Name="Content" Margin="8" />
             </Border>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsChecked" Value="True">
-                    <Setter TargetName="OuterBorder" Property="BorderBrush" Value="#428BCA" />
+                    <Setter TargetName="outerBorder" Property="BorderBrush" Value="#428BCA" />
                     <Setter Property="TextBlock.FontWeight" Value="Medium" />
                 </Trigger>
             </ControlTemplate.Triggers>

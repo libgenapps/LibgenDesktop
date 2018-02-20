@@ -1,5 +1,4 @@
 ﻿using System;
-using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.Models.Entities
 {
@@ -43,10 +42,6 @@ namespace LibgenDesktop.Models.Entities
         public string Pmc { get; set; }
         public string Pii { get; set; }
 
-        public string FileSizeString => Formatters.FileSizeToString(SizeInBytes, false);
-        public string FileSizeWithBytesString => Formatters.FileSizeToString(SizeInBytes, true);
-        public string AddedDateTimeString => AddedDateTime != null ? AddedDateTime.Value.ToString("dd.MM.yyyy HH:mm:ss") : "неизвестно";
-
         public string DoiString
         {
             get
@@ -67,23 +62,6 @@ namespace LibgenDesktop.Models.Entities
                     }
                 }
                 return doiString;
-            }
-        }
-
-        public string PagesString
-        {
-            get
-            {
-                if ((!String.IsNullOrWhiteSpace(FirstPage) && FirstPage != "0") || (!String.IsNullOrWhiteSpace(LastPage) && LastPage != "0"))
-                {
-                    string firstPage = FirstPage != "0" ? FirstPage.Trim() + " " : String.Empty;
-                    string lastPage = LastPage != "0" ? " " + LastPage.Trim() : String.Empty;
-                    return firstPage + "–" + lastPage;
-                }
-                else
-                {
-                    return "неизвестно";
-                }
             }
         }
     }

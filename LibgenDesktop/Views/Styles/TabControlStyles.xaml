@@ -30,7 +30,7 @@
                                                       VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
                                                       SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
                                                       Margin="{TemplateBinding Control.Padding}"
-                                                      Opacity=".87"/>
+                                                      Opacity=".87" />
                                     <Thumb Grid.Column="0" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" 
                                            x:Name="PART_Thumb"
                                            Style="{StaticResource MaterialDesignInvisibleThumbStyle}" />
@@ -42,7 +42,7 @@
                         </Border>
                         <Border x:Name="SelectionHighlightBorder" Background="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(drt:MaterialDesignAssist.IndicatorBrush)}" Height="2"
                                 Grid.Row="1"
-                                Visibility="Hidden"/>
+                                Visibility="Hidden" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="dr:TabablzControl.IsWrappingTabItem" Value="True">
@@ -64,8 +64,8 @@
                 <ControlTemplate TargetType="{x:Type dr:TabablzControl}">
                     <Grid x:Name="templateRoot" ClipToBounds="True" SnapsToDevicePixels="True" KeyboardNavigation.TabNavigation="Local">
                         <Grid.RowDefinitions>
-                            <RowDefinition x:Name="RowDefinition0" Height="Auto"/>
-                            <RowDefinition x:Name="RowDefinition1" Height="*"/>
+                            <RowDefinition x:Name="RowDefinition0" Height="Auto" />
+                            <RowDefinition x:Name="RowDefinition1" Height="*" />
                         </Grid.RowDefinitions>
                         <Border x:Name="contentPanel" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Column="0" KeyboardNavigation.DirectionalNavigation="Contained" Grid.Row="1" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local"
                                 Margin="0 -1 0 0">
@@ -96,7 +96,7 @@
                                 <dr:DragablzItemsControl.MaxWidth>
                                     <MultiBinding>
                                         <MultiBinding.Converter>
-                                            <dr:TabablzHeaderSizeConverter Orientation="Horizontal"/>
+                                            <dr:TabablzHeaderSizeConverter Orientation="Horizontal" />
                                         </MultiBinding.Converter>
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="ActualWidth" />
                                         <Binding RelativeSource="{RelativeSource Self}" Path="ItemsPresenterWidth" />
@@ -114,13 +114,13 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="TabStripPlacement" Value="Bottom">
-                            <Setter Property="Grid.Row" TargetName="PART_HeaderItemsControl" Value="1"/>
-                            <Setter Property="Grid.Row" TargetName="contentPanel" Value="0"/>
-                            <Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
-                            <Setter Property="Height" TargetName="RowDefinition1" Value="Auto"/>
+                            <Setter Property="Grid.Row" TargetName="PART_HeaderItemsControl" Value="1" />
+                            <Setter Property="Grid.Row" TargetName="contentPanel" Value="0" />
+                            <Setter Property="Height" TargetName="RowDefinition0" Value="*" />
+                            <Setter Property="Height" TargetName="RowDefinition1" Value="Auto" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

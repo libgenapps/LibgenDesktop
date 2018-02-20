@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Localization;
+using LibgenDesktop.Models.Localization.Localizators;
 
 namespace LibgenDesktop.Models.Export
 {
     internal class SciMagExportObject : ExportObject<SciMagArticle>
     {
-        public SciMagExportObject(ExportWriter exportWriter)
+        private SciMagExporterLocalizator localization;
+
+        public SciMagExportObject(ExportWriter exportWriter, Language currentLanguage)
             : base(exportWriter)
         {
+            localization = currentLanguage.SciMagExporter;
         }
 
         public override IEnumerable<string> FieldList
@@ -16,36 +21,36 @@ namespace LibgenDesktop.Models.Export
             {
                 return new[]
                 {
-                    "ID",
-                    "Наименование",
-                    "Авторы",
-                    "Журнал",
-                    "Год",
-                    "Месяц",
-                    "День",
-                    "Том",
-                    "Выпуск",
-                    "Страницы",
-                    "Размер файла",
-                    "Добавлено",
-                    "MD5-хэш",
-                    "Abstract URL",
-                    "Libgen ID",
-                    "DOI 1",
-                    "DOI 2",
-                    "ISBN",
-                    "ID журнала",
-                    "ISSN (p)",
-                    "ISSN (e)",
-                    "Pubmed ID",
-                    "PMC",
-                    "PII",
-                    "Атрибут 1",
-                    "Атрибут 2",
-                    "Атрибут 3",
-                    "Атрибут 4",
-                    "Атрибут 5",
-                    "Атрибут 6"
+                    localization.Id,
+                    localization.Title,
+                    localization.Authors,
+                    localization.Magazine,
+                    localization.Year,
+                    localization.Month,
+                    localization.Day,
+                    localization.Volume,
+                    localization.Issue,
+                    localization.Pages,
+                    localization.FileSize,
+                    localization.AddedDateTime,
+                    localization.Md5Hash,
+                    localization.AbstractUrl,
+                    localization.LibgenId,
+                    localization.Doi1,
+                    localization.Doi2,
+                    localization.Isbn,
+                    localization.MagazineId,
+                    localization.Issnp,
+                    localization.Issne,
+                    localization.PubmedId,
+                    localization.Pmc,
+                    localization.Pii,
+                    localization.Attribute1,
+                    localization.Attribute2,
+                    localization.Attribute3,
+                    localization.Attribute4,
+                    localization.Attribute5,
+                    localization.Attribute6
                 };
             }
         }
@@ -61,7 +66,7 @@ namespace LibgenDesktop.Models.Export
             WriteField(article.Day);
             WriteField(article.Volume);
             WriteField(article.Issue);
-            WriteField(article.PagesString);
+            WriteField(localization.GetPagesString(article.FirstPage, article.LastPage));
             WriteField(article.SizeInBytes);
             WriteField(article.AddedDateTime);
             WriteField(article.Md5Hash);

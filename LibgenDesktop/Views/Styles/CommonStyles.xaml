@@ -6,6 +6,7 @@
     <u:BooleanToVisibilityConverter x:Key="booleanToCollapsedConverter" TrueValue="Visible" FalseValue="Collapsed" />
     <u:BooleanToWindowStateConverter x:Key="booleanToMaximizedConverter" TrueValue="Maximized" FalseValue="Normal" />
     <u:BooleanInverseConverter x:Key="booleanInverseConverter" />
+    <u:GridLengthConverter x:Key="gridLengthConverter" />
     <u:DataGridLengthConverter x:Key="dataGridLengthConverter" />
     <Style x:Key="FlatButton" TargetType="Button">
         <Setter Property="md:RippleAssist.Feedback" Value="{DynamicResource MaterialDesignFlatButtonRipple}" />

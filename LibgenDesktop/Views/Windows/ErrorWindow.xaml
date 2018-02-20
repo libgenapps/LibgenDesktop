@@ -1,0 +1,27 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.ErrorWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       Title="{Binding WindowTitle}" Style="{StaticResource ErrorWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/ErrorWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding UnexpectedError}" Style="{StaticResource HeaderLabel}" />
+        <TextBox Grid.Row="1" Text="{Binding Error, Mode=OneWay}" Style="{StaticResource ErrorTextBox}" />
+        <Grid Grid.Row="2" Style="{StaticResource ButtonContainer}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="{Binding Copy}" Command="{Binding CopyErrorCommand}" />
+            <Button Grid.Column="2" Content="{Binding Close}" Style="{StaticResource CloseButton}" />
+        </Grid>
+    </Grid>
+</c:LibgenDesktopWindow>

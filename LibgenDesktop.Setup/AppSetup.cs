@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using WixSharp;
 using WixSharp.CommonTasks;
@@ -25,19 +26,33 @@ namespace LibgenDesktop.Setup
             string normalizedCurrentVersion = Constants.CURRENT_VERSION.Count(c => c == '.') > 1 ? Constants.CURRENT_VERSION : Constants.CURRENT_VERSION + ".0";
             string installerFileName = String.Format(Constants.INSTALLER_FILE_NAME_FORMAT, is64Bit ? 64 : 32);
             Project project = new Project(productTitle, new Dir(@"%ProgramFiles%\Libgen Desktop"));
-            Dir targetDirectory = project.Dirs.First().Dirs.First();
-            foreach (string fileName in AppFiles.GetFileList(is64Bit))
+            Dir rootDirectory = project.Dirs.First().Dirs.First();
+            Dictionary<string, List<AppFile>> appFiles = GetAppFiles(is64Bit);
+            foreach (string subDirectoryName in appFiles.Keys)
             {
-                string filePath = Utils.GetFullFilePath(AppFiles.GetBinariesDirectoryPath(is64Bit), fileName);
-                File file = new File(filePath);
-                if (fileName == Constants.MAIN_EXECUTABLE_NAME)
+                Dir directory;
+                if (String.IsNullOrEmpty(subDirectoryName))
                 {
-                    file.Shortcuts = new[]
-                    {
-                        new FileShortcut(shortcutTitle, "%ProgramMenu%")
-                    };
+                    directory = rootDirectory;
                 }
-                targetDirectory.AddFile(file);
+                else
+                {
+                    directory = new Dir(subDirectoryName);
+                    rootDirectory.AddDir(directory);
+                }
+                foreach (AppFile appFile in appFiles[subDirectoryName])
+                {
+                    string filePath = Utils.GetFullFilePath(AppFiles.GetBinariesDirectoryPath(is64Bit), appFile.SourceFilePath);
+                    File file = new File(filePath);
+                    if (appFile.SourceFilePath == Constants.MAIN_EXECUTABLE_NAME)
+                    {
+                        file.Shortcuts = new[]
+                        {
+                            new FileShortcut(shortcutTitle, "%ProgramMenu%")
+                        };
+                    }
+                    directory.AddFile(file);
+                }
             }
             project.GUID = new Guid(projectGuid);
             project.ControlPanelInfo.Manufacturer = Constants.PRODUCT_COMPANY;
@@ -68,6 +83,22 @@ namespace LibgenDesktop.Setup
                 .On(NativeDialogs.InstallDirDlg, Buttons.Back, new ShowDialog(NativeDialogs.WelcomeDlg));
             project.BuildMsi(installerFileName);
             Utils.MoveFile($"{installerFileName}.msi", @"..\Release");
+        }
+
+        private static Dictionary<string, List<AppFile>> GetAppFiles(bool is64Bit)
+        {
+            Dictionary<string, List<AppFile>> result = new Dictionary<string, List<AppFile>>();
+            foreach (AppFile appFile in (is64Bit ? AppFiles.X64 : AppFiles.X86))
+            {
+                int directorySeparatorIndex = appFile.TargetFilePath.IndexOf('\\');
+                string directory = directorySeparatorIndex != -1 ? appFile.TargetFilePath.Substring(0, directorySeparatorIndex) : String.Empty;
+                if (!result.ContainsKey(directory))
+                {
+                    result.Add(directory, new List<AppFile>());
+                }
+                result[directory].Add(appFile);
+            }
+            return result;
         }
     }
 }

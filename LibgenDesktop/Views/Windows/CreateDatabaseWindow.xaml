@@ -1,0 +1,26 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.CreateDatabaseWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       Title="{Binding Localization.WindowTitle}" Style="{StaticResource CreateDatabaseWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/CreateDatabaseWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding Header}" Style="{StaticResource Header}" />
+        <RadioButton Grid.Row="1" Content="{Binding Localization.CreateNewDatabase}" IsChecked="{Binding IsCreateDatabaseSelected}"
+                     Style="{StaticResource Option}" />
+        <RadioButton Grid.Row="2" Content="{Binding Localization.OpenExistingDatabase}" IsChecked="{Binding IsOpenDatabaseSelected}"
+                     Style="{StaticResource Option}" />
+        <UniformGrid Grid.Row="3" Rows="1" Columns="2" Style="{StaticResource BottomPanel}">
+            <Button Content="{Binding Localization.Ok}" Grid.Column="0" Command="{Binding OkButtonCommand}" Style="{StaticResource OkButton}" />
+            <Button Content="{Binding Localization.Cancel}" Grid.Column="1" Command="{Binding CancelButtonCommand}" Style="{StaticResource CancelButton}" />
+        </UniformGrid>
+    </Grid>
+</c:LibgenDesktopWindow>

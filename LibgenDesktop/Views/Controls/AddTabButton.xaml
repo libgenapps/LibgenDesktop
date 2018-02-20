@@ -4,14 +4,14 @@
         xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes">
     <Button.Template>
         <ControlTemplate TargetType="Button">
-            <Border Name="OuterBorder" Width="24" Height="24" CornerRadius="3" Margin="4">
-                <md:PackIcon Name="Icon" Kind="Plus" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"
+            <Border Name="outerBorder" Width="24" Height="24" CornerRadius="3" Margin="4">
+                <md:PackIcon Name="icon" Kind="Plus" Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center"
                              Foreground="{StaticResource PrimaryHueMidForegroundBrush}" Opacity=".87" Background="Transparent" />
             </Border>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter TargetName="Icon" Property="Opacity" Value="1" />
-                    <Setter TargetName="OuterBorder" Property="Background">
+                    <Setter TargetName="icon" Property="Opacity" Value="1" />
+                    <Setter TargetName="outerBorder" Property="Background">
                         <Setter.Value>
                             <SolidColorBrush Color="White" Opacity=".2" />
                         </Setter.Value>

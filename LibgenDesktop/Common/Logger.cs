@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using NLog;
 using NLog.Config;
@@ -36,7 +37,7 @@ namespace LibgenDesktop.Common
         {
             if (loggingEnabled)
             {
-                logger.Log(typeof(Logger), new LogEventInfo(LogLevel.Debug, String.Empty, String.Join("\r\n", lines)));
+                logger.Log(typeof(Logger), new LogEventInfo(LogLevel.Debug, String.Empty, String.Join("\r\n", lines.Where(line => !String.IsNullOrEmpty(line)))));
             }
         }
 

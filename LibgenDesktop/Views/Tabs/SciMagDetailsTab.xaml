@@ -1,6 +1,7 @@
 ﻿<UserControl x:Class="LibgenDesktop.Views.Tabs.SciMagDetailsTab"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:c="clr-namespace:LibgenDesktop.Views.Controls">
     <UserControl.Resources>
         <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SciMagDetailsTabStyles.xaml" />
@@ -11,7 +12,12 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ScrollViewer Grid.Row="0" Style="{StaticResource ArticleAttributesScrollViewer}">
-            <StackPanel DataContext="{Binding Article}" Style="{StaticResource ArticleAttributesPanel}">
+            <ScrollViewer.Resources>
+                <Style TargetType="c:BookAttributeValueLabel" BasedOn="{StaticResource AttributeValueLabel}">
+                    <Setter Property="ContextMenuItemFormat" Value="{Binding Localization.CopyContextMenu}" />
+                </Style>
+            </ScrollViewer.Resources>
+            <StackPanel Style="{StaticResource ArticleAttributesPanel}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -32,32 +38,32 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Наименование:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="0" Grid.Column="1" Text="{Binding Title}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Авторы:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="1" Grid.Column="1" Text="{Binding Authors}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Журнал:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="2" Grid.Column="1" Text="{Binding Journal}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Год:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="3" Grid.Column="1" Text="{Binding Year}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="Месяц:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="4" Grid.Column="1" Text="{Binding Month}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="5" Grid.Column="0" Text="День:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="5" Grid.Column="1" Text="{Binding Day}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Том:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="6" Grid.Column="1" Text="{Binding Volume}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Выпуск:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="7" Grid.Column="1" Text="{Binding Issue}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Страницы:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="8" Grid.Column="1" Text="{Binding PagesString}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="9" Grid.Column="0" Text="Размер файла:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="9" Grid.Column="1" Text="{Binding FileSizeWithBytesString}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="10" Grid.Column="0" Text="Добавлено:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="10" Grid.Column="1" Text="{Binding AddedDateTimeString}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="11" Grid.Column="0" Text="MD5-хэш:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="11" Grid.Column="1" Text="{Binding Md5Hash}" Style="{StaticResource AttributeValueLabel}" />
-                    <TextBlock Grid.Row="12" Grid.Column="0" Text="Abstract URL:" Style="{StaticResource AttributeHeaderLabel}" />
-                    <c:BookAttributeValueLabel Grid.Row="12" Grid.Column="1" Text="{Binding AbstractUrl}" Style="{StaticResource AttributeValueLabel}" />
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.Title}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="0" Grid.Column="1" Text="{Binding DetailsItem.Title}" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Localization.Authors}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="1" Grid.Column="1" Text="{Binding DetailsItem.Authors}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.Magazine}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="2" Grid.Column="1" Text="{Binding DetailsItem.Journal}" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding Localization.Year}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="3" Grid.Column="1" Text="{Binding DetailsItem.Year}" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding Localization.Month}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="4" Grid.Column="1" Text="{Binding DetailsItem.Month}" />
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{Binding Localization.Day}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="5" Grid.Column="1" Text="{Binding DetailsItem.Day}" />
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding Localization.Volume}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="6" Grid.Column="1" Text="{Binding DetailsItem.Volume}" />
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{Binding Localization.Issue}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="7" Grid.Column="1" Text="{Binding DetailsItem.Issue}" />
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="{Binding Localization.Pages}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="8" Grid.Column="1" Text="{Binding DetailsItem.Pages}" />
+                    <TextBlock Grid.Row="9" Grid.Column="0" Text="{Binding Localization.FileSize}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="9" Grid.Column="1" Text="{Binding DetailsItem.FileSize}" />
+                    <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding Localization.AddedDateTime}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="10" Grid.Column="1" Text="{Binding DetailsItem.AddedDateTime}" />
+                    <TextBlock Grid.Row="11" Grid.Column="0" Text="{Binding Localization.Md5Hash}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="11" Grid.Column="1" Text="{Binding DetailsItem.Md5Hash}" />
+                    <TextBlock Grid.Row="12" Grid.Column="0" Text="{Binding Localization.AbstractUrl}" Style="{StaticResource AttributeHeaderLabel}" />
+                    <c:BookAttributeValueLabel Grid.Row="12" Grid.Column="1" Text="{Binding DetailsItem.AbstractUrl}" />
                 </Grid>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -82,26 +88,27 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Идентификаторы:" Style="{StaticResource AttributeBlockHeaderLabel}" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.Identifiers}"
+                                   Style="{StaticResource AttributeBlockHeaderLabel}" />
                         <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource AttributeBlockHeaderLine}" />
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Libgen ID:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="2" Grid.Column="1" Text="{Binding LibgenId}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="DOI:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="3" Grid.Column="1" Text="{Binding DoiString}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="ISBN:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="4" Grid.Column="1" Text="{Binding Isbn}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="5" Grid.Column="0" Text="ID журнала:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="5" Grid.Column="1" Text="{Binding JournalId}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="6" Grid.Column="0" Text="ISSN (p):" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="6" Grid.Column="1" Text="{Binding Issnp}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="7" Grid.Column="0" Text="ISSN (e):" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="7" Grid.Column="1" Text="{Binding Issne}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Pubmed ID:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="8" Grid.Column="1" Text="{Binding PubmedId}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="9" Grid.Column="0" Text="PMC:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="9" Grid.Column="1" Text="{Binding Pmc}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="10" Grid.Column="0" Text="PII:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="10" Grid.Column="1" Text="{Binding Pii}" Style="{StaticResource AttributeValueLabel}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.LibgenId}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="2" Grid.Column="1" Text="{Binding DetailsItem.LibgenId}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding Localization.Doi}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="3" Grid.Column="1" Text="{Binding DetailsItem.Doi}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding Localization.Isbn}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="4" Grid.Column="1" Text="{Binding DetailsItem.Isbn}" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="{Binding Localization.MagazineId}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="5" Grid.Column="1" Text="{Binding DetailsItem.JournalId}" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding Localization.Issnp}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="6" Grid.Column="1" Text="{Binding DetailsItem.Issnp}" />
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="{Binding Localization.Issne}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="7" Grid.Column="1" Text="{Binding DetailsItem.Issne}" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="{Binding Localization.PubmedId}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="8" Grid.Column="1" Text="{Binding DetailsItem.PubmedId}" />
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="{Binding Localization.Pmc}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="9" Grid.Column="1" Text="{Binding DetailsItem.Pmc}" />
+                        <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding Localization.Pii}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="10" Grid.Column="1" Text="{Binding DetailsItem.Pii}" />
                     </Grid>
                     <Grid Grid.Column="1" Style="{StaticResource ArticleMiscAttributesGrid}">
                         <Grid.RowDefinitions>
@@ -118,26 +125,28 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Дополнительные атрибуты:" Style="{StaticResource AttributeBlockHeaderLabel}" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.AdditionalAttributes}"
+                                   Style="{StaticResource AttributeBlockHeaderLabel}" />
                         <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource AttributeBlockHeaderLine}" />
-                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Атрибут 1:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="2" Grid.Column="1" Text="{Binding Attribute1}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Атрибут 2:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="3" Grid.Column="1" Text="{Binding Attribute2}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Атрибут 3:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="4" Grid.Column="1" Text="{Binding Attribute3}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Атрибут 4:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="5" Grid.Column="1" Text="{Binding Attribute4}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Атрибут 5:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="6" Grid.Column="1" Text="{Binding Attribute5}" Style="{StaticResource AttributeValueLabel}" />
-                        <TextBlock Grid.Row="7" Grid.Column="0" Text="Атрибут 6:" Style="{StaticResource AttributeHeaderLabel}" />
-                        <c:BookAttributeValueLabel Grid.Row="7" Grid.Column="1" Text="{Binding Attribute6}" Style="{StaticResource AttributeValueLabel}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.Attribute1}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="2" Grid.Column="1" Text="{Binding DetailsItem.Attribute1}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding Localization.Attribute2}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="3" Grid.Column="1" Text="{Binding DetailsItem.Attribute2}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding Localization.Attribute3}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="4" Grid.Column="1" Text="{Binding DetailsItem.Attribute3}" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="{Binding Localization.Attribute4}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="5" Grid.Column="1" Text="{Binding DetailsItem.Attribute4}" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding Localization.Attribute5}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="6" Grid.Column="1" Text="{Binding DetailsItem.Attribute5}" />
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="{Binding Localization.Attribute6}" Style="{StaticResource AttributeHeaderLabel}" />
+                        <c:BookAttributeValueLabel Grid.Row="7" Grid.Column="1" Text="{Binding DetailsItem.Attribute6}" />
                     </Grid>
                 </Grid>
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="1" Style="{StaticResource ButtonStackPanel}">
-            <Button Content="{Binding DownloadButtonCaption}" Command="{Binding DownloadArticleCommand}">
+            <Button Content="{Binding DownloadButtonCaption}" Command="{Binding DownloadCommand}"
+                    md:ButtonProgressAssist.Value="{Binding DownloadProgress}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource DownloadButton}">
                         <Style.Triggers>
@@ -149,7 +158,8 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Content="ЗАКРЫТЬ" Command="{Binding CloseCommand}" IsCancel="{Binding IsInModalWindow, Mode=OneTime}" Style="{StaticResource CloseButton}" />
+            <Button Content="{Binding Localization.Close}" Command="{Binding RequestCloseCommand}" IsCancel="{Binding IsInModalWindow, Mode=OneTime}"
+                    Style="{StaticResource CloseButton}" />
         </StackPanel>
     </Grid>
 </UserControl>

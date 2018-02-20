@@ -1,0 +1,41 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.ApplicationUpdateWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       Title="{Binding Localization.WindowTitle}"
+                       ClosingCommand="{Binding WindowClosingCommand}"
+                       Style="{StaticResource ApplicationUpdateWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/ApplicationUpdateWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" Text="{Binding Localization.UpdateAvailable}" Style="{StaticResource Header}" />
+        <TextBlock Grid.Row="1" Text="{Binding NewVersionText}" Style="{StaticResource NewVersion}" />
+        <ProgressBar Grid.Row="2" Value="{Binding DownloadProgress}" Minimum="0" Maximum="100" Style="{StaticResource DownloadProgress}" />
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="{Binding Localization.SkipThisVersion}" Command="{Binding SkipVersionCommand}" Style="{StaticResource SkipButton}"
+                    Visibility="{Binding IsSkipButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+            <Button Grid.Column="2" Content="{Binding DownloadButtonText}" Command="{Binding DownloadCommand}" Style="{StaticResource DownloadButton}" 
+                    Visibility="{Binding IsDownloadButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+            <Button Grid.Column="3" Content="{Binding Localization.Cancel}" Command="{Binding CancelCommand}"
+                    Visibility="{Binding IsCancelButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+            <Button Grid.Column="3" Content="{Binding InterruptButtonText}" Command="{Binding InterruptDownloadCommand}"
+                    IsEnabled="{Binding IsInterruptButtonEnabled}" Style="{StaticResource InterruptButton}"
+                    Visibility="{Binding IsInterruptButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+            <Button Grid.Column="3" Content="{Binding Localization.Close}" Command="{Binding CloseCommand}"
+                    Visibility="{Binding IsCloseButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        </Grid>
+    </Grid>
+</c:LibgenDesktopWindow>

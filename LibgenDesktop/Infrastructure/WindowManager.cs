@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using Microsoft.Win32;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace LibgenDesktop.Infrastructure
 {
@@ -91,28 +92,14 @@ namespace LibgenDesktop.Infrastructure
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, action);
         }
 
-        public static void ShowMessageBox(string title, string text, IWindowContext parentWindowContext = null)
+        public static void ShowMessage(string title, string text, string ok, IWindowContext parentWindowContext)
         {
-            if (parentWindowContext != null)
-            {
-                MessageBox.Show((parentWindowContext as WindowContext)?.Window, text, title);
-            }
-            else
-            {
-                MessageBox.Show(text, title);
-            }
+            RegisteredWindows.MessageBox.ShowMessage(title, text, ok, parentWindowContext);
         }
 
-        public static bool ShowPrompt(string title, string text, IWindowContext parentWindowContext = null)
+        public static bool ShowPrompt(string title, string text, string yes, string no, IWindowContext parentWindowContext)
         {
-            if (parentWindowContext != null)
-            {
-                return MessageBox.Show((parentWindowContext as WindowContext)?.Window, text, title, MessageBoxButton.YesNo) == MessageBoxResult.Yes;
-            }
-            else
-            {
-                return MessageBox.Show(text, title, MessageBoxButton.YesNo) == MessageBoxResult.Yes;
-            }
+            return RegisteredWindows.MessageBox.ShowPrompt(title, text, yes, no, parentWindowContext);
         }
 
         public static OpenFileDialogResult ShowOpenFileDialog(OpenFileDialogParameters openFileDialogParameters)
@@ -169,6 +156,20 @@ namespace LibgenDesktop.Infrastructure
             result.DialogResult = saveFileDialog.ShowDialog() == true;
             result.SelectedFilePath = result.DialogResult ? saveFileDialog.FileName : null;
             return result;
+        }
+
+        public static SelectFolderDialogResult ShowSelectFolderDialog(SelectFolderDialogParameters selectFolderDialogParameters)
+        {
+            using (CommonOpenFileDialog commonOpenFileDialog = new CommonOpenFileDialog())
+            {
+                commonOpenFileDialog.IsFolderPicker = true;
+                commonOpenFileDialog.Title = selectFolderDialogParameters.DialogTitle;
+                commonOpenFileDialog.InitialDirectory = selectFolderDialogParameters.InitialDirectory;
+                SelectFolderDialogResult result = new SelectFolderDialogResult();
+                result.DialogResult = commonOpenFileDialog.ShowDialog() == CommonFileDialogResult.Ok;
+                result.SelectedFolderPath = result.DialogResult ? commonOpenFileDialog.FileName : null;
+                return result;
+            }
         }
 
         public static void RemoveWindowMaximizeButton(Window window)

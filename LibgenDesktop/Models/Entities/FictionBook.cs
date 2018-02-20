@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Text;
-using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.Models.Entities
 {
@@ -66,13 +65,6 @@ namespace LibgenDesktop.Models.Entities
         public string AuthorHash { get; set; }
         public string TitleHash { get; set; }
         public string Visible { get; set; }
-
-        public string YearString => Year != "0" ? Year : String.Empty;
-        public string PagesString => Pages != "0" ? Pages : "неизвестно";
-        public string FileSizeString => Formatters.FileSizeToString(SizeInBytes, false);
-        public string FileSizeWithBytesString => Formatters.FileSizeToString(SizeInBytes, true);
-        public string AddedDateTimeString => AddedDateTime != null ? AddedDateTime.Value.ToString("dd.MM.yyyy HH:mm:ss") : "неизвестно";
-        public string LastModifiedDateTimeString => LastModifiedDateTime.ToString("dd.MM.yyyy HH:mm:ss");
 
         public string Authors
         {

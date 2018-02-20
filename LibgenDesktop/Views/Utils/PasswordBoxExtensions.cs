@@ -7,7 +7,7 @@ namespace LibgenDesktop.Views.Utils
     internal class PasswordBoxExtensions : DependencyObject
     {
         public static readonly DependencyProperty PasswordBindingProperty = DependencyProperty.RegisterAttached("PasswordBinding", typeof(string),
-            typeof(PasswordBoxExtensions), new FrameworkPropertyMetadata(String.Empty, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnPasswordBindingChanged));
+            typeof(PasswordBoxExtensions), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, OnPasswordBindingChanged));
 
         private static bool isUpdating;
 

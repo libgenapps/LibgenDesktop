@@ -260,6 +260,24 @@ namespace LibgenDesktop.Models.Settings
             public ExportPanelSettngs ExportPanel { get; set; }
         }
 
+        internal class DownloadManagerTabSettings
+        {
+            public static DownloadManagerTabSettings Default
+            {
+                get
+                {
+                    return new DownloadManagerTabSettings
+                    {
+                        LogPanelHeight = DOWNLOAD_MANAGER_TAB_LOG_PANEL_DEFAULT_HEIGHT,
+                        ShowDebugLogs = false
+                    };
+                }
+            }
+
+            public int LogPanelHeight { get; set; }
+            public bool ShowDebugLogs { get; set; }
+        }
+
         internal class LastUpdateSettings
         {
             public static LastUpdateSettings Default
@@ -328,6 +346,30 @@ namespace LibgenDesktop.Models.Settings
             public int? ProxyPort { get; set; }
             public string ProxyUserName { get; set; }
             public string ProxyPassword { get; set; }
+        }
+
+        internal class DownloadSettings
+        {
+            public static DownloadSettings Default
+            {
+                get
+                {
+                    return new DownloadSettings
+                    {
+                        UseDownloadManager = false,
+                        DownloadDirectory = null,
+                        Timeout = DEFAULT_DOWNLOAD_TIMEOUT,
+                        Attempts = DEFAULT_DOWNLOAD_ATTEMPT_COUNT,
+                        RetryDelay = DEFAULT_DOWNLOAD_RETRY_DELAY
+                    };
+                }
+            }
+
+            public bool UseDownloadManager { get; set; }
+            public string DownloadDirectory { get; set; }
+            public int Timeout { get; set; }
+            public int Attempts { get; set; }
+            public int RetryDelay { get; set; }
         }
 
         internal class MirrorSettings
@@ -430,9 +472,11 @@ namespace LibgenDesktop.Models.Settings
                     NonFiction = NonFictionSettings.Default,
                     Fiction = FictionSettings.Default,
                     SciMag = SciMagSettings.Default,
+                    DownloadManagerTab = DownloadManagerTabSettings.Default,
                     LastUpdate = LastUpdateSettings.Default,
                     General = GeneralSettings.Default,
                     Network = NetworkSettings.Default,
+                    Download = DownloadSettings.Default,
                     Mirrors = MirrorSettings.Default,
                     Search = SearchSettings.Default,
                     Export = ExportSettings.Default,
@@ -446,9 +490,11 @@ namespace LibgenDesktop.Models.Settings
         public NonFictionSettings NonFiction { get; set; }
         public FictionSettings Fiction { get; set; }
         public SciMagSettings SciMag { get; set; }
+        public DownloadManagerTabSettings DownloadManagerTab { get; set; }
         public LastUpdateSettings LastUpdate { get; set; }
         public GeneralSettings General { get; set; }
         public NetworkSettings Network { get; set; }
+        public DownloadSettings Download { get; set; }
         public MirrorSettings Mirrors { get; set; }
         public SearchSettings Search { get; set; }
         public ExportSettings Export { get; set; }
@@ -467,9 +513,11 @@ namespace LibgenDesktop.Models.Settings
                 appSettings.ValidateAndCorrectNonFictionSettings();
                 appSettings.ValidateAndCorrectFictionSettings();
                 appSettings.ValidateAndCorrectSciMagSettings();
+                appSettings.ValidateAndCorrectDownloadManagerTabSettings();
                 appSettings.ValidateAndCorrectLastUpdateSettings();
                 appSettings.ValidateAndCorrectGeneralSettings();
                 appSettings.ValidateAndCorrectNetworkSettings();
+                appSettings.ValidateAndCorrectDownloadSettings();
                 appSettings.ValidateAndCorrectMirrorSettings();
                 appSettings.ValidateAndCorrectSearchSettings();
                 appSettings.ValidateAndCorrectExportSettings();
@@ -713,6 +761,21 @@ namespace LibgenDesktop.Models.Settings
             }
         }
 
+        private void ValidateAndCorrectDownloadManagerTabSettings()
+        {
+            if (DownloadManagerTab == null)
+            {
+                DownloadManagerTab = DownloadManagerTabSettings.Default;
+            }
+            else
+            {
+                if (DownloadManagerTab.LogPanelHeight < DOWNLOAD_MANAGER_TAB_LOG_PANEL_MIN_HEIGHT)
+                {
+                    DownloadManagerTab.LogPanelHeight = DOWNLOAD_MANAGER_TAB_LOG_PANEL_MIN_HEIGHT;
+                }
+            }
+        }
+
         private ExportPanelSettngs ValidateAndCorrectExportPanelSettings(ExportPanelSettngs exportPanelSettngs)
         {
             if (exportPanelSettngs == null)
@@ -772,6 +835,49 @@ namespace LibgenDesktop.Models.Settings
                 {
                     Network.ProxyPort = null;
                     Network.UseProxy = false;
+                }
+                if (Network.ProxyUserName == null)
+                {
+                    Network.ProxyUserName = String.Empty;
+                }
+                if (Network.ProxyPassword == null)
+                {
+                    Network.ProxyPassword = String.Empty;
+                }
+            }
+        }
+
+        private void ValidateAndCorrectDownloadSettings()
+        {
+            if (Download == null)
+            {
+                Download = DownloadSettings.Default;
+            }
+            else
+            {
+                if (Download.Timeout < MIN_DOWNLOAD_TIMEOUT)
+                {
+                    Download.Timeout = MIN_DOWNLOAD_TIMEOUT;
+                }
+                else if (Download.Timeout > MAX_DOWNLOAD_TIMEOUT)
+                {
+                    Download.Timeout = MAX_DOWNLOAD_TIMEOUT;
+                }
+                if (Download.Attempts < 1)
+                {
+                    Download.Attempts = 1;
+                }
+                else if (Download.Attempts > MAX_DOWNLOAD_ATTEMPT_COUNT)
+                {
+                    Download.Attempts = MAX_DOWNLOAD_ATTEMPT_COUNT;
+                }
+                if (Download.RetryDelay < 0)
+                {
+                    Download.RetryDelay = 0;
+                }
+                else if (Download.RetryDelay > MAX_DOWNLOAD_RETRY_DELAY)
+                {
+                    Download.RetryDelay = MAX_DOWNLOAD_RETRY_DELAY;
                 }
             }
         }

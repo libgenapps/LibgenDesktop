@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -10,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using LibgenDesktop.Common;
 using LibgenDesktop.Models.Database;
+using LibgenDesktop.Models.Download;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Export;
 using LibgenDesktop.Models.Import;
@@ -19,6 +19,7 @@ using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.SqlDump;
 using LibgenDesktop.Models.Update;
+using LibgenDesktop.Models.Utils;
 using static LibgenDesktop.Common.Constants;
 using Environment = LibgenDesktop.Common.Environment;
 
@@ -64,32 +65,37 @@ namespace LibgenDesktop.Models
             {
                 EnableLogging();
             }
-            Mirrors = MirrorStorage.LoadMirrors(Environment.MirrorsFilePath);
+            ValidateAndCorrectDirectoryPaths();
+            Mirrors = MirrorStorage.LoadMirrors(Path.Combine(Environment.MirrorsDirectoryPath, MIRRORS_FILE_NAME));
             ValidateAndCorrectSelectedMirrors();
-            Languages = LocalizationStorage.LoadLanguages();
-            AppSettings.General.Language = Languages.First().Key;
+            Localization = new LocalizationStorage(Environment.LanguagesDirectoryPath, AppSettings.General.Language);
             CreateNewHttpClient();
             OpenDatabase(AppSettings.DatabaseFileName);
+            LastApplicationUpdateCheckDateTime = AppSettings.LastUpdate.LastCheckedAt;
             LastApplicationUpdateCheckResult = null;
             updater = new Updater();
             updater.UpdateCheck += ApplicationUpdateCheck;
             ConfigureUpdater();
+            Downloader = new Downloader();
+            ConfigureDownloader();
         }
 
         public AppSettings AppSettings { get; }
         public DatabaseStatus LocalDatabaseStatus { get; private set; }
         public DatabaseMetadata DatabaseMetadata { get; private set; }
         public Mirrors Mirrors { get; }
-        public Dictionary<string, string> Languages { get; }
+        public LocalizationStorage Localization { get; }
         public HttpClient HttpClient { get; private set; }
+        public Downloader Downloader { get; }
         public int NonFictionBookCount { get; private set; }
         public int FictionBookCount { get; private set; }
         public int SciMagArticleCount { get; private set; }
+        public DateTime? LastApplicationUpdateCheckDateTime { get; set; }
         public Updater.UpdateCheckResult LastApplicationUpdateCheckResult { get; set; }
 
         public event EventHandler ApplicationUpdateCheckCompleted;
 
-        public Task<ObservableCollection<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
+        public Task<List<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
         {
             return SearchItemsAsync(localDatabase.SearchNonFictionBooks, searchQuery, progressHandler, cancellationToken);
@@ -115,7 +121,7 @@ namespace LibgenDesktop.Models
             return LoadItemAsync(localDatabase.GetNonFictionBookById, bookId);
         }
 
-        public Task<ObservableCollection<FictionBook>> SearchFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
+        public Task<List<FictionBook>> SearchFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
         {
             return SearchItemsAsync(localDatabase.SearchFictionBooks, searchQuery, progressHandler, cancellationToken);
@@ -141,7 +147,7 @@ namespace LibgenDesktop.Models
             return LoadItemAsync(localDatabase.GetFictionBookById, bookId);
         }
 
-        public Task<ObservableCollection<SciMagArticle>> SearchSciMagAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
+        public Task<List<SciMagArticle>> SearchSciMagAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
         {
             return SearchItemsAsync(localDatabase.SearchSciMagArticles, searchQuery, progressHandler, cancellationToken);
@@ -594,24 +600,12 @@ namespace LibgenDesktop.Models
 
         public void CreateNewHttpClient()
         {
-            AppSettings.NetworkSettings networkSettings = AppSettings.Network;
-            WebProxy webProxy;
-            if (networkSettings.UseProxy)
-            {
-                webProxy = new WebProxy(networkSettings.ProxyAddress, networkSettings.ProxyPort.Value);
-                if (!String.IsNullOrEmpty(networkSettings.ProxyUserName))
-                {
-                    webProxy.Credentials = new NetworkCredential(networkSettings.ProxyUserName, networkSettings.ProxyPassword);
-                }
-            }
-            else
-            {
-                webProxy = new WebProxy();
-            }
             HttpClientHandler httpClientHandler = new HttpClientHandler
             {
-                Proxy = webProxy,
-                UseProxy = true
+                Proxy = NetworkUtils.CreateProxy(AppSettings.Network),
+                UseProxy = true,
+                AllowAutoRedirect = true,
+                UseCookies = false
             };
             HttpClient = new HttpClient(httpClientHandler);
             HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(USER_AGENT);
@@ -636,8 +630,7 @@ namespace LibgenDesktop.Models
             }
             else
             {
-                DateTime? lastUpdateCheck = AppSettings.LastUpdate.LastCheckedAt;
-                if (!lastUpdateCheck.HasValue)
+                if (!LastApplicationUpdateCheckDateTime.HasValue)
                 {
                     nextUpdateCheck = DateTime.Now;
                 }
@@ -646,13 +639,13 @@ namespace LibgenDesktop.Models
                     switch (AppSettings.General.UpdateCheck)
                     {
                         case AppSettings.GeneralSettings.UpdateCheckInterval.DAILY:
-                            nextUpdateCheck = lastUpdateCheck.Value.AddDays(1);
+                            nextUpdateCheck = LastApplicationUpdateCheckDateTime.Value.AddDays(1);
                             break;
                         case AppSettings.GeneralSettings.UpdateCheckInterval.WEEKLY:
-                            nextUpdateCheck = lastUpdateCheck.Value.AddDays(7);
+                            nextUpdateCheck = LastApplicationUpdateCheckDateTime.Value.AddDays(7);
                             break;
                         case AppSettings.GeneralSettings.UpdateCheckInterval.MONTHLY:
-                            nextUpdateCheck = lastUpdateCheck.Value.AddMonths(1);
+                            nextUpdateCheck = LastApplicationUpdateCheckDateTime.Value.AddMonths(1);
                             break;
                         default:
                             throw new Exception($"Unexpected update check interval: {AppSettings.General.UpdateCheck}.");
@@ -662,7 +655,12 @@ namespace LibgenDesktop.Models
             updater.Configure(HttpClient, nextUpdateCheck, AppSettings.LastUpdate.IgnoreReleaseName);
         }
 
-        private Task<ObservableCollection<T>> SearchItemsAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction, string searchQuery,
+        public void ConfigureDownloader()
+        {
+            Downloader.Configure(Localization.CurrentLanguage, AppSettings.Network, AppSettings.Download);
+        }
+
+        private Task<List<T>> SearchItemsAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction, string searchQuery,
             IProgress<SearchProgress> progressHandler, CancellationToken cancellationToken)
         {
             return Task.Run(() =>
@@ -673,7 +671,7 @@ namespace LibgenDesktop.Models
                     resultLimit = AppSettings.Search.MaximumResultCount;
                 }
                 Logger.Debug($@"Search query = ""{searchQuery}"", result limit = {resultLimit?.ToString() ?? "none"}, object type = {typeof(T).Name}.");
-                ObservableCollection<T> result = new ObservableCollection<T>();
+                List<T> result = new List<T>();
                 DateTime lastReportDateTime = DateTime.Now;
                 foreach (T item in searchFunction(searchQuery, resultLimit))
                 {
@@ -710,7 +708,7 @@ namespace LibgenDesktop.Models
             {
                 rowsPerFile = MAX_EXPORT_ROWS_PER_FILE;
             }
-            XlsxExporter xlsxExporter = new XlsxExporter(filePathTemplate, fileExtension, rowsPerFile, splitIntoMultipleFiles);
+            XlsxExporter xlsxExporter = new XlsxExporter(filePathTemplate, fileExtension, rowsPerFile, splitIntoMultipleFiles, Localization.CurrentLanguage);
             Func<IEnumerable<T>, IProgress<ExportProgress>, CancellationToken, ExportResult> exportFunction = xlsxExporterFunction(xlsxExporter);
             return ExportAsync(searchFunction, exportFunction, searchQuery, searchResultLimit, progressHandler, cancellationToken);
         }
@@ -729,7 +727,8 @@ namespace LibgenDesktop.Models
             {
                 rowsPerFile = null;
             }
-            CsvExporter csvExporter = new CsvExporter(filePathTemplate, fileExtension, rowsPerFile, splitIntoMultipleFiles, separator);
+            CsvExporter csvExporter = new CsvExporter(filePathTemplate, fileExtension, rowsPerFile, splitIntoMultipleFiles, separator,
+                Localization.CurrentLanguage);
             Func<IEnumerable<T>, IProgress<ExportProgress>, CancellationToken, ExportResult> exportFunction = csvExporterFunction(csvExporter);
             return ExportAsync(searchFunction, exportFunction, searchQuery, searchResultLimit, progressHandler, cancellationToken);
         }
@@ -889,12 +888,25 @@ namespace LibgenDesktop.Models
             return null;
         }
 
+        private void ValidateAndCorrectDirectoryPaths()
+        {
+            string downloadDirectory = AppSettings.Download.DownloadDirectory;
+            if (String.IsNullOrWhiteSpace(downloadDirectory) || !Directory.Exists(downloadDirectory))
+            {
+                AppSettings.Download.DownloadDirectory = Path.Combine(Environment.AppDataDirectory, DEFAULT_DOWNLOAD_DIRECTORY_NAME);
+            }
+        }
+
         private void ApplicationUpdateCheck(object sender, Updater.UpdateCheckEventArgs e)
         {
             LastApplicationUpdateCheckResult = e.Result;
             ApplicationUpdateCheckCompleted?.Invoke(this, EventArgs.Empty);
-            AppSettings.LastUpdate.LastCheckedAt = DateTime.Now;
-            SaveSettings();
+            LastApplicationUpdateCheckDateTime = DateTime.Now;
+            if (e.Result == null)
+            {
+                AppSettings.LastUpdate.LastCheckedAt = LastApplicationUpdateCheckDateTime;
+                SaveSettings();
+            }
             ConfigureUpdater();
         }
     }

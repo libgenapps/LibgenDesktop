@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Text;
-using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.Models.Entities
 {
@@ -53,51 +51,6 @@ namespace LibgenDesktop.Models.Entities
         public string Tags { get; set; }
         public string IdentifierPlain { get; set; }
 
-        public string FileSizeString => Formatters.FileSizeToString(SizeInBytes, false);
-        public string FileSizeWithBytesString => Formatters.FileSizeToString(SizeInBytes, true);
         public bool Ocr => Searchable == "1";
-        public string SearchableString => StringBooleanToLabelString(Searchable, "да", "нет", "неизвестно");
-        public string AddedDateTimeString => AddedDateTime.ToString("dd.MM.yyyy HH:mm:ss");
-        public string LastModifiedDateTimeString => LastModifiedDateTime.ToString("dd.MM.yyyy HH:mm:ss");
-        public string BookmarkedString => StringBooleanToLabelString(Bookmarked, "есть", "нет", "неизвестно");
-        public string ScannedString => StringBooleanToLabelString(Scanned, "да", "нет", "неизвестно");
-        public string OrientationString => StringBooleanToLabelString(Orientation, "портретная", "альбомная", "неизвестно");
-        public string PaginatedString => StringBooleanToLabelString(Paginated, "да", "нет", "неизвестно");
-        public string ColorString => StringBooleanToLabelString(Color, "да", "нет", "неизвестно");
-        public string CleanedString => StringBooleanToLabelString(Cleaned, "да", "нет", "неизвестно");
-
-        public string ContentPageCountString
-        {
-            get
-            {
-                return !String.IsNullOrWhiteSpace(Pages) ? Pages : "неизвестно";
-            }
-        }
-
-        public string PagesString
-        {
-            get
-            {
-                StringBuilder resultBuilder = new StringBuilder();
-                resultBuilder.Append(ContentPageCountString);
-                resultBuilder.Append(" (содержательная часть) / ");
-                resultBuilder.Append(PagesInFile.ToString());
-                resultBuilder.Append(" (всего в файле)");
-                return resultBuilder.ToString();
-            }
-        }
-
-        private static string StringBooleanToLabelString(string value, string value1Label, string value0Label, string valueUnknownLabel)
-        {
-            switch (value)
-            {
-                case "0":
-                    return value0Label;
-                case "1":
-                    return value1Label;
-                default:
-                    return valueUnknownLabel;
-            }
-        }
     }
 }

@@ -1,0 +1,278 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.SettingsWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
+                       Title="{Binding Localization.WindowTitle}"
+                       ClosingCommand="{Binding WindowClosingCommand}"
+                       Style="{StaticResource SettingsWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SettingsWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Style="{StaticResource TabsPanel}">
+            <c:SettingsTabHeader IsChecked="{Binding IsGeneralTabSelected}">
+                <TextBlock Text="{Binding Localization.GeneralTabHeader}" />
+            </c:SettingsTabHeader>
+            <c:SettingsTabHeader IsChecked="{Binding IsNetworkTabSelected}">
+                <TextBlock Text="{Binding Localization.NetworkTabHeader}" />
+            </c:SettingsTabHeader>
+            <c:SettingsTabHeader IsChecked="{Binding IsDownloadTabSelected}">
+                <TextBlock Text="{Binding Localization.DownloadTabHeader}" />
+            </c:SettingsTabHeader>
+            <c:SettingsTabHeader IsChecked="{Binding IsMirrorsTabSelected}">
+                <TextBlock Text="{Binding Localization.MirrorsTabHeader}" />
+            </c:SettingsTabHeader>
+            <c:SettingsTabHeader IsChecked="{Binding IsSearchTabSelected}">
+                <TextBlock Text="{Binding Localization.SearchTabHeader}" />
+            </c:SettingsTabHeader>
+            <c:SettingsTabHeader IsChecked="{Binding IsExportTabSelected}">
+                <TextBlock Text="{Binding Localization.ExportTabHeader}" />
+            </c:SettingsTabHeader>
+            <c:SettingsTabHeader IsChecked="{Binding IsAdvancedTabSelected}">
+                <TextBlock Text="{Binding Localization.AdvancedTabHeader}" />
+            </c:SettingsTabHeader>
+        </StackPanel>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsGeneralTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource GeneralTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.GeneralLanguage}" />
+            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding GeneralLanguagesList}" DisplayMemberPath="Key"
+                      SelectedItem="{Binding GeneralSelectedLanguage, Mode=TwoWay}" Style="{StaticResource GeneralComboBox}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.GeneralCheckUpdates}" />
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding GeneralUpdateCheckIntervalList}" DisplayMemberPath="Value"
+                      SelectedItem="{Binding GeneralSelectedUpdateCheckInterval, Mode=TwoWay}" Style="{StaticResource GeneralComboBox}" />
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsNetworkTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource NetworkTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.NetworkOfflineMode}" />
+            <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding NetworkIsOfflineModeOn}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.NetworkUseHttpProxy}" />
+            <ToggleButton Grid.Row="2" Grid.Column="1" IsChecked="{Binding NetworkUseProxy}" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding Localization.NetworkProxyAddress}" Style="{StaticResource MirrorProxyLabel}" />
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding NetworkProxyAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding NetworkUseProxy}" Style="{StaticResource NetworkProxyField}" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding Localization.NetworkProxyPort}" Style="{StaticResource MirrorProxyLabel}" />
+            <TextBox Grid.Row="6" Grid.Column="1" Text="{Binding NetworkProxyPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="5" IsEnabled="{Binding NetworkUseProxy}" Style="{StaticResource NetworkProxyField}" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="{Binding Localization.NetworkProxyUserName}" Style="{StaticResource MirrorProxyLabel}" />
+            <TextBox Grid.Row="8" Grid.Column="1" Text="{Binding NetworkProxyUserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding NetworkUseProxy}" Style="{StaticResource NetworkProxyField}" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding Localization.NetworkProxyPassword}" Style="{StaticResource MirrorProxyLabel}" />
+            <PasswordBox Grid.Row="10" Grid.Column="1"
+                         u:PasswordBoxExtensions.PasswordBinding="{Binding NetworkProxyPassword, UpdateSourceTrigger=PropertyChanged}"
+                         IsEnabled="{Binding NetworkUseProxy}" />
+            <TextBlock Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource NetworkProxyNote}"
+                       Text="{Binding Localization.NetworkProxyPasswordWarning}" />
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsDownloadTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource DownloadTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.DownloadDownloadMode}" />
+            <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource DownloadModeRadioButtonsPanel}">
+                <RadioButton IsChecked="{Binding DownloadIsOpenInBrowserSelected}">
+                    <TextBlock Text="{Binding Localization.DownloadOpenInBrowser}" />
+                </RadioButton>
+                <RadioButton IsChecked="{Binding DownloadIsUseDownloadManagerSelected}">
+                    <TextBlock Text="{Binding Localization.DownloadUseDownloadManager}" />
+                </RadioButton>
+            </StackPanel>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.DownloadDownloadDirectory}" />
+            <TextBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding DownloadDirectory, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                     IsEnabled="{Binding DownloadIsUseDownloadManagerSelected}" Style="{StaticResource DownloadDirectory}" />
+            <Button Grid.Row="4" Grid.Column="2" Content="..." Command="{Binding DownloadSelectDirectoryCommand}"
+                    IsEnabled="{Binding DownloadIsUseDownloadManagerSelected}" Style="{StaticResource DownloadSelectDirectoryButton}" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding Localization.DownloadTimeout}" />
+            <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding DownloadTimeoutDefaultValues}"
+                      Text="{Binding DownloadTimeout, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding DownloadIsUseDownloadManagerSelected}" c:ControlExtensions.MaxLength="4"
+                      Style="{StaticResource DownloadComboBox}" />
+            <TextBlock Grid.Row="6" Grid.Column="2" Text="{Binding Localization.DownloadSeconds}" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="{Binding Localization.DownloadDownloadAttempts}" />
+            <ComboBox Grid.Row="8" Grid.Column="1" ItemsSource="{Binding DownloadAttemptCountDefaultValues}"
+                      Text="{Binding DownloadAttemptCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding DownloadIsUseDownloadManagerSelected}" c:ControlExtensions.MaxLength="2"
+                      Style="{StaticResource DownloadComboBox}" />
+            <TextBlock Grid.Row="8" Grid.Column="2" Text="{Binding Localization.DownloadTimes}" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding Localization.DownloadRetryDelay}" />
+            <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{Binding DownloadRetryDelayDefaultValues}"
+                      Text="{Binding DownloadRetryDelay, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      IsEnabled="{Binding DownloadIsUseDownloadManagerSelected}" c:ControlExtensions.MaxLength="4"
+                      Style="{StaticResource DownloadComboBox}" />
+            <TextBlock Grid.Row="10" Grid.Column="2" Text="{Binding Localization.DownloadSeconds}" />
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsMirrorsTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource MirrorsTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.MirrorsNonFiction}"
+                       Style="{StaticResource MirrorSectionHeader}" />
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Localization.MirrorsBooks}" Style="{StaticResource MirrorType}" />
+            <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding MirrorsNonFictionBooksMirrorList}"
+                      Text="{Binding MirrorsSelectedNonFictionBooksMirror, Mode=TwoWay}" Style="{StaticResource MirrorComboBox}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.MirrorsCovers}" Style="{StaticResource MirrorType}" />
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding MirrorsNonFictionCoversMirrorList}"
+                      Text="{Binding MirrorsSelectedNonFictionCoversMirror, Mode=TwoWay}" Style="{StaticResource MirrorComboBox}" />
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding Localization.MirrorsSynchronization}" Style="{StaticResource MirrorType}" />
+            <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding MirrorsNonFictionSynchronizationMirrorList}"
+                      Text="{Binding MirrorsSelectedNonFictionSynchronizationMirror, Mode=TwoWay}" Style="{StaticResource MirrorComboBox}" />
+            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.MirrorsFiction}"
+                       Style="{StaticResource MirrorSectionHeader}" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding Localization.MirrorsBooks}" Style="{StaticResource MirrorType}" />
+            <ComboBox Grid.Row="6" Grid.Column="1" ItemsSource="{Binding MirrorsFictionBooksMirrorList}"
+                      Text="{Binding MirrorsSelectedFictionBooksMirror, Mode=TwoWay}" Style="{StaticResource MirrorComboBox}" />
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="{Binding Localization.MirrorsCovers}" Style="{StaticResource MirrorType}" />
+            <ComboBox Grid.Row="7" Grid.Column="1" ItemsSource="{Binding MirrorsFictionCoversMirrorList}"
+                      Text="{Binding MirrorsSelectedFictionCoversMirror, Mode=TwoWay}" Style="{StaticResource MirrorComboBox}" />
+            <TextBlock Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.MirrorsSciMagArticles}"
+                       Style="{StaticResource MirrorSectionHeader}" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding Localization.MirrorsArticles}" Style="{StaticResource MirrorType}" />
+            <ComboBox Grid.Row="10" Grid.Column="1" ItemsSource="{Binding MirrorsArticlesMirrorList}"
+                      Text="{Binding MirrorsSelectedArticlesMirror, Mode=TwoWay}" Style="{StaticResource MirrorComboBox}" />
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsSearchTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource SearchTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="140" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.SearchLimitResults}" />
+            <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding SearchIsLimitResultsOn}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.SearchMaximumResults}" IsEnabled="{Binding SearchIsLimitResultsOn}" />
+            <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding SearchMaximumResultCountDefaultValues}"
+                      Text="{Binding SearchMaximumResultCount, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      c:ControlExtensions.MaxLength="9" IsEnabled="{Binding SearchIsLimitResultsOn}" Style="{StaticResource EditableComboBox}" />
+            <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource SearchOpenDetailsPanel}">
+                <TextBlock Text="{Binding Localization.SearchOpenDetails}" />
+                <StackPanel Style="{StaticResource SearchOpenDetailsRadioButtonsPanel}">
+                    <RadioButton IsChecked="{Binding SearchIsOpenInModalWindowSelected}">
+                        <TextBlock Text="{Binding Localization.SearchInModalWindow}" />
+                    </RadioButton>
+                    <RadioButton IsChecked="{Binding SearchIsOpenInNonModalWindowSelected}">
+                        <TextBlock Text="{Binding Localization.SearchInNonModalWindow}" />
+                    </RadioButton>
+                    <RadioButton IsChecked="{Binding SearchIsOpenInNewTabSelected}">
+                        <TextBlock Text="{Binding Localization.SearchInNewTab}" />
+                    </RadioButton>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsExportTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource ExportTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="14" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="140" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.ExportOpenResults}" />
+            <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding ExportIsOpenResultsAfterExportEnabled}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.ExportSplitIntoMultipleFiles}" />
+            <ToggleButton Grid.Row="2" Grid.Column="1" IsChecked="{Binding ExportIsSplitIntoMultipleFilesEnabled}" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding Localization.ExportMaximumRowsPerFile}"
+                       IsEnabled="{Binding ExportIsSplitIntoMultipleFilesEnabled}" />
+            <ComboBox Grid.Row="4" Grid.Column="1" ItemsSource="{Binding ExportMaximumRowsPerFileDefaultValues}"
+                      Text="{Binding ExportMaximumRowsPerFile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      c:ControlExtensions.MaxLength="9" IsEnabled="{Binding ExportIsSplitIntoMultipleFilesEnabled}"
+                      Style="{StaticResource EditableComboBox}" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource Note}" Text="{Binding ExportExcelLimitNote}" />
+        </Grid>
+        <Grid Grid.Row="0" Grid.Column="1" Visibility="{Binding IsAdvancedTabSelected, Converter={StaticResource booleanToCollapsedConverter}}"
+              Style="{StaticResource AdvancedTabContent}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.AdvancedUseLogging}" />
+            <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding AdvancedIsLoggingEnabled}" />
+        </Grid>
+        <UniformGrid Grid.Row="1" Grid.Column="1" Rows="1" Columns="2" Style="{StaticResource ButtonPanel}">
+            <Button Content="{Binding Localization.Ok}" Command="{Binding OkCommand}" IsEnabled="{Binding IsOkButtonEnabled}" Style="{StaticResource OkButton}" />
+            <Button Content="{Binding Localization.Cancel}" Command="{Binding CancelCommand}" Style="{StaticResource CancelButton}" />
+        </UniformGrid>
+    </Grid>
+</c:LibgenDesktopWindow>

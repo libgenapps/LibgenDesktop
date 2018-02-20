@@ -1,0 +1,37 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.SynchronizationWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       Title="{Binding Localization.WindowTitle}"
+                       ClosedCommand="{Binding WindowClosedCommand}"
+                       Style="{StaticResource SynchronizationWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SynchronizationWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Style="{StaticResource StatusPanel}">
+            <ProgressBar Visibility="{Binding IsInProgress, Converter={StaticResource booleanToCollapsedConverter}}" Style="{StaticResource StatusProgressBar}" />
+            <TextBlock Text="{Binding Status}" Style="{StaticResource StatusDescription}" />
+        </StackPanel>
+        <c:ImportLogPanel Grid.Row="1" DataContext="{Binding Logs}" />
+        <Grid Grid.Row="2" Style="{StaticResource BottomPanel}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding Elapsed}" Style="{StaticResource ElapsedLabel}" />
+            <Button Grid.Column="2" Content="{Binding CancelButtonText}" IsEnabled="{Binding IsCancelButtonEnabled}"
+                    Visibility="{Binding IsCancelButtonVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                    Command="{Binding CancelCommand}" Style="{StaticResource CancelButton}" />
+            <Button Grid.Column="2" Content="{Binding Localization.Close}" Command="{Binding CloseCommand}"
+                    Visibility="{Binding IsCloseButtonVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                    Style="{StaticResource CloseButton}" />
+        </Grid>
+    </Grid>
+</c:LibgenDesktopWindow>

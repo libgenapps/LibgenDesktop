@@ -1,13 +1,18 @@
 ﻿using System.Collections.Generic;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Localization;
+using LibgenDesktop.Models.Localization.Localizators;
 
 namespace LibgenDesktop.Models.Export
 {
     internal class FictionExportObject : ExportObject<FictionBook>
     {
-        public FictionExportObject(ExportWriter exportWriter)
+        private FictionExporterLocalizator localization;
+
+        public FictionExportObject(ExportWriter exportWriter, Language currentLanguage)
             : base(exportWriter)
         {
+            localization = currentLanguage.FictionExporter;
         }
 
         public override IEnumerable<string> FieldList
@@ -16,27 +21,27 @@ namespace LibgenDesktop.Models.Export
             {
                 return new[]
                 {
-                    "ID",
-                    "Наименование",
-                    "Авторы",
-                    "Автор (рус.)",
-                    "Серия",
-                    "Издатель",
-                    "Издание",
-                    "Год",
-                    "Язык",
-                    "Формат",
-                    "Страниц",
-                    "Версия",
-                    "Размер файла",
-                    "Добавлено",
-                    "Обновлено",
-                    "MD5-хэш",
-                    "Комментарий",
-                    "Libgen ID",
-                    "ISBN",
-                    "Google Books ID",
-                    "ASIN"
+                    localization.Id,
+                    localization.Title,
+                    localization.Authors,
+                    localization.RussianAuthor,
+                    localization.Series,
+                    localization.Publisher,
+                    localization.Edition,
+                    localization.Year,
+                    localization.Language,
+                    localization.FormatHeader,
+                    localization.Pages,
+                    localization.Version,
+                    localization.FileSize,
+                    localization.Added,
+                    localization.LastModified,
+                    localization.Md5Hash,
+                    localization.Comments,
+                    localization.LibgenId,
+                    localization.Isbn,
+                    localization.GoogleBookId,
+                    localization.Asin
                 };
             }
         }
@@ -50,10 +55,10 @@ namespace LibgenDesktop.Models.Export
             WriteField(book.Series);
             WriteField(book.Publisher);
             WriteField(book.Edition);
-            WriteField(book.Year);
+            WriteField(localization.GetYearString(book.Year));
             WriteField(book.Language);
             WriteField(book.Format);
-            WriteField(book.PagesString);
+            WriteField(localization.GetPagesString(book.Pages));
             WriteField(book.Version);
             WriteField(book.SizeInBytes);
             WriteField(book.AddedDateTime);

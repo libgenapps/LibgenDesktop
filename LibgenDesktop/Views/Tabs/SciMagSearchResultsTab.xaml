@@ -21,16 +21,16 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox Name="searchTextBox" Grid.Column="0" Style="{StaticResource SearchTextBox}"
-                     md:HintAssist.Hint="Поиск" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                     ToolTipService.ToolTip="Поиск по наименованию, авторам, журналу, DOI, Pubmed ID и ISSN (p/e)">
+                     md:HintAssist.Hint="{Binding Localization.SearchPlaceHolder}" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                     ToolTipService.ToolTip="{Binding Localization.SearchBoxTooltip}">
                 <TextBox.InputBindings>
                     <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Grid.Column="1" Command="{Binding ExportCommand}" Style="{StaticResource ExportButton}"
+            <Button Grid.Column="1" Command="{Binding ExportCommand}" Style="{StaticResource ExportButton}" ToolTip="{Binding Localization.ExportButtonTooltip}"
                     IsEnabled="{Binding IsExportPanelVisible, Converter={StaticResource booleanInverseConverter}}" />
         </Grid>
-        <DataGrid Name="articleGrid" Grid.Row="1" ItemsSource="{Binding Path=Articles, IsAsync=True}" SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
+        <DataGrid Name="articleGrid" Grid.Row="1" ItemsSource="{Binding Articles, IsAsync=True}" SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
                   Visibility="{Binding IsArticleGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
                   Style="{StaticResource ArticleDataGrid}">
             <DataGrid.Resources>
@@ -38,34 +38,40 @@
             </DataGrid.Resources>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
-                    <Setter Property="u:DataGridExtensions.DoubleClickCommand" Value="{Binding ElementName=articleGrid, Path=DataContext.OpenDetailsCommand}"/>
+                    <Setter Property="u:DataGridExtensions.DoubleClickCommand" Value="{Binding ElementName=articleGrid, Path=DataContext.OpenDetailsCommand}" />
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.InputBindings>
                 <KeyBinding Command="{Binding ArticleDataGridEnterKeyCommand}" Key="Enter" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
-                <DataGridTextColumn Binding="{Binding Title}" Header="Наименование"
+                <DataGridTextColumn Binding="{Binding Title}"
+                                    Header="{Binding DataContext.Localization.Columns.Title, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.TitleColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_TITLE_COLUMN_MIN_WIDTH}}"
                                     ElementStyle="{StaticResource TitleColumnStyle}" />
-                <DataGridTextColumn Binding="{Binding Authors}" Header="Авторы"
+                <DataGridTextColumn Binding="{Binding Authors}"
+                                    Header="{Binding DataContext.Localization.Columns.Authors, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.AuthorsColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_AUTHORS_COLUMN_MIN_WIDTH}}"
                                     ElementStyle="{StaticResource AuthorsColumnStyle}" />
-                <DataGridTextColumn Binding="{Binding Journal}" Header="Журнал"
+                <DataGridTextColumn Binding="{Binding Journal}"
+                                    Header="{Binding DataContext.Localization.Columns.Magazine, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.JournalColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_JOURNAL_COLUMN_MIN_WIDTH}}"
                                     ElementStyle="{StaticResource JournalColumnStyle}" />
-                <DataGridTextColumn Binding="{Binding Year}" Header="Год"
+                <DataGridTextColumn Binding="{Binding Year}"
+                                    Header="{Binding DataContext.Localization.Columns.Year, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.YearColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_YEAR_COLUMN_MIN_WIDTH}}"
                                     ElementStyle="{StaticResource YearColumnStyle}" />
-                <DataGridTextColumn Binding="{Binding FileSizeString}" Header="Размер файла" SortMemberPath="SizeInBytes"
+                <DataGridTextColumn Binding="{Binding FileSize}"
+                                    Header="{Binding DataContext.Localization.Columns.FileSize, Source={StaticResource dataGridViewModel}}" SortMemberPath="SizeInBytes"
                                     Width="{Binding DataContext.FileSizeColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_FILESIZE_COLUMN_MIN_WIDTH}}"
                                     ElementStyle="{StaticResource FileSizeColumnStyle}" />
-                <DataGridTextColumn Binding="{Binding DoiString}" Header="DOI"
+                <DataGridTextColumn Binding="{Binding Doi}"
+                                    Header="{Binding DataContext.Localization.Columns.Doi, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.DoiColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_DOI_COLUMN_MIN_WIDTH}}"
                                     ElementStyle="{StaticResource DoiColumnStyle}" />
@@ -75,12 +81,12 @@
                     Visibility="{Binding IsSearchProgressPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
             <StackPanel Style="{StaticResource SearchProgressHeader}">
                 <ProgressBar Style="{StaticResource SearchProgressHeaderProgressBar}" />
-                <TextBlock Text="Идет поиск..." Style="{StaticResource SearchProgressHeaderLabel}" />
+                <TextBlock Text="{Binding Localization.SearchInProgress}" Style="{StaticResource SearchProgressHeaderLabel}" />
             </StackPanel>
             <TextBlock Text="{Binding SearchProgressStatus}" Style="{StaticResource SearchProgressStatus}" />
         </StackPanel>
         <TextBlock Grid.Row="2" Text="{Binding ArticleCount}" Style="{StaticResource StatusBarText}"
-                   Visibility="{Binding IsStatusBarVisible, Converter={StaticResource booleanToCollapsedConverter}}"/>
+                   Visibility="{Binding IsStatusBarVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
         <c:ExportPanel Grid.Row="1" Grid.RowSpan="2" DataContext="{Binding ExportPanelViewModel}"
                        Visibility="{Binding DataContext.IsExportPanelVisible, Converter={StaticResource booleanToCollapsedConverter}, RelativeSource={RelativeSource AncestorType=Grid, Mode=FindAncestor}}" />
     </Grid>

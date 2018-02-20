@@ -1,0 +1,11 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.SciMagDetailsWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       xmlns:tabs="clr-namespace:LibgenDesktop.Views.Tabs"
+                       Style="{StaticResource SciMagDetailsWindow}"
+                       Title="{Binding WindowTitle}"
+                       Width="{Binding WindowWidth, Mode=TwoWay}" Height="{Binding WindowHeight, Mode=TwoWay}"
+                       ClosedCommand="{Binding WindowClosedCommand}">
+    <tabs:SciMagDetailsTab DataContext="{Binding TabViewModel}" />
+</c:LibgenDesktopWindow>
