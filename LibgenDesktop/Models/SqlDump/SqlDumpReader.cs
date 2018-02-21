@@ -72,7 +72,7 @@ namespace LibgenDesktop.Models.SqlDump
                     sevenZipArchive = SevenZipArchive.Open(filePath);
                     SevenZipArchiveEntry firstSevenZipArchiveEntry = sevenZipArchive.Entries.First();
                     FileSize = firstSevenZipArchiveEntry.Size;
-                    streamReader = new StreamReader(firstSevenZipArchiveEntry.OpenEntryStream());
+                    streamReader = new StreamReader(new PositioningStream(firstSevenZipArchiveEntry.OpenEntryStream()));
                     break;
                 default:
                     FileSize = new FileInfo(filePath).Length;

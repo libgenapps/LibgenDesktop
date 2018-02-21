@@ -2,8 +2,8 @@
 {
     internal static class Constants
     {
-        public const string CURRENT_VERSION = "0.13.1";
-        public const string CURRENT_GITHUB_RELEASE_NAME = "v0.13.1 alpha";
+        public const string CURRENT_VERSION = "0.13.2";
+        public const string CURRENT_GITHUB_RELEASE_NAME = "v0.13.2 alpha";
         public const string CURRENT_DATABASE_VERSION = "0.7";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
