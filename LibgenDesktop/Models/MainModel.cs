@@ -69,6 +69,8 @@ namespace LibgenDesktop.Models
             Mirrors = MirrorStorage.LoadMirrors(Path.Combine(Environment.MirrorsDirectoryPath, MIRRORS_FILE_NAME));
             ValidateAndCorrectSelectedMirrors();
             Localization = new LocalizationStorage(Environment.LanguagesDirectoryPath, AppSettings.General.Language);
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 |
+                SecurityProtocolType.Tls12;
             CreateNewHttpClient();
             OpenDatabase(AppSettings.DatabaseFileName);
             LastApplicationUpdateCheckDateTime = AppSettings.LastUpdate.LastCheckedAt;
