@@ -2,8 +2,9 @@
 {
     internal static class Constants
     {
-        public const string CURRENT_VERSION = "0.13.2";
-        public const string PRODUCT_TITLE_FORMAT = "Libgen Desktop " + CURRENT_VERSION + " ({0}-bit)";
+        public const string CURRENT_VERSION = "0.13.3";
+        public const string TITLE_VERSION = "1.0 beta 1";
+        public const string PRODUCT_TITLE_FORMAT = "Libgen Desktop " + TITLE_VERSION + " ({0}-bit)";
         public const string SHORTCUT_TITLE_FORMAT = "Libgen Desktop ({0}-bit)";
         public const string PRODUCT_COMPANY = "Libgen Apps";
         public const string INSTALLER_FILE_NAME_FORMAT = "LibgenDesktop Setup ({0}-bit)";
