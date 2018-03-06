@@ -3,3 +3,12 @@
 ################################################################################
 
 /LibgenDesktop/Downloads
+/LibgenDesktop/bin/Debug x64
+/LibgenDesktop/obj
+/packages
+/LibgenDesktop.Setup/obj/Release
+/LibgenDesktop.Setup/obj/Debug x86
+/LibgenDesktop.Setup/obj/Debug x64
+/LibgenDesktop.Setup/obj
+/fiction_dbbackup-2016-01-02.rar
+/.vs

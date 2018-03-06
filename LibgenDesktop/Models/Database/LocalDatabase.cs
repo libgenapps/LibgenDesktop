@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Common;
 
 namespace LibgenDesktop.Models.Database
 {
@@ -71,8 +72,8 @@ namespace LibgenDesktop.Models.Database
                 {
                     while (dataReader.Read())
                     {
-                        string key = dataReader.GetString(0);
-                        string value = dataReader.GetString(1);
+                        string key = dataReader.GetStringExtension(0);
+                        string value = dataReader.GetStringExtension(1);
                         if (DatabaseMetadata.FieldDefinitions.TryGetValue(key.ToLower(), out DatabaseMetadata.FieldDefinition field))
                         {
                             field.Setter(result, value);
@@ -1150,54 +1151,54 @@ namespace LibgenDesktop.Models.Database
         private NonFictionBook ReadNonFictionBook(SQLiteDataReader dataReader)
         {
             NonFictionBook book = new NonFictionBook();
-            book.Id = dataReader.GetInt32(0);
-            book.Title = dataReader.GetString(1);
-            book.VolumeInfo = dataReader.GetString(2);
-            book.Series = dataReader.GetString(3);
-            book.Periodical = dataReader.GetString(4);
-            book.Authors = dataReader.GetString(5);
-            book.Year = dataReader.GetString(6);
-            book.Edition = dataReader.GetString(7);
-            book.Publisher = dataReader.GetString(8);
-            book.City = dataReader.GetString(9);
-            book.Pages = dataReader.GetString(10);
-            book.PagesInFile = dataReader.GetInt32(11);
-            book.Language = dataReader.GetString(12);
-            book.Topic = dataReader.GetString(13);
-            book.Library = dataReader.GetString(14);
-            book.Issue = dataReader.GetString(15);
-            book.Identifier = dataReader.GetString(16);
-            book.Issn = dataReader.GetString(17);
-            book.Asin = dataReader.GetString(18);
-            book.Udc = dataReader.GetString(19);
-            book.Lbc = dataReader.GetString(20);
-            book.Ddc = dataReader.GetString(21);
-            book.Lcc = dataReader.GetString(22);
-            book.Doi = dataReader.GetString(23);
-            book.GoogleBookId = dataReader.GetString(24);
-            book.OpenLibraryId = dataReader.GetString(25);
-            book.Commentary = dataReader.GetString(26);
-            book.Dpi = dataReader.GetInt32(27);
-            book.Color = dataReader.GetString(28);
-            book.Cleaned = dataReader.GetString(29);
-            book.Orientation = dataReader.GetString(30);
-            book.Paginated = dataReader.GetString(31);
-            book.Scanned = dataReader.GetString(32);
-            book.Bookmarked = dataReader.GetString(33);
-            book.Searchable = dataReader.GetString(34);
+            book.Id = dataReader.GetInt32Extension(0);
+            book.Title = dataReader.GetStringExtension(1);
+            book.VolumeInfo = dataReader.GetStringExtension(2);
+            book.Series = dataReader.GetStringExtension(3);
+            book.Periodical = dataReader.GetStringExtension(4);
+            book.Authors = dataReader.GetStringExtension(5);
+            book.Year = dataReader.GetStringExtension(6);
+            book.Edition = dataReader.GetStringExtension(7);
+            book.Publisher = dataReader.GetStringExtension(8);
+            book.City = dataReader.GetStringExtension(9);
+            book.Pages = dataReader.GetStringExtension(10);
+            book.PagesInFile = dataReader.GetInt32Extension(11);
+            book.Language = dataReader.GetStringExtension(12);
+            book.Topic = dataReader.GetStringExtension(13);
+            book.Library = dataReader.GetStringExtension(14);
+            book.Issue = dataReader.GetStringExtension(15);
+            book.Identifier = dataReader.GetStringExtension(16);
+            book.Issn = dataReader.GetStringExtension(17);
+            book.Asin = dataReader.GetStringExtension(18);
+            book.Udc = dataReader.GetStringExtension(19);
+            book.Lbc = dataReader.GetStringExtension(20);
+            book.Ddc = dataReader.GetStringExtension(21);
+            book.Lcc = dataReader.GetStringExtension(22);
+            book.Doi = dataReader.GetStringExtension(23);
+            book.GoogleBookId = dataReader.GetStringExtension(24);
+            book.OpenLibraryId = dataReader.GetStringExtension(25);
+            book.Commentary = dataReader.GetStringExtension(26);
+            book.Dpi = dataReader.GetInt32Extension(27);
+            book.Color = dataReader.GetStringExtension(28);
+            book.Cleaned = dataReader.GetStringExtension(29);
+            book.Orientation = dataReader.GetStringExtension(30);
+            book.Paginated = dataReader.GetStringExtension(31);
+            book.Scanned = dataReader.GetStringExtension(32);
+            book.Bookmarked = dataReader.GetStringExtension(33);
+            book.Searchable = dataReader.GetStringExtension(34);
             book.SizeInBytes = dataReader.GetInt64(35);
-            book.Format = dataReader.GetString(36);
-            book.Md5Hash = dataReader.GetString(37);
-            book.Generic = dataReader.GetString(38);
-            book.Visible = dataReader.GetString(39);
-            book.Locator = dataReader.GetString(40);
-            book.Local = dataReader.GetInt32(41);
-            book.AddedDateTime = ParseDbDate(dataReader.GetString(42));
-            book.LastModifiedDateTime = ParseDbDate(dataReader.GetString(43));
-            book.CoverUrl = dataReader.GetString(44);
-            book.Tags = dataReader.GetString(45);
-            book.IdentifierPlain = dataReader.GetString(46);
-            book.LibgenId = dataReader.GetInt32(47);
+            book.Format = dataReader.GetStringExtension(36);
+            book.Md5Hash = dataReader.GetStringExtension(37);
+            book.Generic = dataReader.GetStringExtension(38);
+            book.Visible = dataReader.GetStringExtension(39);
+            book.Locator = dataReader.GetStringExtension(40);
+            book.Local = dataReader.GetInt32Extension(41);
+            book.AddedDateTime = ParseDbDate(dataReader.GetStringExtension(42));
+            book.LastModifiedDateTime = ParseDbDate(dataReader.GetStringExtension(43));
+            book.CoverUrl = dataReader.GetStringExtension(44);
+            book.Tags = dataReader.GetStringExtension(45);
+            book.IdentifierPlain = dataReader.GetStringExtension(46);
+            book.LibgenId = dataReader.GetInt32Extension(47);
             return book;
         }
 
@@ -1205,56 +1206,56 @@ namespace LibgenDesktop.Models.Database
         private FictionBook ReadFictionBook(SQLiteDataReader dataReader)
         {
             FictionBook book = new FictionBook();
-            book.Id = dataReader.GetInt32(0);
-            book.AuthorFamily1 = dataReader.GetString(1);
-            book.AuthorName1 = dataReader.GetString(2);
-            book.AuthorSurname1 = dataReader.GetString(3);
-            book.Role1 = dataReader.GetString(4);
-            book.Pseudonim1 = dataReader.GetString(5);
-            book.AuthorFamily2 = dataReader.GetString(6);
-            book.AuthorName2 = dataReader.GetString(7);
-            book.AuthorSurname2 = dataReader.GetString(8);
-            book.Role2 = dataReader.GetString(9);
-            book.Pseudonim2 = dataReader.GetString(10);
-            book.AuthorFamily3 = dataReader.GetString(11);
-            book.AuthorName3 = dataReader.GetString(12);
-            book.AuthorSurname3 = dataReader.GetString(13);
-            book.Role3 = dataReader.GetString(14);
-            book.Pseudonim3 = dataReader.GetString(15);
-            book.AuthorFamily4 = dataReader.GetString(16);
-            book.AuthorName4 = dataReader.GetString(17);
-            book.AuthorSurname4 = dataReader.GetString(18);
-            book.Role4 = dataReader.GetString(19);
-            book.Pseudonim4 = dataReader.GetString(20);
-            book.Series1 = dataReader.GetString(21);
-            book.Series2 = dataReader.GetString(22);
-            book.Series3 = dataReader.GetString(23);
-            book.Series4 = dataReader.GetString(24);
-            book.Title = dataReader.GetString(25);
-            book.Format = dataReader.GetString(26);
-            book.Version = dataReader.GetString(27);
+            book.Id = dataReader.GetInt32Extension(0);
+            book.AuthorFamily1 = dataReader.GetStringExtension(1);
+            book.AuthorName1 = dataReader.GetStringExtension(2);
+            book.AuthorSurname1 = dataReader.GetStringExtension(3);
+            book.Role1 = dataReader.GetStringExtension(4);
+            book.Pseudonim1 = dataReader.GetStringExtension(5);
+            book.AuthorFamily2 = dataReader.GetStringExtension(6);
+            book.AuthorName2 = dataReader.GetStringExtension(7);
+            book.AuthorSurname2 = dataReader.GetStringExtension(8);
+            book.Role2 = dataReader.GetStringExtension(9);
+            book.Pseudonim2 = dataReader.GetStringExtension(10);
+            book.AuthorFamily3 = dataReader.GetStringExtension(11);
+            book.AuthorName3 = dataReader.GetStringExtension(12);
+            book.AuthorSurname3 = dataReader.GetStringExtension(13);
+            book.Role3 = dataReader.GetStringExtension(14);
+            book.Pseudonim3 = dataReader.GetStringExtension(15);
+            book.AuthorFamily4 = dataReader.GetStringExtension(16);
+            book.AuthorName4 = dataReader.GetStringExtension(17);
+            book.AuthorSurname4 = dataReader.GetStringExtension(18);
+            book.Role4 = dataReader.GetStringExtension(19);
+            book.Pseudonim4 = dataReader.GetStringExtension(20);
+            book.Series1 = dataReader.GetStringExtension(21);
+            book.Series2 = dataReader.GetStringExtension(22);
+            book.Series3 = dataReader.GetStringExtension(23);
+            book.Series4 = dataReader.GetStringExtension(24);
+            book.Title = dataReader.GetStringExtension(25);
+            book.Format = dataReader.GetStringExtension(26);
+            book.Version = dataReader.GetStringExtension(27);
             book.SizeInBytes = dataReader.GetInt64(28);
-            book.Md5Hash = dataReader.GetString(29);
-            book.Path = dataReader.GetString(30);
-            book.Language = dataReader.GetString(31);
-            book.Pages = dataReader.GetString(32);
-            book.Identifier = dataReader.GetString(33);
-            book.Year = dataReader.GetString(34);
-            book.Publisher = dataReader.GetString(35);
-            book.Edition = dataReader.GetString(36);
-            book.Commentary = dataReader.GetString(37);
+            book.Md5Hash = dataReader.GetStringExtension(29);
+            book.Path = dataReader.GetStringExtension(30);
+            book.Language = dataReader.GetStringExtension(31);
+            book.Pages = dataReader.GetStringExtension(32);
+            book.Identifier = dataReader.GetStringExtension(33);
+            book.Year = dataReader.GetStringExtension(34);
+            book.Publisher = dataReader.GetStringExtension(35);
+            book.Edition = dataReader.GetStringExtension(36);
+            book.Commentary = dataReader.GetStringExtension(37);
             book.AddedDateTime = ParseNullableDbDate(dataReader.GetValue(38));
-            book.LastModifiedDateTime = ParseDbDate(dataReader.GetString(39));
-            book.RussianAuthorFamily = dataReader.GetString(40);
-            book.RussianAuthorName = dataReader.GetString(41);
-            book.RussianAuthorSurname = dataReader.GetString(42);
-            book.Cover = dataReader.GetString(43);
-            book.GoogleBookId = dataReader.GetString(44);
-            book.Asin = dataReader.GetString(45);
-            book.AuthorHash = dataReader.GetString(46);
-            book.TitleHash = dataReader.GetString(47);
-            book.Visible = dataReader.GetString(48);
-            book.LibgenId = dataReader.GetInt32(49);
+            book.LastModifiedDateTime = ParseDbDate(dataReader.GetStringExtension(39));
+            book.RussianAuthorFamily = dataReader.GetStringExtension(40);
+            book.RussianAuthorName = dataReader.GetStringExtension(41);
+            book.RussianAuthorSurname = dataReader.GetStringExtension(42);
+            book.Cover = dataReader.GetStringExtension(43);
+            book.GoogleBookId = dataReader.GetStringExtension(44);
+            book.Asin = dataReader.GetStringExtension(45);
+            book.AuthorHash = dataReader.GetStringExtension(46);
+            book.TitleHash = dataReader.GetStringExtension(47);
+            book.Visible = dataReader.GetStringExtension(48);
+            book.LibgenId = dataReader.GetInt32Extension(49);
             return book;
         }
 
@@ -1262,38 +1263,38 @@ namespace LibgenDesktop.Models.Database
         private SciMagArticle ReadSciMagArticle(SQLiteDataReader dataReader)
         {
             SciMagArticle article = new SciMagArticle();
-            article.Id = dataReader.GetInt32(0);
-            article.Doi = dataReader.GetString(1);
-            article.Doi2 = dataReader.GetString(2);
-            article.Title = dataReader.GetString(3);
-            article.Authors = dataReader.GetString(4);
-            article.Year = dataReader.GetString(5);
-            article.Month = dataReader.GetString(6);
-            article.Day = dataReader.GetString(7);
-            article.Volume = dataReader.GetString(8);
-            article.Issue = dataReader.GetString(9);
-            article.FirstPage = dataReader.GetString(10);
-            article.LastPage = dataReader.GetString(11);
-            article.Journal = dataReader.GetString(12);
-            article.Isbn = dataReader.GetString(13);
-            article.Issnp = dataReader.GetString(14);
-            article.Issne = dataReader.GetString(15);
-            article.Md5Hash = dataReader.GetString(16);
+            article.Id = dataReader.GetInt32Extension(0);
+            article.Doi = dataReader.GetStringExtension(1);
+            article.Doi2 = dataReader.GetStringExtension(2);
+            article.Title = dataReader.GetStringExtension(3);
+            article.Authors = dataReader.GetStringExtension(4);
+            article.Year = dataReader.GetStringExtension(5);
+            article.Month = dataReader.GetStringExtension(6);
+            article.Day = dataReader.GetStringExtension(7);
+            article.Volume = dataReader.GetStringExtension(8);
+            article.Issue = dataReader.GetStringExtension(9);
+            article.FirstPage = dataReader.GetStringExtension(10);
+            article.LastPage = dataReader.GetStringExtension(11);
+            article.Journal = dataReader.GetStringExtension(12);
+            article.Isbn = dataReader.GetStringExtension(13);
+            article.Issnp = dataReader.GetStringExtension(14);
+            article.Issne = dataReader.GetStringExtension(15);
+            article.Md5Hash = dataReader.GetStringExtension(16);
             article.SizeInBytes = dataReader.GetInt64(17);
             article.AddedDateTime = ParseNullableDbDate(dataReader.GetValue(18));
-            article.JournalId = dataReader.GetString(19);
-            article.AbstractUrl = dataReader.GetString(20);
-            article.Attribute1 = dataReader.GetString(21);
-            article.Attribute2 = dataReader.GetString(22);
-            article.Attribute3 = dataReader.GetString(23);
-            article.Attribute4 = dataReader.GetString(24);
-            article.Attribute5 = dataReader.GetString(25);
-            article.Attribute6 = dataReader.GetString(26);
-            article.Visible = dataReader.GetString(27);
-            article.PubmedId = dataReader.GetString(28);
-            article.Pmc = dataReader.GetString(29);
-            article.Pii = dataReader.GetString(30);
-            article.LibgenId = dataReader.GetInt32(31);
+            article.JournalId = dataReader.GetStringExtension(19);
+            article.AbstractUrl = dataReader.GetStringExtension(20);
+            article.Attribute1 = dataReader.GetStringExtension(21);
+            article.Attribute2 = dataReader.GetStringExtension(22);
+            article.Attribute3 = dataReader.GetStringExtension(23);
+            article.Attribute4 = dataReader.GetStringExtension(24);
+            article.Attribute5 = dataReader.GetStringExtension(25);
+            article.Attribute6 = dataReader.GetStringExtension(26);
+            article.Visible = dataReader.GetStringExtension(27);
+            article.PubmedId = dataReader.GetStringExtension(28);
+            article.Pmc = dataReader.GetStringExtension(29);
+            article.Pii = dataReader.GetStringExtension(30);
+            article.LibgenId = dataReader.GetInt32Extension(31);
             return article;
         }
 
@@ -1395,7 +1396,7 @@ namespace LibgenDesktop.Models.Database
                 {
                     if (dataReader.Read())
                     {
-                        return dataReader.GetInt32(0);
+                        return dataReader.GetInt32Extension(0);
                     }
                     else
                     {
@@ -1415,7 +1416,7 @@ namespace LibgenDesktop.Models.Database
                 {
                     while (dataReader.Read())
                     {
-                        result[dataReader.GetInt32(0)] = true;
+                        result[dataReader.GetInt32Extension(0)] = true;
                     }
                 }
             }
