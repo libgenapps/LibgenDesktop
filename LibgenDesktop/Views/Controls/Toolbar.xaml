@@ -66,10 +66,23 @@
                             <TextBlock Text="{Binding Localization.ToolbarSynchronize}" />
                         </StackPanel>
                     </Button>
+                    <Button Command="{Binding DatabaseCommand}" Padding="16,0" VerticalContentAlignment="Center">
+                        <StackPanel Style="{StaticResource PopupBoxItem}">
+                            <md:PackIcon Kind="Database" />
+                            <TextBlock Text="{Binding Localization.ToolbarDatabase}" />
+                        </StackPanel>
+                    </Button>
                     <Button Command="{Binding SettingsCommand}" Padding="16,0" VerticalContentAlignment="Center">
                         <StackPanel Style="{StaticResource PopupBoxItem}">
                             <md:PackIcon Kind="Settings" />
                             <TextBlock Text="{Binding Localization.ToolbarSettings}" />
+                        </StackPanel>
+                    </Button>
+                    <Separator />
+                    <Button Command="{Binding AboutCommand}" Padding="16,0" VerticalContentAlignment="Center">
+                        <StackPanel Style="{StaticResource PopupBoxItem}">
+                            <md:PackIcon Kind="HelpCircleOutline" />
+                            <TextBlock Text="{Binding Localization.ToolbarAbout}" />
                         </StackPanel>
                     </Button>
                 </StackPanel>

@@ -13,7 +13,9 @@ namespace LibgenDesktop.Models.Localization.Localizators
             ToolbarUpdate = Format(translation => translation?.Update);
             ToolbarImport = Format(translation => translation?.Import);
             ToolbarSynchronize = Format(translation => translation?.Synchronize);
+            ToolbarDatabase = Format(translation => translation?.Database);
             ToolbarSettings = Format(translation => translation?.Settings);
+            ToolbarAbout = Format(translation => translation?.About);
         }
 
         public string WindowTitle { get; }
@@ -21,7 +23,9 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string ToolbarUpdate { get; }
         public string ToolbarImport { get; }
         public string ToolbarSynchronize { get; }
+        public string ToolbarDatabase { get; }
         public string ToolbarSettings { get; }
+        public string ToolbarAbout { get; }
 
         private string Format(Func<Translation.MainWindowTranslation, string> field)
         {

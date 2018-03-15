@@ -27,13 +27,13 @@ namespace LibgenDesktop.ViewModels.Windows
         public CreateDatabaseWindowViewModel(MainModel mainModel)
             : base(mainModel)
         {
-            Localization = mainModel.Localization.CurrentLanguage.DatabaseWindow;
+            Localization = mainModel.Localization.CurrentLanguage.CreateDatabaseWindow;
             OkButtonCommand = new Command(OkButtonClick);
             CancelButtonCommand = new Command(CancelButtonClick);
             Initialize();
         }
 
-        public DatabaseWindowLocalizator Localization { get; }
+        public CreateDatabaseWindowLocalizator Localization { get; }
 
         public string Header
         {

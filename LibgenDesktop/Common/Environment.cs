@@ -45,7 +45,7 @@ namespace LibgenDesktop.Common
                 }
             }
             string logFileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.log";
-            LogFilePath = Path.Combine(AppDataDirectory, logFileName);
+            LogFilePath = Path.Combine(AppDataDirectory, "Logs", logFileName);
             AppSettingsFilePath = Path.Combine(AppDataDirectory, APP_SETTINGS_FILE_NAME);
             MirrorsDirectoryPath = Path.Combine(AppBinariesDirectory, MIRRORS_DIRECTORY_NAME);
             LanguagesDirectoryPath = Path.Combine(AppBinariesDirectory, LANGUAGES_DIRECTORY_NAME);

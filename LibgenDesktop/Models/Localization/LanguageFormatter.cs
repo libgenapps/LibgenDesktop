@@ -60,7 +60,7 @@ namespace LibgenDesktop.Models.Localization
 
         public string ToFormattedDateTimeString(DateTime dateTime)
         {
-            return dateTime.ToString(dateFormat, CultureInfo.InvariantCulture);
+            return dateTime.ToString(dateTimeFormat, CultureInfo.InvariantCulture);
         }
 
         public string FileSizeToString(long fileSize, bool showBytes)

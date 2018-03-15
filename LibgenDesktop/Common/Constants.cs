@@ -1,10 +1,13 @@
-﻿namespace LibgenDesktop.Common
+﻿using System;
+
+namespace LibgenDesktop.Common
 {
     internal static class Constants
     {
         public const string CURRENT_VERSION = "1.0";
-        public const string CURRENT_GITHUB_RELEASE_NAME = "v1.0 beta 1";
-        public const string CURRENT_DATABASE_VERSION = "0.7";
+        public const string CURRENT_GITHUB_RELEASE_NAME = "1.0";
+        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2018, 3, 15);
+        public const string CURRENT_DATABASE_VERSION = "1.0";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
         public const string MIRRORS_DIRECTORY_NAME = "Mirrors";
@@ -60,6 +63,8 @@
         public const int SYNCHRONIZATION_WINDOW_MIN_WIDTH = 530;
         public const int SYNCHRONIZATION_WINDOW_MIN_HEIGHT = 400;
         public const int APPLICATION_UPDATE_WINDOW_WIDTH = 700;
+        public const int DATABASE_WINDOW_WIDTH = 500;
+        public const int ABOUT_WINDOW_WIDTH = 670;
         public const int MESSAGE_BOX_WINDOW_WIDTH = 500;
 
         public const string DEFAULT_DATABASE_FILE_NAME = "libgen.db";

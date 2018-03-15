@@ -1,0 +1,68 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.DatabaseWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       Title="{Binding Localization.WindowTitle}" Style="{StaticResource DatabaseWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/DatabaseWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <StackPanel Visibility="{Binding IsCreatingIndexesMessageVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                    Style="{StaticResource CreatingIndexesMessagePanel}">
+            <ProgressBar Style="{StaticResource CreatingIndexesProgressBar}" />
+            <TextBlock Text="{Binding Localization.CreatingIndexes}" />
+        </StackPanel>
+        <Grid Visibility="{Binding AreDatabaseStatsVisible, Converter={StaticResource booleanToHiddenConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="18" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.NonFiction}" Style="{StaticResource HeaderLabel}" />
+            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HeaderLine}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.TotalBooks}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding NonFictionTotalBooks}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding Localization.LastUpdate}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding NonFictionLastUpdate}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.Fiction}" Style="{StaticResource HeaderLabel}" />
+            <Rectangle Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HeaderLine}" />
+            <TextBlock Grid.Row="7" Grid.Column="0" Text="{Binding Localization.TotalBooks}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding FictionTotalBooks}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Text="{Binding Localization.LastUpdate}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding FictionLastUpdate}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.SciMagArticles}" Style="{StaticResource HeaderLabel}" />
+            <Rectangle Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HeaderLine}" />
+            <TextBlock Grid.Row="12" Grid.Column="0" Text="{Binding Localization.TotalArticles}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding SciMagTotalArticles}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="13" Grid.Column="0" Text="{Binding Localization.LastUpdate}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding SciMagLastUpdate}" Style="{StaticResource ValueLabel}" />
+            <Grid Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="{Binding Localization.ChangeDatabase}" Command="{Binding ChangeDatabaseCommand}"
+                    Style="{StaticResource ChangeDatabaseButton}" />
+                <Button Grid.Column="1" Content="{Binding Localization.Close}" Command="{Binding CloseButtonCommand}"
+                    Style="{StaticResource CloseButton}" />
+            </Grid>
+        </Grid>
+    </Grid>
+</c:LibgenDesktopWindow>

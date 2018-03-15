@@ -34,7 +34,9 @@
             public string Update { get; set; }
             public string Import { get; set; }
             public string Synchronize { get; set; }
+            public string Database { get; set; }
             public string Settings { get; set; }
+            public string About { get; set; }
         }
 
         internal class MainWindowTranslation
@@ -43,7 +45,7 @@
             public MainMenuTranslation MainMenu { get; set; }
         }
 
-        internal class DatabaseWindowTranslation
+        internal class CreateDatabaseWindowTranslation
         {
             public string WindowTitle { get; set; }
             public string FirstRunMessage { get; set; }
@@ -533,6 +535,26 @@
             public SynchronizationLogMessagesTranslation LogMessages { get; set; }
         }
 
+        internal class DatabaseTranslation
+        {
+            public string WindowTitle { get; set; }
+            public string NonFiction { get; set; }
+            public string Fiction { get; set; }
+            public string SciMagArticles { get; set; }
+            public string TotalBooks { get; set; }
+            public string TotalArticles { get; set; }
+            public string LastUpdate { get; set; }
+            public string Never { get; set; }
+            public string CreatingIndexes { get; set; }
+            public string ChangeDatabase { get; set; }
+            public string BrowseDatabaseDialogTitle { get; set; }
+            public string Databases { get; set; }
+            public string AllFiles { get; set; }
+            public string Error { get; set; }
+            public string CannotOpenDatabase { get; set; }
+            public string Close { get; set; }
+        }
+
         internal class DownloadManagerLogMessagesTranslation
         {
             public string Queued { get; set; }
@@ -716,6 +738,20 @@
             public AdvancedSettingsTranslation Advanced { get; set; }
         }
 
+        internal class AboutTranslation
+        {
+            public string WindowTitle { get; set; }
+            public string ApplicationName { get; set; }
+            public string Version { get; set; }
+            public string CheckForUpdates { get; set; }
+            public string CheckingUpdates { get; set; }
+            public string OfflineModeIsOnTooltip { get; set; }
+            public string LatestVersion { get; set; }
+            public string NewVersionAvailable { get; set; }
+            public string Update { get; set; }
+            public string Translators { get; set; }
+        }
+
         internal class MessageBoxTranslation
         {
             public string Ok { get; set; }
@@ -734,7 +770,7 @@
         public GeneralInfo General { get; set; }
         public FormattingInfo Formatting { get; set; }
         public MainWindowTranslation MainWindow { get; set; }
-        public DatabaseWindowTranslation DatabaseWindow { get; set; }
+        public CreateDatabaseWindowTranslation CreateDatabaseWindow { get; set; }
         public SearchTabTranslation SearchTab { get; set; }
         public SearchResultsTabsTranslation SearchResultsTabs { get; set; }
         public NonFictionSearchResultsTabTranslation NonFictionSearchResultsTab { get; set; }
@@ -750,7 +786,9 @@
         public SynchronizationTranslation Synchronization { get; set; }
         public DownloadManagerTranslation DownloadManager { get; set; }
         public ApplicationUpdateTranslation ApplicationUpdate { get; set; }
+        public DatabaseTranslation Database { get; set; }
         public SettingsTranslation Settings { get; set; }
+        public AboutTranslation About { get; set; }
         public MessageBoxTranslation MessageBox { get; set; }
         public ErrorWindowTranslation ErrorWindow { get; set; }
     }

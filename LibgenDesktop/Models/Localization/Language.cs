@@ -9,7 +9,7 @@ namespace LibgenDesktop.Models.Localization
     {
         private readonly List<Translation> translations;
         private MainWindowLocalizator mainWindow;
-        private DatabaseWindowLocalizator databaseWindow;
+        private CreateDatabaseWindowLocalizator createDatabaseWindow;
         private SearchTabLocalizator searchTab;
         private NonFictionSearchResultsTabLocalizator nonFictionSearchResultsTab;
         private FictionSearchResultsTabLocalizator fictionSearchResultsTab;
@@ -26,7 +26,9 @@ namespace LibgenDesktop.Models.Localization
         private SynchronizationLocalizator synchronization;
         private DownloadManagerLocalizator downloadManager;
         private ApplicationUpdateLocalizator applicationUpdate;
+        private DatabaseWindowLocalizator database;
         private SettingsWindowLocalizator settings;
+        private AboutWindowLocalizator about;
         private MessageBoxLocalizator messageBox;
         private ErrorWindowLocalizator errorWindow;
 
@@ -34,7 +36,7 @@ namespace LibgenDesktop.Models.Localization
         {
             translations = prioritizedTranslationList;
             mainWindow = null;
-            databaseWindow = null;
+            createDatabaseWindow = null;
             searchTab = null;
             nonFictionSearchResultsTab = null;
             fictionSearchResultsTab = null;
@@ -51,7 +53,9 @@ namespace LibgenDesktop.Models.Localization
             synchronization = null;
             downloadManager = null;
             applicationUpdate = null;
+            database = null;
             settings = null;
+            about = null;
             messageBox = null;
             errorWindow = null;
             Translation mainTranslation = prioritizedTranslationList.First();
@@ -66,6 +70,7 @@ namespace LibgenDesktop.Models.Localization
                 DisplayName = "Error";
             }
             CultureCode = mainTranslation.General?.CultureCode?.Trim() ?? String.Empty;
+            TranslatorName = mainTranslation.General?.TranslatorName ?? "unknown";
             Formatter = new LanguageFormatter(prioritizedTranslationList);
         }
 
@@ -73,11 +78,13 @@ namespace LibgenDesktop.Models.Localization
         public string LocalizedName { get; }
         public string DisplayName { get; }
         public string CultureCode { get; }
+        public string TranslatorName { get; }
         public LanguageFormatter Formatter { get; }
 
         public MainWindowLocalizator MainWindow => mainWindow ?? (mainWindow = new MainWindowLocalizator(translations, Formatter));
 
-        public DatabaseWindowLocalizator DatabaseWindow => databaseWindow ?? (databaseWindow = new DatabaseWindowLocalizator(translations, Formatter));
+        public CreateDatabaseWindowLocalizator CreateDatabaseWindow =>
+            createDatabaseWindow ?? (createDatabaseWindow = new CreateDatabaseWindowLocalizator(translations, Formatter));
 
         public SearchTabLocalizator SearchTab => searchTab ?? (searchTab = new SearchTabLocalizator(translations, Formatter));
 
@@ -120,7 +127,11 @@ namespace LibgenDesktop.Models.Localization
         public ApplicationUpdateLocalizator ApplicationUpdate =>
             applicationUpdate ?? (applicationUpdate = new ApplicationUpdateLocalizator(translations, Formatter));
 
+        public DatabaseWindowLocalizator Database => database ?? (database = new DatabaseWindowLocalizator(translations, Formatter));
+
         public SettingsWindowLocalizator Settings => settings ?? (settings = new SettingsWindowLocalizator(translations, Formatter));
+
+        public AboutWindowLocalizator About => about ?? (about = new AboutWindowLocalizator(translations, Formatter));
 
         public MessageBoxLocalizator MessageBox => messageBox ?? (messageBox = new MessageBoxLocalizator(translations, Formatter));
 

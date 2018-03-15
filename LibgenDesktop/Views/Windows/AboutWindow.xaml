@@ -1,0 +1,64 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.AboutWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
+                       Title="{Binding Localization.WindowTitle}" Style="{StaticResource AboutWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/AboutWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="75" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Image Grid.Row="0" Grid.Column="0" Grid.RowSpan="5" Source="{u:Icon /LibgenDesktop;component/Resources/app_icon.ico, 256}"
+               Style="{StaticResource LogoImage}" />
+        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Localization.ApplicationName}" Style="{StaticResource ApplicationName}" />
+        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding VersionText}" />
+        <Button Grid.Row="2" Grid.Column="1" Content="{Binding CheckForUpdatesButtonCaption}" Command="{Binding CheckForUpdatesCommand}"
+                Visibility="{Binding IsCheckForUpdatesButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource CheckForUpdatesButton}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsCheckForUpdatesButtonEnabled}" Value="False">
+                            <Setter Property="IsEnabled" Value="False" />
+                            <Setter Property="ToolTip" Value="{Binding DisabledCheckForUpdatesButtonTooltip}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Localization.LatestVersion}" Style="{StaticResource LatestVersionMessage}"
+                   Visibility="{Binding IsLatestVersionMessageVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <StackPanel Grid.Row="2" Grid.Column="1" Style="{StaticResource UpdatePanel}"
+                    Visibility="{Binding IsUpdatePanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <TextBlock Text="{Binding NewVersionMessage}" Style="{StaticResource NewVersionMessage}" />
+            <Button Content="{Binding Localization.Update}" Style="{StaticResource UpdateButton}" Command="{Binding UpdateCommand}" />
+        </StackPanel>
+        <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Localization.Translators}" />
+        <ScrollViewer Grid.Row="4" Grid.Column="1" Style="{StaticResource TranslatorsScrollViewer}">
+            <ItemsControl ItemsSource="{Binding Translators}" Grid.IsSharedSizeScope="True">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition SharedSizeGroup="LanguageColumn" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="{Binding Language}" Style="{StaticResource LanguageText}" />
+                            <TextBlock Grid.Column="1" Text="{Binding Translator}" Style="{StaticResource TranslatorText}" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</c:LibgenDesktopWindow>

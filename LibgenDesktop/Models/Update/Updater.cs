@@ -97,7 +97,7 @@ namespace LibgenDesktop.Models.Update
             }
         }
 
-        public async Task<UpdateCheckResult> CheckForUpdateAsync()
+        public async Task<UpdateCheckResult> CheckForUpdateAsync(bool ignoreSpecifiedRelease)
         {
             UpdateCheckResult result = null;
             if (httpClient != null)
@@ -127,7 +127,7 @@ namespace LibgenDesktop.Models.Update
                 {
                     GitHubApiRelease latestRelease = releases.First();
                     Logger.Debug($@"Latest release is ""{latestRelease.Name}"".");
-                    if (latestRelease.Name != CURRENT_GITHUB_RELEASE_NAME && latestRelease.Name != ignoreReleaseName)
+                    if (latestRelease.Name != CURRENT_GITHUB_RELEASE_NAME && (!ignoreSpecifiedRelease || latestRelease.Name != ignoreReleaseName))
                     {
                         GitHubApiRelease.Asset asset = latestRelease.Assets.FirstOrDefault(assetItem => assetItem.Name == expectedAssetName);
                         if (asset != null)
@@ -146,7 +146,7 @@ namespace LibgenDesktop.Models.Update
             UpdateCheckResult updateCheckResult;
             try
             {
-                updateCheckResult = CheckForUpdateAsync().Result;
+                updateCheckResult = CheckForUpdateAsync(ignoreSpecifiedRelease: true).Result;
             }
             catch (Exception exception)
             {

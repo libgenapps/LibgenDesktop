@@ -18,7 +18,9 @@ namespace LibgenDesktop.Infrastructure
             CREATE_DATABASE_WINDOW,
             SETTINGS_WINDOW,
             SYNCHRONIZATION_WINDOW,
-            APPLICATION_UPDATE_WINDOW
+            APPLICATION_UPDATE_WINDOW,
+            DATABASE_WINDOW,
+            ABOUT_WINDOW
         }
 
         internal class RegisteredWindow
@@ -48,6 +50,8 @@ namespace LibgenDesktop.Infrastructure
             RegisterWindow(WindowKey.SETTINGS_WINDOW, typeof(SettingsWindow), typeof(SettingsWindowViewModel));
             RegisterWindow(WindowKey.SYNCHRONIZATION_WINDOW, typeof(SynchronizationWindow), typeof(SynchronizationWindowViewModel));
             RegisterWindow(WindowKey.APPLICATION_UPDATE_WINDOW, typeof(ApplicationUpdateWindow), typeof(ApplicationUpdateWindowViewModel));
+            RegisterWindow(WindowKey.DATABASE_WINDOW, typeof(DatabaseWindow), typeof(DatabaseWindowViewModel));
+            RegisterWindow(WindowKey.ABOUT_WINDOW, typeof(AboutWindow), typeof(AboutWindowViewModel));
             MessageBox = new MessageBox();
         }
 

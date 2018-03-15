@@ -9,41 +9,46 @@ namespace LibgenDesktop.Models.Localization.Localizators
             : base(prioritizedTranslationList, formatter)
         {
             WindowTitle = Format(translation => translation?.WindowTitle);
-            FirstRunMessage = Format(translation => translation?.FirstRunMessage);
-            ChooseOption = Format(translation => translation?.ChooseOption);
-            CreateNewDatabase = Format(translation => translation?.CreateNewDatabase);
-            OpenExistingDatabase = Format(translation => translation?.OpenExistingDatabase);
-            BrowseNewDatabaseDialogTitle = Format(translation => translation?.BrowseNewDatabaseDialogTitle);
-            BrowseExistingDatabaseDialogTitle = Format(translation => translation?.BrowseExistingDatabaseDialogTitle);
+            NonFiction = Format(translation => translation?.NonFiction);
+            Fiction = Format(translation => translation?.Fiction);
+            SciMagArticles = Format(translation => translation?.SciMagArticles);
+            TotalBooks = Format(translation => translation?.TotalBooks) + ":";
+            TotalArticles = Format(translation => translation?.TotalArticles) + ":";
+            LastUpdate = Format(translation => translation?.LastUpdate) + ":";
+            Never = Format(translation => translation?.Never);
+            CreatingIndexes = Format(translation => translation?.CreatingIndexes);
+            ChangeDatabase = Format(translation => translation?.ChangeDatabase);
+            BrowseDatabaseDialogTitle = Format(translation => translation?.BrowseDatabaseDialogTitle);
             Databases = Format(translation => translation?.Databases);
             AllFiles = Format(translation => translation?.AllFiles);
             Error = Format(translation => translation?.Error);
-            CannotCreateDatabase = Format(translation => translation?.CannotCreateDatabase);
-            Ok = Format(translation => translation?.Ok);
-            Cancel = Format(translation => translation?.Cancel);
+            Close = Format(translation => translation?.Close);
         }
 
         public string WindowTitle { get; }
-        public string FirstRunMessage { get; }
-        public string ChooseOption { get; }
-        public string CreateNewDatabase { get; }
-        public string OpenExistingDatabase { get; }
-        public string BrowseNewDatabaseDialogTitle { get; }
-        public string BrowseExistingDatabaseDialogTitle { get; }
+        public string NonFiction { get; }
+        public string Fiction { get; }
+        public string SciMagArticles { get; }
+        public string TotalBooks { get; }
+        public string TotalArticles { get; }
+        public string LastUpdate { get; }
+        public string Never { get; }
+        public string CreatingIndexes { get; }
+        public string ChangeDatabase { get; }
+        public string BrowseDatabaseDialogTitle { get; }
         public string Databases { get; }
         public string AllFiles { get; }
         public string Error { get; }
-        public string CannotCreateDatabase { get; }
-        public string Ok { get; }
-        public string Cancel { get; }
+        public string Close { get; }
 
-        public string GetDatabaseNotFoundText(string database) => Format(translation => translation.DatabaseNotFound, new { database });
-        public string GetDatabaseCorruptedText(string database) => Format(translation => translation.DatabaseCorrupted, new { database });
-
-        private string Format(Func<Translation.DatabaseWindowTranslation, string> field, object templateArguments = null)
+        public string GetCannotOpenDatabase(string file)
         {
-            return Format(translation => field(translation?.DatabaseWindow), templateArguments);
+            return Format(translation => translation.CannotOpenDatabase, new { file });
         }
 
+        private string Format(Func<Translation.DatabaseTranslation, string> field, object templateArguments = null)
+        {
+            return Format(translation => field(translation?.Database), templateArguments);
+        }
     }
 }

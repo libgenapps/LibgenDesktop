@@ -161,9 +161,15 @@ namespace LibgenDesktop.Models.Database
                 command.Parameters.AddWithValue("@Id", id);
                 using (SQLiteDataReader dataReader = command.ExecuteReader())
                 {
-                    dataReader.Read();
-                    NonFictionBook book = ReadNonFictionBook(dataReader);
-                    return book;
+                    if (dataReader.Read())
+                    {
+                        NonFictionBook book = ReadNonFictionBook(dataReader);
+                        return book;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
         }
@@ -180,9 +186,15 @@ namespace LibgenDesktop.Models.Database
                 command.CommandText = SqlScripts.GET_LAST_MODIFIED_NON_FICTION;
                 using (SQLiteDataReader dataReader = command.ExecuteReader())
                 {
-                    dataReader.Read();
-                    NonFictionBook book = ReadNonFictionBook(dataReader);
-                    return book;
+                    if (dataReader.Read())
+                    {
+                        NonFictionBook book = ReadNonFictionBook(dataReader);
+                        return book;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
         }
@@ -513,9 +525,15 @@ namespace LibgenDesktop.Models.Database
                 command.Parameters.AddWithValue("@Id", id);
                 using (SQLiteDataReader dataReader = command.ExecuteReader())
                 {
-                    dataReader.Read();
-                    FictionBook book = ReadFictionBook(dataReader);
-                    return book;
+                    if (dataReader.Read())
+                    {
+                        FictionBook book = ReadFictionBook(dataReader);
+                        return book;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
         }
@@ -532,9 +550,15 @@ namespace LibgenDesktop.Models.Database
                 command.CommandText = SqlScripts.GET_LAST_MODIFIED_FICTION;
                 using (SQLiteDataReader dataReader = command.ExecuteReader())
                 {
-                    dataReader.Read();
-                    FictionBook book = ReadFictionBook(dataReader);
-                    return book;
+                    if (dataReader.Read())
+                    {
+                        FictionBook book = ReadFictionBook(dataReader);
+                        return book;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
         }
@@ -994,9 +1018,15 @@ namespace LibgenDesktop.Models.Database
                 command.Parameters.AddWithValue("@Id", id);
                 using (SQLiteDataReader dataReader = command.ExecuteReader())
                 {
-                    dataReader.Read();
-                    SciMagArticle article = ReadSciMagArticle(dataReader);
-                    return article;
+                    if (dataReader.Read())
+                    {
+                        SciMagArticle article = ReadSciMagArticle(dataReader);
+                        return article;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
         }
@@ -1013,9 +1043,15 @@ namespace LibgenDesktop.Models.Database
                 command.CommandText = SqlScripts.GET_LAST_ADDED_SCIMAG;
                 using (SQLiteDataReader dataReader = command.ExecuteReader())
                 {
-                    dataReader.Read();
-                    SciMagArticle article = ReadSciMagArticle(dataReader);
-                    return article;
+                    if (dataReader.Read())
+                    {
+                        SciMagArticle article = ReadSciMagArticle(dataReader);
+                        return article;
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
         }

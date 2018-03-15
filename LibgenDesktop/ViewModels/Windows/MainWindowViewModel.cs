@@ -9,6 +9,7 @@ using LibgenDesktop.Models.Download;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization.Localizators;
 using LibgenDesktop.Models.Settings;
+using LibgenDesktop.Models.Update;
 using LibgenDesktop.ViewModels.EventArguments;
 using LibgenDesktop.ViewModels.Tabs;
 using static LibgenDesktop.Models.Settings.AppSettings;
@@ -38,7 +39,9 @@ namespace LibgenDesktop.ViewModels.Windows
             ShowApplicationUpdateCommand = new Command(ShowApplicationUpdate);
             ImportCommand = new Command(Import);
             SynchronizeCommand = new Command(Synchronize);
+            DatabaseCommand = new Command(DatabaseMenuItemClick);
             SettingsCommand = new Command(SettingsMenuItemClick);
+            AboutCommand = new Command(AboutMenuItemClick);
             WindowClosedCommand = new Command(WindowClosed);
             TabViewModels = new ObservableCollection<TabViewModel>();
             Initialize();
@@ -178,7 +181,9 @@ namespace LibgenDesktop.ViewModels.Windows
         public Command ShowApplicationUpdateCommand { get; }
         public Command ImportCommand { get; }
         public Command SynchronizeCommand { get; }
+        public Command DatabaseCommand { get; }
         public Command SettingsCommand { get; }
+        public Command AboutCommand { get; }
         public Command WindowClosedCommand { get; }
 
         private DownloadManagerTabViewModel DownloadManagerTabViewModel
@@ -509,8 +514,13 @@ namespace LibgenDesktop.ViewModels.Windows
 
         private void ShowApplicationUpdate()
         {
+            ShowApplicationUpdate(MainModel.LastApplicationUpdateCheckResult, showSkipVersionButton: true);
+        }
+
+        private void ShowApplicationUpdate(Updater.UpdateCheckResult updateCheckResult, bool showSkipVersionButton)
+        {
             ApplicationUpdateWindowViewModel applicationUpdateWindowViewModel =
-                new ApplicationUpdateWindowViewModel(MainModel, MainModel.LastApplicationUpdateCheckResult);
+                new ApplicationUpdateWindowViewModel(MainModel, updateCheckResult, showSkipVersionButton);
             applicationUpdateWindowViewModel.ApplicationShutdownRequested += Shutdown;
             IWindowContext applicationUpdateWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.APPLICATION_UPDATE_WINDOW,
                 applicationUpdateWindowViewModel, CurrentWindowContext);
@@ -600,12 +610,31 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
+        private void DatabaseMenuItemClick()
+        {
+            DatabaseWindowViewModel databaseWindowViewModel = new DatabaseWindowViewModel(MainModel);
+            IWindowContext databaseWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.DATABASE_WINDOW, databaseWindowViewModel,
+                CurrentWindowContext);
+            databaseWindowContext.ShowDialog();
+        }
+
         private void SettingsMenuItemClick()
         {
             SettingsWindowViewModel settingsWindowViewModel = new SettingsWindowViewModel(MainModel);
             IWindowContext settingsWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.SETTINGS_WINDOW, settingsWindowViewModel,
                 CurrentWindowContext);
             settingsWindowContext.ShowDialog();
+        }
+
+        private void AboutMenuItemClick()
+        {
+            AboutWindowViewModel aboutWindowViewModel = new AboutWindowViewModel(MainModel);
+            IWindowContext aboutWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.ABOUT_WINDOW, aboutWindowViewModel,
+                CurrentWindowContext);
+            if (aboutWindowContext.ShowDialog() == true && aboutWindowViewModel.ApplicationUpdateRequested)
+            {
+                ShowApplicationUpdate(aboutWindowViewModel.UpdateCheckResult, showSkipVersionButton: false);
+            }
         }
 
         private void ApplicationUpdateCheckCompleted(object sender, EventArgs e)

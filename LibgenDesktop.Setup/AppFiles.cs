@@ -26,6 +26,8 @@ namespace LibgenDesktop.Setup
             X64.Add(new AppFile(@"x64\SQLite.Interop.dll", "SQLite.Interop.dll"));
             AddFile(@"Languages\English.lng");
             AddFile(@"Languages\Russian.lng");
+            AddFile(@"Languages\Romanian.lng");
+            AddFile(@"Languages\Ukrainian.lng");
             AddFile(@"Mirrors\mirrors.config");
             AddFile(@"Mirrors\libgen_io_nonfiction.xslt");
             AddFile(@"Mirrors\libgen_io_fiction.xslt");

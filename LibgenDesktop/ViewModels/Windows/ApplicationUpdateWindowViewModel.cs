@@ -27,10 +27,11 @@ namespace LibgenDesktop.ViewModels.Windows
         private bool isInterruptButtonEnabled;
         private string interruptButtonText;
 
-        public ApplicationUpdateWindowViewModel(MainModel mainModel, Updater.UpdateCheckResult updateCheckResult)
+        public ApplicationUpdateWindowViewModel(MainModel mainModel, Updater.UpdateCheckResult updateCheckResult, bool showSkipVersionButton)
             : base(mainModel)
         {
             this.updateCheckResult = updateCheckResult;
+            isSkipButtonVisible = showSkipVersionButton;
             cancellationTokenSource = new CancellationTokenSource();
             Localization = mainModel.Localization.CurrentLanguage.ApplicationUpdate;
             WindowClosingCommand = new FuncCommand<bool>(WindowClosing);
@@ -186,7 +187,6 @@ namespace LibgenDesktop.ViewModels.Windows
         private void Initialize()
         {
             newVersionText = Localization.GetNewVersionString(updateCheckResult.NewReleaseName, updateCheckResult.PublishedAt);
-            isSkipButtonVisible = true;
             downloadProgress = 0;
             downloadButtonText = Environment.IsInPortableMode ? Localization.Download : Localization.DownloadAndInstall;
             isDownloadButtonVisible = true;

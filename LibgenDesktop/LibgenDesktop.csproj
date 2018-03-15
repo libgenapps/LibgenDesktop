@@ -133,6 +133,8 @@
     <Compile Include="Infrastructure\WindowContext.cs" />
     <Compile Include="Infrastructure\WindowManager.cs" />
     <Compile Include="Common\Logger.cs" />
+    <Compile Include="Models\Database\DatabaseStats.cs" />
+    <Compile Include="Models\Database\Migration.cs" />
     <Compile Include="Models\Database\SearchQueryParser.cs" />
     <Compile Include="Models\Download\Downloader.cs" />
     <Compile Include="Models\Download\DownloadItem.cs" />
@@ -167,7 +169,9 @@
     <Compile Include="Models\Localization\Language.cs" />
     <Compile Include="Models\Localization\Localizators\ApplicationUpdateLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\CommonDetailsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\AboutWindowLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\DatabaseWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\CreateDatabaseWindowLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\DetailsTabLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\DownloadManagerLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\ErrorWindowLocalizator.cs" />
@@ -232,6 +236,8 @@
     <Compile Include="ViewModels\SearchResultItems\NonFictionSearchResultItemViewModel.cs" />
     <Compile Include="ViewModels\Windows\ApplicationUpdateWindowViewModel.cs" />
     <Compile Include="ViewModels\Tabs\DetailsTabViewModel.cs" />
+    <Compile Include="ViewModels\Windows\AboutWindowViewModel.cs" />
+    <Compile Include="ViewModels\Windows\DatabaseWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\DetailsWindowViewModel.cs" />
     <Compile Include="ViewModels\EventArguments\OpenFictionDetailsEventArgs.cs" />
     <Compile Include="ViewModels\EventArguments\OpenNonFictionDetailsEventArgs.cs" />
@@ -261,6 +267,7 @@
     <Compile Include="ViewModels\Tabs\SearchTabViewModel.cs" />
     <Compile Include="ViewModels\Windows\SettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\Tabs\TabViewModel.cs" />
+    <Compile Include="Views\Utils\IconExtension.cs" />
     <Compile Include="Views\Windows\ApplicationUpdateWindow.xaml.cs">
       <DependentUpon>ApplicationUpdateWindow.xaml</DependentUpon>
     </Compile>
@@ -282,6 +289,12 @@
       <DependentUpon>PressedToggleButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\TabControl.cs" />
+    <Compile Include="Views\Windows\AboutWindow.xaml.cs">
+      <DependentUpon>AboutWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\DatabaseWindow.xaml.cs">
+      <DependentUpon>DatabaseWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Windows\MessageBoxWindow.xaml.cs">
       <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
     </Compile>
@@ -356,6 +369,14 @@
     <Compile Include="Views\Utils\EventListenerExtensions.cs" />
     <Compile Include="Views\Utils\GridLengthConverter.cs" />
     <Compile Include="Views\Utils\PasswordBoxExtensions.cs" />
+    <Page Include="Views\Styles\AboutWindowStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Styles\DatabaseWindowStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Windows\ApplicationUpdateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -379,6 +400,14 @@
     <Page Include="Views\Controls\PressedToggleButton.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Windows\AboutWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Windows\DatabaseWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Windows\MessageBoxWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -660,6 +689,14 @@
     <ContentWithTargetPath Include="Resources\Languages\English.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Languages\English.lng</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Languages\Romanian.lng">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Languages\Romanian.lng</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Languages\Ukrainian.lng">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Languages\Ukrainian.lng</TargetPath>
     </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>

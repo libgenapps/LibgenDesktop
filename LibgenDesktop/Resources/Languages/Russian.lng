@@ -30,10 +30,12 @@
             "Update": "Обновление...",
             "Import": "Импорт...",
             "Synchronize": "Синхронизация...",
-            "Settings": "Настройки"
+            "Database": "База данных...",
+            "Settings": "Настройки",
+            "About": "О программе"
         }
     },
-    "DatabaseWindow":
+    "CreateDatabaseWindow":
     {
         "WindowTitle": "Libgen Desktop",
         "FirstRunMessage": "Добро пожаловать в Libgen Desktop.",
@@ -176,8 +178,8 @@
         "Identifiers": "Идентификаторы",
         "LibgenId": "Libgen ID",
         "Issn": "ISSN",
-        "Udc": "UDC",
-        "Lbc": "LBC",
+        "Udc": "УДК",
+        "Lbc": "ББК",
         "Lcc": "LCC",
         "Ddc": "DDC",
         "Doi": "DOI",
@@ -373,8 +375,8 @@
             "Comments": "Комментарий",
             "LibgenId": "Libgen ID",
             "Issn": "ISSN",
-            "Udc": "UDC",
-            "Lbc": "LBC",
+            "Udc": "УДК",
+            "Lbc": "ББК",
             "Lcc": "LCC",
             "Ddc": "DDC",
             "Doi": "DOI",
@@ -488,6 +490,25 @@
             "SynchronizationCancelled": "Синхронизация была прервана пользователем.",
             "SynchronizationError": "Синхронизация завершилась с ошибками."
         }
+    },
+    "Database":
+    {
+        "WindowTitle": "Статистика базы данных",
+        "NonFiction": "Нехудожественная литература",
+        "Fiction": "Художественная литература",
+        "SciMagArticles": "Научные статьи",
+        "TotalBooks": "Всего книг",
+        "TotalArticles": "Всего статей",
+        "LastUpdate": "Последнее обновление",
+        "Never": "никогда",
+        "CreatingIndexes": "Идет создание отсутствующих индексов.{new-line}Пожалуйста, подождите...",
+        "ChangeDatabase": "СМЕНИТЬ БАЗУ ДАННЫХ...",
+        "BrowseDatabaseDialogTitle": "Местоположение файла базы данных",
+        "Databases": "Базы данных",
+        "AllFiles": "Все файлы",
+        "Error": "Ошибка",
+        "CannotOpenDatabase": "Произошла ошибка при открытии файла базы данных: {file}",
+        "Close": "ЗАКРЫТЬ"
     },
     "DownloadManager":
     {
@@ -650,6 +671,19 @@
             "TabHeader": "Дополнительно",
             "UseLogging": "Записывать отладочную информацию в файл"
         }
+    },
+    "About":
+    {
+        "WindowTitle": "О программе",
+        "ApplicationName": "Libgen Desktop",
+        "Version": "Текущая версия: {version} от {date}",
+        "CheckForUpdates": "ПРОВЕРИТЬ НАЛИЧИЕ ОБНОВЛЕНИЙ",
+        "CheckingUpdates": "ПРОВЕРЯЕТСЯ НАЛИЧИЕ ОБНОВЛЕНИЙ...",
+        "OfflineModeIsOnTooltip": "Включен автономный режим",
+        "LatestVersion": "У вас установлена последняя версия.",
+        "NewVersionAvailable": "Доступна новая версия: {version} от {date}",
+        "Update": "ОБНОВИТЬ",
+        "Translators": "Переводчики:"
     },
     "MessageBox":
     {

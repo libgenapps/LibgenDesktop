@@ -30,10 +30,12 @@
             "Update": "Update...",
             "Import": "Import...",
             "Synchronize": "Synchronization...",
-            "Settings": "Settings"
+            "Database": "Database...",
+            "Settings": "Settings",
+            "About": "About"
         }
     },
-    "DatabaseWindow":
+    "CreateDatabaseWindow":
     {
         "WindowTitle": "Libgen Desktop",
         "FirstRunMessage": "Welcome to Libgen Desktop.",
@@ -489,6 +491,25 @@
             "SynchronizationError": "An error occurred during the synchronization."
         }
     },
+    "Database":
+    {
+        "WindowTitle": "Database information",
+        "NonFiction": "Non-fiction books",
+        "Fiction": "Fiction books",
+        "SciMagArticles": "Scientific articles",
+        "TotalBooks": "Total books",
+        "TotalArticles": "Total articles",
+        "LastUpdate": "Last update",
+        "Never": "never",
+        "CreatingIndexes": "Please wait. Creating missing database indexes...",
+        "ChangeDatabase": "CHANGE DATABASE...",
+        "BrowseDatabaseDialogTitle": "Database file location",
+        "Databases": "Databases",
+        "AllFiles": "All files",
+        "Error": "Error",
+        "CannotOpenDatabase": "An error occurred while trying to open database file: {file}",
+        "Close": "CLOSE"
+    },
     "DownloadManager":
     {
         "TabTitle": "Downloads",
@@ -650,6 +671,19 @@
             "TabHeader": "Advanced",
             "UseLogging": "Write diagnostic information into a file"
         }
+    },
+    "About":
+    {
+        "WindowTitle": "About Libgen Desktop",
+        "ApplicationName": "Libgen Desktop",
+        "Version": "Current version: {version} released at {date}",
+        "CheckForUpdates": "CHECK FOR UPDATES",
+        "CheckingUpdates": "CHECKING UPDATES...",
+        "OfflineModeIsOnTooltip": "Offline mode is on",
+        "LatestVersion": "You are using the latest version.",
+        "NewVersionAvailable": "New version is available: {version} released at {date}",
+        "Update": "UPDATE",
+        "Translators": "Translators:"
     },
     "MessageBox":
     {

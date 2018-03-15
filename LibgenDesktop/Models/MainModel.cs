@@ -481,6 +481,73 @@ namespace LibgenDesktop.Models
             });
         }
 
+        public Task<DatabaseStats> GetDatabaseStatsAsync()
+        {
+            return Task.Run(() =>
+            {
+                if (NonFictionBookCount > 0)
+                {
+                    Logger.Debug("Retrieving the list of non-fiction table indexes.");
+                    List<string> nonFictionIndexes = localDatabase.GetNonFictionIndexList();
+                    Logger.Debug("Checking the index on LastModifiedDateTime column.");
+                    CheckAndCreateIndex(nonFictionIndexes, SqlScripts.NON_FICTION_INDEX_PREFIX, "LastModifiedDateTime", null,
+                        localDatabase.CreateNonFictionLastModifiedDateTimeIndex);
+                }
+                if (FictionBookCount > 0)
+                {
+                    Logger.Debug("Retrieving the list of fiction table indexes.");
+                    List<string> fictionIndexes = localDatabase.GetFictionIndexList();
+                    Logger.Debug("Checking the index on LastModifiedDateTime column.");
+                    CheckAndCreateIndex(fictionIndexes, SqlScripts.FICTION_INDEX_PREFIX, "LastModifiedDateTime", null,
+                        localDatabase.CreateFictionLastModifiedDateTimeIndex);
+                }
+                if (SciMagArticleCount > 0)
+                {
+                    Logger.Debug("Retrieving the list of scimag table indexes.");
+                    List<string> sciMagIndexes = localDatabase.GetSciMagIndexList();
+                    Logger.Debug("Checking the index on AddedDateTime column.");
+                    CheckAndCreateIndex(sciMagIndexes, SqlScripts.SCIMAG_INDEX_PREFIX, "AddedDateTime", null, localDatabase.CreateSciMagAddedDateTimeIndex);
+                }
+                DatabaseStats result = new DatabaseStats
+                {
+                    NonFictionBookCount = NonFictionBookCount,
+                    FictionBookCount = FictionBookCount,
+                    SciMagArticleCount = SciMagArticleCount
+                };
+                if (result.NonFictionBookCount > 0)
+                {
+                    result.NonFictionLastUpdate = localDatabase.GetLastModifiedNonFictionBook()?.LastModifiedDateTime;
+                }
+                if (result.FictionBookCount > 0)
+                {
+                    result.FictionLastUpdate = localDatabase.GetLastModifiedFictionBook()?.LastModifiedDateTime;
+                }
+                if (result.SciMagArticleCount > 0)
+                {
+                    result.SciMagLastUpdate = localDatabase.GetLastAddedSciMagArticle()?.AddedDateTime;
+                }
+                return result;
+            });
+        }
+
+        public async Task<Updater.UpdateCheckResult> CheckForApplicationUpdateAsync()
+        {
+            Updater.UpdateCheckResult result = await updater.CheckForUpdateAsync(ignoreSpecifiedRelease: false);
+            if (result != null && result.NewReleaseName != AppSettings.LastUpdate.IgnoreReleaseName)
+            {
+                LastApplicationUpdateCheckResult = result;
+                ApplicationUpdateCheckCompleted?.Invoke(this, EventArgs.Empty);
+            }
+            LastApplicationUpdateCheckDateTime = DateTime.Now;
+            if (result == null)
+            {
+                AppSettings.LastUpdate.LastCheckedAt = LastApplicationUpdateCheckDateTime;
+                SaveSettings();
+            }
+            ConfigureUpdater();
+            return result;
+        }
+
         public void SaveSettings()
         {
             SettingsStorage.SaveSettings(AppSettings, Environment.AppSettingsFilePath);
@@ -537,7 +604,12 @@ namespace LibgenDesktop.Models
                             return false;
                         }
                         DatabaseMetadata = localDatabase.GetMetadata();
-                        if (DatabaseMetadata.Version != CURRENT_DATABASE_VERSION)
+                        if (String.IsNullOrEmpty(DatabaseMetadata.Version))
+                        {
+                            LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
+                            return false;
+                        }
+                        if (!Migration.Migrate(localDatabase, DatabaseMetadata))
                         {
                             LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
                             return false;
@@ -836,7 +908,10 @@ namespace LibgenDesktop.Models
             if (!existingIndexes.Contains(prefix + fieldName))
             {
                 Logger.Debug($"Index on {fieldName} doesn't exist, creating it.");
-                progressHandler.Report(new ImportCreateIndexProgress(fieldName));
+                if (progressHandler != null)
+                {
+                    progressHandler.Report(new ImportCreateIndexProgress(fieldName));
+                }
                 createIndexAction();
                 Logger.Debug("Index has been created.");
             }
