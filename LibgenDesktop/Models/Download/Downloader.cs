@@ -323,6 +323,7 @@ namespace LibgenDesktop.Models.Download
                                         if (!isUrlValid)
                                         {
                                             Logger.Debug($"Transformation {transformationName} failed, returned string:", url);
+                                            Logger.Debug("Page:", pageContent);
                                             ReportError(downloadItem, localization.GetLogLineTransformationReturnedIncorrectUrl(transformationName));
                                             break;
                                         }

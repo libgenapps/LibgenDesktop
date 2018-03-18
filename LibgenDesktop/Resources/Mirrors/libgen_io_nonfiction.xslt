@@ -7,8 +7,8 @@
           <xsl:value-of select="@href" />
         </xsl:for-each>
       </xsl:when>
-      <xsl:when test="//a[starts-with(@href, 'http://download.libgen.io/get/')]">
-        <xsl:for-each select="(//a[starts-with(@href, 'http://download.libgen.io/get/')])[1]">
+      <xsl:when test="//a[starts-with(@href, 'http://download.libgen.io/get')]">
+        <xsl:for-each select="(//a[starts-with(@href, 'http://download.libgen.io/get')])[1]">
           <xsl:value-of select="@href" />
         </xsl:for-each>
       </xsl:when>

@@ -83,7 +83,7 @@
         "StatusBar": "Cărți găsite: {count}",
         "Columns":
         {
-            "Title": "Titlu",
+            "Title": "Titlul",
             "Authors": "Autor(i)",
             "Series": "Colecția",
             "Year": "Anul",
@@ -100,7 +100,7 @@
         "StatusBar": "Cărți găsite: {count}",
         "Columns":
         {
-            "Title": "Titlu",
+            "Title": "Titlul",
             "Authors": "Autor(i)",
             "Series": "Colecția",
             "Year": "Anul",
@@ -116,7 +116,7 @@
         "StatusBar": "Articole găsite: {count}",
         "Columns":
         {
-            "Title": "Titlu",
+            "Title": "Titlul",
             "Authors": "Autor(i)",
             "Magazine": "Periodicul",
             "Year": "Anul",
@@ -152,7 +152,7 @@
     },
     "NonFictionDetailsTab":
     {
-        "Title": "Titlu",
+        "Title": "Titlul",
         "Authors": "Autor(i)",
         "Series": "Colecția",
         "Publisher": "Editura",
@@ -160,7 +160,7 @@
         "Language": "Limba",
         "Format": "Formatul",
         "Isbn": "ISBN",
-        "Added": "Adăugat",
+        "Added": "Adăugat la data de",
         "LastModified": "Ultima Modificare",
         "Library": "Biblioteca",
         "FileSize": "Dimensiunea",
@@ -198,7 +198,7 @@
     },
     "FictionDetailsTab":
     {
-        "Title": "Titlu",
+        "Title": "Titlul",
         "Authors": "Autor(i)",
         "RussianAuthor": "Autor(i) rus(i)",
         "Series": "Colecția",
@@ -210,7 +210,7 @@
         "Pages": "Paginile",
         "Version": "Versiunea",
         "FileSize": "Dimensiunea",
-        "Added": "Adăugat",
+        "Added": "Adăugat la data de",
         "LastModified": "Ultima modificare",
         "Md5Hash": "MD5 hash",
         "Comments": "Comentarii",
@@ -222,7 +222,7 @@
     },
     "SciMagDetailsTab":
     {
-        "Title": "Titlu",
+        "Title": "Titlul",
         "Authors": "Autor(i)",
         "Magazine": "Periodicul",
         "Year": "Anul",
@@ -232,7 +232,7 @@
         "Issue": "Nr.",
         "Pages": "Paginile",
         "FileSize": "Dimensiunea",
-        "AddedDateTime": "Adăugat",
+        "AddedDateTime": "Adăugat la data de",
         "Md5Hash": "MD5 hash",
         "AbstractUrl": "URL-ul abstract",
         "Identifiers": "Identificatori",
@@ -351,7 +351,7 @@
         "NonFictionColumns":
         {
             "Id": "ID",
-            "Title": "Titlu",
+            "Title": "Titlul",
             "Authors": "Autor(i)",
             "Series": "Colecția",
             "Publisher": "Editura",
@@ -359,7 +359,7 @@
             "Language": "Limba",
             "Format": "Formatul",
             "Isbn": "ISBN",
-            "Added": "Adăugat",
+            "Added": "Adăugat la data de",
             "LastModified": "Ultima modificare",
             "Library": "Biblioteca",
             "FileSize": "Dimensiunea",
@@ -407,7 +407,7 @@
             "Pages": "Pagini",
             "Version": "Versiunea",
             "FileSize": "Dimensiunea",
-            "Added": "Adăugat",
+            "Added": "Adăugat la data de",
             "LastModified": "Ultima modificare",
             "Md5Hash": "MD5 hash",
             "Comments": "Comentarii",
@@ -419,7 +419,7 @@
         "SciMagColumns":
         {
             "Id": "ID",
-            "Title": "Titlu",
+            "Title": "Titlul",
             "Authors": "Autor(i)",
             "Magazine": "Periodicul",
             "Year": "Anul",
@@ -429,7 +429,7 @@
             "Issue": "Nr.",
             "Pages": "Paginile",
             "FileSize": "Dimensiunea",
-            "AddedDateTime": "Adăugat",
+            "AddedDateTime": "Adăugat la data de",
             "Md5Hash": "MD5 hash",
             "AbstractUrl": "URL-ul abstract",
             "LibgenId": "ID-ul Libgen",
@@ -458,7 +458,7 @@
         "NoSynchronizationMirror": "A fost selectată o conexiune pentru sincronizarea Cărților non-ficțiune.",
         "OfflineModePromptTitle": "Modul Offline",
         "OfflineModePromptText": "Sincronizarea nu poate începe cât timp este activat Modul Offline. Vreți să activați Modul Online?",
-        "Elapsed": "Time scurs: {elapsed}",
+        "Elapsed": "Timp scurs: {elapsed}",
         "Interrupt": "ÎNTRERUPE",
         "Interrupting": "SE ÎNTRERUPE...",
         "Close": "ÎNCHIDE",
@@ -499,7 +499,7 @@
         "SciMagArticles": "Articole științifice",
         "TotalBooks": "Cărți disponibile",
         "TotalArticles": "Articole disponibile",
-        "LastUpdate": "Ulima actualizare",
+        "LastUpdate": "Ultima actualizare",
         "Never": "niciodată",
         "CreatingIndexes": "Vă rugăm așteptați. Se creează indecșii lipsă...",
         "ChangeDatabase": "SCHIMBĂ BAZA DE DATE...",
@@ -676,7 +676,7 @@
     {
         "WindowTitle": "Despre Libgen Desktop",
         "ApplicationName": "Libgen Desktop",
-        "Version": "Veriunea curentă: {version} din {date}",
+        "Version": "Versiunea curentă: {version} din {date}",
         "CheckForUpdates": "CAUTĂ ACTUALIZĂRI",
         "CheckingUpdates": "SE CAUTĂ ACTUALIZĂRI...",
         "OfflineModeIsOnTooltip": "Modul Offline este dezactivat",
