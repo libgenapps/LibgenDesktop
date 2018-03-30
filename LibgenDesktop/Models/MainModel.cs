@@ -752,7 +752,7 @@ namespace LibgenDesktop.Models
                     if (cancellationToken.IsCancellationRequested)
                     {
                         Logger.Debug("Search has been cancelled.");
-                        return null;
+                        return result;
                     }
                     result.Add(item);
                     DateTime now = DateTime.Now;

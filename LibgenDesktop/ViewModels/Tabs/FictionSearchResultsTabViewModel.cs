@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
@@ -21,27 +22,21 @@ namespace LibgenDesktop.ViewModels.Tabs
         private readonly FictionColumnSettings columnSettings;
         private ObservableCollection<FictionSearchResultItemViewModel> books;
         private FictionSearchResultsTabLocalizator localization;
-        private string searchQuery;
         private string bookCount;
         private bool isBookGridVisible;
-        private bool isSearchProgressPanelVisible;
         private string searchProgressStatus;
         private bool isStatusBarVisible;
-        private bool isExportPanelVisible;
 
         public FictionSearchResultsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, string searchQuery,
             List<FictionBook> searchResults)
-            : base(mainModel, parentWindowContext, searchQuery)
+            : base(mainModel, parentWindowContext, LibgenObjectType.FICTION_BOOK, searchQuery)
         {
             columnSettings = mainModel.AppSettings.Fiction.Columns;
-            this.searchQuery = searchQuery;
             LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
             books = new ObservableCollection<FictionSearchResultItemViewModel>(searchResults.Select(book =>
                 new FictionSearchResultItemViewModel(book, formatter)));
-            ExportPanelViewModel = new ExportPanelViewModel(mainModel, LibgenObjectType.FICTION_BOOK, parentWindowContext);
             ExportPanelViewModel.ClosePanel += CloseExportPanel;
             OpenDetailsCommand = new Command(param => OpenDetails((param as FictionSearchResultItemViewModel)?.Book));
-            SearchCommand = new Command(Search);
             ExportCommand = new Command(ShowExportPanel);
             BookDataGridEnterKeyCommand = new Command(BookDataGridEnterKeyPressed);
             Initialize();
@@ -58,23 +53,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             {
                 localization = value;
                 NotifyPropertyChanged();
-            }
-        }
-
-        public string SearchQuery
-        {
-            get
-            {
-                return searchQuery;
-            }
-            set
-            {
-                searchQuery = value;
-                NotifyPropertyChanged();
-                if (IsExportPanelVisible)
-                {
-                    ExportPanelViewModel.UpdateSearchQuery(value);
-                }
             }
         }
 
@@ -188,19 +166,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public bool IsSearchProgressPanelVisible
-        {
-            get
-            {
-                return isSearchProgressPanelVisible;
-            }
-            set
-            {
-                isSearchProgressPanelVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         public string SearchProgressStatus
         {
             get
@@ -240,25 +205,9 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public bool IsExportPanelVisible
-        {
-            get
-            {
-                return isExportPanelVisible;
-            }
-            set
-            {
-                isExportPanelVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public ExportPanelViewModel ExportPanelViewModel { get; }
-
         public FictionSearchResultItemViewModel SelectedBook { get; set; }
 
         public Command OpenDetailsCommand { get; }
-        public Command SearchCommand { get; }
         public Command ExportCommand { get; }
         public Command BookDataGridEnterKeyCommand { get; }
 
@@ -280,13 +229,39 @@ namespace LibgenDesktop.ViewModels.Tabs
             MainModel.Localization.LanguageChanged -= LocalizationLanguageChanged;
         }
 
+        protected override SearchResultsTabLocalizator GetLocalization()
+        {
+            return localization;
+        }
+
+        protected override async Task SearchAsync(string searchQuery, CancellationToken cancellationToken)
+        {
+            IsBookGridVisible = false;
+            IsStatusBarVisible = false;
+            UpdateSearchProgressStatus(0);
+            Progress<SearchProgress> searchProgressHandler = new Progress<SearchProgress>(HandleSearchProgress);
+            List<FictionBook> result = new List<FictionBook>();
+            try
+            {
+                result = await MainModel.SearchFictionAsync(SearchQuery, searchProgressHandler, cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                ShowErrorWindow(exception, ParentWindowContext);
+            }
+            LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
+            Books = new ObservableCollection<FictionSearchResultItemViewModel>(result.Select(book =>
+                new FictionSearchResultItemViewModel(book, formatter)));
+            UpdateBookCount();
+            IsBookGridVisible = true;
+            IsStatusBarVisible = true;
+        }
+
         private void Initialize()
         {
             localization = MainModel.Localization.CurrentLanguage.FictionSearchResultsTab;
             isBookGridVisible = true;
             isStatusBarVisible = true;
-            isSearchProgressPanelVisible = false;
-            isExportPanelVisible = false;
             UpdateBookCount();
             Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
         }
@@ -304,36 +279,6 @@ namespace LibgenDesktop.ViewModels.Tabs
         private void OpenDetails(FictionBook book)
         {
             OpenFictionDetailsRequested?.Invoke(this, new OpenFictionDetailsEventArgs(book));
-        }
-
-        private async void Search()
-        {
-            if (!String.IsNullOrWhiteSpace(SearchQuery) && !IsSearchProgressPanelVisible && !IsExportPanelVisible)
-            {
-                Title = SearchQuery;
-                IsBookGridVisible = false;
-                IsStatusBarVisible = false;
-                IsSearchProgressPanelVisible = true;
-                UpdateSearchProgressStatus(0);
-                Progress<SearchProgress> searchProgressHandler = new Progress<SearchProgress>(HandleSearchProgress);
-                CancellationToken cancellationToken = new CancellationToken();
-                List<FictionBook> result = new List<FictionBook>();
-                try
-                {
-                    result = await MainModel.SearchFictionAsync(SearchQuery, searchProgressHandler, cancellationToken);
-                }
-                catch (Exception exception)
-                {
-                    ShowErrorWindow(exception, ParentWindowContext);
-                }
-                LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
-                Books = new ObservableCollection<FictionSearchResultItemViewModel>(result.Select(book =>
-                    new FictionSearchResultItemViewModel(book, formatter)));
-                UpdateBookCount();
-                IsSearchProgressPanelVisible = false;
-                IsBookGridVisible = true;
-                IsStatusBarVisible = true;
-            }
         }
 
         private void HandleSearchProgress(SearchProgress searchProgress)

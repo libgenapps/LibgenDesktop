@@ -84,6 +84,8 @@
                 <TextBlock Text="{Binding Localization.SearchInProgress}" Style="{StaticResource SearchProgressHeaderLabel}" />
             </StackPanel>
             <TextBlock Text="{Binding SearchProgressStatus}" Style="{StaticResource SearchProgressStatus}" />
+            <Button Content="{Binding InterruptButtonText}" Style="{StaticResource InterruptSearchButton}"
+                    IsEnabled="{Binding IsInterruptButtonEnabled}" Command="{Binding InterruptSearchCommand}" />
         </StackPanel>
         <TextBlock Grid.Row="2" Text="{Binding ArticleCount}" Style="{StaticResource StatusBarText}"
                    Visibility="{Binding IsStatusBarVisible, Converter={StaticResource booleanToCollapsedConverter}}" />

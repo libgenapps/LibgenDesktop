@@ -67,6 +67,8 @@
         "NonFictionSearchProgress": "Books found: {count}",
         "FictionSearchProgress": "Books found: {count}",
         "SciMagSearchProgress": "Articles found: {count}",
+        "Interrupt": "INTERRUPT",
+        "Interrupting": "INTERRUPTING...",
         "DatabaseIsEmpty": "The database is empty. Download a database dump from the Library Genesis web site and import it here.",
         "ImportButton": "Import"
     },
@@ -74,6 +76,8 @@
     {
         "SearchPlaceHolder": "Search",
         "SearchInProgress": "Search in progress...",
+        "Interrupt": "INTERRUPT",
+        "Interrupting": "INTERRUPTING...",
         "ExportButtonTooltip": "Export search results to a file"
     },
     "NonFictionSearchResultsTab":

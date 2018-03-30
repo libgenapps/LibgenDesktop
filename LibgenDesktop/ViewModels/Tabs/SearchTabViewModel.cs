@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using LibgenDesktop.Common;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
@@ -14,6 +15,7 @@ namespace LibgenDesktop.ViewModels.Tabs
     internal class SearchTabViewModel : TabViewModel
     {
         private SearchTabLocalizator localization;
+        private CancellationTokenSource searchCancellationTokenSource;
         private bool isSearchBlockVisible;
         private bool isSearchParamsPanelVisible;
         private string searchQuery;
@@ -27,6 +29,8 @@ namespace LibgenDesktop.ViewModels.Tabs
         private bool isSciMagLibrarySelected;
         private bool isSearchProgressPanelVisible;
         private string searchProgressStatus;
+        private string interruptButtonText;
+        private bool isInterruptButtonEnabled;
         private bool isImportBlockVisible;
 
         public SearchTabViewModel(MainModel mainModel, IWindowContext parentWindowContext)
@@ -34,6 +38,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         {
             ImportCommand = new Command(Import);
             SearchCommand = new Command(Search);
+            InterruptSearchCommand = new Command(InterruptSearch);
             Initialize();
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
         }
@@ -223,6 +228,32 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        public string InterruptButtonText
+        {
+            get
+            {
+                return interruptButtonText;
+            }
+            set
+            {
+                interruptButtonText = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsInterruptButtonEnabled
+        {
+            get
+            {
+                return isInterruptButtonEnabled;
+            }
+            set
+            {
+                isInterruptButtonEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public bool IsImportBlockVisible
         {
             get
@@ -238,6 +269,7 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         public Command ImportCommand { get; }
         public Command SearchCommand { get; }
+        public Command InterruptSearchCommand { get; }
 
         public event EventHandler ImportRequested;
         public event EventHandler<SearchCompleteEventArgs<NonFictionBook>> NonFictionSearchComplete;
@@ -350,6 +382,8 @@ namespace LibgenDesktop.ViewModels.Tabs
         {
             if (!String.IsNullOrWhiteSpace(SearchQuery))
             {
+                InterruptButtonText = Localization.Interrupt;
+                IsInterruptButtonEnabled = true;
                 IsSearchParamsPanelVisible = false;
                 IsSearchProgressPanelVisible = true;
                 UpdateSearchProgressStatus(0);
@@ -373,7 +407,8 @@ namespace LibgenDesktop.ViewModels.Tabs
             where T: LibgenObject
         {
             Progress<SearchProgress> searchProgressHandler = new Progress<SearchProgress>(HandleSearchProgress);
-            CancellationToken cancellationToken = new CancellationToken();
+            searchCancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = searchCancellationTokenSource.Token;
             List<T> result = null;
             bool error = false;
             try
@@ -417,6 +452,13 @@ namespace LibgenDesktop.ViewModels.Tabs
             {
                 SearchProgressStatus = Localization.GetSciMagSearchProgressText(itemsFound);
             }
+        }
+
+        private void InterruptSearch()
+        {
+            searchCancellationTokenSource.Cancel();
+            InterruptButtonText = Localization.Interrupting;
+            IsInterruptButtonEnabled = false;
         }
 
         private void LocalizationLanguageChanged(object sender, EventArgs e)

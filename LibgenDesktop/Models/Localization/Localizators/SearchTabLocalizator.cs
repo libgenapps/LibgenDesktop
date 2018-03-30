@@ -18,6 +18,8 @@ namespace LibgenDesktop.Models.Localization.Localizators
             FictionSearchBoxTooltip = Format(translation => translation?.FictionSearchBoxTooltip);
             SciMagSearchBoxTooltip = Format(translation => translation?.SciMagSearchBoxTooltip);
             SearchInProgress = Format(translation => translation?.SearchInProgress);
+            Interrupt = Format(translation => translation?.Interrupt);
+            Interrupting = Format(translation => translation?.Interrupting);
             DatabaseIsEmpty = Format(translation => translation?.DatabaseIsEmpty);
             ImportButton = Format(translation => translation?.ImportButton);
         }
@@ -31,6 +33,8 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string FictionSearchBoxTooltip { get; }
         public string SciMagSearchBoxTooltip { get; }
         public string SearchInProgress { get; }
+        public string Interrupt { get; }
+        public string Interrupting { get; }
         public string DatabaseIsEmpty { get; }
         public string ImportButton { get; }
 

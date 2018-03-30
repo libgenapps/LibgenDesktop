@@ -127,6 +127,11 @@
     <Style x:Key="SearchProgressStatus" TargetType="TextBlock">
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
+    <Style x:Key="InterruptSearchButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,16,0,0" />
+        <Setter Property="IsCancel" Value="True" />
+    </Style>
     <Style x:Key="StatusBarText" TargetType="TextBlock">
         <Setter Property="Margin" Value="0,12,0,0" />
     </Style>

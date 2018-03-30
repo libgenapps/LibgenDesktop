@@ -67,6 +67,8 @@
         "NonFictionSearchProgress": "Знайдено книг: {count}",
         "FictionSearchProgress": "Знайдено книг: {count}",
         "SciMagSearchProgress": "Знайдено статей: {count}",
+        "Interrupt": "ПЕРЕРВАТИ",
+        "Interrupting": "ПЕРЕРИВАЄТЬСЯ...",
         "DatabaseIsEmpty": "База даних порожня. Завантажте дамп бази даних з сайту Library Genesis, а потім імпортуйте його.",
         "ImportButton": "Імпортувати"
     },
@@ -74,6 +76,8 @@
     {
         "SearchPlaceHolder": "Пошук",
         "SearchInProgress": "Триває пошук...",
+        "Interrupt": "ПЕРЕРВАТИ",
+        "Interrupting": "ПЕРЕРИВАЄТЬСЯ...",
         "ExportButtonTooltip": "Експорт результатів пошуку в файл"
     },
     "NonFictionSearchResultsTab":

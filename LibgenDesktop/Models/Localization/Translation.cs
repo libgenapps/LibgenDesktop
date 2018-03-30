@@ -78,6 +78,8 @@
             public string NonFictionSearchProgress { get; set; }
             public string FictionSearchProgress { get; set; }
             public string SciMagSearchProgress { get; set; }
+            public string Interrupt { get; set; }
+            public string Interrupting { get; set; }
             public string DatabaseIsEmpty { get; set; }
             public string ImportButton { get; set; }
         }
@@ -86,6 +88,8 @@
         {
             public string SearchPlaceHolder { get; set; }
             public string SearchInProgress { get; set; }
+            public string Interrupt { get; set; }
+            public string Interrupting { get; set; }
             public string ExportButtonTooltip { get; set; }
         }
 

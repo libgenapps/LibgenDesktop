@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
 using LibgenDesktop.Models.Localization.Localizators;
 using LibgenDesktop.Models.ProgressArgs;
-using LibgenDesktop.Models.Utils;
 using LibgenDesktop.ViewModels.EventArguments;
 using LibgenDesktop.ViewModels.Panels;
 using LibgenDesktop.ViewModels.SearchResultItems;
@@ -22,27 +22,21 @@ namespace LibgenDesktop.ViewModels.Tabs
         private readonly SciMagColumnSettings columnSettings;
         private ObservableCollection<SciMagSearchResultItemViewModel> articles;
         private SciMagSearchResultsTabLocalizator localization;
-        private string searchQuery;
         private string articleCount;
         private bool isArticleGridVisible;
-        private bool isSearchProgressPanelVisible;
         private string searchProgressStatus;
         private bool isStatusBarVisible;
-        private bool isExportPanelVisible;
 
         public SciMagSearchResultsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, string searchQuery,
             List<SciMagArticle> searchResults)
-            : base(mainModel, parentWindowContext, searchQuery)
+            : base(mainModel, parentWindowContext, LibgenObjectType.SCIMAG_ARTICLE, searchQuery)
         {
             columnSettings = mainModel.AppSettings.SciMag.Columns;
-            this.searchQuery = searchQuery;
             LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
             articles = new ObservableCollection<SciMagSearchResultItemViewModel>(searchResults.Select(article =>
                 new SciMagSearchResultItemViewModel(article, formatter)));
-            ExportPanelViewModel = new ExportPanelViewModel(mainModel, LibgenObjectType.SCIMAG_ARTICLE, parentWindowContext);
             ExportPanelViewModel.ClosePanel += CloseExportPanel;
             OpenDetailsCommand = new Command(param => OpenDetails((param as SciMagSearchResultItemViewModel)?.Article));
-            SearchCommand = new Command(Search);
             ExportCommand = new Command(ShowExportPanel);
             ArticleDataGridEnterKeyCommand = new Command(ArticleDataGridEnterKeyPressed);
             Initialize();
@@ -59,23 +53,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             {
                 localization = value;
                 NotifyPropertyChanged();
-            }
-        }
-
-        public string SearchQuery
-        {
-            get
-            {
-                return searchQuery;
-            }
-            set
-            {
-                searchQuery = value;
-                NotifyPropertyChanged();
-                if (IsExportPanelVisible)
-                {
-                    ExportPanelViewModel.UpdateSearchQuery(value);
-                }
             }
         }
 
@@ -177,19 +154,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public bool IsSearchProgressPanelVisible
-        {
-            get
-            {
-                return isSearchProgressPanelVisible;
-            }
-            set
-            {
-                isSearchProgressPanelVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         public string SearchProgressStatus
         {
             get
@@ -229,25 +193,9 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public bool IsExportPanelVisible
-        {
-            get
-            {
-                return isExportPanelVisible;
-            }
-            set
-            {
-                isExportPanelVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public ExportPanelViewModel ExportPanelViewModel { get; }
-
         public SciMagSearchResultItemViewModel SelectedArticle { get; set; }
 
         public Command OpenDetailsCommand { get; }
-        public Command SearchCommand { get; }
         public Command ExportCommand { get; }
         public Command ArticleDataGridEnterKeyCommand { get; }
 
@@ -269,13 +217,39 @@ namespace LibgenDesktop.ViewModels.Tabs
             MainModel.Localization.LanguageChanged -= LocalizationLanguageChanged;
         }
 
+        protected override SearchResultsTabLocalizator GetLocalization()
+        {
+            return localization;
+        }
+
+        protected override async Task SearchAsync(string searchQuery, CancellationToken cancellationToken)
+        {
+            IsArticleGridVisible = false;
+            IsStatusBarVisible = false;
+            UpdateSearchProgressStatus(0);
+            Progress<SearchProgress> searchProgressHandler = new Progress<SearchProgress>(HandleSearchProgress);
+            List<SciMagArticle> result = new List<SciMagArticle>();
+            try
+            {
+                result = await MainModel.SearchSciMagAsync(SearchQuery, searchProgressHandler, cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                ShowErrorWindow(exception, ParentWindowContext);
+            }
+            LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
+            Articles = new ObservableCollection<SciMagSearchResultItemViewModel>(result.Select(article =>
+                new SciMagSearchResultItemViewModel(article, formatter)));
+            UpdateArticleCount();
+            IsArticleGridVisible = true;
+            IsStatusBarVisible = true;
+        }
+
         private void Initialize()
         {
             localization = MainModel.Localization.CurrentLanguage.SciMagSearchResultsTab;
             isArticleGridVisible = true;
             isStatusBarVisible = true;
-            isSearchProgressPanelVisible = false;
-            isExportPanelVisible = false;
             UpdateArticleCount();
             Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
         }
@@ -293,36 +267,6 @@ namespace LibgenDesktop.ViewModels.Tabs
         private void OpenDetails(SciMagArticle article)
         {
             OpenSciMagDetailsRequested?.Invoke(this, new OpenSciMagDetailsEventArgs(article));
-        }
-
-        private async void Search()
-        {
-            if (!String.IsNullOrWhiteSpace(SearchQuery) && !IsSearchProgressPanelVisible && !IsExportPanelVisible)
-            {
-                Title = SearchQuery;
-                IsArticleGridVisible = false;
-                IsStatusBarVisible = false;
-                IsSearchProgressPanelVisible = true;
-                UpdateSearchProgressStatus(0);
-                Progress<SearchProgress> searchProgressHandler = new Progress<SearchProgress>(HandleSearchProgress);
-                CancellationToken cancellationToken = new CancellationToken();
-                List<SciMagArticle> result = new List<SciMagArticle>();
-                try
-                {
-                    result = await MainModel.SearchSciMagAsync(SearchQuery, searchProgressHandler, cancellationToken);
-                }
-                catch (Exception exception)
-                {
-                    ShowErrorWindow(exception, ParentWindowContext);
-                }
-                LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
-                Articles = new ObservableCollection<SciMagSearchResultItemViewModel>(result.Select(article =>
-                    new SciMagSearchResultItemViewModel(article, formatter)));
-                UpdateArticleCount();
-                IsSearchProgressPanelVisible = false;
-                IsArticleGridVisible = true;
-                IsStatusBarVisible = true;
-            }
         }
 
         private void HandleSearchProgress(SearchProgress searchProgress)

@@ -67,6 +67,8 @@
         "NonFictionSearchProgress": "Cărți găsite: {count}",
         "FictionSearchProgress": "Cărți găsite: {count}",
         "SciMagSearchProgress": "Articole găsite: {count}",
+        "Interrupt": "ÎNTRERUPE",
+        "Interrupting": "SE ÎNTRERUPE...",
         "DatabaseIsEmpty": "Baza de date este goală. Descarcă fișierul arhiva/sql de pe site-ul Libgen și-l importează aici.",
         "ImportButton": "Importează"
     },
@@ -74,6 +76,8 @@
     {
         "SearchPlaceHolder": "Caută",
         "SearchInProgress": "Căutare în curs...",
+        "Interrupt": "ÎNTRERUPE",
+        "Interrupting": "SE ÎNTRERUPE...",
         "ExportButtonTooltip": "Exportă rezultatele căutării într-un fișier"
     },
     "NonFictionSearchResultsTab":
