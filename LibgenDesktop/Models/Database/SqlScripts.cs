@@ -297,7 +297,7 @@
                 "Asin=@Asin," +
                 "AuthorHash=@AuthorHash," +
                 "TitleHash=@TitleHash," +
-                "Visible=@Visible," +
+                "Visible=@Visible " +
                 "WHERE Id=@Id";
 
         public const string INSERT_FICTION_FTS_WITHOUT_ID =
