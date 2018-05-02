@@ -4,8 +4,8 @@ namespace LibgenDesktop.Common
 {
     internal static class Constants
     {
-        public const string CURRENT_VERSION = "1.1.0";
-        public const string CURRENT_GITHUB_RELEASE_NAME = "1.1.0";
+        public const string CURRENT_VERSION = "1.1.1";
+        public const string CURRENT_GITHUB_RELEASE_NAME = "1.1.1";
         public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2018, 5, 2);
         public const string CURRENT_DATABASE_VERSION = "1.0";
 

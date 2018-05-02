@@ -673,16 +673,22 @@ namespace LibgenDesktop.ViewModels.Windows
                 switch (bookmarkViewModel.LibgenObjectType)
                 {
                     case LibgenObjectType.NON_FICTION_BOOK:
-                        newTab = new NonFictionSearchResultsTabViewModel(MainModel, CurrentWindowContext, bookmarkViewModel.SearchQuery,
-                            new List<NonFictionBook>());
+                        NonFictionSearchResultsTabViewModel nonFictionNewTab = new NonFictionSearchResultsTabViewModel(MainModel, CurrentWindowContext,
+                            bookmarkViewModel.SearchQuery, new List<NonFictionBook>());
+                        nonFictionNewTab.OpenNonFictionDetailsRequested += OpenNonFictionDetailsRequested;
+                        newTab = nonFictionNewTab;
                         break;
                     case LibgenObjectType.FICTION_BOOK:
-                        newTab = new FictionSearchResultsTabViewModel(MainModel, CurrentWindowContext, bookmarkViewModel.SearchQuery,
-                            new List<FictionBook>());
+                        FictionSearchResultsTabViewModel fictionNewTab = new FictionSearchResultsTabViewModel(MainModel, CurrentWindowContext,
+                            bookmarkViewModel.SearchQuery, new List<FictionBook>());
+                        fictionNewTab.OpenFictionDetailsRequested += OpenFictionDetailsRequested;
+                        newTab = fictionNewTab;
                         break;
                     case LibgenObjectType.SCIMAG_ARTICLE:
-                        newTab = new SciMagSearchResultsTabViewModel(MainModel, CurrentWindowContext, bookmarkViewModel.SearchQuery,
-                            new List<SciMagArticle>());
+                        SciMagSearchResultsTabViewModel sciMagNewTab = new SciMagSearchResultsTabViewModel(MainModel, CurrentWindowContext,
+                            bookmarkViewModel.SearchQuery, new List<SciMagArticle>());
+                        sciMagNewTab.OpenSciMagDetailsRequested += OpenSciMagDetailsRequested;
+                        newTab = sciMagNewTab;
                         break;
                     default:
                         newTab = null;
