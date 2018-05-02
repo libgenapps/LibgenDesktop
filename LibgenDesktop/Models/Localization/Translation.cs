@@ -31,6 +31,8 @@
         internal class MainMenuTranslation
         {
             public string DownloadManagerTooltip { get; set; }
+            public string BookmarksTooltip { get; set; }
+            public string NoBookmarks { get; set; }
             public string Update { get; set; }
             public string Import { get; set; }
             public string Synchronize { get; set; }
@@ -90,6 +92,8 @@
             public string SearchInProgress { get; set; }
             public string Interrupt { get; set; }
             public string Interrupting { get; set; }
+            public string AddToBookmarksTooltip { get; set; }
+            public string RemoveFromBookmarksTooltip { get; set; }
             public string ExportButtonTooltip { get; set; }
         }
 

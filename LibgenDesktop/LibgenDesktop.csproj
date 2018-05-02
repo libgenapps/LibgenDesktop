@@ -226,6 +226,8 @@
     <Compile Include="Models\Utils\NetworkUtils.cs" />
     <Compile Include="Models\Utils\StringExtensions.cs" />
     <Compile Include="Models\Utils\UrlGenerator.cs" />
+    <Compile Include="ViewModels\Bookmarks\BookmarkViewModelList.cs" />
+    <Compile Include="ViewModels\Bookmarks\BookmarkViewModel.cs" />
     <Compile Include="ViewModels\ContainerViewModel.cs" />
     <Compile Include="ViewModels\DetailsItems\DetailsItemViewModel.cs" />
     <Compile Include="ViewModels\DetailsItems\FictionDetailsItemViewModel.cs" />
@@ -267,6 +269,7 @@
     <Compile Include="ViewModels\Tabs\SearchTabViewModel.cs" />
     <Compile Include="ViewModels\Windows\SettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\Tabs\TabViewModel.cs" />
+    <Compile Include="Views\Controls\HorizontalScrollViewer.cs" />
     <Compile Include="Views\Utils\IconExtension.cs" />
     <Compile Include="Views\Windows\ApplicationUpdateWindow.xaml.cs">
       <DependentUpon>ApplicationUpdateWindow.xaml</DependentUpon>
@@ -697,6 +700,10 @@
     <ContentWithTargetPath Include="Resources\Languages\Ukrainian.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Languages\Ukrainian.lng</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Languages\Spanish.lng">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Languages\Spanish.lng</TargetPath>
     </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>

@@ -26,7 +26,20 @@
     <Style x:Key="MenuBadge" TargetType="md:Badged">
         <Setter Property="Margin" Value="9,10,9,0" />
     </Style>
-    <Style x:Key="PopupBox" TargetType="{x:Type md:PopupBox}">
+    <Style x:Key="BookmarkPopupBox" TargetType="{x:Type md:PopupBox}">
+        <Setter Property="PlacementMode" Value="BottomAndAlignRightEdges" />
+        <Setter Property="StaysOpen" Value="False" />
+        <Setter Property="Margin" Value="0,8,5,0" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Foreground" Value="{Binding IconForeground, RelativeSource={RelativeSource FindAncestor, AncestorType=c:Toolbar}}" />
+    </Style>
+    <Style x:Key="BookmarkIcon" TargetType="md:PackIcon">
+        <Setter Property="Kind" Value="Bookmark" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Foreground" Value="{Binding IconForeground, RelativeSource={RelativeSource FindAncestor, AncestorType=c:Toolbar}}" />
+    </Style>
+    <Style x:Key="MenuPopupBox" TargetType="{x:Type md:PopupBox}">
         <Setter Property="PlacementMode" Value="BottomAndAlignRightEdges" />
         <Setter Property="StaysOpen" Value="False" />
         <Setter Property="Foreground" Value="{Binding IconForeground, RelativeSource={RelativeSource FindAncestor, AncestorType=c:Toolbar}}" />

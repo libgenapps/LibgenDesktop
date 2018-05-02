@@ -13,6 +13,9 @@ namespace LibgenDesktop.ViewModels.Tabs
     {
         private CancellationTokenSource searchCancellationTokenSource;
         private string searchQuery;
+        private LibgenObjectType libgenObjectType;
+        private string lastExecutedSearchQuery;
+        private bool isBookmarkSet;
         private bool isExportPanelVisible;
         private bool isSearchProgressPanelVisible;
         private string interruptButtonText;
@@ -21,12 +24,16 @@ namespace LibgenDesktop.ViewModels.Tabs
         protected SearchResultsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, LibgenObjectType libgenObjectType, string searchQuery)
             : base(mainModel, parentWindowContext, searchQuery)
         {
+            this.libgenObjectType = libgenObjectType;
             this.searchQuery = searchQuery;
+            lastExecutedSearchQuery = searchQuery;
+            UpdateBookmarkedState();
             isExportPanelVisible = false;
             isSearchProgressPanelVisible = false;
             ExportPanelViewModel = new ExportPanelViewModel(mainModel, libgenObjectType, parentWindowContext);
             SearchCommand = new Command(Search);
             InterruptSearchCommand = new Command(InterruptSearch);
+            ToggleBookmarkCommand = new Command(ToggleBookmark);
         }
 
         public string SearchQuery
@@ -43,6 +50,19 @@ namespace LibgenDesktop.ViewModels.Tabs
                 {
                     ExportPanelViewModel.UpdateSearchQuery(value);
                 }
+            }
+        }
+
+        public bool IsBookmarkSet
+        {
+            get
+            {
+                return isBookmarkSet;
+            }
+            set
+            {
+                isBookmarkSet = value;
+                NotifyPropertyChanged();
             }
         }
 
@@ -102,6 +122,7 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         public Command SearchCommand { get; }
         public Command InterruptSearchCommand { get; }
+        public Command ToggleBookmarkCommand { get; }
 
         private SearchResultsTabLocalizator Localization
         {
@@ -109,6 +130,12 @@ namespace LibgenDesktop.ViewModels.Tabs
             {
                 return GetLocalization();
             }
+        }
+
+        public void Search(string searchQuery)
+        {
+            SearchQuery = searchQuery;
+            Search();
         }
 
         public abstract void ShowExportPanel();
@@ -120,6 +147,8 @@ namespace LibgenDesktop.ViewModels.Tabs
             if (!String.IsNullOrWhiteSpace(SearchQuery) && !IsSearchProgressPanelVisible && !IsExportPanelVisible)
             {
                 Title = SearchQuery;
+                lastExecutedSearchQuery = SearchQuery;
+                UpdateBookmarkedState();
                 InterruptButtonText = Localization.Interrupt;
                 IsInterruptButtonEnabled = true;
                 IsSearchProgressPanelVisible = true;
@@ -135,6 +164,24 @@ namespace LibgenDesktop.ViewModels.Tabs
             searchCancellationTokenSource.Cancel();
             InterruptButtonText = Localization.Interrupting;
             IsInterruptButtonEnabled = false;
+        }
+
+        private void UpdateBookmarkedState()
+        {
+            IsBookmarkSet = MainModel.HasBookmark(libgenObjectType, lastExecutedSearchQuery);
+        }
+
+        private void ToggleBookmark()
+        {
+            if (isBookmarkSet)
+            {
+                MainModel.DeleteBookmark(libgenObjectType, lastExecutedSearchQuery);
+            }
+            else
+            {
+                MainModel.AddBookmark(libgenObjectType, lastExecutedSearchQuery, lastExecutedSearchQuery);
+            }
+            UpdateBookmarkedState();
         }
     }
 }

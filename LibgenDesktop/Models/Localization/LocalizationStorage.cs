@@ -71,7 +71,7 @@ namespace LibgenDesktop.Models.Localization
                 }
                 Languages.Add(CreateLanguage(translation, translations, defaultTranslation));
             }
-            Languages = Languages.OrderBy(language => language.LocalizedName).ToList();
+            Languages = Languages.OrderBy(language => language.Name).ToList();
             Language selectedLanguage = Languages.FirstOrDefault(language => language.Name.CompareOrdinalIgnoreCase(selectedLanguageName));
             if (selectedLanguage != null)
             {

@@ -6,6 +6,24 @@
         <Setter Property="Margin" Value="12" />
     </Style>
     <Style x:Key="SearchTextBox" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignFloatingHintTextBox}" />
+    <Style x:Key="BookmarkButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Margin" Value="8,0,0,0" />
+        <Setter Property="VerticalContentAlignment" Value="Bottom" />
+        <Setter Property="Padding" Value="0,0,0,4" />
+        <Setter Property="md:RippleAssist.Feedback" Value="{x:Null}" />
+        <Setter Property="Foreground" Value="#585858" />
+    </Style>
+    <Style x:Key="BookmarkSetIcon" TargetType="md:PackIcon">
+        <Setter Property="Kind" Value="Star" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="Width" Value="22" />
+    </Style>
+    <Style x:Key="BookmarkNotSetIcon" TargetType="md:PackIcon">
+        <Setter Property="Kind" Value="StarOutline" />
+        <Setter Property="Height" Value="22" />
+        <Setter Property="Width" Value="22" />
+    </Style>
     <Style x:Key="ExportButton" TargetType="Button" BasedOn="{StaticResource FlatButton}">
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="Margin" Value="8,0,0,0" />

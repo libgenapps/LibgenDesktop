@@ -96,6 +96,7 @@ namespace LibgenDesktop.Models
         public Updater.UpdateCheckResult LastApplicationUpdateCheckResult { get; set; }
 
         public event EventHandler ApplicationUpdateCheckCompleted;
+        public event EventHandler BookmarksChanged;
 
         public Task<List<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
@@ -546,6 +547,45 @@ namespace LibgenDesktop.Models
             }
             ConfigureUpdater();
             return result;
+        }
+
+        public bool HasBookmark(LibgenObjectType libgenObjectType, string searchQuery)
+        {
+            if (String.IsNullOrWhiteSpace(searchQuery))
+            {
+                return false;
+            }
+            searchQuery = searchQuery.Trim();
+            return AppSettings.Bookmarks.Bookmarks.Any(bookmark => bookmark.Type == libgenObjectType && bookmark.Query == searchQuery);
+        }
+
+        public void AddBookmark(LibgenObjectType libgenObjectType, string name, string searchQuery)
+        {
+            AppSettings.Bookmarks.Bookmarks.Add(new AppSettings.BookmarkSettings.Bookmark
+            {
+                Name = name,
+                Query = searchQuery,
+                Type = libgenObjectType
+            });
+            SaveSettings();
+            BookmarksChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void DeleteBookmark(LibgenObjectType libgenObjectType, string searchQuery)
+        {
+            if (String.IsNullOrWhiteSpace(searchQuery))
+            {
+                return;
+            }
+            searchQuery = searchQuery.Trim();
+            AppSettings.BookmarkSettings.Bookmark bookmark =
+                AppSettings.Bookmarks.Bookmarks.FirstOrDefault(bookmarkItem => bookmarkItem.Type == libgenObjectType && bookmarkItem.Query == searchQuery);
+            if (bookmark != null)
+            {
+                AppSettings.Bookmarks.Bookmarks.Remove(bookmark);
+                SaveSettings();
+                BookmarksChanged?.Invoke(this, EventArgs.Empty);
+            }
         }
 
         public void SaveSettings()

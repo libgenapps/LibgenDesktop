@@ -12,6 +12,11 @@
           <xsl:value-of select="@href" />
         </xsl:for-each>
       </xsl:when>
+      <xsl:when test="//a[starts-with(@href, 'http://download1.libgen.io/get')]">
+        <xsl:for-each select="(//a[starts-with(@href, 'http://download1.libgen.io/get')])[1]">
+          <xsl:value-of select="@href" />
+        </xsl:for-each>
+      </xsl:when>
     </xsl:choose>
   </xsl:template>
 </xsl:transform>

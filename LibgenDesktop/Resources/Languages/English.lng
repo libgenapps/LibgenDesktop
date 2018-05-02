@@ -27,6 +27,8 @@
         "MainMenu":
         {
             "DownloadManagerTooltip": "Download Manager",
+            "BookmarksTooltip": "Bookmarks",
+            "NoBookmarks": "No bookmarks",
             "Update": "Update...",
             "Import": "Import...",
             "Synchronize": "Synchronization...",
@@ -78,6 +80,8 @@
         "SearchInProgress": "Search in progress...",
         "Interrupt": "INTERRUPT",
         "Interrupting": "INTERRUPTING...",
+        "AddToBookmarksTooltip": "Add to bookmarks",
+        "RemoveFromBookmarksTooltip": "Remove from bookmarks",
         "ExportButtonTooltip": "Export search results to a file"
     },
     "NonFictionSearchResultsTab":

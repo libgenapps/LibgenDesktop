@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization.Localizators;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.Update;
+using LibgenDesktop.ViewModels.Bookmarks;
 using LibgenDesktop.ViewModels.EventArguments;
 using LibgenDesktop.ViewModels.Tabs;
 using static LibgenDesktop.Models.Settings.AppSettings;
@@ -25,6 +27,7 @@ namespace LibgenDesktop.ViewModels.Windows
         private bool isCompletedDownloadCounterVisible;
         private int completedDownloadCount;
         private bool isApplicationUpdateAvailable;
+        private BookmarkViewModelList bookmarks;
 
         public MainWindowViewModel(MainModel mainModel)
             : base(mainModel)
@@ -40,12 +43,14 @@ namespace LibgenDesktop.ViewModels.Windows
             ImportCommand = new Command(Import);
             SynchronizeCommand = new Command(Synchronize);
             DatabaseCommand = new Command(DatabaseMenuItemClick);
+            BookmarkCommand = new Command(param => BookmarksMenuItemClick(param as BookmarkViewModel));
             SettingsCommand = new Command(SettingsMenuItemClick);
             AboutCommand = new Command(AboutMenuItemClick);
             WindowClosedCommand = new Command(WindowClosed);
             TabViewModels = new ObservableCollection<TabViewModel>();
             Initialize();
             mainModel.ApplicationUpdateCheckCompleted += ApplicationUpdateCheckCompleted;
+            mainModel.BookmarksChanged += BookmarksChanged;
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
             mainModel.Downloader.DownloaderEvent += DownloaderEvent;
         }
@@ -173,6 +178,19 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
+        public BookmarkViewModelList Bookmarks
+        {
+            get
+            {
+                return bookmarks;
+            }
+            set
+            {
+                bookmarks = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public Command NewTabCommand { get; }
         public Command CloseTabCommand { get; }
         public Command CloseCurrentTabCommand { get; }
@@ -182,6 +200,7 @@ namespace LibgenDesktop.ViewModels.Windows
         public Command ImportCommand { get; }
         public Command SynchronizeCommand { get; }
         public Command DatabaseCommand { get; }
+        public Command BookmarkCommand { get; }
         public Command SettingsCommand { get; }
         public Command AboutCommand { get; }
         public Command WindowClosedCommand { get; }
@@ -213,6 +232,7 @@ namespace LibgenDesktop.ViewModels.Windows
             isCompletedDownloadCounterVisible = false;
             completedDownloadCount = 0;
             isApplicationUpdateAvailable = false;
+            bookmarks = new BookmarkViewModelList(MainModel);
         }
 
         private void DefaultSearchTabViewModel_ImportRequested(object sender, EventArgs e)
@@ -618,6 +638,68 @@ namespace LibgenDesktop.ViewModels.Windows
             databaseWindowContext.ShowDialog();
         }
 
+        private void BookmarksMenuItemClick(BookmarkViewModel bookmarkViewModel)
+        {
+            bool useCurrentTab;
+            if (SelectedTabViewModel != null)
+            {
+                switch (bookmarkViewModel.LibgenObjectType)
+                {
+                    case LibgenObjectType.NON_FICTION_BOOK:
+                        useCurrentTab = SelectedTabViewModel is NonFictionSearchResultsTabViewModel;
+                        break;
+                    case LibgenObjectType.FICTION_BOOK:
+                        useCurrentTab = SelectedTabViewModel is FictionSearchResultsTabViewModel;
+                        break;
+                    case LibgenObjectType.SCIMAG_ARTICLE:
+                        useCurrentTab = SelectedTabViewModel is SciMagSearchResultsTabViewModel;
+                        break;
+                    default:
+                        useCurrentTab = false;
+                        break;
+                }
+            }
+            else
+            {
+                useCurrentTab = false;
+            }
+            if (useCurrentTab)
+            {
+                (SelectedTabViewModel as SearchResultsTabViewModel).Search(bookmarkViewModel.SearchQuery);
+            }
+            else
+            {
+                SearchResultsTabViewModel newTab;
+                switch (bookmarkViewModel.LibgenObjectType)
+                {
+                    case LibgenObjectType.NON_FICTION_BOOK:
+                        newTab = new NonFictionSearchResultsTabViewModel(MainModel, CurrentWindowContext, bookmarkViewModel.SearchQuery,
+                            new List<NonFictionBook>());
+                        break;
+                    case LibgenObjectType.FICTION_BOOK:
+                        newTab = new FictionSearchResultsTabViewModel(MainModel, CurrentWindowContext, bookmarkViewModel.SearchQuery,
+                            new List<FictionBook>());
+                        break;
+                    case LibgenObjectType.SCIMAG_ARTICLE:
+                        newTab = new SciMagSearchResultsTabViewModel(MainModel, CurrentWindowContext, bookmarkViewModel.SearchQuery,
+                            new List<SciMagArticle>());
+                        break;
+                    default:
+                        newTab = null;
+                        break;
+                }
+                if (newTab != null)
+                {
+                    newTab.Search(bookmarkViewModel.SearchQuery);
+                    TabViewModels.Add(newTab);
+                    SelectedTabViewModel = newTab;
+                    NotifyPropertyChanged(nameof(IsDefaultSearchTabVisible));
+                    NotifyPropertyChanged(nameof(AreTabsVisible));
+                    NotifyPropertyChanged(nameof(IsNewTabButtonVisible));
+                }
+            }
+        }
+
         private void SettingsMenuItemClick()
         {
             SettingsWindowViewModel settingsWindowViewModel = new SettingsWindowViewModel(MainModel);
@@ -640,6 +722,11 @@ namespace LibgenDesktop.ViewModels.Windows
         private void ApplicationUpdateCheckCompleted(object sender, EventArgs e)
         {
             IsApplicationUpdateAvailable = MainModel.LastApplicationUpdateCheckResult != null;
+        }
+
+        private void BookmarksChanged(object sender, EventArgs e)
+        {
+            Bookmarks = new BookmarkViewModelList(MainModel);
         }
 
         private void LocalizationLanguageChanged(object sender, EventArgs e)

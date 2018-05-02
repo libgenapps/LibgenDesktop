@@ -34,6 +34,25 @@
                 </Button.Style>
             </Button>
         </md:Badged>
+        <md:PopupBox Style="{StaticResource BookmarkPopupBox}">
+            <md:PopupBox.ToggleContent>
+                <md:PackIcon Style="{StaticResource BookmarkIcon}" ToolTip="{Binding Localization.ToolbarBookmarksTooltip}" />
+            </md:PopupBox.ToggleContent>
+            <ItemsControl ItemsSource="{Binding Bookmarks}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Name}" IsEnabled="{Binding IsEnabled}"
+                                Command="{Binding DataContext.BookmarkCommand, RelativeSource={RelativeSource FindAncestor, AncestorType=c:Toolbar}}"
+                                CommandParameter="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </md:PopupBox>
         <md:Badged>
             <md:Badged.Style>
                 <Style TargetType="md:Badged" BasedOn="{StaticResource MenuBadge}">
@@ -44,7 +63,7 @@
                     </Style.Triggers>
                 </Style>
             </md:Badged.Style>
-            <md:PopupBox Style="{StaticResource PopupBox}">
+            <md:PopupBox Style="{StaticResource MenuPopupBox}">
                 <StackPanel>
                     <Button Command="{Binding ShowApplicationUpdateCommand}" Padding="16,0" VerticalContentAlignment="Center"
                             Visibility="{Binding IsApplicationUpdateAvailable, Converter={StaticResource booleanToCollapsedConverter}}">

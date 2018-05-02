@@ -10,6 +10,8 @@ namespace LibgenDesktop.Models.Localization.Localizators
         {
             WindowTitle = Format(translation => translation?.WindowTitle);
             ToolbarDownloadManagerTooltip = Format(translation => translation?.DownloadManagerTooltip);
+            ToolbarBookmarksTooltip = Format(translation => translation?.BookmarksTooltip);
+            ToolbarNoBookmarks = Format(translation => translation?.NoBookmarks);
             ToolbarUpdate = Format(translation => translation?.Update);
             ToolbarImport = Format(translation => translation?.Import);
             ToolbarSynchronize = Format(translation => translation?.Synchronize);
@@ -20,6 +22,8 @@ namespace LibgenDesktop.Models.Localization.Localizators
 
         public string WindowTitle { get; }
         public string ToolbarDownloadManagerTooltip { get; }
+        public string ToolbarBookmarksTooltip { get; }
+        public string ToolbarNoBookmarks { get; }
         public string ToolbarUpdate { get; }
         public string ToolbarImport { get; }
         public string ToolbarSynchronize { get; }

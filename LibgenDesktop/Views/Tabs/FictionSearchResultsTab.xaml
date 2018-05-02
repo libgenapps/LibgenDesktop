@@ -19,6 +19,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox Name="searchTextBox" Grid.Column="0" Style="{StaticResource SearchTextBox}"
                      md:HintAssist.Hint="{Binding Localization.SearchPlaceHolder}" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
@@ -27,7 +28,31 @@
                     <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
                 </TextBox.InputBindings>
             </TextBox>
-            <Button Grid.Column="1" Command="{Binding ExportCommand}" Style="{StaticResource ExportButton}" ToolTip="{Binding Localization.ExportButtonTooltip}"
+            <Button Grid.Column="1" Command="{Binding ToggleBookmarkCommand}">
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource BookmarkButton}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsBookmarkSet}" Value="True">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <md:PackIcon Style="{StaticResource BookmarkSetIcon}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ToolTip" Value="{Binding Localization.RemoveFromBookmarksTooltip}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsBookmarkSet}" Value="False">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <md:PackIcon Style="{StaticResource BookmarkNotSetIcon}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ToolTip" Value="{Binding Localization.AddToBookmarksTooltip}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+            <Button Grid.Column="2" Command="{Binding ExportCommand}" Style="{StaticResource ExportButton}" ToolTip="{Binding Localization.ExportButtonTooltip}"
                     IsEnabled="{Binding IsExportPanelVisible, Converter={StaticResource booleanInverseConverter}}" />
         </Grid>
         <DataGrid Name="bookGrid" Grid.Row="1" ItemsSource="{Binding Books, IsAsync=True}" SelectedItem="{Binding SelectedBook, Mode=TwoWay}"

@@ -27,6 +27,8 @@
         "MainMenu":
         {
             "DownloadManagerTooltip": "Менеджер загрузок",
+            "BookmarksTooltip": "Закладки",
+            "NoBookmarks": "Нет закладок",
             "Update": "Обновление...",
             "Import": "Импорт...",
             "Synchronize": "Синхронизация...",
@@ -78,6 +80,8 @@
         "SearchInProgress": "Идет поиск...",
         "Interrupt": "ПРЕРВАТЬ",
         "Interrupting": "ПРЕРЫВАЕТСЯ...",
+        "AddToBookmarksTooltip": "Добавить в закладки",
+        "RemoveFromBookmarksTooltip": "Удалить из закладок",
         "ExportButtonTooltip": "Экспорт результатов поиска в файл"
     },
     "NonFictionSearchResultsTab":

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using LibgenDesktop.Infrastructure;
+using LibgenDesktop.Models.Entities;
 using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.Models.Settings
@@ -296,6 +298,29 @@ namespace LibgenDesktop.Models.Settings
             public string IgnoreReleaseName { get; set; }
         }
 
+        internal class BookmarkSettings
+        {
+            internal class Bookmark
+            {
+                public string Name { get; set; }
+                public string Query { get; set; }
+                public LibgenObjectType Type { get; set; }
+            }
+
+            public static BookmarkSettings Default
+            {
+                get
+                {
+                    return new BookmarkSettings
+                    {
+                        Bookmarks = new List<Bookmark>()
+                    };
+                }
+            }
+
+            public List<Bookmark> Bookmarks { get; set; }
+        }
+
         internal class GeneralSettings
         {
             internal enum UpdateCheckInterval
@@ -474,6 +499,7 @@ namespace LibgenDesktop.Models.Settings
                     SciMag = SciMagSettings.Default,
                     DownloadManagerTab = DownloadManagerTabSettings.Default,
                     LastUpdate = LastUpdateSettings.Default,
+                    Bookmarks = BookmarkSettings.Default,
                     General = GeneralSettings.Default,
                     Network = NetworkSettings.Default,
                     Download = DownloadSettings.Default,
@@ -492,6 +518,7 @@ namespace LibgenDesktop.Models.Settings
         public SciMagSettings SciMag { get; set; }
         public DownloadManagerTabSettings DownloadManagerTab { get; set; }
         public LastUpdateSettings LastUpdate { get; set; }
+        public BookmarkSettings Bookmarks { get; set; }
         public GeneralSettings General { get; set; }
         public NetworkSettings Network { get; set; }
         public DownloadSettings Download { get; set; }
@@ -515,6 +542,7 @@ namespace LibgenDesktop.Models.Settings
                 appSettings.ValidateAndCorrectSciMagSettings();
                 appSettings.ValidateAndCorrectDownloadManagerTabSettings();
                 appSettings.ValidateAndCorrectLastUpdateSettings();
+                appSettings.ValidateAndCorrectBookmarkSettings();
                 appSettings.ValidateAndCorrectGeneralSettings();
                 appSettings.ValidateAndCorrectNetworkSettings();
                 appSettings.ValidateAndCorrectDownloadSettings();
@@ -801,6 +829,33 @@ namespace LibgenDesktop.Models.Settings
             if (LastUpdate == null)
             {
                 LastUpdate = LastUpdateSettings.Default;
+            }
+        }
+
+        private void ValidateAndCorrectBookmarkSettings()
+        {
+            if (Bookmarks == null)
+            {
+                Bookmarks = BookmarkSettings.Default;
+            }
+            else
+            {
+                if (Bookmarks.Bookmarks == null)
+                {
+                    Bookmarks = BookmarkSettings.Default;
+                }
+                else
+                {
+                    for (int bookmarkIndex = Bookmarks.Bookmarks.Count - 1; bookmarkIndex >= 0; bookmarkIndex--)
+                    {
+                        BookmarkSettings.Bookmark bookmark = Bookmarks.Bookmarks[bookmarkIndex];
+                        if (String.IsNullOrEmpty(bookmark.Name) || String.IsNullOrEmpty(bookmark.Query) ||
+                            !Enum.IsDefined(typeof(LibgenObjectType), bookmark.Type))
+                        {
+                            Bookmarks.Bookmarks.RemoveAt(bookmarkIndex);
+                        }
+                    }
+                }
             }
         }
 
