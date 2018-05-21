@@ -32,6 +32,7 @@
             "Update": "Update...",
             "Import": "Import...",
             "Synchronize": "Synchronization...",
+            "Library": "Library...",
             "Database": "Database...",
             "Settings": "Settings",
             "About": "About"
@@ -498,6 +499,16 @@
             "SynchronizationCancelled": "Synchronization has been cancelled by the user.",
             "SynchronizationError": "An error occurred during the synchronization."
         }
+    },
+    "Library":
+    {
+        "WindowTitle": "Local library",
+        "Scan": "SCAN FOR NON-FICTION BOOKS...",
+        "BrowseDirectoryDialogTitle": "Scan for non-fiction books in...",
+        "ScanStarted": "Scan started in {directory}",
+        "CreatingIndexes": "Please wait. Creating missing database indexes...",
+        "NotFound": "not found",
+        "ScanComplete": "Scan complete: found {found}, not found {notFound}."
     },
     "Database":
     {

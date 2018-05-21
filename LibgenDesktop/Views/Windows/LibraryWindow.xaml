@@ -1,0 +1,23 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.LibraryWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       Title="{Binding Localization.WindowTitle}" Style="{StaticResource LibraryWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/LibraryWindowStyles.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Button Content="{Binding Localization.Scan}" Command="{Binding ScanCommand}" Style="{StaticResource ScanButton}"
+                Visibility="{Binding IsScanButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <c:AutoScrollViewer Style="{StaticResource LogPanel}"
+                            Visibility="{Binding IsLogPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <ItemsControl ItemsSource="{Binding ScanLogs}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </c:AutoScrollViewer>
+    </Grid>
+</c:LibgenDesktopWindow>

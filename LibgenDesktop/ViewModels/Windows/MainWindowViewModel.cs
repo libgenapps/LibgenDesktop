@@ -42,6 +42,7 @@ namespace LibgenDesktop.ViewModels.Windows
             ShowApplicationUpdateCommand = new Command(ShowApplicationUpdate);
             ImportCommand = new Command(Import);
             SynchronizeCommand = new Command(Synchronize);
+            LibraryCommand = new Command(LibraryMenuItemClick);
             DatabaseCommand = new Command(DatabaseMenuItemClick);
             BookmarkCommand = new Command(param => BookmarksMenuItemClick(param as BookmarkViewModel));
             SettingsCommand = new Command(SettingsMenuItemClick);
@@ -199,6 +200,7 @@ namespace LibgenDesktop.ViewModels.Windows
         public Command ShowApplicationUpdateCommand { get; }
         public Command ImportCommand { get; }
         public Command SynchronizeCommand { get; }
+        public Command LibraryCommand { get; }
         public Command DatabaseCommand { get; }
         public Command BookmarkCommand { get; }
         public Command SettingsCommand { get; }
@@ -628,6 +630,14 @@ namespace LibgenDesktop.ViewModels.Windows
                     searchTabViewModel.SetFocus();
                 }
             }
+        }
+
+        private void LibraryMenuItemClick()
+        {
+            LibraryWindowViewModel libraryWindowViewModel = new LibraryWindowViewModel(MainModel);
+            IWindowContext libraryWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.LIBRARY_WINDOW, libraryWindowViewModel,
+                CurrentWindowContext);
+            libraryWindowContext.ShowDialog();
         }
 
         private void DatabaseMenuItemClick()

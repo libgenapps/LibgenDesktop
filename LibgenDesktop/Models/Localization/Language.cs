@@ -26,6 +26,7 @@ namespace LibgenDesktop.Models.Localization
         private SynchronizationLocalizator synchronization;
         private DownloadManagerLocalizator downloadManager;
         private ApplicationUpdateLocalizator applicationUpdate;
+        private LibraryWindowLocalizator library;
         private DatabaseWindowLocalizator database;
         private SettingsWindowLocalizator settings;
         private AboutWindowLocalizator about;
@@ -126,6 +127,8 @@ namespace LibgenDesktop.Models.Localization
 
         public ApplicationUpdateLocalizator ApplicationUpdate =>
             applicationUpdate ?? (applicationUpdate = new ApplicationUpdateLocalizator(translations, Formatter));
+
+        public LibraryWindowLocalizator Library => library ?? (library = new LibraryWindowLocalizator(translations, Formatter));
 
         public DatabaseWindowLocalizator Database => database ?? (database = new DatabaseWindowLocalizator(translations, Formatter));
 

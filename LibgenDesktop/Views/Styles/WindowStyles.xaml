@@ -87,6 +87,13 @@
         <Setter Property="Window.SizeToContent" Value="Height" />
         <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
     </Style>
+    <Style x:Key="LibraryWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.SETTINGS_WINDOW_DEFAULT_WIDTH}}" />
+        <Setter Property="Window.Height" Value="{Binding Source={x:Static const:Constants.SETTINGS_WINDOW_DEFAULT_HEIGHT}}" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.SETTINGS_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.SETTINGS_WINDOW_MIN_HEIGHT}}" />
+    </Style>
     <Style x:Key="DatabaseWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
         <Setter Property="Window.ResizeMode" Value="NoResize" />
         <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.DATABASE_WINDOW_WIDTH}}" />

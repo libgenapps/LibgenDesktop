@@ -82,6 +82,8 @@
 
         public const string GET_NON_FICTION_BY_ID = "SELECT * FROM non_fiction WHERE Id = @Id";
 
+        public const string GET_NON_FICTION_BY_MD5HASH = "SELECT * FROM non_fiction WHERE Md5Hash = @Md5Hash COLLATE NOCASE";
+
         public const string GET_NON_FICTION_ID_BY_LIBGENID = "SELECT Id FROM non_fiction WHERE LibgenId=@LibgenId LIMIT 1";
 
         public const string GET_LAST_MODIFIED_NON_FICTION =
@@ -161,6 +163,9 @@
         public const string GET_NON_FICTION_INDEX_LIST = "PRAGMA index_list(non_fiction)";
 
         public const string NON_FICTION_INDEX_PREFIX = "IX_non_fiction_";
+
+        public const string CREATE_NON_FICTION_MD5HASH_INDEX = "CREATE UNIQUE INDEX " + NON_FICTION_INDEX_PREFIX +
+            "Md5Hash ON non_fiction (Md5Hash COLLATE NOCASE)";
 
         public const string CREATE_NON_FICTION_LASTMODIFIEDDATETIME_INDEX = "CREATE INDEX " + NON_FICTION_INDEX_PREFIX +
             "LastModifiedDateTime ON non_fiction (LastModifiedDateTime DESC)";
@@ -329,6 +334,8 @@
 
         public const string FICTION_INDEX_PREFIX = "IX_fiction_";
 
+        public const string CREATE_FICTION_MD5HASH_INDEX = "CREATE UNIQUE INDEX " + FICTION_INDEX_PREFIX + "Md5Hash ON fiction (Md5Hash COLLATE NOCASE)";
+
         public const string CREATE_FICTION_LASTMODIFIEDDATETIME_INDEX = "CREATE INDEX " + FICTION_INDEX_PREFIX +
             "LastModifiedDateTime ON fiction (LastModifiedDateTime DESC)";
 
@@ -398,6 +405,8 @@
         public const string GET_SCIMAG_INDEX_LIST = "PRAGMA index_list(scimag)";
 
         public const string SCIMAG_INDEX_PREFIX = "IX_scimag_";
+
+        public const string CREATE_SCIMAG_MD5HASH_INDEX = "CREATE UNIQUE INDEX " + SCIMAG_INDEX_PREFIX + "Md5Hash ON scimag (Md5Hash COLLATE NOCASE)";
 
         public const string CREATE_SCIMAG_ADDEDDATETIME_INDEX = "CREATE INDEX " + SCIMAG_INDEX_PREFIX + "AddedDateTime ON scimag (AddedDateTime DESC)";
     }

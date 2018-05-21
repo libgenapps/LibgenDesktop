@@ -36,6 +36,7 @@
             public string Update { get; set; }
             public string Import { get; set; }
             public string Synchronize { get; set; }
+            public string Library { get; set; }
             public string Database { get; set; }
             public string Settings { get; set; }
             public string About { get; set; }
@@ -543,6 +544,17 @@
             public SynchronizationLogMessagesTranslation LogMessages { get; set; }
         }
 
+        internal class LibraryTranslation
+        {
+            public string WindowTitle { get; set; }
+            public string Scan { get; set; }
+            public string BrowseDirectoryDialogTitle { get; set; }
+            public string ScanStarted { get; set; }
+            public string CreatingIndexes { get; set; }
+            public string NotFound { get; set; }
+            public string ScanComplete { get; set; }
+        }
+
         internal class DatabaseTranslation
         {
             public string WindowTitle { get; set; }
@@ -794,6 +806,7 @@
         public SynchronizationTranslation Synchronization { get; set; }
         public DownloadManagerTranslation DownloadManager { get; set; }
         public ApplicationUpdateTranslation ApplicationUpdate { get; set; }
+        public LibraryTranslation Library { get; set; }
         public DatabaseTranslation Database { get; set; }
         public SettingsTranslation Settings { get; set; }
         public AboutTranslation About { get; set; }

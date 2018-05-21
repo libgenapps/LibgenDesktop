@@ -133,6 +133,11 @@ namespace LibgenDesktop.Models.Database
             ExecuteCommands(SqlScripts.CREATE_NON_FICTION_FTS_TABLE);
         }
 
+        public void CreateNonFictionMd5HashIndex()
+        {
+            ExecuteCommands(SqlScripts.CREATE_NON_FICTION_MD5HASH_INDEX);
+        }
+
         public void CreateNonFictionLastModifiedDateTimeIndex()
         {
             ExecuteCommands(SqlScripts.CREATE_NON_FICTION_LASTMODIFIEDDATETIME_INDEX);
@@ -159,6 +164,27 @@ namespace LibgenDesktop.Models.Database
             {
                 command.CommandText = SqlScripts.GET_NON_FICTION_BY_ID;
                 command.Parameters.AddWithValue("@Id", id);
+                using (SQLiteDataReader dataReader = command.ExecuteReader())
+                {
+                    if (dataReader.Read())
+                    {
+                        NonFictionBook book = ReadNonFictionBook(dataReader);
+                        return book;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        public NonFictionBook GetNonFictionBookByMd5Hash(string md5Hash)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = SqlScripts.GET_NON_FICTION_BY_MD5HASH;
+                command.Parameters.AddWithValue("@Md5Hash", md5Hash);
                 using (SQLiteDataReader dataReader = command.ExecuteReader())
                 {
                     if (dataReader.Read())

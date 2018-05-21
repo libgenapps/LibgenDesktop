@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using LibgenDesktop.Common;
@@ -482,6 +483,28 @@ namespace LibgenDesktop.Models
             });
         }
 
+        public Task ScanAsync(string scanDirectory, IProgress<object> progressHandler)
+        {
+            return Task.Run(() =>
+            {
+                int found = 0;
+                int notFound = 0;
+                if (NonFictionBookCount > 0)
+                {
+                    Logger.Debug("Retrieving the list of non-fiction table indexes.");
+                    List<string> nonFictionIndexes = localDatabase.GetNonFictionIndexList();
+                    if (!nonFictionIndexes.Contains(SqlScripts.NON_FICTION_INDEX_PREFIX + "Md5Hash"))
+                    {
+                        Logger.Debug("Creating an index on Md5Hash column.");
+                        progressHandler.Report(new GenericProgress(GenericProgress.Event.SCAN_CREATING_INDEXES));
+                        localDatabase.CreateNonFictionMd5HashIndex();
+                    }
+                    ScanDirectory(scanDirectory.ToLower(), scanDirectory, progressHandler, ref found, ref notFound);
+                }
+                progressHandler.Report(new ScanCompleteProgress(found, notFound));
+            });
+        }
+
         public Task<DatabaseStats> GetDatabaseStatsAsync()
         {
             return Task.Run(() =>
@@ -884,6 +907,49 @@ namespace LibgenDesktop.Models
                 return tableDefinition.TableType;
             }
             return TableType.UNKNOWN;
+        }
+
+        private void ScanDirectory(string rootScanDirectory, string scanDirectory, IProgress<object> progressHandler, ref int found, ref int notFound)
+        {
+            foreach (string filePath in Directory.EnumerateFiles(scanDirectory))
+            {
+                string md5Hash;
+                try
+                {
+                    using (MD5 md5 = MD5.Create())
+                    using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    {
+                        byte[] md5HashArray = md5.ComputeHash(fileStream);
+                        md5Hash = BitConverter.ToString(md5HashArray).Replace("-", String.Empty).ToLowerInvariant();
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Logger.Debug($"Couldn't calculate MD5 hash for the file: {filePath}");
+                    Logger.Exception(exception);
+                    continue;
+                }
+                string relativeFilePath = filePath;
+                if (relativeFilePath.ToLower().StartsWith(rootScanDirectory))
+                {
+                    relativeFilePath = relativeFilePath.Substring(rootScanDirectory.Length + 1);
+                }
+                NonFictionBook book = localDatabase.GetNonFictionBookByMd5Hash(md5Hash);
+                if (book != null)
+                {
+                    progressHandler.Report(new ScanProgress(relativeFilePath, book.Authors, book.Title));
+                    found++;
+                }
+                else
+                {
+                    progressHandler.Report(new ScanProgress(relativeFilePath));
+                    notFound++;
+                }
+            }
+            foreach (string directoryPath in Directory.EnumerateDirectories(scanDirectory))
+            {
+                ScanDirectory(rootScanDirectory, directoryPath, progressHandler, ref found, ref notFound);
+            }
         }
 
         private void CheckAndCreateNonFictionIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)

@@ -4,9 +4,9 @@ namespace LibgenDesktop.Common
 {
     internal static class Constants
     {
-        public const string CURRENT_VERSION = "1.1.1";
-        public const string CURRENT_GITHUB_RELEASE_NAME = "1.1.1";
-        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2018, 5, 2);
+        public const string CURRENT_VERSION = "1.1.2";
+        public const string CURRENT_GITHUB_RELEASE_NAME = "1.1.2";
+        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2018, 5, 21);
         public const string CURRENT_DATABASE_VERSION = "1.0";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
@@ -56,6 +56,10 @@ namespace LibgenDesktop.Common
         public const int IMPORT_WINDOW_MIN_WIDTH = 530;
         public const int IMPORT_WINDOW_MIN_HEIGHT = 400;
         public const int CREATE_DATABASE_WINDOW_WIDTH = 500;
+        public const int LIBRARY_WINDOW_DEFAULT_WIDTH = 760;
+        public const int LIBRARY_WINDOW_DEFAULT_HEIGHT = 550;
+        public const int LIBRARY_WINDOW_MIN_WIDTH = 760;
+        public const int LIBRARY_WINDOW_MIN_HEIGHT = 550;
         public const int SETTINGS_WINDOW_DEFAULT_WIDTH = 760;
         public const int SETTINGS_WINDOW_DEFAULT_HEIGHT = 550;
         public const int SETTINGS_WINDOW_MIN_WIDTH = 760;

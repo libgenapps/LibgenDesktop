@@ -19,6 +19,7 @@ namespace LibgenDesktop.Infrastructure
             SETTINGS_WINDOW,
             SYNCHRONIZATION_WINDOW,
             APPLICATION_UPDATE_WINDOW,
+            LIBRARY_WINDOW,
             DATABASE_WINDOW,
             ABOUT_WINDOW
         }
@@ -49,6 +50,7 @@ namespace LibgenDesktop.Infrastructure
             RegisterWindow(WindowKey.CREATE_DATABASE_WINDOW, typeof(CreateDatabaseWindow), typeof(CreateDatabaseWindowViewModel));
             RegisterWindow(WindowKey.SETTINGS_WINDOW, typeof(SettingsWindow), typeof(SettingsWindowViewModel));
             RegisterWindow(WindowKey.SYNCHRONIZATION_WINDOW, typeof(SynchronizationWindow), typeof(SynchronizationWindowViewModel));
+            RegisterWindow(WindowKey.LIBRARY_WINDOW, typeof(LibraryWindow), typeof(LibraryWindowViewModel));
             RegisterWindow(WindowKey.APPLICATION_UPDATE_WINDOW, typeof(ApplicationUpdateWindow), typeof(ApplicationUpdateWindowViewModel));
             RegisterWindow(WindowKey.DATABASE_WINDOW, typeof(DatabaseWindow), typeof(DatabaseWindowViewModel));
             RegisterWindow(WindowKey.ABOUT_WINDOW, typeof(AboutWindow), typeof(AboutWindowViewModel));
