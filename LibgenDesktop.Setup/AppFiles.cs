@@ -40,7 +40,8 @@ namespace LibgenDesktop.Setup
             AddFile(@"Mirrors\libgen_pw_scimag_step1.xslt");
             AddFile(@"Mirrors\libgen_pw_scimag_step2.xslt");
             AddFile(@"Mirrors\bookfi_net.xslt");
-            AddFile(@"Mirrors\b_ok_org.xslt");
+            AddFile(@"Mirrors\b_ok_xyz_step1.xslt");
+            AddFile(@"Mirrors\b_ok_xyz_step2.xslt");
             AddFile(@"Mirrors\booksc_org.xslt");
         }
 
