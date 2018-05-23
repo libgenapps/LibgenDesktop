@@ -2,10 +2,11 @@
 {
     internal class ScanProgress
     {
-        public ScanProgress(string relativeFilePath)
+        public ScanProgress(string relativeFilePath, bool error = false)
         {
             RelativeFilePath = relativeFilePath;
             Found = false;
+            Error = error;
             Authors = null;
             Title = null;
         }
@@ -14,12 +15,14 @@
         {
             RelativeFilePath = relativeFilePath;
             Found = true;
+            Error = false;
             Authors = authors;
             Title = title;
         }
 
         public string RelativeFilePath { get; }
         public bool Found { get; }
+        public bool Error { get; }
         public string Authors { get; }
         public string Title { get; }
     }

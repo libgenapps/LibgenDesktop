@@ -507,8 +507,17 @@
         "BrowseDirectoryDialogTitle": "Scan for non-fiction books in...",
         "ScanStarted": "Scan started in {directory}",
         "CreatingIndexes": "Please wait. Creating missing database indexes...",
-        "NotFound": "not found",
-        "ScanComplete": "Scan complete: found {found}, not found {notFound}."
+        "Found": "Found ({count})",
+        "NotFound": "Not found ({count})",
+        "ScanLog": "Scan log",
+        "Error": "error",
+        "ScanComplete": "Scan complete. Found: {found}, not found: {notFound}, errors: {errors}.",
+        "Columns":
+        {
+            "File": "File",
+            "Authors": "Authors",
+            "Title": "Title"
+        }
     },
     "Database":
     {

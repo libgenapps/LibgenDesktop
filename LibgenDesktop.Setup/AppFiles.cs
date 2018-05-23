@@ -42,7 +42,8 @@ namespace LibgenDesktop.Setup
             AddFile(@"Mirrors\bookfi_net.xslt");
             AddFile(@"Mirrors\b_ok_xyz_step1.xslt");
             AddFile(@"Mirrors\b_ok_xyz_step2.xslt");
-            AddFile(@"Mirrors\booksc_org.xslt");
+            AddFile(@"Mirrors\booksc_org_step1.xslt");
+            AddFile(@"Mirrors\booksc_org_step2.xslt");
         }
 
         public static string GetBinariesDirectoryPath(bool is64Bit)

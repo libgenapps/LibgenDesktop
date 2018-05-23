@@ -237,6 +237,7 @@
     <Compile Include="ViewModels\DetailsItems\FictionDetailsItemViewModel.cs" />
     <Compile Include="ViewModels\DetailsItems\NonFictionDetailsItemViewModel.cs" />
     <Compile Include="ViewModels\DetailsItems\SciMagDetailsItemViewModel.cs" />
+    <Compile Include="ViewModels\Library\ScanResultItemViewModel.cs" />
     <Compile Include="ViewModels\SearchResultItems\SciMagSearchResultItemViewModel.cs" />
     <Compile Include="ViewModels\SearchResultItems\FictionSearchResultItemViewModel.cs" />
     <Compile Include="ViewModels\SearchResultItems\NonFictionSearchResultItemViewModel.cs" />
@@ -701,9 +702,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\b_ok_xyz_step2.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\booksc_org.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\booksc_org_step1.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\booksc_org.xslt</TargetPath>
+      <TargetPath>Mirrors\booksc_org_step1.xslt</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\booksc_org_step2.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\booksc_org_step2.xslt</TargetPath>
     </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Languages\Russian.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -2,15 +2,22 @@
 using System.Collections.ObjectModel;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
+using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization.Localizators;
 using LibgenDesktop.Models.ProgressArgs;
+using LibgenDesktop.ViewModels.Library;
 
 namespace LibgenDesktop.ViewModels.Windows
 {
     internal class LibraryWindowViewModel : LibgenWindowViewModel
     {
         private bool isScanButtonVisible;
-        private bool isLogPanelVisible;
+        private bool isResultsPanelVisible;
+        private string foundTabHeaderTitle;
+        private string notFoundTabHeaderTitle;
+        private bool isScanLogTabSelected;
+        private ObservableCollection<ScanResultItemViewModel> foundItems;
+        private ObservableCollection<string> notFoundItems;
         private ObservableCollection<string> scanLogs;
 
         public LibraryWindowViewModel(MainModel mainModel)
@@ -36,15 +43,80 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
-        public bool IsLogPanelVisible
+        public bool IsResultsPanelVisible
         {
             get
             {
-                return isLogPanelVisible;
+                return isResultsPanelVisible;
             }
             set
             {
-                isLogPanelVisible = value;
+                isResultsPanelVisible = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string FoundTabHeaderTitle
+        {
+            get
+            {
+                return foundTabHeaderTitle;
+            }
+            set
+            {
+                foundTabHeaderTitle = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string NotFoundTabHeaderTitle
+        {
+            get
+            {
+                return notFoundTabHeaderTitle;
+            }
+            set
+            {
+                notFoundTabHeaderTitle = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsScanLogTabSelected
+        {
+            get
+            {
+                return isScanLogTabSelected;
+            }
+            set
+            {
+                isScanLogTabSelected = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<ScanResultItemViewModel> FoundItems
+        {
+            get
+            {
+                return foundItems;
+            }
+            set
+            {
+                foundItems = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> NotFoundItems
+        {
+            get
+            {
+                return notFoundItems;
+            }
+            set
+            {
+                notFoundItems = value;
                 NotifyPropertyChanged();
             }
         }
@@ -67,7 +139,8 @@ namespace LibgenDesktop.ViewModels.Windows
         private void Initialize()
         {
             isScanButtonVisible = true;
-            isLogPanelVisible = false;
+            isResultsPanelVisible = false;
+            isScanLogTabSelected = false;
             scanLogs = new ObservableCollection<string>();
         }
 
@@ -80,8 +153,12 @@ namespace LibgenDesktop.ViewModels.Windows
             SelectFolderDialogResult selectFolderDialogResult = WindowManager.ShowSelectFolderDialog(selectFolderDialogParameters);
             if (selectFolderDialogResult.DialogResult)
             {
+                FoundItems = new ObservableCollection<ScanResultItemViewModel>();
+                NotFoundItems = new ObservableCollection<string>();
+                UpdateResultTabHeaders();
+                IsScanLogTabSelected = true;
                 IsScanButtonVisible = false;
-                IsLogPanelVisible = true;
+                IsResultsPanelVisible = true;
                 string scanDirectory = selectFolderDialogResult.SelectedFolderPath;
                 ScanLogs.Add(Localization.GetScanStartedString(scanDirectory));
                 Progress<object> scanProgressHandler = new Progress<object>(HandleScanProgress);
@@ -102,19 +179,31 @@ namespace LibgenDesktop.ViewModels.Windows
                     }
                     break;
                 case ScanProgress scanProgress:
-                    if (scanProgress.Found)
+                    if (scanProgress.Error)
                     {
-                        ScanLogs.Add($"{scanProgress.RelativeFilePath}: {scanProgress.Authors} — {scanProgress.Title}");
+                        ScanLogs.Add($"{scanProgress.RelativeFilePath} — {Localization.Error}.");
+                    }
+                    else if (scanProgress.Found)
+                    {
+                        FoundItems.Add(new ScanResultItemViewModel(LibgenObjectType.NON_FICTION_BOOK, 0, null, scanProgress.RelativeFilePath,
+                            scanProgress.Authors, scanProgress.Title));
                     }
                     else
                     {
-                        ScanLogs.Add($"{scanProgress.RelativeFilePath}: {Localization.NotFound}.");
+                        NotFoundItems.Add(scanProgress.RelativeFilePath);
                     }
+                    UpdateResultTabHeaders();
                     break;
                 case ScanCompleteProgress scanCompleteProgress:
-                    ScanLogs.Add(Localization.GetScanCompleteString(scanCompleteProgress.Found, scanCompleteProgress.NotFound));
+                    ScanLogs.Add(Localization.GetScanCompleteString(scanCompleteProgress.Found, scanCompleteProgress.NotFound, scanCompleteProgress.Errors));
                     break;
             }
+        }
+
+        private void UpdateResultTabHeaders()
+        {
+            FoundTabHeaderTitle = Localization.GetFoundString(FoundItems.Count);
+            NotFoundTabHeaderTitle = Localization.GetNotFoundString(NotFoundItems.Count);
         }
     }
 }

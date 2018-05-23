@@ -544,6 +544,13 @@
             public SynchronizationLogMessagesTranslation LogMessages { get; set; }
         }
 
+        internal class LibraryColumnsTranslation
+        {
+            public string File { get; set; }
+            public string Authors { get; set; }
+            public string Title { get; set; }
+        }
+
         internal class LibraryTranslation
         {
             public string WindowTitle { get; set; }
@@ -551,8 +558,12 @@
             public string BrowseDirectoryDialogTitle { get; set; }
             public string ScanStarted { get; set; }
             public string CreatingIndexes { get; set; }
+            public string Found { get; set; }
             public string NotFound { get; set; }
+            public string ScanLog { get; set; }
+            public string Error { get; set; }
             public string ScanComplete { get; set; }
+            public LibraryColumnsTranslation Columns { get; set; }
         }
 
         internal class DatabaseTranslation
