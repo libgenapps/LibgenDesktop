@@ -35,6 +35,12 @@ namespace LibgenDesktop.Models.SqlDump
 
         protected DateTime ParseDateTime(string value)
         {
+			// Added in order to skip the exception as DateTime.ParseExact thows excpetion
+			// if Date value is Minimun or all zeros
+			if(value == DateTime.MinValue.ToString("yyyy-MM-dd HH:mm:ss") || value == "0000-00-00 00:00:00")
+			{
+				value = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+			}
             return DateTime.ParseExact(value, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
         }
 

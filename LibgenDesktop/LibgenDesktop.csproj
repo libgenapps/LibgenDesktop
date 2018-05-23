@@ -116,6 +116,7 @@
     </ApplicationDefinition>
     <Compile Include="Common\Constants.cs" />
     <Compile Include="Common\Environment.cs" />
+    <Compile Include="Common\SqlLiteDataReaderExtensions.cs" />
     <Compile Include="Infrastructure\EventProvider.cs" />
     <Compile Include="Infrastructure\FuncCommand.cs" />
     <Compile Include="Infrastructure\IEventListener.cs" />
