@@ -170,7 +170,7 @@
     <Compile Include="Models\Localization\Localizators\ApplicationUpdateLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\CommonDetailsTabLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\AboutWindowLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\LibraryWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\LibraryTabLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\DatabaseWindowLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\CreateDatabaseWindowLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\DetailsTabLocalizator.cs" />
@@ -244,7 +244,7 @@
     <Compile Include="ViewModels\Windows\ApplicationUpdateWindowViewModel.cs" />
     <Compile Include="ViewModels\Tabs\DetailsTabViewModel.cs" />
     <Compile Include="ViewModels\Windows\AboutWindowViewModel.cs" />
-    <Compile Include="ViewModels\Windows\LibraryWindowViewModel.cs" />
+    <Compile Include="ViewModels\Tabs\LibraryTabViewModel.cs" />
     <Compile Include="ViewModels\Windows\DatabaseWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\DetailsWindowViewModel.cs" />
     <Compile Include="ViewModels\EventArguments\OpenFictionDetailsEventArgs.cs" />
@@ -301,8 +301,8 @@
     <Compile Include="Views\Windows\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Windows\LibraryWindow.xaml.cs">
-      <DependentUpon>LibraryWindow.xaml</DependentUpon>
+    <Compile Include="Views\Tabs\LibraryTab.xaml.cs">
+      <DependentUpon>LibraryTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\DatabaseWindow.xaml.cs">
       <DependentUpon>DatabaseWindow.xaml</DependentUpon>
@@ -385,7 +385,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\LibraryWindowStyles.xaml">
+    <Page Include="Views\Styles\LibraryTabStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -421,7 +421,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Windows\LibraryWindow.xaml">
+    <Page Include="Views\Tabs\LibraryTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

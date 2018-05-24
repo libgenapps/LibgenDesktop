@@ -32,7 +32,7 @@
             "Update": "Update...",
             "Import": "Import...",
             "Synchronize": "Synchronization...",
-            "Library": "Library...",
+            "Library": "Library",
             "Database": "Database...",
             "Settings": "Settings",
             "About": "About"
@@ -502,7 +502,7 @@
     },
     "Library":
     {
-        "WindowTitle": "Local library",
+        "TabTitle": "Library",
         "Scan": "SCAN FOR NON-FICTION BOOKS...",
         "BrowseDirectoryDialogTitle": "Scan for non-fiction books in...",
         "ScanStarted": "Scan started in {directory}",

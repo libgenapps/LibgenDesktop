@@ -945,7 +945,7 @@ namespace LibgenDesktop.Models
                         NonFictionBook book = localDatabase.GetNonFictionBookByMd5Hash(md5Hash);
                         if (book != null)
                         {
-                            progressHandler.Report(new ScanProgress(relativeFilePath, book.Authors, book.Title));
+                            progressHandler.Report(new ScanProgress(relativeFilePath, book.Authors, book.Title, book));
                             found++;
                         }
                         else

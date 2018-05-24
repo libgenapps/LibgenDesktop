@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.Tabs.LibraryTab"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+             xmlns:u="clr-namespace:LibgenDesktop.Views.Utils">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/LibraryTabStyles.xaml" />
+    </UserControl.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <StackPanel>
+            <Button Content="{Binding Localization.Scan}" Command="{Binding ScanCommand}" Style="{StaticResource ScanButton}"
+                Visibility="{Binding IsScanButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        </StackPanel>
+        <TabControl Visibility="{Binding IsResultsPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <TabItem Header="{Binding FoundTabHeaderTitle}">
+                <DataGrid Name="foundDataGrid" ItemsSource="{Binding FoundItems}" ColumnWidth="*" Style="{StaticResource FoundDataGrid}">
+                    <DataGrid.Resources>
+                        <u:BindingProxy x:Key="dataGridViewModel" DataContext="{Binding}" />
+                    </DataGrid.Resources>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
+                            <Setter Property="u:DataGridExtensions.DoubleClickCommand"
+                                    Value="{Binding ElementName=foundDataGrid, Path=DataContext.OpenDetailsCommand}" />
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.InputBindings>
+                        <KeyBinding Command="{Binding FoundDataGridEnterKeyCommand}" Key="Enter" />
+                    </DataGrid.InputBindings>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding RelativeFilePath}"
+                                            Header="{Binding DataContext.Localization.ColumnsFile, Source={StaticResource dataGridViewModel}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style>
+                                    <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Binding="{Binding Authors}"
+                                            Header="{Binding DataContext.Localization.ColumnsAuthors, Source={StaticResource dataGridViewModel}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style>
+                                    <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn Binding="{Binding Title}"
+                                            Header="{Binding DataContext.Localization.ColumnsTitle, Source={StaticResource dataGridViewModel}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style>
+                                    <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="{Binding NotFoundTabHeaderTitle}">
+                <DataGrid ItemsSource="{Binding NotFoundItems}" ColumnWidth="*" Style="{StaticResource NotFoundDataGrid}">
+                    <DataGrid.Resources>
+                        <u:BindingProxy x:Key="dataGridViewModel" DataContext="{Binding}" />
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding}"
+                                            Header="{Binding DataContext.Localization.ColumnsFile, Source={StaticResource dataGridViewModel}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style>
+                                    <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Header="{Binding Localization.ScanLog}" IsSelected="{Binding IsScanLogTabSelected}">
+                <c:AutoScrollViewer Style="{StaticResource LogPanel}">
+                    <ItemsControl ItemsSource="{Binding ScanLogs}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </c:AutoScrollViewer>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

@@ -553,7 +553,7 @@
 
         internal class LibraryTranslation
         {
-            public string WindowTitle { get; set; }
+            public string TabTitle { get; set; }
             public string Scan { get; set; }
             public string BrowseDirectoryDialogTitle { get; set; }
             public string ScanStarted { get; set; }

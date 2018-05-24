@@ -215,6 +215,14 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
+        private LibraryTabViewModel LibraryTabViewModel
+        {
+            get
+            {
+                return TabViewModels.OfType<LibraryTabViewModel>().FirstOrDefault();
+            }
+        }
+
         private void Initialize()
         {
             localization = MainModel.Localization.CurrentLanguage.MainWindow;
@@ -498,6 +506,9 @@ namespace LibgenDesktop.ViewModels.Windows
                     sciMagDetailsTabViewModel.SelectDownloadRequested -= SelectDownloadRequested;
                     sciMagDetailsTabViewModel.CloseTabRequested -= SciMagDetailsCloseTabRequested;
                     break;
+                case LibraryTabViewModel libraryTabViewModel:
+                    libraryTabViewModel.OpenNonFictionDetailsRequested -= OpenNonFictionDetailsRequested;
+                    break;
             }
             int removingTabIndex = TabViewModels.IndexOf(tabViewModel);
             TabViewModels.Remove(tabViewModel);
@@ -634,10 +645,21 @@ namespace LibgenDesktop.ViewModels.Windows
 
         private void LibraryMenuItemClick()
         {
-            LibraryWindowViewModel libraryWindowViewModel = new LibraryWindowViewModel(MainModel);
-            IWindowContext libraryWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.LIBRARY_WINDOW, libraryWindowViewModel,
-                CurrentWindowContext);
-            libraryWindowContext.ShowDialog();
+            LibraryTabViewModel libraryTabViewModel = LibraryTabViewModel;
+            if (libraryTabViewModel == null)
+            {
+                libraryTabViewModel = new LibraryTabViewModel(MainModel, CurrentWindowContext);
+                libraryTabViewModel.OpenNonFictionDetailsRequested += OpenNonFictionDetailsRequested;
+                TabViewModels.Add(libraryTabViewModel);
+                SelectedTabViewModel = libraryTabViewModel;
+                NotifyPropertyChanged(nameof(IsDefaultSearchTabVisible));
+                NotifyPropertyChanged(nameof(AreTabsVisible));
+                NotifyPropertyChanged(nameof(IsNewTabButtonVisible));
+            }
+            else
+            {
+                SelectedTabViewModel = libraryTabViewModel;
+            }
         }
 
         private void DatabaseMenuItemClick()

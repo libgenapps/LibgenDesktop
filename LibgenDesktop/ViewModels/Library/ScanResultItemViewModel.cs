@@ -5,7 +5,7 @@ namespace LibgenDesktop.ViewModels.Library
     internal class ScanResultItemViewModel : ViewModel
     {
         public ScanResultItemViewModel(LibgenObjectType libgenObjectType, int libgenObjectId, string fullFilePath, string relativeFilePath, string authors,
-            string title)
+            string title, NonFictionBook libgenObject)
         {
             LibgenObjectType = libgenObjectType;
             LibgenObjectId = libgenObjectId;
@@ -13,6 +13,7 @@ namespace LibgenDesktop.ViewModels.Library
             RelativeFilePath = relativeFilePath;
             Authors = authors;
             Title = title;
+            LibgenObject = libgenObject;
         }
 
         public LibgenObjectType LibgenObjectType { get; }
@@ -21,5 +22,6 @@ namespace LibgenDesktop.ViewModels.Library
         public string RelativeFilePath { get; }
         public string Authors { get; }
         public string Title { get; }
+        public NonFictionBook LibgenObject { get; }
     }
 }

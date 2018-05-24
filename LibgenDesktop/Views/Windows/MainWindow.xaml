@@ -58,6 +58,9 @@
                 <DataTemplate DataType="{x:Type vm:DownloadManagerTabViewModel}">
                     <tabs:DownloadManagerTab />
                 </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:LibraryTabViewModel}">
+                    <tabs:LibraryTab />
+                </DataTemplate>
             </TabControl.Resources>
             <c:TabControl.HeaderItemTemplate>
                 <DataTemplate>
