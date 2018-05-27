@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
@@ -13,7 +14,7 @@ namespace LibgenDesktop.ViewModels.Tabs
     internal class LibraryTabViewModel : TabViewModel
     {
         private LibraryTabLocalizator localization;
-        private bool isScanButtonVisible;
+        private bool areScanButtonsVisible;
         private bool isResultsPanelVisible;
         private string foundTabHeaderTitle;
         private string notFoundTabHeaderTitle;
@@ -27,7 +28,9 @@ namespace LibgenDesktop.ViewModels.Tabs
             : base(mainModel, parentWindowContext, mainModel.Localization.CurrentLanguage.Library.TabTitle)
         {
             Localization = mainModel.Localization.CurrentLanguage.Library;
-            ScanCommand = new Command(Scan);
+            ScanNonFictionCommand = new Command(ScanNonFiction);
+            ScanFictionCommand = new Command(ScanFiction);
+            ScanSciMagCommand = new Command(ScanSciMag);
             OpenDetailsCommand = new Command(param => OpenDetails((param as ScanResultItemViewModel)));
             FoundDataGridEnterKeyCommand = new Command(FoundDataGridEnterKeyPressed);
             Initialize();
@@ -47,15 +50,15 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public bool IsScanButtonVisible
+        public bool AreScanButtonsVisible
         {
             get
             {
-                return isScanButtonVisible;
+                return areScanButtonsVisible;
             }
             set
             {
-                isScanButtonVisible = value;
+                areScanButtonsVisible = value;
                 NotifyPropertyChanged();
             }
         }
@@ -164,21 +167,40 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public Command ScanCommand { get; }
+        public Command ScanNonFictionCommand { get; }
+        public Command ScanFictionCommand { get; }
+        public Command ScanSciMagCommand { get; }
         public Command OpenDetailsCommand { get; }
         public Command FoundDataGridEnterKeyCommand { get; }
 
         public event EventHandler<OpenNonFictionDetailsEventArgs> OpenNonFictionDetailsRequested;
+        public event EventHandler<OpenFictionDetailsEventArgs> OpenFictionDetailsRequested;
+        public event EventHandler<OpenSciMagDetailsEventArgs> OpenSciMagDetailsRequested;
 
         private void Initialize()
         {
-            isScanButtonVisible = true;
+            areScanButtonsVisible = true;
             isResultsPanelVisible = false;
             isScanLogTabSelected = false;
             scanLogs = new ObservableCollection<string>();
         }
 
-        private async void Scan()
+        private void ScanNonFiction()
+        {
+            Scan<NonFictionBook>(MainModel.ScanNonFictionAsync);
+        }
+
+        private void ScanFiction()
+        {
+            Scan<FictionBook>(MainModel.ScanFictionAsync);
+        }
+
+        private void ScanSciMag()
+        {
+            Scan<SciMagArticle>(MainModel.ScanSciMagAsync);
+        }
+
+        private async void Scan<T>(Func<string, Progress<object>, Task> scanFunction) where T : LibgenObject
         {
             SelectFolderDialogParameters selectFolderDialogParameters = new SelectFolderDialogParameters
             {
@@ -191,16 +213,16 @@ namespace LibgenDesktop.ViewModels.Tabs
                 NotFoundItems = new ObservableCollection<string>();
                 UpdateResultTabHeaders();
                 IsScanLogTabSelected = true;
-                IsScanButtonVisible = false;
+                AreScanButtonsVisible = false;
                 IsResultsPanelVisible = true;
                 string scanDirectory = selectFolderDialogResult.SelectedFolderPath;
                 ScanLogs.Add(Localization.GetScanStartedString(scanDirectory));
-                Progress<object> scanProgressHandler = new Progress<object>(HandleScanProgress);
-                await MainModel.ScanAsync(scanDirectory, scanProgressHandler);
+                Progress<object> scanProgressHandler = new Progress<object>(HandleScanProgress<T>);
+                await scanFunction(scanDirectory, scanProgressHandler);
             }
         }
 
-        private void HandleScanProgress(object progress)
+        private void HandleScanProgress<T>(object progress) where T : LibgenObject
         {
             switch (progress)
             {
@@ -212,21 +234,31 @@ namespace LibgenDesktop.ViewModels.Tabs
                             break;
                     }
                     break;
-                case ScanProgress scanProgress:
-                    if (scanProgress.Error)
+                case ScanProgress<T> scanProgress:
+                    switch (scanProgress.LibgenObject)
                     {
-                        ScanLogs.Add($"{scanProgress.RelativeFilePath} — {Localization.Error}.");
+                        case NonFictionBook nonFictionBook:
+                            FoundItems.Add(new NonFictionScanResultItemViewModel(scanProgress.RelativeFilePath, nonFictionBook));
+                            break;
+                        case FictionBook fictionBook:
+                            FoundItems.Add(new FictionScanResultItemViewModel(scanProgress.RelativeFilePath, fictionBook));
+                            break;
+                        case SciMagArticle sciMagArticle:
+                            FoundItems.Add(new SciMagScanResultItemViewModel(scanProgress.RelativeFilePath, sciMagArticle));
+                            break;
                     }
-                    else if (scanProgress.Found)
+                    UpdateResultTabHeaders();
+                    break;
+                case ScanUnknownProgress scanUnknownProgress:
+                    if (scanUnknownProgress.Error)
                     {
-                        FoundItems.Add(new ScanResultItemViewModel(LibgenObjectType.NON_FICTION_BOOK, 0, null, scanProgress.RelativeFilePath,
-                            scanProgress.Authors, scanProgress.Title, scanProgress.LibgenObject));
+                        ScanLogs.Add($"{scanUnknownProgress.RelativeFilePath} — {Localization.Error}.");
                     }
                     else
                     {
-                        NotFoundItems.Add(scanProgress.RelativeFilePath);
+                        NotFoundItems.Add(scanUnknownProgress.RelativeFilePath);
+                        UpdateResultTabHeaders();
                     }
-                    UpdateResultTabHeaders();
                     break;
                 case ScanCompleteProgress scanCompleteProgress:
                     ScanLogs.Add(Localization.GetScanCompleteString(scanCompleteProgress.Found, scanCompleteProgress.NotFound, scanCompleteProgress.Errors));
@@ -253,7 +285,18 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         private void OpenDetails(ScanResultItemViewModel foundItem)
         {
-            OpenNonFictionDetailsRequested?.Invoke(this, new OpenNonFictionDetailsEventArgs(foundItem.LibgenObject));
+            switch (foundItem)
+            {
+                case NonFictionScanResultItemViewModel nonFictionFoundItem:
+                    OpenNonFictionDetailsRequested?.Invoke(this, new OpenNonFictionDetailsEventArgs(nonFictionFoundItem.LibgenObject));
+                    break;
+                case FictionScanResultItemViewModel fictionFoundItem:
+                    OpenFictionDetailsRequested?.Invoke(this, new OpenFictionDetailsEventArgs(fictionFoundItem.LibgenObject));
+                    break;
+                case SciMagScanResultItemViewModel sciMagFoundItem:
+                    OpenSciMagDetailsRequested?.Invoke(this, new OpenSciMagDetailsEventArgs(sciMagFoundItem.LibgenObject));
+                    break;
+            }
         }
 
         private void LocalizationLanguageChanged(object sender, EventArgs e)

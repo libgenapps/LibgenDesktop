@@ -5,7 +5,7 @@
     </ResourceDictionary.MergedDictionaries>
     <Style x:Key="ScanButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Margin" Value="0,0,0,12" />
     </Style>
     <Style x:Key="FoundDataGrid" TargetType="DataGrid" BasedOn="{StaticResource SearchResultsDataGrid}" />
     <Style x:Key="NotFoundDataGrid" TargetType="DataGrid" BasedOn="{StaticResource SearchResultsDataGrid}" />

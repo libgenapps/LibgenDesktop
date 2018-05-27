@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,6 +47,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -209,6 +211,7 @@
     <Compile Include="Models\ProgressArgs\ImportSearchTableDefinitionProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportTableDefinitionFoundProgress.cs" />
     <Compile Include="Models\ProgressArgs\ExportProgress.cs" />
+    <Compile Include="Models\ProgressArgs\ScanUnknownProgress.cs" />
     <Compile Include="Models\ProgressArgs\ScanCompleteProgress.cs" />
     <Compile Include="Models\ProgressArgs\ScanProgress.cs" />
     <Compile Include="Models\ProgressArgs\SearchProgress.cs" />
@@ -237,6 +240,9 @@
     <Compile Include="ViewModels\DetailsItems\FictionDetailsItemViewModel.cs" />
     <Compile Include="ViewModels\DetailsItems\NonFictionDetailsItemViewModel.cs" />
     <Compile Include="ViewModels\DetailsItems\SciMagDetailsItemViewModel.cs" />
+    <Compile Include="ViewModels\Library\SciMagScanResultItemViewModel.cs" />
+    <Compile Include="ViewModels\Library\FictionScanResultItemViewModel.cs" />
+    <Compile Include="ViewModels\Library\NonFictionScanResultItemViewModel.cs" />
     <Compile Include="ViewModels\Library\ScanResultItemViewModel.cs" />
     <Compile Include="ViewModels\SearchResultItems\SciMagSearchResultItemViewModel.cs" />
     <Compile Include="ViewModels\SearchResultItems\FictionSearchResultItemViewModel.cs" />
@@ -729,6 +735,10 @@
     <ContentWithTargetPath Include="Resources\Languages\Spanish.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Languages\Spanish.lng</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Languages\French.lng">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Languages\French.lng</TargetPath>
     </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>

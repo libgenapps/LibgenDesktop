@@ -27,9 +27,12 @@
         "MainMenu":
         {
             "DownloadManagerTooltip": "Administrador de descargas",
+            "BookmarksTooltip": "Marcadores",
+            "NoBookmarks": "No hay marcadores",
             "Update": "Actualizar...",
             "Import": "Importar...",
             "Synchronize": "Sincronización...",
+            "Library": "Biblioteca",
             "Database": "Base de datos...",
             "Settings": "Ajustes",
             "About": "Acerca de"
@@ -78,6 +81,8 @@
         "SearchInProgress": "Realizando la búsqueda...",
         "Interrupt": "INTERRUMPIR",
         "Interrupting": "INTERRUMPIENDO...",
+        "AddToBookmarksTooltip": "Añadir a los marcadores",
+        "RemoveFromBookmarksTooltip": "Quitar de los marcadores",
         "ExportButtonTooltip": "Exportar la búsqueda a un archivo"
     },
     "NonFictionSearchResultsTab":
@@ -493,6 +498,25 @@
             "SynchronizationSuccessful": "Sincronización completada satisfactoriamente.",
             "SynchronizationCancelled": "La sincronización ha sido cancelada por el usuario.",
             "SynchronizationError": "Ocurrió un error duante la sincronización."
+        }
+    },
+    "Library":
+    {
+        "TabTitle": "Biblioteca",
+        "ScanNonFiction": "BUSCAR LIBROS DE NO FICCIÓN...",
+        "BrowseDirectoryDialogTitle": "Buscar en...",
+        "ScanStarted": "La búsqueda se inició en {directory}",
+        "CreatingIndexes": "Por favor, espera. Creandos los índices perdidos de la base de datos...",
+        "Found": "Encontrado ({count})",
+        "NotFound": "No encontrado ({count})",
+        "ScanLog": "Registro de búsqueda",
+        "Error": "error",
+        "ScanComplete": "La búsqueda terminó. Encontrados: {found}, no se encontraron: {notFound}, errores: {errors}.",
+        "Columns":
+        {
+            "File": "Archivo",
+            "Authors": "Autores",
+            "Title": "Título"
         }
     },
     "Database":

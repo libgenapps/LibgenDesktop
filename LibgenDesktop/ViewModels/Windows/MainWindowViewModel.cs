@@ -508,6 +508,8 @@ namespace LibgenDesktop.ViewModels.Windows
                     break;
                 case LibraryTabViewModel libraryTabViewModel:
                     libraryTabViewModel.OpenNonFictionDetailsRequested -= OpenNonFictionDetailsRequested;
+                    libraryTabViewModel.OpenFictionDetailsRequested -= OpenFictionDetailsRequested;
+                    libraryTabViewModel.OpenSciMagDetailsRequested -= OpenSciMagDetailsRequested;
                     break;
             }
             int removingTabIndex = TabViewModels.IndexOf(tabViewModel);
@@ -650,6 +652,8 @@ namespace LibgenDesktop.ViewModels.Windows
             {
                 libraryTabViewModel = new LibraryTabViewModel(MainModel, CurrentWindowContext);
                 libraryTabViewModel.OpenNonFictionDetailsRequested += OpenNonFictionDetailsRequested;
+                libraryTabViewModel.OpenFictionDetailsRequested += OpenFictionDetailsRequested;
+                libraryTabViewModel.OpenSciMagDetailsRequested += OpenSciMagDetailsRequested;
                 TabViewModels.Add(libraryTabViewModel);
                 SelectedTabViewModel = libraryTabViewModel;
                 NotifyPropertyChanged(nameof(IsDefaultSearchTabVisible));

@@ -84,7 +84,7 @@
 
         public const string GET_NON_FICTION_BY_MD5HASH = "SELECT * FROM non_fiction WHERE Md5Hash = @Md5Hash COLLATE NOCASE";
 
-        public const string GET_NON_FICTION_ID_BY_LIBGENID = "SELECT Id FROM non_fiction WHERE LibgenId=@LibgenId LIMIT 1";
+        public const string GET_NON_FICTION_ID_BY_LIBGENID = "SELECT Id FROM non_fiction WHERE LibgenId = @LibgenId LIMIT 1";
 
         public const string GET_LAST_MODIFIED_NON_FICTION =
             "SELECT * FROM non_fiction WHERE LastModifiedDateTime = (SELECT MAX(LastModifiedDateTime) FROM non_fiction) ORDER BY LibgenId DESC LIMIT 1";
@@ -238,7 +238,9 @@
 
         public const string GET_FICTION_BY_ID = "SELECT * FROM fiction WHERE Id = @Id";
 
-        public const string GET_FICTION_ID_BY_LIBGENID = "SELECT Id FROM fiction WHERE LibgenId=@LibgenId LIMIT 1";
+        public const string GET_FICTION_BY_MD5HASH = "SELECT * FROM fiction WHERE Md5Hash = @Md5Hash COLLATE NOCASE";
+
+        public const string GET_FICTION_ID_BY_LIBGENID = "SELECT Id FROM fiction WHERE LibgenId = @LibgenId LIMIT 1";
 
         public const string GET_LAST_MODIFIED_FICTION = 
             "SELECT * FROM fiction WHERE LastModifiedDateTime = (SELECT MAX(LastModifiedDateTime) FROM fiction) ORDER BY LibgenId DESC LIMIT 1";
@@ -386,7 +388,9 @@
 
         public const string GET_SCIMAG_BY_ID = "SELECT * FROM scimag WHERE Id = @Id";
 
-        public const string GET_SCIMAG_ID_BY_LIBGENID = "SELECT Id FROM scimag WHERE LibgenId=@LibgenId LIMIT 1";
+        public const string GET_SCIMAG_BY_MD5HASH = "SELECT * FROM scimag WHERE Md5Hash = @Md5Hash COLLATE NOCASE LIMIT 1";
+
+        public const string GET_SCIMAG_ID_BY_LIBGENID = "SELECT Id FROM scimag WHERE LibgenId = @LibgenId LIMIT 1";
 
         public const string GET_LAST_ADDED_SCIMAG =
             "SELECT * FROM scimag WHERE AddedDateTime = (SELECT MAX(AddedDateTime) FROM scimag) ORDER BY LibgenId DESC LIMIT 1";
@@ -406,7 +410,7 @@
 
         public const string SCIMAG_INDEX_PREFIX = "IX_scimag_";
 
-        public const string CREATE_SCIMAG_MD5HASH_INDEX = "CREATE UNIQUE INDEX " + SCIMAG_INDEX_PREFIX + "Md5Hash ON scimag (Md5Hash COLLATE NOCASE)";
+        public const string CREATE_SCIMAG_MD5HASH_INDEX = "CREATE INDEX " + SCIMAG_INDEX_PREFIX + "Md5Hash ON scimag (Md5Hash COLLATE NOCASE)";
 
         public const string CREATE_SCIMAG_ADDEDDATETIME_INDEX = "CREATE INDEX " + SCIMAG_INDEX_PREFIX + "AddedDateTime ON scimag (AddedDateTime DESC)";
     }

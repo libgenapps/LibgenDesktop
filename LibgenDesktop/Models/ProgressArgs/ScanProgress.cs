@@ -2,33 +2,15 @@
 
 namespace LibgenDesktop.Models.ProgressArgs
 {
-    internal class ScanProgress
+    internal class ScanProgress<T> where T: LibgenObject
     {
-        public ScanProgress(string relativeFilePath, bool error = false)
+        public ScanProgress(string relativeFilePath, T libgenObject)
         {
             RelativeFilePath = relativeFilePath;
-            Found = false;
-            Error = error;
-            Authors = null;
-            Title = null;
-            LibgenObject = null;
-        }
-
-        public ScanProgress(string relativeFilePath, string authors, string title, NonFictionBook libgenObject)
-        {
-            RelativeFilePath = relativeFilePath;
-            Found = true;
-            Error = false;
-            Authors = authors;
-            Title = title;
             LibgenObject = libgenObject;
         }
 
         public string RelativeFilePath { get; }
-        public bool Found { get; }
-        public bool Error { get; }
-        public string Authors { get; }
-        public string Title { get; }
-        public NonFictionBook LibgenObject { get; }
+        public T LibgenObject { get; }
     }
 }

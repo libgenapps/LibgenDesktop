@@ -29,6 +29,7 @@ namespace LibgenDesktop.Setup
             AddFile(@"Languages\Romanian.lng");
             AddFile(@"Languages\Ukrainian.lng");
             AddFile(@"Languages\Spanish.lng");
+            AddFile(@"Languages\French.lng");
             AddFile(@"Mirrors\mirrors.config");
             AddFile(@"Mirrors\libgen_io_nonfiction.xslt");
             AddFile(@"Mirrors\libgen_io_fiction.xslt");

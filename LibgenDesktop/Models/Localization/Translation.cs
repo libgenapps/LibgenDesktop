@@ -554,7 +554,9 @@
         internal class LibraryTranslation
         {
             public string TabTitle { get; set; }
-            public string Scan { get; set; }
+            public string ScanNonFiction { get; set; }
+            public string ScanFiction { get; set; }
+            public string ScanSciMag { get; set; }
             public string BrowseDirectoryDialogTitle { get; set; }
             public string ScanStarted { get; set; }
             public string CreatingIndexes { get; set; }

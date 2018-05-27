@@ -9,7 +9,9 @@ namespace LibgenDesktop.Models.Localization.Localizators
             : base(prioritizedTranslationList, formatter)
         {
             TabTitle = Format(translation => translation?.TabTitle);
-            Scan = Format(translation => translation?.Scan);
+            ScanNonFiction = Format(translation => translation?.ScanNonFiction);
+            ScanFiction = Format(translation => translation?.ScanFiction);
+            ScanSciMag = Format(translation => translation?.ScanSciMag);
             BrowseDirectoryDialogTitle = Format(translation => translation?.BrowseDirectoryDialogTitle);
             CreatingIndexes = Format(translation => translation?.CreatingIndexes);
             ScanLog = Format(translation => translation?.ScanLog);
@@ -20,7 +22,9 @@ namespace LibgenDesktop.Models.Localization.Localizators
         }
 
         public string TabTitle { get; }
-        public string Scan { get; }
+        public string ScanNonFiction { get; }
+        public string ScanFiction { get; }
+        public string ScanSciMag { get; }
         public string BrowseDirectoryDialogTitle { get; }
         public string CreatingIndexes { get; }
         public string ScanLog { get; }

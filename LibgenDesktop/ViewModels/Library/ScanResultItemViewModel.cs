@@ -2,26 +2,27 @@
 
 namespace LibgenDesktop.ViewModels.Library
 {
-    internal class ScanResultItemViewModel : ViewModel
+    internal abstract class ScanResultItemViewModel : ViewModel
     {
-        public ScanResultItemViewModel(LibgenObjectType libgenObjectType, int libgenObjectId, string fullFilePath, string relativeFilePath, string authors,
-            string title, NonFictionBook libgenObject)
+        public ScanResultItemViewModel(string relativeFilePath)
         {
-            LibgenObjectType = libgenObjectType;
-            LibgenObjectId = libgenObjectId;
-            FullFilePath = fullFilePath;
             RelativeFilePath = relativeFilePath;
-            Authors = authors;
-            Title = title;
+        }
+
+        public string RelativeFilePath { get; }
+
+        public abstract string Authors { get; }
+        public abstract string Title { get; }
+    }
+
+    internal abstract class ScanResultItemViewModel<T> : ScanResultItemViewModel where T : LibgenObject
+    {
+        public ScanResultItemViewModel(string relativeFilePath, T libgenObject)   
+            : base(relativeFilePath)
+        {
             LibgenObject = libgenObject;
         }
 
-        public LibgenObjectType LibgenObjectType { get; }
-        public int LibgenObjectId { get; }
-        public string FullFilePath { get; }
-        public string RelativeFilePath { get; }
-        public string Authors { get; }
-        public string Title { get; }
-        public NonFictionBook LibgenObject { get; }
+        public T LibgenObject { get; }
     }
 }

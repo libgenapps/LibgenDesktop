@@ -7,9 +7,10 @@
         <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/LibraryTabStyles.xaml" />
     </UserControl.Resources>
     <Grid Style="{StaticResource TopContainer}">
-        <StackPanel>
-            <Button Content="{Binding Localization.Scan}" Command="{Binding ScanCommand}" Style="{StaticResource ScanButton}"
-                Visibility="{Binding IsScanButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <StackPanel Visibility="{Binding AreScanButtonsVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <Button Content="{Binding Localization.ScanNonFiction}" Command="{Binding ScanNonFictionCommand}" Style="{StaticResource ScanButton}" />
+            <Button Content="{Binding Localization.ScanFiction}" Command="{Binding ScanFictionCommand}" Style="{StaticResource ScanButton}" />
+            <Button Content="{Binding Localization.ScanSciMag}" Command="{Binding ScanSciMagCommand}" Style="{StaticResource ScanButton}" />
         </StackPanel>
         <TabControl Visibility="{Binding IsResultsPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
             <TabItem Header="{Binding FoundTabHeaderTitle}">

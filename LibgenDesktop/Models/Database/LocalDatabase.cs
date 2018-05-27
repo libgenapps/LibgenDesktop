@@ -523,6 +523,11 @@ namespace LibgenDesktop.Models.Database
             ExecuteCommands(SqlScripts.CREATE_FICTION_FTS_TABLE);
         }
 
+        public void CreateFictionMd5HashIndex()
+        {
+            ExecuteCommands(SqlScripts.CREATE_FICTION_MD5HASH_INDEX);
+        }
+
         public void CreateFictionLastModifiedDateTimeIndex()
         {
             ExecuteCommands(SqlScripts.CREATE_FICTION_LASTMODIFIEDDATETIME_INDEX);
@@ -549,6 +554,27 @@ namespace LibgenDesktop.Models.Database
             {
                 command.CommandText = SqlScripts.GET_FICTION_BY_ID;
                 command.Parameters.AddWithValue("@Id", id);
+                using (SQLiteDataReader dataReader = command.ExecuteReader())
+                {
+                    if (dataReader.Read())
+                    {
+                        FictionBook book = ReadFictionBook(dataReader);
+                        return book;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        public FictionBook GetFictionBookByMd5Hash(string md5Hash)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = SqlScripts.GET_FICTION_BY_MD5HASH;
+                command.Parameters.AddWithValue("@Md5Hash", md5Hash);
                 using (SQLiteDataReader dataReader = command.ExecuteReader())
                 {
                     if (dataReader.Read())
@@ -1021,6 +1047,11 @@ namespace LibgenDesktop.Models.Database
             ExecuteCommands(SqlScripts.CREATE_SCIMAG_FTS_TABLE);
         }
 
+        public void CreateSciMagMd5HashIndex()
+        {
+            ExecuteCommands(SqlScripts.CREATE_SCIMAG_MD5HASH_INDEX);
+        }
+
         public void CreateSciMagAddedDateTimeIndex()
         {
             ExecuteCommands(SqlScripts.CREATE_SCIMAG_ADDEDDATETIME_INDEX);
@@ -1042,6 +1073,27 @@ namespace LibgenDesktop.Models.Database
             {
                 command.CommandText = SqlScripts.GET_SCIMAG_BY_ID;
                 command.Parameters.AddWithValue("@Id", id);
+                using (SQLiteDataReader dataReader = command.ExecuteReader())
+                {
+                    if (dataReader.Read())
+                    {
+                        SciMagArticle article = ReadSciMagArticle(dataReader);
+                        return article;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        public SciMagArticle GetSciMagArticleByMd5Hash(string md5Hash)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = SqlScripts.GET_SCIMAG_BY_MD5HASH;
+                command.Parameters.AddWithValue("@Md5Hash", md5Hash);
                 using (SQLiteDataReader dataReader = command.ExecuteReader())
                 {
                     if (dataReader.Read())

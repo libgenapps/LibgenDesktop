@@ -503,8 +503,10 @@
     "Library":
     {
         "TabTitle": "Library",
-        "Scan": "SCAN FOR NON-FICTION BOOKS...",
-        "BrowseDirectoryDialogTitle": "Scan for non-fiction books in...",
+        "ScanNonFiction": "SCAN FOR NON-FICTION BOOKS...",
+        "ScanFiction": "SCAN FOR FICTION BOOKS...",
+        "ScanSciMag": "SCAN FOR SCIENTIFIC ARTICLES...",
+        "BrowseDirectoryDialogTitle": "Scan in...",
         "ScanStarted": "Scan started in {directory}",
         "CreatingIndexes": "Please wait. Creating missing database indexes...",
         "Found": "Found ({count})",

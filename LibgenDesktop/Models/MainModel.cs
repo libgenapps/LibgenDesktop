@@ -483,27 +483,22 @@ namespace LibgenDesktop.Models
             });
         }
 
-        public Task ScanAsync(string scanDirectory, IProgress<object> progressHandler)
+        public Task ScanNonFictionAsync(string scanDirectory, IProgress<object> progressHandler)
         {
-            return Task.Run(() =>
-            {
-                int found = 0;
-                int notFound = 0;
-                int errors = 0;
-                if (NonFictionBookCount > 0)
-                {
-                    Logger.Debug("Retrieving the list of non-fiction table indexes.");
-                    List<string> nonFictionIndexes = localDatabase.GetNonFictionIndexList();
-                    if (!nonFictionIndexes.Contains(SqlScripts.NON_FICTION_INDEX_PREFIX + "Md5Hash"))
-                    {
-                        Logger.Debug("Creating an index on Md5Hash column.");
-                        progressHandler.Report(new GenericProgress(GenericProgress.Event.SCAN_CREATING_INDEXES));
-                        localDatabase.CreateNonFictionMd5HashIndex();
-                    }
-                    ScanDirectory(scanDirectory.ToLower(), scanDirectory, progressHandler, ref found, ref notFound, ref errors);
-                }
-                progressHandler.Report(new ScanCompleteProgress(found, notFound, errors));
-            });
+            return ScanAsync(scanDirectory, progressHandler, NonFictionBookCount, localDatabase.GetNonFictionIndexList,
+                SqlScripts.NON_FICTION_INDEX_PREFIX, localDatabase.CreateNonFictionMd5HashIndex, localDatabase.GetNonFictionBookByMd5Hash);
+        }
+
+        public Task ScanFictionAsync(string scanDirectory, IProgress<object> progressHandler)
+        {
+            return ScanAsync(scanDirectory, progressHandler, FictionBookCount, localDatabase.GetFictionIndexList,
+                SqlScripts.FICTION_INDEX_PREFIX, localDatabase.CreateFictionMd5HashIndex, localDatabase.GetFictionBookByMd5Hash);
+        }
+
+        public Task ScanSciMagAsync(string scanDirectory, IProgress<object> progressHandler)
+        {
+            return ScanAsync(scanDirectory, progressHandler, SciMagArticleCount, localDatabase.GetSciMagIndexList,
+                SqlScripts.SCIMAG_INDEX_PREFIX, localDatabase.CreateSciMagMd5HashIndex, localDatabase.GetSciMagArticleByMd5Hash);
         }
 
         public Task<DatabaseStats> GetDatabaseStatsAsync()
@@ -910,8 +905,35 @@ namespace LibgenDesktop.Models
             return TableType.UNKNOWN;
         }
 
-        private void ScanDirectory(string rootScanDirectory, string scanDirectory, IProgress<object> progressHandler, ref int found, ref int notFound,
-            ref int errors)
+        private Task ScanAsync<T>(string scanDirectory, IProgress<object> progressHandler, int objectsInDatabaseCount,
+            Func<List<string>> indexRetrievalFunction, string indexPrefix, Action indexCreationAction, Func<string, T> getObjectByMd5HashFunction)
+            where T: LibgenObject
+        {
+            return Task.Run(() =>
+            {
+                Logger.Debug($"Scan request in directory = {scanDirectory}, object count = {objectsInDatabaseCount}, object type = {typeof(T).Name}.");
+                int found = 0;
+                int notFound = 0;
+                int errors = 0;
+                if (objectsInDatabaseCount > 0)
+                {
+                    Logger.Debug("Retrieving the list of indexes.");
+                    List<string> indexList = indexRetrievalFunction();
+                    if (!indexList.Contains(indexPrefix + "Md5Hash"))
+                    {
+                        Logger.Debug("Creating an index on Md5Hash column.");
+                        progressHandler.Report(new GenericProgress(GenericProgress.Event.SCAN_CREATING_INDEXES));
+                        indexCreationAction();
+                    }
+                    ScanDirectory(scanDirectory.ToLower(), scanDirectory, progressHandler, getObjectByMd5HashFunction, ref found, ref notFound, ref errors);
+                }
+                progressHandler.Report(new ScanCompleteProgress(found, notFound, errors));
+            });
+        }
+
+        private void ScanDirectory<T>(string rootScanDirectory, string scanDirectory, IProgress<object> progressHandler,
+            Func<string, T> getObjectByMd5HashFunction, ref int found, ref int notFound, ref int errors)
+            where T : LibgenObject
         {
             try
             {
@@ -936,21 +958,21 @@ namespace LibgenDesktop.Models
                     {
                         Logger.Debug($"Couldn't calculate MD5 hash for the file: {filePath}");
                         Logger.Exception(exception);
-                        progressHandler.Report(new ScanProgress(relativeFilePath, error: true));
+                        progressHandler.Report(new ScanUnknownProgress(relativeFilePath, error: true));
                         errors++;
                         continue;
                     }
                     try
                     {
-                        NonFictionBook book = localDatabase.GetNonFictionBookByMd5Hash(md5Hash);
-                        if (book != null)
+                        T libgenObject = getObjectByMd5HashFunction(md5Hash);
+                        if (libgenObject != null)
                         {
-                            progressHandler.Report(new ScanProgress(relativeFilePath, book.Authors, book.Title, book));
+                            progressHandler.Report(new ScanProgress<T>(relativeFilePath, libgenObject));
                             found++;
                         }
                         else
                         {
-                            progressHandler.Report(new ScanProgress(relativeFilePath));
+                            progressHandler.Report(new ScanUnknownProgress(relativeFilePath, error: false));
                             notFound++;
                         }
                     }
@@ -958,25 +980,25 @@ namespace LibgenDesktop.Models
                     {
                         Logger.Debug($"Couldn't lookup the MD5 hash: {md5Hash} in the database for the file: {filePath}");
                         Logger.Exception(exception);
-                        progressHandler.Report(new ScanProgress(relativeFilePath, error: true));
+                        progressHandler.Report(new ScanUnknownProgress(relativeFilePath, error: true));
                         errors++;
                         continue;
                     }
                 }
                 foreach (string directoryPath in Directory.EnumerateDirectories(scanDirectory))
                 {
-                    ScanDirectory(rootScanDirectory, directoryPath, progressHandler, ref found, ref notFound, ref errors);
+                    ScanDirectory(rootScanDirectory, directoryPath, progressHandler, getObjectByMd5HashFunction, ref found, ref notFound, ref errors);
                 }
             }
             catch (Exception exception)
             {
                 Logger.Exception(exception);
-                progressHandler.Report(new ScanProgress(scanDirectory, error: true));
+                progressHandler.Report(new ScanUnknownProgress(scanDirectory, error: true));
                 errors++;
             }
         }
 
-            private void CheckAndCreateNonFictionIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)
+        private void CheckAndCreateNonFictionIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)
         {
             Logger.Debug("Retrieving the list of non-fiction table indexes.");
             List<string> nonFictionIndexes = localDatabase.GetNonFictionIndexList();

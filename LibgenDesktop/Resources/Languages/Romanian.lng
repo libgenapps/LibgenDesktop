@@ -27,10 +27,13 @@
         "MainMenu":
         {
             "DownloadManagerTooltip": "Managerul de Descărcare",
-            "Update": "Actualizează...",
+            "BookmarksTooltip": "Marcaje",
+            "NoBookmarks": "Fără marcaje",
+            "Update": "Actualizare...",
             "Import": "Importare...",
             "Synchronize": "Sincronizare...",
-            "Database": "Baza de date...",
+            "Library": "Bibliotecă",
+            "Database": "Bază de date...",
             "Settings": "Setări",
             "About": "Despre"
         }
@@ -78,6 +81,8 @@
         "SearchInProgress": "Căutare în curs...",
         "Interrupt": "ÎNTRERUPE",
         "Interrupting": "SE ÎNTRERUPE...",
+        "AddToBookmarksTooltip": "Adaugă la Marcaje",
+        "RemoveFromBookmarksTooltip": "Șterge din Marcaje",
         "ExportButtonTooltip": "Exportă rezultatele căutării într-un fișier"
     },
     "NonFictionSearchResultsTab":
@@ -493,6 +498,25 @@
             "SynchronizationSuccessful": "Sincronizarea s-a încheiat cu succes.",
             "SynchronizationCancelled": "Sincronizarea a fost oprită de utilizator.",
             "SynchronizationError": "S-a produs o eroare în timpul sincronizării."
+        }
+    },
+    "Library":
+    {
+        "TabTitle": "Biblioteca",
+        "ScanNonFiction": "SCANEAZĂ CĂRȚI ȘTIINȚIFICE (NON-FICTION)...",
+        "BrowseDirectoryDialogTitle": "Scanează în...",
+        "ScanStarted": "Scanarea pornită în {directory}",
+        "CreatingIndexes": "Așteptați. Se creează indecșii lipsă a Bazei de Date...",
+        "Found": "S-au găsit ({count})",
+        "NotFound": "Lipsesc ({count})",
+        "ScanLog": "Log-ul scanării",
+        "Error": "eroare",
+        "ScanComplete": "Scanare completă. Găsite: {found}, lipsă: {notFound}, erori: {errors}.",
+        "Columns":
+        {
+            "File": "Fișier",
+            "Authors": "Autori",
+            "Title": "Titlu"
         }
     },
     "Database":
