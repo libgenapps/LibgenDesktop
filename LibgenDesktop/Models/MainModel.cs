@@ -501,6 +501,22 @@ namespace LibgenDesktop.Models
                 SqlScripts.SCIMAG_INDEX_PREFIX, localDatabase.CreateSciMagMd5HashIndex, localDatabase.GetSciMagArticleByMd5Hash);
         }
 
+        public Task<LibraryFile> LoadFileAsync(int fileId)
+        {
+            Logger.Debug($"Loading file with ID = {fileId}.");
+            return LoadItemAsync(localDatabase.GetFileById, fileId);
+        }
+
+        public Task AddFiles(List<LibraryFile> files)
+        {
+            return Task.Run(() =>
+            {
+                Logger.Debug($"Adding {files.Count} files to the database.");
+                localDatabase.AddFiles(files);
+                Logger.Debug($"{files.Count} files have been added to the database.");
+            });
+        }
+
         public Task<DatabaseStats> GetDatabaseStatsAsync()
         {
             return Task.Run(() =>

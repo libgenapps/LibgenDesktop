@@ -13,6 +13,9 @@ namespace LibgenDesktop.ViewModels.Library
 
         public abstract string Authors { get; }
         public abstract string Title { get; }
+        public abstract bool ExistsInLibrary { get; }
+        public abstract LibgenObjectType LibgenObjectType { get; }
+        public abstract int ObjectId { get; }
     }
 
     internal abstract class ScanResultItemViewModel<T> : ScanResultItemViewModel where T : LibgenObject
@@ -24,5 +27,11 @@ namespace LibgenDesktop.ViewModels.Library
         }
 
         public T LibgenObject { get; }
+
+        public override bool ExistsInLibrary => LibgenObject.FileId.HasValue;
+
+        public override LibgenObjectType LibgenObjectType => LibgenObject.LibgenObjectType;
+
+        public override int ObjectId => LibgenObject.Id;
     }
 }

@@ -103,7 +103,8 @@ namespace LibgenDesktop.Models.Settings
                         PublisherColumnWidth = DEFAULT_NON_FICTION_GRID_PUBLISHER_COLUMN_WIDTH,
                         FormatColumnWidth = DEFAULT_NON_FICTION_GRID_FORMAT_COLUMN_WIDTH,
                         FileSizeColumnWidth = DEFAULT_NON_FICTION_GRID_FILESIZE_COLUMN_WIDTH,
-                        OcrColumnWidth = DEFAULT_NON_FICTION_GRID_OCR_COLUMN_WIDTH
+                        OcrColumnWidth = DEFAULT_NON_FICTION_GRID_OCR_COLUMN_WIDTH,
+                        ExistsInLibraryColumnWidth = DEFAULT_NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_WIDTH
                     };
                 }
             }
@@ -116,6 +117,7 @@ namespace LibgenDesktop.Models.Settings
             public int FormatColumnWidth { get; set; }
             public int FileSizeColumnWidth { get; set; }
             public int OcrColumnWidth { get; set; }
+            public int ExistsInLibraryColumnWidth { get; set; }
         }
 
         internal class NonFictionSettings
@@ -167,7 +169,8 @@ namespace LibgenDesktop.Models.Settings
                         YearColumnWidth = DEFAULT_FICTION_GRID_YEAR_COLUMN_WIDTH,
                         PublisherColumnWidth = DEFAULT_FICTION_GRID_PUBLISHER_COLUMN_WIDTH,
                         FormatColumnWidth = DEFAULT_FICTION_GRID_FORMAT_COLUMN_WIDTH,
-                        FileSizeColumnWidth = DEFAULT_FICTION_GRID_FILESIZE_COLUMN_WIDTH
+                        FileSizeColumnWidth = DEFAULT_FICTION_GRID_FILESIZE_COLUMN_WIDTH,
+                        ExistsInLibraryColumnWidth = DEFAULT_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_WIDTH
                     };
                 }
             }
@@ -179,6 +182,7 @@ namespace LibgenDesktop.Models.Settings
             public int PublisherColumnWidth { get; set; }
             public int FormatColumnWidth { get; set; }
             public int FileSizeColumnWidth { get; set; }
+            public int ExistsInLibraryColumnWidth { get; set; }
         }
 
         internal class FictionSettings
@@ -229,7 +233,8 @@ namespace LibgenDesktop.Models.Settings
                         JournalColumnWidth = DEFAULT_SCI_MAG_GRID_JOURNAL_COLUMN_WIDTH,
                         YearColumnWidth = DEFAULT_SCI_MAG_GRID_YEAR_COLUMN_WIDTH,
                         FileSizeColumnWidth = DEFAULT_SCI_MAG_GRID_FILESIZE_COLUMN_WIDTH,
-                        DoiColumnWidth = DEFAULT_SCI_MAG_GRID_DOI_COLUMN_WIDTH
+                        DoiColumnWidth = DEFAULT_SCI_MAG_GRID_DOI_COLUMN_WIDTH,
+                        ExistsInLibraryColumnWidth = DEFAULT_SCI_MAG_GRID_EXISTS_IN_LIBRARY_COLUMN_WIDTH
                     };
                 }
             }
@@ -240,6 +245,7 @@ namespace LibgenDesktop.Models.Settings
             public int YearColumnWidth { get; set; }
             public int FileSizeColumnWidth { get; set; }
             public int DoiColumnWidth { get; set; }
+            public int ExistsInLibraryColumnWidth { get; set; }
         }
 
         internal class SciMagSettings
@@ -405,12 +411,12 @@ namespace LibgenDesktop.Models.Settings
                 {
                     return new MirrorSettings
                     {
-                        NonFictionBooksMirrorName = DEFAULT_MIRROR_NAME,
-                        NonFictionCoversMirrorName = DEFAULT_MIRROR_NAME,
-                        NonFictionSynchronizationMirrorName = DEFAULT_MIRROR_NAME,
-                        FictionBooksMirrorName = DEFAULT_MIRROR_NAME,
-                        FictionCoversMirrorName = DEFAULT_MIRROR_NAME,
-                        ArticlesMirrorMirrorName = DEFAULT_MIRROR_NAME
+                        NonFictionBooksMirrorName = DEFAULT_DOWNLOAD_MIRROR_NAME,
+                        NonFictionCoversMirrorName = DEFAULT_DOWNLOAD_MIRROR_NAME,
+                        NonFictionSynchronizationMirrorName = DEFAULT_SYNCHRONIZATION_MIRROR_NAME,
+                        FictionBooksMirrorName = DEFAULT_DOWNLOAD_MIRROR_NAME,
+                        FictionCoversMirrorName = DEFAULT_DOWNLOAD_MIRROR_NAME,
+                        ArticlesMirrorMirrorName = DEFAULT_DOWNLOAD_MIRROR_NAME
                     };
                 }
             }
@@ -660,6 +666,10 @@ namespace LibgenDesktop.Models.Settings
                     {
                         nonFictionColumns.OcrColumnWidth = NON_FICTION_GRID_OCR_COLUMN_MIN_WIDTH;
                     }
+                    if (nonFictionColumns.ExistsInLibraryColumnWidth < NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH)
+                    {
+                        nonFictionColumns.ExistsInLibraryColumnWidth = NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH;
+                    }
                 }
                 NonFiction.ExportPanel = ValidateAndCorrectExportPanelSettings(NonFiction.ExportPanel);
             }
@@ -724,6 +734,10 @@ namespace LibgenDesktop.Models.Settings
                     {
                         fictionColumns.FileSizeColumnWidth = FICTION_GRID_FILESIZE_COLUMN_MIN_WIDTH;
                     }
+                    if (fictionColumns.ExistsInLibraryColumnWidth < FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH)
+                    {
+                        fictionColumns.ExistsInLibraryColumnWidth = FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH;
+                    }
                 }
                 Fiction.ExportPanel = ValidateAndCorrectExportPanelSettings(Fiction.ExportPanel);
             }
@@ -783,6 +797,10 @@ namespace LibgenDesktop.Models.Settings
                     if (sciMagColumns.DoiColumnWidth < SCI_MAG_GRID_DOI_COLUMN_MIN_WIDTH)
                     {
                         sciMagColumns.DoiColumnWidth = SCI_MAG_GRID_DOI_COLUMN_MIN_WIDTH;
+                    }
+                    if (sciMagColumns.ExistsInLibraryColumnWidth < SCI_MAG_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH)
+                    {
+                        sciMagColumns.ExistsInLibraryColumnWidth = SCI_MAG_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH;
                     }
                 }
                 SciMag.ExportPanel = ValidateAndCorrectExportPanelSettings(SciMag.ExportPanel);

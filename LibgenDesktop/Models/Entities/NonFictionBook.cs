@@ -4,6 +4,11 @@ namespace LibgenDesktop.Models.Entities
 {
     internal class NonFictionBook : LibgenObject
     {
+        public NonFictionBook()
+            : base(LibgenObjectType.NON_FICTION_BOOK)
+        {
+        }
+
         public string Title { get; set; }
         public string VolumeInfo { get; set; }
         public string Series { get; set; }

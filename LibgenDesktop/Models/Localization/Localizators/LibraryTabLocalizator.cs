@@ -15,6 +15,9 @@ namespace LibgenDesktop.Models.Localization.Localizators
             BrowseDirectoryDialogTitle = Format(translation => translation?.BrowseDirectoryDialogTitle);
             CreatingIndexes = Format(translation => translation?.CreatingIndexes);
             ScanLog = Format(translation => translation?.ScanLog);
+            AddAll = Format(translation => translation?.AddAll);
+            Adding = Format(translation => translation?.Adding);
+            Added = Format(translation => translation?.Added);
             Error = Format(translation => translation?.Error);
             ColumnsFile = Format(translation => translation?.File);
             ColumnsAuthors = Format(translation => translation?.Authors);
@@ -27,6 +30,9 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string ScanSciMag { get; }
         public string BrowseDirectoryDialogTitle { get; }
         public string CreatingIndexes { get; }
+        public string AddAll { get; }
+        public string Adding { get; }
+        public string Added { get; }
         public string ScanLog { get; }
         public string Error { get; }
         public string ColumnsFile { get; }

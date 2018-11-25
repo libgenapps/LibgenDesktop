@@ -3,7 +3,7 @@
     internal enum LibgenObjectType
     {
         NON_FICTION_BOOK = 1,
-        FICTION_BOOK,
-        SCIMAG_ARTICLE
+        FICTION_BOOK = 2,
+        SCIMAG_ARTICLE = 3
     }
 }

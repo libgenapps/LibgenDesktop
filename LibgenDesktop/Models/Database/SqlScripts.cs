@@ -69,7 +69,9 @@
                 "CoverUrl TEXT," +
                 "Tags TEXT," +
                 "IdentifierPlain TEXT," +
-                "LibgenId INTEGER NOT NULL" +
+                "LibgenId INTEGER NOT NULL," +
+                "FileId INTEGER," +
+                "FOREIGN KEY (FileId) REFERENCES files(Id)" +
             ")";
 
         public const string CREATE_NON_FICTION_FTS_TABLE =
@@ -99,7 +101,7 @@
                 "@Pages,@PagesInFile,@Language,@Topic,@Library,@Issue,@Identifier,@Issn,@Asin,@Udc,@Lbc,@Ddc,@Lcc,@Doi," +
                 "@GoogleBookId,@OpenLibraryId,@Commentary,@Dpi,@Color,@Cleaned,@Orientation,@Paginated,@Scanned,@Bookmarked," +
                 "@Searchable,@SizeInBytes,@Format,@Md5Hash,@Generic,@Visible,@Locator,@Local,@AddedDateTime," +
-                "@LastModifiedDateTime,@CoverUrl,@Tags,@IdentifierPlain,@LibgenId)";
+                "@LastModifiedDateTime,@CoverUrl,@Tags,@IdentifierPlain,@LibgenId,NULL)";
 
         public const string UPDATE_NON_FICTION =
             "UPDATE non_fiction SET " +
@@ -223,7 +225,9 @@
                 "AuthorHash TEXT," +
                 "TitleHash TEXT," +
                 "Visible TEXT," +
-                "LibgenId INTEGER NOT NULL" +
+                "LibgenId INTEGER NOT NULL," +
+                "FileId INTEGER," +
+                "FOREIGN KEY (FileId) REFERENCES files(Id)" +
             ")";
 
         public const string CREATE_FICTION_FTS_TABLE =
@@ -253,7 +257,7 @@
             "INSERT INTO fiction VALUES (@Id,@AuthorFamily1,@AuthorName1,@AuthorSurname1,@Role1,@Pseudonim1,@AuthorFamily2,@AuthorName2,@AuthorSurname2,@Role2,@Pseudonim2," +
                 "@AuthorFamily3,@AuthorName3,@AuthorSurname3,@Role3,@Pseudonim3,@AuthorFamily4,@AuthorName4,@AuthorSurname4,@Role4,@Pseudonim4,@Series1,@Series2,@Series3,@Series4," +
                 "@Title,@Format,@Version,@SizeInBytes,@Md5Hash,@Path,@Language,@Pages,@Identifier,@Year,@Publisher,@Edition,@Commentary,@AddedDateTime,@LastModifiedDateTime," +
-                "@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname,@Cover,@GoogleBookId,@Asin,@AuthorHash,@TitleHash,@Visible,@LibgenId)";
+                "@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname,@Cover,@GoogleBookId,@Asin,@AuthorHash,@TitleHash,@Visible,@LibgenId,NULL)";
 
         public const string UPDATE_FICTION =
             "UPDATE fiction SET " +
@@ -376,7 +380,9 @@
                 "PubmedId TEXT," +
                 "Pmc TEXT," +
                 "Pii TEXT," +
-                "LibgenId INTEGER NOT NULL" +
+                "LibgenId INTEGER NOT NULL," +
+                "FileId INTEGER," +
+                "FOREIGN KEY (FileId) REFERENCES files(Id)" +
             ")";
 
         public const string CREATE_SCIMAG_FTS_TABLE = "CREATE VIRTUAL TABLE IF NOT EXISTS scimag_fts USING fts5 "+
@@ -402,7 +408,7 @@
         public const string INSERT_SCIMAG =
             "INSERT INTO scimag VALUES (@Id,@Doi,@Doi2,@Title,@Authors,@Year,@Month,@Day,@Volume,@Issue,@FirstPage,@LastPage,@Journal,@Isbn,@Issnp,@Issne," +
                 "@Md5Hash,@SizeInBytes,@AddedDateTime,@JournalId,@AbstractUrl,@Attribute1,@Attribute2,@Attribute3,@Attribute4,@Attribute5,@Attribute6," +
-                "@Visible,@PubmedId,@Pmc,@Pii,@LibgenId)";
+                "@Visible,@PubmedId,@Pmc,@Pii,@LibgenId,NULL)";
 
         public const string INSERT_SCIMAG_FTS_WITHOUT_ID = "INSERT INTO scimag_fts VALUES (@Title,@Authors,@Doi,@Doi2,@PubmedId,@Journal,@Issnp,@Issne)";
 
@@ -413,5 +419,40 @@
         public const string CREATE_SCIMAG_MD5HASH_INDEX = "CREATE INDEX " + SCIMAG_INDEX_PREFIX + "Md5Hash ON scimag (Md5Hash COLLATE NOCASE)";
 
         public const string CREATE_SCIMAG_ADDEDDATETIME_INDEX = "CREATE INDEX " + SCIMAG_INDEX_PREFIX + "AddedDateTime ON scimag (AddedDateTime DESC)";
+
+        public const string CREATE_FILES_TABLE =
+            "CREATE TABLE IF NOT EXISTS files (" +
+                "Id INTEGER PRIMARY KEY NOT NULL," +
+                "FilePath TEXT NOT NULL," +
+                "ArchiveEntry TEXT," +
+                "ObjectType INTEGER NOT NULL," +
+                "ObjectId INTEGER NOT NULL" +
+            ")";
+
+        public const string ALTER_NON_FICTION_ADD_FILE_ID = "ALTER TABLE non_fiction ADD COLUMN FileId INTEGER REFERENCES files(Id)";
+
+        public const string ALTER_FICTION_ADD_FILE_ID = "ALTER TABLE fiction ADD COLUMN FileId INTEGER REFERENCES files(Id)";
+
+        public const string ALTER_SCIMAG_ADD_FILE_ID = "ALTER TABLE scimag ADD COLUMN FileId INTEGER REFERENCES files(Id)";
+
+        public const string GET_FILE_BY_ID = "SELECT * FROM files WHERE Id = @Id";
+
+        public const string INSERT_FILE = "INSERT INTO files VALUES (@Id,@FilePath,@ArchiveEntry,@ObjectType,@ObjectId)";
+
+        public const string UPDATE_FILE =
+            "UPDATE files SET " +
+                "FilePath=@FilePath," +
+                "ArchiveEntry=@ArchiveEntry," +
+                "ObjectType=@ObjectType," +
+                "ObjectId=@ObjectId " +
+                "WHERE Id=@Id";
+
+        public const string UPDATE_NON_FICTION_FILE_ID = "UPDATE non_fiction SET FileId=@FileId WHERE Id=@Id";
+
+        public const string UPDATE_FICTION_FILE_ID = "UPDATE fiction SET FileId=@FileId WHERE Id=@Id";
+
+        public const string UPDATE_SCIMAG_FILE_ID = "UPDATE scimag SET FileId=@FileId WHERE Id=@Id";
+
+        public const string GET_LAST_INSERTED_ID = "SELECT last_insert_rowid()";
     }
 }

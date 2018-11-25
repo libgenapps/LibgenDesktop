@@ -561,6 +561,9 @@
             public string ScanStarted { get; set; }
             public string CreatingIndexes { get; set; }
             public string Found { get; set; }
+            public string AddAll { get; set; }
+            public string Adding { get; set; }
+            public string Added { get; set; }
             public string NotFound { get; set; }
             public string ScanLog { get; set; }
             public string Error { get; set; }

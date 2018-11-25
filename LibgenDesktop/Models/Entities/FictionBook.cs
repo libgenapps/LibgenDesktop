@@ -11,6 +11,7 @@ namespace LibgenDesktop.Models.Entities
         private string russianAuthor;
 
         public FictionBook()
+            : base(LibgenObjectType.FICTION_BOOK)
         {
             authors = null;
             series = null;

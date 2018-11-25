@@ -11,6 +11,8 @@ namespace LibgenDesktop.ViewModels.SearchResultItems
             Formatter = formatter;
         }
 
+        public bool ExistsInLibrary => LibgenObject.FileId.HasValue;
+
         protected T LibgenObject { get; }
         protected LanguageFormatter Formatter { get; private set; }
 

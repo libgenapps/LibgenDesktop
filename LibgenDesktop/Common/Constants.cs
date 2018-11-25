@@ -4,10 +4,10 @@ namespace LibgenDesktop.Common
 {
     internal static class Constants
     {
-        public const string CURRENT_VERSION = "1.1.6";
-        public const string CURRENT_GITHUB_RELEASE_NAME = "1.1.6";
-        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2018, 5, 27);
-        public const string CURRENT_DATABASE_VERSION = "1.0";
+        public const string CURRENT_VERSION = "1.2.0";
+        public const string CURRENT_GITHUB_RELEASE_NAME = "1.2";
+        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2018, 11, 25);
+        public const string CURRENT_DATABASE_VERSION = "1.2";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
         public const string MIRRORS_DIRECTORY_NAME = "Mirrors";
@@ -29,6 +29,7 @@ namespace LibgenDesktop.Common
         public const int NON_FICTION_GRID_FORMAT_COLUMN_MIN_WIDTH = 80;
         public const int NON_FICTION_GRID_FILESIZE_COLUMN_MIN_WIDTH = 130;
         public const int NON_FICTION_GRID_OCR_COLUMN_MIN_WIDTH = 55;
+        public const int NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH = 55;
         public const int FICTION_DETAILS_WINDOW_MIN_WIDTH = 600;
         public const int FICTION_DETAILS_WINDOW_MIN_HEIGHT = 500;
         public const int FICTION_GRID_TITLE_COLUMN_MIN_WIDTH = 150;
@@ -38,6 +39,7 @@ namespace LibgenDesktop.Common
         public const int FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH = 150;
         public const int FICTION_GRID_FORMAT_COLUMN_MIN_WIDTH = 80;
         public const int FICTION_GRID_FILESIZE_COLUMN_MIN_WIDTH = 130;
+        public const int FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH = 55;
         public const int SCI_MAG_DETAILS_WINDOW_MIN_WIDTH = 600;
         public const int SCI_MAG_DETAILS_WINDOW_MIN_HEIGHT = 500;
         public const int SCI_MAG_GRID_TITLE_COLUMN_MIN_WIDTH = 150;
@@ -46,6 +48,7 @@ namespace LibgenDesktop.Common
         public const int SCI_MAG_GRID_YEAR_COLUMN_MIN_WIDTH = 60;
         public const int SCI_MAG_GRID_FILESIZE_COLUMN_MIN_WIDTH = 130;
         public const int SCI_MAG_GRID_DOI_COLUMN_MIN_WIDTH = 150;
+        public const int SCI_MAG_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH = 55;
         public const int DOWNLOAD_MANAGER_TAB_DOWNLOADS_PANEL_MIN_HEIGHT = 100;
         public const int DOWNLOAD_MANAGER_TAB_LOG_PANEL_MIN_HEIGHT = 50;
         public const int DOWNLOAD_MANAGER_TAB_LOG_PANEL_DEFAULT_HEIGHT = 150;
@@ -60,6 +63,7 @@ namespace LibgenDesktop.Common
         public const int LIBRARY_WINDOW_DEFAULT_HEIGHT = 550;
         public const int LIBRARY_WINDOW_MIN_WIDTH = 760;
         public const int LIBRARY_WINDOW_MIN_HEIGHT = 550;
+        public const int LIBRARY_GRID_EXISTS_IN_LIBRARY_COLUMN_WIDTH = 55;
         public const int SETTINGS_WINDOW_DEFAULT_WIDTH = 760;
         public const int SETTINGS_WINDOW_DEFAULT_HEIGHT = 550;
         public const int SETTINGS_WINDOW_MIN_WIDTH = 760;
@@ -84,6 +88,7 @@ namespace LibgenDesktop.Common
         public const int DEFAULT_NON_FICTION_GRID_FORMAT_COLUMN_WIDTH = 100;
         public const int DEFAULT_NON_FICTION_GRID_FILESIZE_COLUMN_WIDTH = 150;
         public const int DEFAULT_NON_FICTION_GRID_OCR_COLUMN_WIDTH = 55;
+        public const int DEFAULT_NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_WIDTH = 55;
         public const int DEFAULT_FICTION_DETAILS_WINDOW_WIDTH = 850;
         public const int DEFAULT_FICTION_DETAILS_WINDOW_HEIGHT = 650;
         public const int DEFAULT_FICTION_GRID_TITLE_COLUMN_WIDTH = 200;
@@ -93,6 +98,7 @@ namespace LibgenDesktop.Common
         public const int DEFAULT_FICTION_GRID_PUBLISHER_COLUMN_WIDTH = 180;
         public const int DEFAULT_FICTION_GRID_FORMAT_COLUMN_WIDTH = 100;
         public const int DEFAULT_FICTION_GRID_FILESIZE_COLUMN_WIDTH = 150;
+        public const int DEFAULT_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_WIDTH = 55;
         public const int DEFAULT_SCI_MAG_DETAILS_WINDOW_WIDTH = 910;
         public const int DEFAULT_SCI_MAG_DETAILS_WINDOW_HEIGHT = 680;
         public const int DEFAULT_SCI_MAG_GRID_TITLE_COLUMN_WIDTH = 270;
@@ -101,7 +107,9 @@ namespace LibgenDesktop.Common
         public const int DEFAULT_SCI_MAG_GRID_YEAR_COLUMN_WIDTH = 60;
         public const int DEFAULT_SCI_MAG_GRID_FILESIZE_COLUMN_WIDTH = 150;
         public const int DEFAULT_SCI_MAG_GRID_DOI_COLUMN_WIDTH = 290;
-        public const string DEFAULT_MIRROR_NAME = "libgen.io";
+        public const int DEFAULT_SCI_MAG_GRID_EXISTS_IN_LIBRARY_COLUMN_WIDTH = 55;
+        public const string DEFAULT_DOWNLOAD_MIRROR_NAME = "libgen.io";
+        public const string DEFAULT_SYNCHRONIZATION_MIRROR_NAME = "gen.lib.rus.ec";
         public const int DEFAULT_MAXIMUM_SEARCH_RESULT_COUNT = 50000;
 
         public const double SEARCH_PROGRESS_REPORT_INTERVAL = 0.1;

@@ -17,14 +17,14 @@ namespace LibgenDesktop.ViewModels.Tabs
 {
     internal abstract class DetailsTabViewModel<T> : TabViewModel where T: LibgenObject
     {
-        private enum DownloadButtonAction
+        private enum MainActionButtonMode
         {
             START_DOWNLOAD = 1,
             SELECT_DOWNLOAD,
             OPEN_FILE
         }
 
-        private enum DownloadButtonCaptionOption
+        private enum MainActionButtonCaptionOption
         {
             DOWNLOAD = 1,
             QUEUED,
@@ -40,7 +40,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             DOWNLOAD_FROM_MIRROR
         }
 
-        private enum DownloadButtonTooltipOption
+        private enum MainActionButtonTooltipOption
         {
             NO_TOOLTIP = 1,
             NO_DOWNLOAD_MIRROR,
@@ -60,22 +60,22 @@ namespace LibgenDesktop.ViewModels.Tabs
         private readonly string downloadMirrorName;
         private readonly string coverMirrorName;
         private CommonDetailsTabLocalizator localization;
-        private DownloadButtonCaptionOption downloadButtonCaptionOption;
+        private MainActionButtonCaptionOption mainActionButtonCaptionOption;
         private DownloadActionTextOption downloadActionTextOption;
-        private DownloadButtonTooltipOption downloadButtonTooltipOption;
+        private MainActionButtonTooltipOption mainActionButtonTooltipOption;
         private CoverNotificationOption coverNotificationOption;
-        private string downloadButtonCaption;
-        private double downloadProgress;
-        private bool isDownloadButtonEnabled;
-        private string disabledDownloadButtonTooltip;
+        private string mainActionButtonCaption;
+        private double mainActionProgress;
+        private bool isMainActionButtonEnabled;
+        private string disabledMainActionButtonTooltip;
         private bool isCoverNotificationVisible;
         private string coverNotification;
         private bool coverVisible;
         private BitmapImage cover;
-        private DownloadButtonAction downloadButtonAction;
+        private MainActionButtonMode mainActionButtonMode;
         private string downloadUrl;
         private Guid? downloadId;
-        private string downloadedFilePath;
+        private string localFilePath;
 
         protected DetailsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, T libgenObject, string libgenObjectTitle, bool isInModalWindow,
             string downloadMirrorName, string coverMirrorName)
@@ -86,61 +86,61 @@ namespace LibgenDesktop.ViewModels.Tabs
             IsInModalWindow = isInModalWindow;
             this.downloadMirrorName = downloadMirrorName;
             this.coverMirrorName = coverMirrorName;
-            DownloadCommand = new Command(DownloadButtonClick);
+            MainActionCommand = new Command(MainActionButtonClick);
             Initialize();
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
         }
 
         public bool IsInModalWindow { get; }
 
-        public string DownloadButtonCaption
+        public string MainActionButtonCaption
         {
             get
             {
-                return downloadButtonCaption;
+                return mainActionButtonCaption;
             }
             set
             {
-                downloadButtonCaption = value;
+                mainActionButtonCaption = value;
                 NotifyPropertyChanged();
             }
         }
 
-        public double DownloadProgress
+        public double MainActionProgress
         {
             get
             {
-                return downloadProgress;
+                return mainActionProgress;
             }
             set
             {
-                downloadProgress = value;
+                mainActionProgress = value;
                 NotifyPropertyChanged();
             }
         }
 
-        public bool IsDownloadButtonEnabled
+        public bool IsMainActionButtonEnabled
         {
             get
             {
-                return isDownloadButtonEnabled;
+                return isMainActionButtonEnabled;
             }
             set
             {
-                isDownloadButtonEnabled = value;
+                isMainActionButtonEnabled = value;
                 NotifyPropertyChanged();
             }
         }
 
-        public string DisabledDownloadButtonTooltip
+        public string DisabledMainActionButtonTooltip
         {
             get
             {
-                return disabledDownloadButtonTooltip;
+                return disabledMainActionButtonTooltip;
             }
             set
             {
-                disabledDownloadButtonTooltip = value;
+                disabledMainActionButtonTooltip = value;
                 NotifyPropertyChanged();
             }
         }
@@ -197,7 +197,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public Command DownloadCommand { get; }
+        public Command MainActionCommand { get; }
 
         protected abstract string FileNameWithoutExtension { get; }
         protected abstract string FileExtension { get; }
@@ -222,44 +222,58 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         private async void Initialize()
         {
-            downloadProgress = 0;
-            downloadButtonAction = DownloadButtonAction.START_DOWNLOAD;
+            mainActionProgress = 0;
             downloadId = null;
-            downloadedFilePath = null;
-            InitializeLibgenObject();
-            UpdateDownloadStatus(MainModel.Downloader.GetDownloadItemByDownloadPageUrl(downloadUrl));
-            MainModel.Downloader.DownloaderEvent += DownloaderEvent;
-            await InitializeCoverAsync();
-        }
-
-        private void InitializeLibgenObject()
-        {
-            downloadButtonCaptionOption = DownloadButtonCaptionOption.DOWNLOAD;
-            if (downloadMirrorName == null)
+            if (LibgenObject.FileId.HasValue)
             {
-                downloadActionTextOption = DownloadActionTextOption.DOWNLOAD;
-                IsDownloadButtonEnabled = false;
-                downloadButtonTooltipOption = DownloadButtonTooltipOption.NO_DOWNLOAD_MIRROR;
-                downloadUrl = null;
+                LibraryFile file = await MainModel.LoadFileAsync(LibgenObject.FileId.Value);
+                localFilePath = file.FilePath;
             }
             else
             {
-                downloadActionTextOption = DownloadActionTextOption.DOWNLOAD_FROM_MIRROR;
-                if (IsInOfflineMode)
+                localFilePath = null;
+            }
+            if (localFilePath != null)
+            {
+                downloadUrl = null;
+                IsMainActionButtonEnabled = true;
+                mainActionButtonMode = MainActionButtonMode.OPEN_FILE;
+                mainActionButtonCaptionOption = MainActionButtonCaptionOption.OPEN;
+                mainActionButtonTooltipOption = MainActionButtonTooltipOption.NO_TOOLTIP;
+            }
+            else
+            {
+                mainActionButtonMode = MainActionButtonMode.START_DOWNLOAD;
+                mainActionButtonCaptionOption = MainActionButtonCaptionOption.DOWNLOAD;
+                if (downloadMirrorName == null)
                 {
-                    IsDownloadButtonEnabled = false;
-                    downloadButtonTooltipOption = DownloadButtonTooltipOption.OFFLINE_MODE_IS_ON;
+                    downloadActionTextOption = DownloadActionTextOption.DOWNLOAD;
+                    IsMainActionButtonEnabled = false;
+                    mainActionButtonTooltipOption = MainActionButtonTooltipOption.NO_DOWNLOAD_MIRROR;
                     downloadUrl = null;
                 }
                 else
                 {
-                    IsDownloadButtonEnabled = true;
-                    downloadButtonTooltipOption = DownloadButtonTooltipOption.NO_TOOLTIP;
-                    downloadUrl = GenerateDownloadUrl(MainModel.Mirrors[downloadMirrorName]);
+                    downloadActionTextOption = DownloadActionTextOption.DOWNLOAD_FROM_MIRROR;
+                    if (IsInOfflineMode)
+                    {
+                        IsMainActionButtonEnabled = false;
+                        mainActionButtonTooltipOption = MainActionButtonTooltipOption.OFFLINE_MODE_IS_ON;
+                        downloadUrl = null;
+                    }
+                    else
+                    {
+                        IsMainActionButtonEnabled = true;
+                        mainActionButtonTooltipOption = MainActionButtonTooltipOption.NO_TOOLTIP;
+                        downloadUrl = GenerateDownloadUrl(MainModel.Mirrors[downloadMirrorName]);
+                    }
                 }
             }
-            UpdateDownloadButtonCaption();
-            UpdateDownloadButtonTooltip();
+            UpdateMainActionButtonCaption();
+            UpdateMainActionButtonTooltip();
+            UpdateDownloadStatus(MainModel.Downloader.GetDownloadItemByDownloadPageUrl(downloadUrl));
+            MainModel.Downloader.DownloaderEvent += DownloaderEvent;
+            await InitializeCoverAsync();
         }
 
         private async Task InitializeCoverAsync()
@@ -328,11 +342,11 @@ namespace LibgenDesktop.ViewModels.Tabs
             return result;
         }
 
-        private void DownloadButtonClick()
+        private void MainActionButtonClick()
         {
-            switch (downloadButtonAction)
+            switch (mainActionButtonMode)
             {
-                case DownloadButtonAction.START_DOWNLOAD:
+                case MainActionButtonMode.START_DOWNLOAD:
                     if (MainModel.AppSettings.Download.UseDownloadManager)
                     {
                         MainModel.Downloader.EnqueueDownloadItem(downloadUrl, FileNameWithoutExtension, FileExtension.ToLower(), Md5Hash,
@@ -343,17 +357,17 @@ namespace LibgenDesktop.ViewModels.Tabs
                         Process.Start(downloadUrl);
                     }
                     break;
-                case DownloadButtonAction.SELECT_DOWNLOAD:
+                case MainActionButtonMode.SELECT_DOWNLOAD:
                     SelectDownloadRequested?.Invoke(this, new SelectDownloadEventArgs(downloadId.Value));
                     break;
-                case DownloadButtonAction.OPEN_FILE:
-                    if (File.Exists(downloadedFilePath))
+                case MainActionButtonMode.OPEN_FILE:
+                    if (File.Exists(localFilePath))
                     {
-                        Process.Start(downloadedFilePath);
+                        Process.Start(localFilePath);
                     }
                     else
                     {
-                        ShowMessage(localization.ErrorMessageTitle, localization.GetFileNotFoundErrorText(downloadedFilePath));
+                        ShowMessage(localization.ErrorMessageTitle, localization.GetFileNotFoundErrorText(localFilePath));
                     }
                     break;
             }
@@ -389,26 +403,26 @@ namespace LibgenDesktop.ViewModels.Tabs
                     switch (downloadItem.Status)
                     {
                         case DownloadItemStatus.QUEUED:
-                            downloadButtonCaptionOption = DownloadButtonCaptionOption.QUEUED;
+                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.QUEUED;
                             break;
                         case DownloadItemStatus.DOWNLOADING:
                         case DownloadItemStatus.RETRY_DELAY:
-                            downloadButtonCaptionOption = DownloadButtonCaptionOption.DOWNLOADING;
+                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.DOWNLOADING;
                             break;
                         case DownloadItemStatus.STOPPED:
-                            downloadButtonCaptionOption = DownloadButtonCaptionOption.STOPPED;
+                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.STOPPED;
                             break;
                         case DownloadItemStatus.ERROR:
-                            downloadButtonCaptionOption = DownloadButtonCaptionOption.ERROR;
+                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.ERROR;
                             break;
                         case DownloadItemStatus.COMPLETED:
-                            downloadButtonCaptionOption = DownloadButtonCaptionOption.OPEN;
+                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.OPEN;
                             break;
                         case DownloadItemStatus.REMOVED:
-                            downloadButtonCaptionOption = DownloadButtonCaptionOption.DOWNLOAD;
+                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.DOWNLOAD;
                             break;
                     }
-                    UpdateDownloadButtonCaption();
+                    UpdateMainActionButtonCaption();
                     switch (downloadItem.Status)
                     {
                         case DownloadItemStatus.QUEUED:
@@ -417,76 +431,76 @@ namespace LibgenDesktop.ViewModels.Tabs
                         case DownloadItemStatus.STOPPED:
                         case DownloadItemStatus.ERROR:
                             downloadId = downloadItem.Id;
-                            downloadButtonAction = DownloadButtonAction.SELECT_DOWNLOAD;
+                            mainActionButtonMode = MainActionButtonMode.SELECT_DOWNLOAD;
                             break;
                         case DownloadItemStatus.COMPLETED:
-                            downloadedFilePath = Path.Combine(downloadItem.DownloadDirectory, downloadItem.FileName);
-                            downloadButtonAction = DownloadButtonAction.OPEN_FILE;
+                            localFilePath = Path.Combine(downloadItem.DownloadDirectory, downloadItem.FileName);
+                            mainActionButtonMode = MainActionButtonMode.OPEN_FILE;
                             break;
                         case DownloadItemStatus.REMOVED:
                             downloadId = null;
-                            downloadedFilePath = null;
-                            downloadButtonAction = DownloadButtonAction.START_DOWNLOAD;
+                            localFilePath = null;
+                            mainActionButtonMode = MainActionButtonMode.START_DOWNLOAD;
                             break;
                     }
                     if (downloadItem.Status != DownloadItemStatus.REMOVED && downloadItem.DownloadedFileSize.HasValue &&
                         downloadItem.TotalFileSize.HasValue && downloadItem.DownloadedFileSize.Value < downloadItem.TotalFileSize.Value)
                     {
-                        DownloadProgress = (double)downloadItem.DownloadedFileSize.Value * 100 / downloadItem.TotalFileSize.Value;
+                        MainActionProgress = (double)downloadItem.DownloadedFileSize.Value * 100 / downloadItem.TotalFileSize.Value;
                     }
                     else
                     {
-                        DownloadProgress = 0;
+                        MainActionProgress = 0;
                     }
                 });
             }
         }
 
-        private void UpdateDownloadButtonCaption()
+        private void UpdateMainActionButtonCaption()
         {
-            switch (downloadButtonCaptionOption)
+            switch (mainActionButtonCaptionOption)
             {
-                case DownloadButtonCaptionOption.DOWNLOAD:
+                case MainActionButtonCaptionOption.DOWNLOAD:
                     switch (downloadActionTextOption)
                     {
                         case DownloadActionTextOption.DOWNLOAD:
-                            DownloadButtonCaption = localization.Download;
+                            MainActionButtonCaption = localization.Download;
                             break;
                         case DownloadActionTextOption.DOWNLOAD_FROM_MIRROR:
-                            DownloadButtonCaption = localization.GetDownloadFromMirrorText(downloadMirrorName.ToUpper());
+                            MainActionButtonCaption = localization.GetDownloadFromMirrorText(downloadMirrorName.ToUpper());
                             break;
                     }
                     break;
-                case DownloadButtonCaptionOption.QUEUED:
-                    DownloadButtonCaption = localization.Queued;
+                case MainActionButtonCaptionOption.QUEUED:
+                    MainActionButtonCaption = localization.Queued;
                     break;
-                case DownloadButtonCaptionOption.DOWNLOADING:
-                    DownloadButtonCaption = localization.Downloading;
+                case MainActionButtonCaptionOption.DOWNLOADING:
+                    MainActionButtonCaption = localization.Downloading;
                     break;
-                case DownloadButtonCaptionOption.STOPPED:
-                    DownloadButtonCaption = localization.Stopped;
+                case MainActionButtonCaptionOption.STOPPED:
+                    MainActionButtonCaption = localization.Stopped;
                     break;
-                case DownloadButtonCaptionOption.ERROR:
-                    DownloadButtonCaption = localization.Error;
+                case MainActionButtonCaptionOption.ERROR:
+                    MainActionButtonCaption = localization.Error;
                     break;
-                case DownloadButtonCaptionOption.OPEN:
-                    DownloadButtonCaption = localization.Open;
+                case MainActionButtonCaptionOption.OPEN:
+                    MainActionButtonCaption = localization.Open;
                     break;
             }
         }
 
-        private void UpdateDownloadButtonTooltip()
+        private void UpdateMainActionButtonTooltip()
         {
-            switch (downloadButtonTooltipOption)
+            switch (mainActionButtonTooltipOption)
             {
-                case DownloadButtonTooltipOption.NO_TOOLTIP:
-                    DisabledDownloadButtonTooltip = null;
+                case MainActionButtonTooltipOption.NO_TOOLTIP:
+                    DisabledMainActionButtonTooltip = null;
                     break;
-                case DownloadButtonTooltipOption.NO_DOWNLOAD_MIRROR:
-                    DisabledDownloadButtonTooltip = localization.NoDownloadMirrorTooltip;
+                case MainActionButtonTooltipOption.NO_DOWNLOAD_MIRROR:
+                    DisabledMainActionButtonTooltip = localization.NoDownloadMirrorTooltip;
                     break;
-                case DownloadButtonTooltipOption.OFFLINE_MODE_IS_ON:
-                    DisabledDownloadButtonTooltip = localization.OfflineModeIsOnTooltip;
+                case MainActionButtonTooltipOption.OFFLINE_MODE_IS_ON:
+                    DisabledMainActionButtonTooltip = localization.OfflineModeIsOnTooltip;
                     break;
             }
         }
@@ -519,8 +533,8 @@ namespace LibgenDesktop.ViewModels.Tabs
         private void LocalizationLanguageChanged(object sender, EventArgs e)
         {
             localization = MainModel.Localization.CurrentLanguage.CommonDetailsTab;
-            UpdateDownloadButtonCaption();
-            UpdateDownloadButtonTooltip();
+            UpdateMainActionButtonCaption();
+            UpdateMainActionButtonTooltip();
             UpdateCoverNotification();
             UpdateLocalization(MainModel.Localization.CurrentLanguage);
         }

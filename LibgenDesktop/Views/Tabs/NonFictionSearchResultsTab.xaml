@@ -107,12 +107,27 @@
                                     ElementStyle="{StaticResource FileSizeColumnStyle}" />
                 <DataGridTemplateColumn Header="{Binding DataContext.Localization.Columns.Ocr, Source={StaticResource dataGridViewModel}}"
                                         SortMemberPath="Ocr"
-                                        Width="{Binding DataContext.OcrColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}">
+                                        Width="{Binding DataContext.OcrColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                        MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_OCR_COLUMN_MIN_WIDTH}}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ContentControl Name="tickMarkContainer" Content="{StaticResource tickMark}" Visibility="Hidden" />
                             <DataTemplate.Triggers>
                                 <DataTrigger Binding="{Binding Ocr}" Value="True">
+                                    <Setter TargetName="tickMarkContainer" Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn SortMemberPath="ExistsInLibrary"
+                                        Width="{Binding DataContext.ExistsInLibraryColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                        MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH}}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ContentControl Name="tickMarkContainer" Content="{StaticResource tickMark}" Visibility="Hidden" />
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding ExistsInLibrary}" Value="True">
                                     <Setter TargetName="tickMarkContainer" Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </DataTemplate.Triggers>

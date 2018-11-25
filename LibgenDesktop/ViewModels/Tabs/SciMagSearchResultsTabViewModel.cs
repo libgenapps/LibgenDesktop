@@ -154,6 +154,18 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        public int ExistsInLibraryColumnWidth
+        {
+            get
+            {
+                return columnSettings.ExistsInLibraryColumnWidth;
+            }
+            set
+            {
+                columnSettings.ExistsInLibraryColumnWidth = value;
+            }
+        }
+
         public string SearchProgressStatus
         {
             get

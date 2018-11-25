@@ -8,6 +8,10 @@
         <Setter Property="Margin" Value="0,0,0,12" />
     </Style>
     <Style x:Key="FoundDataGrid" TargetType="DataGrid" BasedOn="{StaticResource SearchResultsDataGrid}" />
+    <Style x:Key="AddAllButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Margin" Value="0,12,0,0" />
+    </Style>
     <Style x:Key="NotFoundDataGrid" TargetType="DataGrid" BasedOn="{StaticResource SearchResultsDataGrid}" />
     <Style x:Key="LogPanel" TargetType="ScrollViewer">
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />

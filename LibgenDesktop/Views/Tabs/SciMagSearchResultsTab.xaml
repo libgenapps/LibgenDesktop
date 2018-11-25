@@ -100,6 +100,20 @@
                                     Width="{Binding DataContext.DoiColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_DOI_COLUMN_MIN_WIDTH}}"
                                     ElementStyle="{StaticResource DoiColumnStyle}" />
+                <DataGridTemplateColumn SortMemberPath="ExistsInLibrary"
+                                        Width="{Binding DataContext.ExistsInLibraryColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                        MinWidth="{Binding Source={x:Static const:Constants.SCI_MAG_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH}}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ContentControl Name="tickMarkContainer" Content="{StaticResource tickMark}" Visibility="Hidden" />
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding ExistsInLibrary}" Value="True">
+                                    <Setter TargetName="tickMarkContainer" Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <StackPanel Grid.Row="1" Style="{StaticResource ArticleSearchProgressPanel}"

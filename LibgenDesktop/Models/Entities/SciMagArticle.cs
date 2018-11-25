@@ -7,6 +7,7 @@ namespace LibgenDesktop.Models.Entities
         private string doiString;
 
         public SciMagArticle()
+            : base(LibgenObjectType.SCIMAG_ARTICLE)
         {
             doiString = null;
         }

@@ -187,14 +187,14 @@
             </Grid>
         </ScrollViewer>
         <StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ButtonStackPanel}">
-            <Button Content="{Binding DownloadButtonCaption}" Command="{Binding DownloadCommand}"
-                    md:ButtonProgressAssist.Value="{Binding DownloadProgress}">
+            <Button Content="{Binding MainActionButtonCaption}" Command="{Binding MainActionCommand}"
+                    md:ButtonProgressAssist.Value="{Binding MainActionProgress}">
                 <Button.Style>
-                    <Style TargetType="Button" BasedOn="{StaticResource DownloadButton}">
+                    <Style TargetType="Button" BasedOn="{StaticResource MainActionButton}">
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsDownloadButtonEnabled}" Value="False">
+                            <DataTrigger Binding="{Binding IsMainActionButtonEnabled}" Value="False">
                                 <Setter Property="IsEnabled" Value="False" />
-                                <Setter Property="ToolTip" Value="{Binding DisabledDownloadButtonTooltip}" />
+                                <Setter Property="ToolTip" Value="{Binding DisabledMainActionButtonTooltip}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>

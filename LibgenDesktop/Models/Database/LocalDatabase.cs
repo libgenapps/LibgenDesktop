@@ -1260,6 +1260,97 @@ namespace LibgenDesktop.Models.Database
             return GetIndexList(SqlScripts.GET_SCIMAG_INDEX_LIST);
         }
 
+        public void CreateFilesTable()
+        {
+            ExecuteCommands(SqlScripts.CREATE_FILES_TABLE);
+        }
+
+        public void AddFileIdColumns()
+        {
+            ExecuteCommands(SqlScripts.ALTER_NON_FICTION_ADD_FILE_ID);
+            ExecuteCommands(SqlScripts.ALTER_FICTION_ADD_FILE_ID);
+            ExecuteCommands(SqlScripts.ALTER_SCIMAG_ADD_FILE_ID);
+        }
+
+        public LibraryFile GetFileById(int id)
+        {
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = SqlScripts.GET_FILE_BY_ID;
+                command.Parameters.AddWithValue("@Id", id);
+                using (SQLiteDataReader dataReader = command.ExecuteReader())
+                {
+                    if (dataReader.Read())
+                    {
+                        LibraryFile file = ReadFile(dataReader);
+                        return file;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        public void AddFiles(List<LibraryFile> files)
+        {
+            using (SQLiteTransaction transaction = connection.BeginTransaction())
+            {
+                using (SQLiteCommand insertCommand = connection.CreateCommand())
+                using (SQLiteCommand updateNonFictionCommand = connection.CreateCommand())
+                using (SQLiteCommand updateFictionCommand = connection.CreateCommand())
+                using (SQLiteCommand updateSciMagCommand = connection.CreateCommand())
+                using (SQLiteCommand getLastInsertedIdCommand = connection.CreateCommand())
+                {
+                    insertCommand.CommandText = SqlScripts.INSERT_FILE;
+                    insertCommand.Parameters.AddWithValue("@Id", null);
+                    SQLiteParameter filePathParameter = insertCommand.Parameters.Add("@FilePath", DbType.String);
+                    SQLiteParameter archiveEntryParameter = insertCommand.Parameters.Add("@ArchiveEntry", DbType.String);
+                    SQLiteParameter objectTypeParameter = insertCommand.Parameters.Add("@ObjectType", DbType.String);
+                    SQLiteParameter objectIdParameter = insertCommand.Parameters.Add("@ObjectId", DbType.String);
+                    updateNonFictionCommand.CommandText = SqlScripts.UPDATE_NON_FICTION_FILE_ID;
+                    SQLiteParameter updateNonFictionFileIdParameter = updateNonFictionCommand.Parameters.Add("@FileId", DbType.Int32);
+                    SQLiteParameter updateNonFictionIdParameter = updateNonFictionCommand.Parameters.Add("@Id", DbType.Int32);
+                    updateFictionCommand.CommandText = SqlScripts.UPDATE_FICTION_FILE_ID;
+                    SQLiteParameter updateFictionFileIdParameter = updateFictionCommand.Parameters.Add("@FileId", DbType.Int32);
+                    SQLiteParameter updateFictionIdParameter = updateFictionCommand.Parameters.Add("@Id", DbType.Int32);
+                    updateSciMagCommand.CommandText = SqlScripts.UPDATE_SCIMAG_FILE_ID;
+                    SQLiteParameter updateSciMagFileIdParameter = updateSciMagCommand.Parameters.Add("@FileId", DbType.Int32);
+                    SQLiteParameter updateSciMagIdParameter = updateSciMagCommand.Parameters.Add("@Id", DbType.Int32);
+                    getLastInsertedIdCommand.CommandText = SqlScripts.GET_LAST_INSERTED_ID;
+                    foreach (LibraryFile file in files)
+                    {
+                        filePathParameter.Value = file.FilePath;
+                        archiveEntryParameter.Value = file.ArchiveEntry;
+                        objectTypeParameter.Value = (int)file.ObjectType;
+                        objectIdParameter.Value = file.ObjectId;
+                        insertCommand.ExecuteNonQuery();
+                        file.Id = ParseIntScalarResult(getLastInsertedIdCommand.ExecuteScalar());
+                        switch (file.ObjectType)
+                        {
+                            case LibgenObjectType.NON_FICTION_BOOK:
+                                updateNonFictionFileIdParameter.Value = file.Id;
+                                updateNonFictionIdParameter.Value = file.ObjectId;
+                                updateNonFictionCommand.ExecuteNonQuery();
+                                break;
+                            case LibgenObjectType.FICTION_BOOK:
+                                updateFictionFileIdParameter.Value = file.Id;
+                                updateFictionIdParameter.Value = file.ObjectId;
+                                updateFictionCommand.ExecuteNonQuery();
+                                break;
+                            case LibgenObjectType.SCIMAG_ARTICLE:
+                                updateSciMagFileIdParameter.Value = file.Id;
+                                updateSciMagIdParameter.Value = file.ObjectId;
+                                updateSciMagCommand.ExecuteNonQuery();
+                                break;
+                        }
+                    }
+                }
+                transaction.Commit();
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private NonFictionBook ReadNonFictionBook(SQLiteDataReader dataReader)
         {
@@ -1312,6 +1403,7 @@ namespace LibgenDesktop.Models.Database
             book.Tags = dataReader.GetString(45);
             book.IdentifierPlain = dataReader.GetString(46);
             book.LibgenId = dataReader.GetInt32(47);
+            book.FileId = ParseNullableIntScalarResult(dataReader.GetValue(48));
             return book;
         }
 
@@ -1369,6 +1461,7 @@ namespace LibgenDesktop.Models.Database
             book.TitleHash = dataReader.GetString(47);
             book.Visible = dataReader.GetString(48);
             book.LibgenId = dataReader.GetInt32(49);
+            book.FileId = ParseNullableIntScalarResult(dataReader.GetValue(50));
             return book;
         }
 
@@ -1408,7 +1501,20 @@ namespace LibgenDesktop.Models.Database
             article.Pmc = dataReader.GetString(29);
             article.Pii = dataReader.GetString(30);
             article.LibgenId = dataReader.GetInt32(31);
+            article.FileId = ParseNullableIntScalarResult(dataReader.GetValue(32));
             return article;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private LibraryFile ReadFile(SQLiteDataReader dataReader)
+        {
+            LibraryFile file = new LibraryFile();
+            file.Id = dataReader.GetInt32(0);
+            file.FilePath = dataReader.GetString(1);
+            file.ArchiveEntry = ParseStringScalarResult(dataReader.GetValue(2));
+            file.ObjectType = (LibgenObjectType)dataReader.GetInt32(3);
+            file.ObjectId = dataReader.GetInt32(4);
+            return file;
         }
 
         private string EscapeSearchQuery(string originalSearchQuery)
@@ -1455,6 +1561,11 @@ namespace LibgenDesktop.Models.Database
         private int ParseIntScalarResult(object objectResult)
         {
             return objectResult != DBNull.Value ? (int)(long)objectResult : 0;
+        }
+
+        private int? ParseNullableIntScalarResult(object objectResult)
+        {
+            return objectResult != DBNull.Value ? (int?)(long)objectResult : null;
         }
 
         private string ParseStringScalarResult(object objectResult)

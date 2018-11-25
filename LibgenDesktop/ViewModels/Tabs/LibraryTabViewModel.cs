@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
@@ -13,16 +16,31 @@ namespace LibgenDesktop.ViewModels.Tabs
 {
     internal class LibraryTabViewModel : TabViewModel
     {
+        private enum Mode
+        {
+            OPERATION_SELECT = 1,
+            SCANNING,
+            SCAN_COMPLETE,
+            ADDING_FILES,
+            FILES_ADDED
+        }
+
         private LibraryTabLocalizator localization;
         private bool areScanButtonsVisible;
         private bool isResultsPanelVisible;
         private string foundTabHeaderTitle;
         private string notFoundTabHeaderTitle;
         private bool isScanLogTabSelected;
+        private bool isAddAllFilesToLibraryButtonVisible;
+        private bool isAddAllFilesToLibraryButtonEnabled;
+        private string addAllFilesToLibraryButtonCaption;
         private ObservableCollection<ScanResultItemViewModel> foundItems;
         private ScanResultItemViewModel selectedFoundItem;
         private ObservableCollection<string> notFoundItems;
         private ObservableCollection<string> scanLogs;
+        private string scanDirectory;
+        private bool hasFilesToAdd;
+        private Mode mode;
 
         public LibraryTabViewModel(MainModel mainModel, IWindowContext parentWindowContext)
             : base(mainModel, parentWindowContext, mainModel.Localization.CurrentLanguage.Library.TabTitle)
@@ -33,6 +51,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             ScanSciMagCommand = new Command(ScanSciMag);
             OpenDetailsCommand = new Command(param => OpenDetails((param as ScanResultItemViewModel)));
             FoundDataGridEnterKeyCommand = new Command(FoundDataGridEnterKeyPressed);
+            AddAllFilesToLibraryCommand = new Command(AddAllFilesToLibrary);
             Initialize();
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
         }
@@ -115,6 +134,45 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        public bool IsAddAllFilesToLibraryButtonVisible
+        {
+            get
+            {
+                return isAddAllFilesToLibraryButtonVisible;
+            }
+            set
+            {
+                isAddAllFilesToLibraryButtonVisible = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsAddAllFilesToLibraryButtonEnabled
+        {
+            get
+            {
+                return isAddAllFilesToLibraryButtonEnabled;
+            }
+            set
+            {
+                isAddAllFilesToLibraryButtonEnabled = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string AddAllFilesToLibraryButtonCaption
+        {
+            get
+            {
+                return addAllFilesToLibraryButtonCaption;
+            }
+            set
+            {
+                addAllFilesToLibraryButtonCaption = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public ObservableCollection<ScanResultItemViewModel> FoundItems
         {
             get
@@ -172,6 +230,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         public Command ScanSciMagCommand { get; }
         public Command OpenDetailsCommand { get; }
         public Command FoundDataGridEnterKeyCommand { get; }
+        public Command AddAllFilesToLibraryCommand { get; }
 
         public event EventHandler<OpenNonFictionDetailsEventArgs> OpenNonFictionDetailsRequested;
         public event EventHandler<OpenFictionDetailsEventArgs> OpenFictionDetailsRequested;
@@ -179,10 +238,16 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         private void Initialize()
         {
+            mode = Mode.OPERATION_SELECT;
             areScanButtonsVisible = true;
             isResultsPanelVisible = false;
             isScanLogTabSelected = false;
+            isAddAllFilesToLibraryButtonVisible = false;
+            isAddAllFilesToLibraryButtonEnabled = true;
+            UpdateAddAllFilesToLibraryButton();
             scanLogs = new ObservableCollection<string>();
+            scanDirectory = null;
+            hasFilesToAdd = false;
         }
 
         private void ScanNonFiction()
@@ -209,16 +274,21 @@ namespace LibgenDesktop.ViewModels.Tabs
             SelectFolderDialogResult selectFolderDialogResult = WindowManager.ShowSelectFolderDialog(selectFolderDialogParameters);
             if (selectFolderDialogResult.DialogResult)
             {
+                mode = Mode.SCANNING;
                 FoundItems = new ObservableCollection<ScanResultItemViewModel>();
                 NotFoundItems = new ObservableCollection<string>();
                 UpdateResultTabHeaders();
+                UpdateAddAllFilesToLibraryButton();
                 IsScanLogTabSelected = true;
                 AreScanButtonsVisible = false;
                 IsResultsPanelVisible = true;
-                string scanDirectory = selectFolderDialogResult.SelectedFolderPath;
+                scanDirectory = selectFolderDialogResult.SelectedFolderPath;
                 ScanLogs.Add(Localization.GetScanStartedString(scanDirectory));
                 Progress<object> scanProgressHandler = new Progress<object>(HandleScanProgress<T>);
                 await scanFunction(scanDirectory, scanProgressHandler);
+                mode = Mode.SCAN_COMPLETE;
+                hasFilesToAdd = foundItems.Any(foundItem => !foundItem.ExistsInLibrary);
+                UpdateAddAllFilesToLibraryButton();
             }
         }
 
@@ -278,6 +348,32 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        private void UpdateAddAllFilesToLibraryButton()
+        {
+            switch (mode)
+            {
+                case Mode.OPERATION_SELECT:
+                case Mode.SCANNING:
+                    IsAddAllFilesToLibraryButtonVisible = false;
+                    break;
+                case Mode.SCAN_COMPLETE:
+                    IsAddAllFilesToLibraryButtonVisible = hasFilesToAdd;
+                    IsAddAllFilesToLibraryButtonEnabled = true;
+                    AddAllFilesToLibraryButtonCaption = Localization.AddAll;
+                    break;
+                case Mode.ADDING_FILES:
+                    IsAddAllFilesToLibraryButtonVisible = true;
+                    IsAddAllFilesToLibraryButtonEnabled = false;
+                    AddAllFilesToLibraryButtonCaption = Localization.Adding;
+                    break;
+                case Mode.FILES_ADDED:
+                    IsAddAllFilesToLibraryButtonVisible = true;
+                    IsAddAllFilesToLibraryButtonEnabled = false;
+                    AddAllFilesToLibraryButtonCaption = Localization.Added;
+                    break;
+            }
+        }
+
         private void FoundDataGridEnterKeyPressed()
         {
             OpenDetails(SelectedFoundItem);
@@ -299,11 +395,29 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        private async void AddAllFilesToLibrary()
+        {
+            mode = Mode.ADDING_FILES;
+            UpdateAddAllFilesToLibraryButton();
+            List<LibraryFile> filesToAdd = FoundItems.Where(foundItem => !foundItem.ExistsInLibrary).Select(foundItem =>
+                new LibraryFile
+                {
+                    FilePath = Path.Combine(scanDirectory, foundItem.RelativeFilePath),
+                    ArchiveEntry = null,
+                    ObjectType = foundItem.LibgenObjectType,
+                    ObjectId = foundItem.ObjectId
+                }).ToList();
+            await MainModel.AddFiles(filesToAdd);
+            mode = Mode.FILES_ADDED;
+            UpdateAddAllFilesToLibraryButton();
+        }
+
         private void LocalizationLanguageChanged(object sender, EventArgs e)
         {
             Localization = MainModel.Localization.CurrentLanguage.Library;
             Title = Localization.TabTitle;
             UpdateResultTabHeaders();
+            UpdateAddAllFilesToLibraryButton();
         }
     }
 }
