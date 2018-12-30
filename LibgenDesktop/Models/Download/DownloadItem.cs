@@ -9,7 +9,8 @@ namespace LibgenDesktop.Models.Download
     {
         private CancellationTokenSource cancellationTokenSource;
 
-        public DownloadItem(Guid id, string downloadPageUrl, string downloadDirectory, string fileName, string downloadTransformations, string md5Hash)
+        public DownloadItem(Guid id, string downloadPageUrl, string downloadDirectory, string fileName, string downloadTransformations, string md5Hash,
+            bool restartSessionOnTimeout)
         {
             cancellationTokenSource = new CancellationTokenSource();
             Id = id;
@@ -29,6 +30,7 @@ namespace LibgenDesktop.Models.Download
             DownloadedFileSize = null;
             TotalFileSize = null;
             CurrentAttempt = 1;
+            RestartSessionOnTimeout = restartSessionOnTimeout;
         }
 
         private DownloadItem(DownloadItem source)
@@ -48,6 +50,7 @@ namespace LibgenDesktop.Models.Download
             DownloadedFileSize = source.DownloadedFileSize;
             TotalFileSize = source.TotalFileSize;
             CurrentAttempt = source.CurrentAttempt;
+            RestartSessionOnTimeout = source.RestartSessionOnTimeout;
         }
 
         public Guid Id { get; }
@@ -67,6 +70,7 @@ namespace LibgenDesktop.Models.Download
         public long? DownloadedFileSize { get; set; }
         public long? TotalFileSize { get; set; }
         public int CurrentAttempt { get; set; }
+        public bool RestartSessionOnTimeout { get; set; }
 
         public void CancelDownload()
         {

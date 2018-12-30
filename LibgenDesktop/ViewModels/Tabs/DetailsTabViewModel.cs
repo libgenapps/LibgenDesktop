@@ -349,8 +349,9 @@ namespace LibgenDesktop.ViewModels.Tabs
                 case MainActionButtonMode.START_DOWNLOAD:
                     if (MainModel.AppSettings.Download.UseDownloadManager)
                     {
+                        Mirrors.MirrorConfiguration mirror = MainModel.Mirrors[downloadMirrorName];
                         MainModel.Downloader.EnqueueDownloadItem(downloadUrl, FileNameWithoutExtension, FileExtension.ToLower(), Md5Hash,
-                            GetDownloadTransformations(MainModel.Mirrors[downloadMirrorName]));
+                            GetDownloadTransformations(mirror), mirror.RestartSessionOnTimeout);
                     }
                     else
                     {

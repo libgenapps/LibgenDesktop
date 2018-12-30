@@ -54,6 +54,7 @@
             public string FirstRunMessage { get; set; }
             public string DatabaseNotFound { get; set; }
             public string DatabaseCorrupted { get; set; }
+            public string LibgenServerDatabase { get; set; }
             public string ChooseOption { get; set; }
             public string CreateNewDatabase { get; set; }
             public string OpenExistingDatabase { get; set; }

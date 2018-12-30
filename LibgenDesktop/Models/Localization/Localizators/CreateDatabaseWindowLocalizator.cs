@@ -39,6 +39,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
 
         public string GetDatabaseNotFoundText(string database) => Format(translation => translation.DatabaseNotFound, new { database });
         public string GetDatabaseCorruptedText(string database) => Format(translation => translation.DatabaseCorrupted, new { database });
+        public string GetLibgenServerDatabaseText(string database) => Format(translation => translation.LibgenServerDatabase, new { database });
 
         private string Format(Func<Translation.CreateDatabaseWindowTranslation, string> field, object templateArguments = null)
         {

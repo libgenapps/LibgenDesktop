@@ -16,6 +16,7 @@ namespace LibgenDesktop.ViewModels.Windows
         {
             DATABASE_NOT_FOUND = 1,
             DATABASE_CORRUPTED,
+            DATABASE_NOT_VALID,
             FIRST_RUN
         }
 
@@ -99,6 +100,10 @@ namespace LibgenDesktop.ViewModels.Windows
                 case MainModel.DatabaseStatus.CORRUPTED:
                     eventType = EventType.DATABASE_CORRUPTED;
                     header = Localization.GetDatabaseCorruptedText(databaseFileName ?? GetDatabaseFileName());
+                    break;
+                case MainModel.DatabaseStatus.SERVER_DATABASE:
+                    eventType = EventType.DATABASE_NOT_VALID;
+                    header = Localization.GetLibgenServerDatabaseText(databaseFileName ?? GetDatabaseFileName());
                     break;
                 default:
                     throw new Exception($"Unexpected database status: {MainModel.LocalDatabaseStatus}.");

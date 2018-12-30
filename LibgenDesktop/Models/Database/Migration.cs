@@ -14,6 +14,8 @@ namespace LibgenDesktop.Models.Database
                     return MigrateFrom_0_7(localDatabase, databaseMetadata);
                 case "1.0":
                     return MigrateFrom_1_0(localDatabase, databaseMetadata);
+                case "1.2":
+                    return MigrateFrom_1_2(localDatabase, databaseMetadata);
                 case Constants.CURRENT_DATABASE_VERSION:
                     return true;
                 default:
@@ -23,18 +25,24 @@ namespace LibgenDesktop.Models.Database
 
         private static bool MigrateFrom_0_7(LocalDatabase localDatabase, DatabaseMetadata databaseMetadata)
         {
-            return AddFiles(localDatabase) && UpdateMetadataVersion(localDatabase, databaseMetadata);
+            return AddFiles(localDatabase) && UpdateMetadata(localDatabase, databaseMetadata);
         }
 
         private static bool MigrateFrom_1_0(LocalDatabase localDatabase, DatabaseMetadata databaseMetadata)
         {
-            return AddFiles(localDatabase) && UpdateMetadataVersion(localDatabase, databaseMetadata);
+            return AddFiles(localDatabase) && UpdateMetadata(localDatabase, databaseMetadata);
         }
 
-        private static bool UpdateMetadataVersion(LocalDatabase localDatabase, DatabaseMetadata databaseMetadata)
+        private static bool MigrateFrom_1_2(LocalDatabase localDatabase, DatabaseMetadata databaseMetadata)
+        {
+            return UpdateMetadata(localDatabase, databaseMetadata);
+        }
+
+        private static bool UpdateMetadata(LocalDatabase localDatabase, DatabaseMetadata databaseMetadata)
         {
             try
             {
+                databaseMetadata.AppName = Constants.DATABASE_METADATA_APP_NAME;
                 databaseMetadata.Version = Constants.CURRENT_DATABASE_VERSION;
                 localDatabase.UpdateMetadata(databaseMetadata);
                 return true;

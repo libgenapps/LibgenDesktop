@@ -44,6 +44,7 @@
         "FirstRunMessage": "Добро пожаловать в Libgen Desktop.",
         "DatabaseNotFound": "База данных {database} не найдена.",
         "DatabaseCorrupted": "База данных {database} повреждена.",
+        "LibgenServerDatabase": "Файл {database} является базой данных приложения Libgen Server и не может быть использован в приложении Libgen Desktop.",
         "ChooseOption": "Выберите действие",
         "CreateNewDatabase": "Создать новую базу данных",
         "OpenExistingDatabase": "Открыть существующую базу данных",

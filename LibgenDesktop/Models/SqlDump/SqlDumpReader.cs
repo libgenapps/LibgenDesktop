@@ -257,10 +257,6 @@ namespace LibgenDesktop.Models.SqlDump
             throw new Exception($"Couldn't parse table name from the line:\r\n{line}");
         }
 
-        private void PopulateBookField(NonFictionBook book, string fieldName, string line, ref int position)
-        {
-        }
-
         private string ParseString(string line, ref int position)
         {
             bool openQuote = false;

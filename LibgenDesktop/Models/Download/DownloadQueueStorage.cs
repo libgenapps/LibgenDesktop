@@ -24,6 +24,7 @@ namespace LibgenDesktop.Models.Download
             public long? DownloadedFileSize { get; set; }
             public long? TotalFileSize { get; set; }
             public int CurrentAttempt { get; set; }
+            public bool RestartSessionOnTimeout { get; set; }
         }
 
         public static List<DownloadItem> LoadDownloadQueue(string downloadQueueFilePath)
@@ -91,14 +92,16 @@ namespace LibgenDesktop.Models.Download
                 FileCreated = downloadItem.FileCreated,
                 DownloadedFileSize = downloadItem.DownloadedFileSize,
                 TotalFileSize = downloadItem.TotalFileSize,
-                CurrentAttempt = downloadItem.CurrentAttempt
+                CurrentAttempt = downloadItem.CurrentAttempt,
+                RestartSessionOnTimeout = downloadItem.RestartSessionOnTimeout
             };
         }
 
         private static DownloadItem FromStorageDownloadItem(StorageDownloadItem storageDownloadItem)
         {
             DownloadItem result = new DownloadItem(storageDownloadItem.Id, storageDownloadItem.DownloadPageUrl, storageDownloadItem.DownloadDirectory,
-                storageDownloadItem.FileName, storageDownloadItem.DownloadTransformations, storageDownloadItem.Md5Hash)
+                storageDownloadItem.FileName, storageDownloadItem.DownloadTransformations, storageDownloadItem.Md5Hash,
+                storageDownloadItem.RestartSessionOnTimeout)
             {
                 Status = storageDownloadItem.Status,
                 DirectFileUrl = storageDownloadItem.DirectFileUrl,

@@ -33,7 +33,8 @@ namespace LibgenDesktop.Models
             OPENED = 1,
             NOT_FOUND,
             NOT_SET,
-            CORRUPTED
+            CORRUPTED,
+            SERVER_DATABASE
         }
 
         internal enum ImportSqlDumpResult
@@ -679,6 +680,12 @@ namespace LibgenDesktop.Models
                             return false;
                         }
                         DatabaseMetadata = localDatabase.GetMetadata();
+                        if (!String.IsNullOrEmpty(DatabaseMetadata.AppName) &&
+                            DatabaseMetadata.AppName.CompareOrdinalIgnoreCase(LIBGEN_SERVER_DATABASE_METADATA_APP_NAME))
+                        {
+                            LocalDatabaseStatus = DatabaseStatus.SERVER_DATABASE;
+                            return false;
+                        }
                         if (String.IsNullOrEmpty(DatabaseMetadata.Version))
                         {
                             LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
@@ -724,6 +731,7 @@ namespace LibgenDesktop.Models
             {
                 localDatabase = LocalDatabase.CreateDatabase(databaseFilePath);
                 localDatabase.CreateMetadataTable();
+                localDatabase.CreateFilesTable();
                 localDatabase.CreateNonFictionTables();
                 localDatabase.CreateFictionTables();
                 localDatabase.CreateSciMagTables();
@@ -923,7 +931,7 @@ namespace LibgenDesktop.Models
 
         private Task ScanAsync<T>(string scanDirectory, IProgress<object> progressHandler, int objectsInDatabaseCount,
             Func<List<string>> indexRetrievalFunction, string indexPrefix, Action indexCreationAction, Func<string, T> getObjectByMd5HashFunction)
-            where T: LibgenObject
+            where T : LibgenObject
         {
             return Task.Run(() =>
             {

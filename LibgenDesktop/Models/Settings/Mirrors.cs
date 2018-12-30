@@ -15,6 +15,7 @@ namespace LibgenDesktop.Models.Settings
             public string FictionCoverUrl { get; set; }
             public string SciMagDownloadUrl { get; set; }
             public string SciMagDownloadTransformations { get; set; }
+            public bool RestartSessionOnTimeout { get; set; }
         }
     }
 }

@@ -22,6 +22,7 @@ namespace LibgenDesktop.Models.Entities
         static DatabaseMetadata()
         {
             FieldDefinitions = new Dictionary<string, FieldDefinition>();
+            AddField("AppName", metadata => metadata.AppName, (metadata, value) => metadata.AppName = value);
             AddField("Version", metadata => metadata.Version, (metadata, value) => metadata.Version = value);
             AddField("NonFictionFirstImportComplete", metadata => metadata.NonFictionFirstImportComplete.ToString(),
                 (metadata, value) => metadata.NonFictionFirstImportComplete = value == Boolean.TrueString);
@@ -33,6 +34,7 @@ namespace LibgenDesktop.Models.Entities
 
         public DatabaseMetadata()
         {
+            AppName = null;
             Version = null;
             NonFictionFirstImportComplete = null;
             FictionFirstImportComplete = null;
@@ -41,6 +43,7 @@ namespace LibgenDesktop.Models.Entities
 
         public static Dictionary<string, FieldDefinition> FieldDefinitions { get; }
 
+        public string AppName { get; set; }
         public string Version { get; set; }
         public bool? NonFictionFirstImportComplete { get; set; }
         public bool? FictionFirstImportComplete { get; set; }

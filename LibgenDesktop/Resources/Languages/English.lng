@@ -44,6 +44,7 @@
         "FirstRunMessage": "Welcome to Libgen Desktop.",
         "DatabaseNotFound": "Database {database} not found.",
         "DatabaseCorrupted": "Database {database} is corrupted.",
+        "LibgenServerDatabase": "Database {database} is a Libgen Server database which is not compatible with the Libgen Desktop database structure.",
         "ChooseOption": "Choose an action",
         "CreateNewDatabase": "Create a new database",
         "OpenExistingDatabase": "Open an existing database",

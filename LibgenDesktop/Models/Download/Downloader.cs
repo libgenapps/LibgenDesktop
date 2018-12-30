@@ -91,13 +91,13 @@ namespace LibgenDesktop.Models.Download
         }
 
         public void EnqueueDownloadItem(string downloadPageUrl, string fileNameWithoutExtension, string fileExtension, string md5Hash,
-            string downloadTransformations)
+            string downloadTransformations, bool restartSessionOnTimeout)
         {
             string fileName = String.Concat(FileUtils.RemoveInvalidFileNameCharacters(fileNameWithoutExtension, md5Hash), ".", fileExtension.ToLower());
             lock (downloadQueueLock)
             {
                 DownloadItem newDownloadItem = new DownloadItem(Guid.NewGuid(), downloadPageUrl, downloadSettings.DownloadDirectory, fileName,
-                    downloadTransformations, md5Hash);
+                    downloadTransformations, md5Hash, restartSessionOnTimeout);
                 downloadQueue.Add(newDownloadItem);
                 eventQueue.Add(new DownloadItemAddedEventArgs(newDownloadItem));
                 AddLogLine(newDownloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineQueued);
@@ -267,7 +267,7 @@ namespace LibgenDesktop.Models.Download
                         }
                         else
                         {
-                            if (!downloadItem.FileCreated)
+                            if (!downloadItem.FileCreated || downloadItem.RestartSessionOnTimeout)
                             {
                                 string url = downloadItem.DownloadPageUrl;
                                 string referer = null;
@@ -403,6 +403,10 @@ namespace LibgenDesktop.Models.Download
                                             downloadItem.Status = DownloadItemStatus.DOWNLOADING;
                                             currentAttempt++;
                                             downloadItem.CurrentAttempt = currentAttempt;
+                                            if (downloadItem.RestartSessionOnTimeout)
+                                            {
+                                                downloadItem.Referer = null;
+                                            }
                                             AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
                                                 localization.GetLogLineAttempt(currentAttempt, downloadSettings.Attempts));
                                         }
