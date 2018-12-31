@@ -677,6 +677,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\libgen_io_scimag.xslt</TargetPath>
     </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\gen_lib_rus_ec_nonfiction.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\gen_lib_rus_ec_nonfiction.xslt</TargetPath>
+    </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Mirrors\libgen_pw_nonfiction_step1.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\libgen_pw_nonfiction_step1.xslt</TargetPath>
@@ -712,14 +716,6 @@
     <ContentWithTargetPath Include="Resources\Mirrors\b_ok_xyz_step2.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\b_ok_xyz_step2.xslt</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\b_ok_tor_step1.xslt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\b_ok_tor_step1.xslt</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\b_ok_tor_step2.xslt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\b_ok_tor_step2.xslt</TargetPath>
     </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Mirrors\booksc_org_step1.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
