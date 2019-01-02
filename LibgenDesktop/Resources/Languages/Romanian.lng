@@ -44,6 +44,7 @@
         "FirstRunMessage": "Bine ați venit la Biblioteca Digitală Libgen.",
         "DatabaseNotFound": "Baza de date nu a fost gasită.",
         "DatabaseCorrupted": "Baza de date este coruptă.",
+        "LibgenServerDatabase": "Baza de date {database} este o bază de date Libgen Server care nu este compatibilă cu structura bazei de date Libgen Desktop.",
         "ChooseOption": "Alege o acțiune",
         "CreateNewDatabase": "Creează o nouă Baza de date",
         "OpenExistingDatabase": "Deschide o Baza de date deja creată",

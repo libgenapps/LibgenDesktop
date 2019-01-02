@@ -34,7 +34,6 @@ namespace LibgenDesktop.Setup
             AddFile(@"Mirrors\libgen_io_nonfiction.xslt");
             AddFile(@"Mirrors\libgen_io_fiction.xslt");
             AddFile(@"Mirrors\libgen_io_scimag.xslt");
-            AddFile(@"Mirrors\gen_lib_rus_ec_nonfiction.xslt");
             AddFile(@"Mirrors\libgen_pw_nonfiction_step1.xslt");
             AddFile(@"Mirrors\libgen_pw_nonfiction_step2.xslt");
             AddFile(@"Mirrors\libgen_pw_fiction_step1.xslt");

@@ -677,10 +677,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\libgen_io_scimag.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\gen_lib_rus_ec_nonfiction.xslt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\gen_lib_rus_ec_nonfiction.xslt</TargetPath>
-    </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Mirrors\libgen_pw_nonfiction_step1.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\libgen_pw_nonfiction_step1.xslt</TargetPath>
