@@ -700,8 +700,9 @@ namespace LibgenDesktop.Models
                         UpdateFictionBookCount();
                         UpdateSciMagArticleCount();
                     }
-                    catch
+                    catch (Exception exception)
                     {
+                        Logger.Exception(exception);
                         LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
                         return false;
                     }
@@ -748,8 +749,9 @@ namespace LibgenDesktop.Models
                 SciMagArticleCount = 0;
                 return true;
             }
-            catch
+            catch (Exception exception)
             {
+                Logger.Exception(exception);
                 LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
                 return false;
             }

@@ -72,7 +72,7 @@ namespace LibgenDesktop.Models.Database
                     while (dataReader.Read())
                     {
                         string key = dataReader.GetString(0);
-                        string value = dataReader.GetString(1);
+                        string value = ParseNullableDbString(dataReader.GetValue(1));
                         if (DatabaseMetadata.FieldDefinitions.TryGetValue(key.ToLower(), out DatabaseMetadata.FieldDefinition field))
                         {
                             field.Setter(result, value);
@@ -1511,7 +1511,7 @@ namespace LibgenDesktop.Models.Database
             LibraryFile file = new LibraryFile();
             file.Id = dataReader.GetInt32(0);
             file.FilePath = dataReader.GetString(1);
-            file.ArchiveEntry = ParseStringScalarResult(dataReader.GetValue(2));
+            file.ArchiveEntry = ParseNullableDbString(dataReader.GetValue(2));
             file.ObjectType = (LibgenObjectType)dataReader.GetInt32(3);
             file.ObjectId = dataReader.GetInt32(4);
             return file;
@@ -1546,7 +1546,7 @@ namespace LibgenDesktop.Models.Database
 
         private string ExecuteStringScalarCommand(string commandText)
         {
-            return ParseStringScalarResult(ExecuteScalarCommand(commandText));
+            return ParseNullableDbString(ExecuteScalarCommand(commandText));
         }
 
         private object ExecuteScalarCommand(string commandText)
@@ -1568,9 +1568,9 @@ namespace LibgenDesktop.Models.Database
             return objectResult != DBNull.Value ? (int?)(long)objectResult : null;
         }
 
-        private string ParseStringScalarResult(object objectResult)
+        private string ParseNullableDbString(object input)
         {
-            return objectResult != DBNull.Value ? objectResult.ToString() : null;
+            return input != DBNull.Value ? input.ToString() : null;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -5,9 +5,9 @@ namespace LibgenDesktop.Common
     internal static class Constants
     {
         public const string DATABASE_METADATA_APP_NAME = "LibgenDesktop";
-        public const string CURRENT_VERSION = "1.2.3";
-        public const string CURRENT_GITHUB_RELEASE_NAME = "1.2.3";
-        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2019, 1, 2);
+        public const string CURRENT_VERSION = "1.2.4";
+        public const string CURRENT_GITHUB_RELEASE_NAME = "1.2.4";
+        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2019, 1, 27);
         public const string CURRENT_DATABASE_VERSION = "1.2.1";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
