@@ -528,6 +528,7 @@
     "Database":
     {
         "WindowTitle": "Статистика базы данных",
+        "CurrentDatabase": "База данных:",
         "NonFiction": "Нехудожественная литература",
         "Fiction": "Художественная литература",
         "SciMagArticles": "Научные статьи",
@@ -597,6 +598,7 @@
             "ServerResponseTimeout": "Превышено время ожидания ответа от сервера.",
             "DownloadIncompleteError": "Загрузка завершена не полностью.",
             "FileWriteError": "Ошибка записи файла на диск.",
+            "LogLineRequestError": "Не удалось отправить запрос по адресу {url}",
             "UnexpectedError": "Возникла непредвиденная ошибка."
         }
     },

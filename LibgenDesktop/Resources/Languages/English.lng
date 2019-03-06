@@ -528,6 +528,7 @@
     "Database":
     {
         "WindowTitle": "Database information",
+        "CurrentDatabase": "Current database:",
         "NonFiction": "Non-fiction books",
         "Fiction": "Fiction books",
         "SciMagArticles": "Scientific articles",
@@ -597,6 +598,7 @@
             "ServerResponseTimeout": "Server response timeout.",
             "DownloadIncompleteError": "Server indicates that file download is complete, but it is not.",
             "FileWriteError": "File write error.",
+            "LogLineRequestError": "Couldn't send request to {url}",
             "UnexpectedError": "An unexpected error occurred."
         }
     },

@@ -575,6 +575,7 @@
         internal class DatabaseTranslation
         {
             public string WindowTitle { get; set; }
+            public string CurrentDatabase { get; set; }
             public string NonFiction { get; set; }
             public string Fiction { get; set; }
             public string SciMagArticles { get; set; }
@@ -624,6 +625,7 @@
             public string ServerResponseTimeout { get; set; }
             public string DownloadIncompleteError { get; set; }
             public string FileWriteError { get; set; }
+            public string LogLineRequestError { get; set; }
             public string UnexpectedError { get; set; }
         }
 

@@ -106,6 +106,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             Format(translation => translation?.LogMessages?.CannotCreateOrOpenFile, new { file });
         public string GetLogLineCannotRenamePartFile(string source, string destination) =>
             Format(translation => translation?.LogMessages?.CannotRenamePartFile, new { source, destination });
+        public string GetLogLineRequestError(string url) => Format(translation => translation?.LogMessages?.LogLineRequestError, new { url });
 
         private string Format(Func<Translation.DownloadManagerTranslation, string> field, object templateArguments = null)
         {

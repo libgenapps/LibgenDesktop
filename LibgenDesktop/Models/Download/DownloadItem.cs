@@ -5,9 +5,10 @@ using System.Threading;
 
 namespace LibgenDesktop.Models.Download
 {
-    internal class DownloadItem
+    internal class DownloadItem : IDisposable
     {
         private CancellationTokenSource cancellationTokenSource;
+        private bool disposed;
 
         public DownloadItem(Guid id, string downloadPageUrl, string downloadDirectory, string fileName, string downloadTransformations, string md5Hash,
             bool restartSessionOnTimeout)
@@ -31,6 +32,7 @@ namespace LibgenDesktop.Models.Download
             TotalFileSize = null;
             CurrentAttempt = 1;
             RestartSessionOnTimeout = restartSessionOnTimeout;
+            disposed = false;
         }
 
         private DownloadItem(DownloadItem source)
@@ -51,6 +53,7 @@ namespace LibgenDesktop.Models.Download
             TotalFileSize = source.TotalFileSize;
             CurrentAttempt = source.CurrentAttempt;
             RestartSessionOnTimeout = source.RestartSessionOnTimeout;
+            disposed = false;
         }
 
         public Guid Id { get; }
@@ -74,11 +77,25 @@ namespace LibgenDesktop.Models.Download
 
         public void CancelDownload()
         {
-            cancellationTokenSource.Cancel();
+            if (cancellationTokenSource != null)
+            {
+                cancellationTokenSource.Cancel();
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = null;
+            }
         }
 
         public void CreateNewCancellationToken()
         {
+            if (disposed)
+            {
+                throw new ObjectDisposedException(nameof(DownloadItem));
+            }
+            if (cancellationTokenSource != null)
+            {
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = null;
+            }
             cancellationTokenSource = new CancellationTokenSource();
             CancellationToken = cancellationTokenSource.Token;
         }
@@ -86,6 +103,19 @@ namespace LibgenDesktop.Models.Download
         public DownloadItem Clone()
         {
             return new DownloadItem(this);
+        }
+
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                if (cancellationTokenSource != null)
+                {
+                    cancellationTokenSource.Dispose();
+                    cancellationTokenSource = null;
+                }
+                disposed = true;
+            }
         }
     }
 }

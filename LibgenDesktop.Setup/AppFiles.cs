@@ -31,15 +31,9 @@ namespace LibgenDesktop.Setup
             AddFile(@"Languages\Spanish.lng");
             AddFile(@"Languages\French.lng");
             AddFile(@"Mirrors\mirrors.config");
-            AddFile(@"Mirrors\libgen_io_nonfiction.xslt");
-            AddFile(@"Mirrors\libgen_io_fiction.xslt");
-            AddFile(@"Mirrors\libgen_io_scimag.xslt");
-            AddFile(@"Mirrors\libgen_pw_nonfiction_step1.xslt");
-            AddFile(@"Mirrors\libgen_pw_nonfiction_step2.xslt");
-            AddFile(@"Mirrors\libgen_pw_fiction_step1.xslt");
-            AddFile(@"Mirrors\libgen_pw_fiction_step2.xslt");
-            AddFile(@"Mirrors\libgen_pw_scimag_step1.xslt");
-            AddFile(@"Mirrors\libgen_pw_scimag_step2.xslt");
+            AddFile(@"Mirrors\libgen_pw_nonfiction.xslt");
+            AddFile(@"Mirrors\libgen_pw_fiction.xslt");
+            AddFile(@"Mirrors\libgen_pw_scimag.xslt");
             AddFile(@"Mirrors\bookfi_net.xslt");
             AddFile(@"Mirrors\b_ok_xyz_step1.xslt");
             AddFile(@"Mirrors\b_ok_xyz_step2.xslt");

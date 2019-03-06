@@ -102,6 +102,7 @@ namespace LibgenDesktop
             if (mainModel != null)
             {
                 mainModel.Downloader.Shutdown();
+                mainModel.Dispose();
             }
             Shutdown();
         }

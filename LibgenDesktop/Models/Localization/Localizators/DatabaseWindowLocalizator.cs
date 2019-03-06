@@ -9,6 +9,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             : base(prioritizedTranslationList, formatter)
         {
             WindowTitle = Format(translation => translation?.WindowTitle);
+            CurrentDatabase = Format(translation => translation?.CurrentDatabase);
             NonFiction = Format(translation => translation?.NonFiction);
             Fiction = Format(translation => translation?.Fiction);
             SciMagArticles = Format(translation => translation?.SciMagArticles);
@@ -26,6 +27,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
         }
 
         public string WindowTitle { get; }
+        public string CurrentDatabase { get; }
         public string NonFiction { get; }
         public string Fiction { get; }
         public string SciMagArticles { get; }

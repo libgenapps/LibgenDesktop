@@ -26,7 +26,7 @@ using Environment = LibgenDesktop.Common.Environment;
 
 namespace LibgenDesktop.Models
 {
-    internal class MainModel
+    internal class MainModel : IDisposable
     {
         internal enum DatabaseStatus
         {
@@ -59,6 +59,7 @@ namespace LibgenDesktop.Models
 
         private Updater updater;
         private LocalDatabase localDatabase;
+        private bool disposed;
 
         public MainModel()
         {
@@ -82,6 +83,7 @@ namespace LibgenDesktop.Models
             ConfigureUpdater();
             Downloader = new Downloader();
             ConfigureDownloader();
+            disposed = false;
         }
 
         public AppSettings AppSettings { get; }
@@ -817,6 +819,15 @@ namespace LibgenDesktop.Models
         public void ConfigureDownloader()
         {
             Downloader.Configure(Localization.CurrentLanguage, AppSettings.Network, AppSettings.Download);
+        }
+
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                Downloader?.Dispose();
+                disposed = true;
+            }
         }
 
         private Task<List<T>> SearchItemsAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction, string searchQuery,

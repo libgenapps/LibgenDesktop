@@ -22,7 +22,7 @@ using Environment = LibgenDesktop.Common.Environment;
 
 namespace LibgenDesktop.Models.Download
 {
-    internal partial class Downloader
+    internal class Downloader : IDisposable
     {
         private readonly object downloadQueueLock;
         private readonly string downloadQueueFilePath;
@@ -35,6 +35,7 @@ namespace LibgenDesktop.Models.Download
         private DownloadSettings downloadSettings;
         private bool isInOfflineMode;
         private bool isShuttingDown;
+        private bool disposed;
 
         public Downloader()
         {
@@ -50,6 +51,7 @@ namespace LibgenDesktop.Models.Download
             isShuttingDown = false;
             StartEventPublisherTask();
             downloadTask = StartDownloadTask();
+            disposed = false;
         }
 
         public event EventHandler DownloaderEvent;
@@ -223,6 +225,16 @@ namespace LibgenDesktop.Models.Download
                 Logger.Exception(exception);
             }
             Logger.Debug("Downloader was shut down successfully.");
+        }
+
+        public void Dispose()
+        {
+            if (!disposed)
+            {
+                eventQueue?.Dispose();
+                downloadTaskResetEvent?.Dispose();
+                disposed = true;
+            }
         }
 
         private void ResumeDownloadTask()
@@ -773,7 +785,17 @@ namespace LibgenDesktop.Models.Download
             {
                 Logger.Debug($"Requesting {url}, range: {startPosition.Value} - end.");
             }
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, url);
+            HttpRequestMessage request;
+            try
+            {
+                request = new HttpRequestMessage(HttpMethod.Get, url);
+            }
+            catch (Exception exception)
+            {
+                Logger.Exception(exception);
+                ReportError(downloadItem, localization.GetLogLineRequestError(Uri.UnescapeDataString(url)));
+                return null;
+            }
             request.Headers.UserAgent.ParseAdd(USER_AGENT);
             if (downloadItem.Cookies.Any())
             {

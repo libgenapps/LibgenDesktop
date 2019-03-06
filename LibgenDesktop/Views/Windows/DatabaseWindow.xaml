@@ -15,6 +15,8 @@
         <Grid Visibility="{Binding AreDatabaseStatsVisible, Converter={StaticResource booleanToHiddenConverter}}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="18" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -35,25 +37,34 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.NonFiction}" Style="{StaticResource HeaderLabel}" />
-            <Rectangle Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HeaderLine}" />
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.TotalBooks}" Style="{StaticResource RowNameLabel}" />
-            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding NonFictionTotalBooks}" Style="{StaticResource ValueLabel}" />
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding Localization.LastUpdate}" Style="{StaticResource RowNameLabel}" />
-            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding NonFictionLastUpdate}" Style="{StaticResource ValueLabel}" />
-            <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.Fiction}" Style="{StaticResource HeaderLabel}" />
-            <Rectangle Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HeaderLine}" />
-            <TextBlock Grid.Row="7" Grid.Column="0" Text="{Binding Localization.TotalBooks}" Style="{StaticResource RowNameLabel}" />
-            <TextBlock Grid.Row="7" Grid.Column="1" Text="{Binding FictionTotalBooks}" Style="{StaticResource ValueLabel}" />
-            <TextBlock Grid.Row="8" Grid.Column="0" Text="{Binding Localization.LastUpdate}" Style="{StaticResource RowNameLabel}" />
-            <TextBlock Grid.Row="8" Grid.Column="1" Text="{Binding FictionLastUpdate}" Style="{StaticResource ValueLabel}" />
-            <TextBlock Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.SciMagArticles}" Style="{StaticResource HeaderLabel}" />
-            <Rectangle Grid.Row="11" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HeaderLine}" />
-            <TextBlock Grid.Row="12" Grid.Column="0" Text="{Binding Localization.TotalArticles}" Style="{StaticResource RowNameLabel}" />
-            <TextBlock Grid.Row="12" Grid.Column="1" Text="{Binding SciMagTotalArticles}" Style="{StaticResource ValueLabel}" />
-            <TextBlock Grid.Row="13" Grid.Column="0" Text="{Binding Localization.LastUpdate}" Style="{StaticResource RowNameLabel}" />
-            <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding SciMagLastUpdate}" Style="{StaticResource ValueLabel}" />
-            <Grid Grid.Row="15" Grid.Column="0" Grid.ColumnSpan="2">
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{Binding Localization.CurrentDatabase}" Style="{StaticResource RowNameLabel}" />
+                <TextBox Grid.Column="1" Text="{Binding DatabaseFilePath}" Style="{StaticResource CurrentDatabaseTextBox}" />
+            </Grid>
+            <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.NonFiction}" Style="{StaticResource HeaderLabel}" />
+            <Rectangle Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HeaderLine}" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding Localization.TotalBooks}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding NonFictionTotalBooks}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="{Binding Localization.LastUpdate}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="5" Grid.Column="1" Text="{Binding NonFictionLastUpdate}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.Fiction}" Style="{StaticResource HeaderLabel}" />
+            <Rectangle Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HeaderLine}" />
+            <TextBlock Grid.Row="9" Grid.Column="0" Text="{Binding Localization.TotalBooks}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="9" Grid.Column="1" Text="{Binding FictionTotalBooks}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding Localization.LastUpdate}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding FictionLastUpdate}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="12" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Localization.SciMagArticles}" Style="{StaticResource HeaderLabel}" />
+            <Rectangle Grid.Row="13" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource HeaderLine}" />
+            <TextBlock Grid.Row="14" Grid.Column="0" Text="{Binding Localization.TotalArticles}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="14" Grid.Column="1" Text="{Binding SciMagTotalArticles}" Style="{StaticResource ValueLabel}" />
+            <TextBlock Grid.Row="15" Grid.Column="0" Text="{Binding Localization.LastUpdate}" Style="{StaticResource RowNameLabel}" />
+            <TextBlock Grid.Row="15" Grid.Column="1" Text="{Binding SciMagLastUpdate}" Style="{StaticResource ValueLabel}" />
+            <Grid Grid.Row="17" Grid.Column="0" Grid.ColumnSpan="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />

@@ -20,6 +20,7 @@ namespace LibgenDesktop.ViewModels.Windows
         private string fictionLastUpdate;
         private string sciMagTotalArticles;
         private string sciMagLastUpdate;
+        private string databaseFilePath;
 
         public DatabaseWindowViewModel(MainModel mainModel)
             : base(mainModel)
@@ -55,6 +56,19 @@ namespace LibgenDesktop.ViewModels.Windows
             set
             {
                 areDatabaseStatsVisible = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string DatabaseFilePath
+        {
+            get
+            {
+                return databaseFilePath;
+            }
+            set
+            {
+                databaseFilePath = value;
                 NotifyPropertyChanged();
             }
         }
@@ -155,6 +169,7 @@ namespace LibgenDesktop.ViewModels.Windows
                 CurrentWindowContext.CloseDialog(false);
                 return;
             }
+            DatabaseFilePath = MainModel.GetDatabaseFullPath(MainModel.AppSettings.DatabaseFileName);
             NonFictionTotalBooks = formatter.ToFormattedString(databaseStats.NonFictionBookCount);
             NonFictionLastUpdate = databaseStats.NonFictionLastUpdate.HasValue ?
                 formatter.ToFormattedDateTimeString(databaseStats.NonFictionLastUpdate.Value) : Localization.Never;
