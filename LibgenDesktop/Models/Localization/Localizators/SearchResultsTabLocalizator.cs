@@ -15,6 +15,13 @@ namespace LibgenDesktop.Models.Localization.Localizators
             AddToBookmarksTooltip = Format(translation => translation?.AddToBookmarksTooltip);
             RemoveFromBookmarksTooltip = Format(translation => translation?.RemoveFromBookmarksTooltip);
             ExportButtonTooltip = Format(translation => translation?.ExportButtonTooltip);
+            Details = Format(translation => translation?.Details);
+            Open = Format(translation => translation?.Open);
+            Download = Format(translation => translation?.Download);
+            ErrorMessageTitle = Format(translation => translation?.ErrorMessageTitle);
+            OfflineModeIsOnMessageTitle = Format(translation => translation?.OfflineModeIsOnMessageTitle);
+            OfflineModeIsOnMessageText = Format(translation => translation?.OfflineModeIsOnMessageText);
+            NoDownloadMirrorError = Format(translation => translation?.NoDownloadMirrorError);
         }
 
         public string SearchPlaceHolder { get; }
@@ -24,6 +31,15 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string AddToBookmarksTooltip { get; }
         public string RemoveFromBookmarksTooltip { get; }
         public string ExportButtonTooltip { get; }
+        public string Details { get; }
+        public string Open { get; }
+        public string Download { get; }
+        public string ErrorMessageTitle { get; }
+        public string OfflineModeIsOnMessageTitle { get; }
+        public string OfflineModeIsOnMessageText { get; }
+        public string NoDownloadMirrorError { get; }
+
+        public string GetFileNotFoundErrorText(string file) => Format(translation => translation?.FileNotFoundError, new { file });
 
         private string Format(Func<Translation.SearchResultsTabsTranslation, string> field, object templateArguments = null)
         {

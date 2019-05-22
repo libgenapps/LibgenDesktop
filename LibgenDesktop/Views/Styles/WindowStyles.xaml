@@ -91,7 +91,7 @@
         <Setter Property="Window.ResizeMode" Value="NoResize" />
         <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.DATABASE_WINDOW_WIDTH}}" />
         <Setter Property="Window.SizeToContent" Value="Height" />
-        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowCloseButton" Value="False" />
     </Style>
     <Style x:Key="AboutWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
         <Setter Property="Window.ResizeMode" Value="NoResize" />

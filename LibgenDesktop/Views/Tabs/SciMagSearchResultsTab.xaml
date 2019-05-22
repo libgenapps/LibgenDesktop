@@ -56,7 +56,7 @@
                     IsEnabled="{Binding IsExportPanelVisible, Converter={StaticResource booleanInverseConverter}}" />
         </Grid>
         <DataGrid Name="articleGrid" Grid.Row="1" ItemsSource="{Binding Articles, IsAsync=True}" SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
-                  Visibility="{Binding IsArticleGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                  Visibility="{Binding IsSearchResultsGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
                   Style="{StaticResource ArticleDataGrid}">
             <DataGrid.Resources>
                 <u:BindingProxy x:Key="dataGridViewModel" DataContext="{Binding}" />

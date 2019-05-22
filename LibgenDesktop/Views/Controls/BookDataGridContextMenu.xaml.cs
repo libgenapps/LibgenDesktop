@@ -2,9 +2,9 @@
 
 namespace LibgenDesktop.Views.Controls
 {
-    public partial class ImportLogPanel : UserControl
+    public partial class BookDataGridContextMenu : ContextMenu
     {
-        public ImportLogPanel()
+        public BookDataGridContextMenu()
         {
             InitializeComponent();
         }

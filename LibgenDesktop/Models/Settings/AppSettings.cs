@@ -416,7 +416,7 @@ namespace LibgenDesktop.Models.Settings
                         NonFictionSynchronizationMirrorName = DEFAULT_SYNCHRONIZATION_MIRROR_NAME,
                         FictionBooksMirrorName = DEFAULT_DOWNLOAD_MIRROR_NAME,
                         FictionCoversMirrorName = DEFAULT_DOWNLOAD_MIRROR_NAME,
-                        ArticlesMirrorMirrorName = DEFAULT_DOWNLOAD_MIRROR_NAME
+                        ArticlesMirrorName = DEFAULT_DOWNLOAD_MIRROR_NAME
                     };
                 }
             }
@@ -426,7 +426,7 @@ namespace LibgenDesktop.Models.Settings
             public string NonFictionSynchronizationMirrorName { get; set; }
             public string FictionBooksMirrorName { get; set; }
             public string FictionCoversMirrorName { get; set; }
-            public string ArticlesMirrorMirrorName { get; set; }
+            public string ArticlesMirrorName { get; set; }
         }
 
         internal class SearchSettings

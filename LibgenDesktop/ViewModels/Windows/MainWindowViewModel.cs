@@ -782,7 +782,7 @@ namespace LibgenDesktop.ViewModels.Windows
             {
                 switch (e)
                 {
-                    case DownloadItemAddedEventArgs downloadItemAddedEvent:
+                    case DownloadItemAddedEventArgs _:
                         IsDownloadManagerButtonHighlighted = true;
                         break;
                     case DownloadItemChangedEventArgs downloadItemChangedEvent:

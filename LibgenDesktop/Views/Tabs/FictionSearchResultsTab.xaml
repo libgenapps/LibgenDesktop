@@ -56,7 +56,7 @@
                     IsEnabled="{Binding IsExportPanelVisible, Converter={StaticResource booleanInverseConverter}}" />
         </Grid>
         <DataGrid Name="bookGrid" Grid.Row="1" ItemsSource="{Binding Books, IsAsync=True}" SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
-                  Visibility="{Binding IsBookGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                  Visibility="{Binding IsSearchResultsGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
                   Style="{StaticResource BookDataGrid}">
             <DataGrid.Resources>
                 <u:BindingProxy x:Key="dataGridViewModel" DataContext="{Binding}" />

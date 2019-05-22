@@ -1,9 +1,11 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
                     xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
                     xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes">
     <u:BooleanToVisibilityConverter x:Key="booleanToHiddenConverter" TrueValue="Visible" FalseValue="Hidden" />
     <u:BooleanToVisibilityConverter x:Key="booleanToCollapsedConverter" TrueValue="Visible" FalseValue="Collapsed" />
+    <u:BooleanToVisibilityConverter x:Key="booleanToCollapsedInverseConverter" TrueValue="Collapsed" FalseValue="Visible" />
     <u:BooleanToWindowStateConverter x:Key="booleanToMaximizedConverter" TrueValue="Maximized" FalseValue="Normal" />
     <u:BooleanInverseConverter x:Key="booleanInverseConverter" />
     <u:GridLengthConverter x:Key="gridLengthConverter" />
@@ -21,4 +23,5 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="c:BookDataGridContextMenu" BasedOn="{StaticResource MaterialDesignContextMenu}" />
 </ResourceDictionary>

@@ -11,6 +11,7 @@ namespace LibgenDesktop.Views.Controls
         public static readonly DependencyProperty ShowIconProperty = DependencyProperty.Register("ShowIcon", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
         public static readonly DependencyProperty ShowMinimizeButtonProperty = DependencyProperty.Register("ShowMinimizeButton", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
         public static readonly DependencyProperty ShowMaximizeButtonProperty = DependencyProperty.Register("ShowMaximizeButton", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
+        public static readonly DependencyProperty ShowCloseButtonProperty = DependencyProperty.Register("ShowCloseButton", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
         public static readonly DependencyProperty ClosingCommandProperty = DependencyProperty.Register("ClosingCommand", typeof(FuncCommand<bool>), typeof(LibgenDesktopWindow));
         public static readonly DependencyProperty ClosedCommandProperty = DependencyProperty.Register("ClosedCommand", typeof(ICommand), typeof(LibgenDesktopWindow));
 
@@ -47,6 +48,18 @@ namespace LibgenDesktop.Views.Controls
             set
             {
                 SetValue(ShowMaximizeButtonProperty, value);
+            }
+        }
+
+        public bool ShowCloseButton
+        {
+            get
+            {
+                return (bool)GetValue(ShowCloseButtonProperty);
+            }
+            set
+            {
+                SetValue(ShowCloseButtonProperty, value);
             }
         }
 
@@ -88,6 +101,10 @@ namespace LibgenDesktop.Views.Controls
             if (!ShowMaximizeButton)
             {
                 WindowManager.RemoveWindowMaximizeButton(this);
+            }
+            if (!ShowCloseButton)
+            {
+                WindowManager.RemoveWindowCloseButton(this);
             }
         }
 

@@ -47,11 +47,8 @@ namespace LibgenDesktop.ViewModels.Tabs
         }
 
         protected override string FileNameWithoutExtension => $"{DetailsItem.Authors} - {DetailsItem.Title}";
-
         protected override string FileExtension => DetailsItem.Format;
-
         protected override string Md5Hash => DetailsItem.Md5Hash;
-
         protected override bool HasCover => DetailsItem.Book.Cover == "1";
 
         protected override string GenerateDownloadUrl(Mirrors.MirrorConfiguration mirrorConfiguration)

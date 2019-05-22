@@ -97,6 +97,14 @@
             public string AddToBookmarksTooltip { get; set; }
             public string RemoveFromBookmarksTooltip { get; set; }
             public string ExportButtonTooltip { get; set; }
+            public string Details { get; set; }
+            public string Open { get; set; }
+            public string Download { get; set; }
+            public string ErrorMessageTitle { get; set; }
+            public string FileNotFoundError { get; set; }
+            public string OfflineModeIsOnMessageTitle { get; set; }
+            public string OfflineModeIsOnMessageText { get; set; }
+            public string NoDownloadMirrorError { get; set; }
         }
 
         internal class NonFictionSearchResultsGridColumnsTranslation

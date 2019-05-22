@@ -84,7 +84,15 @@
         "Interrupting": "ПРЕРЫВАЕТСЯ...",
         "AddToBookmarksTooltip": "Добавить в закладки",
         "RemoveFromBookmarksTooltip": "Удалить из закладок",
-        "ExportButtonTooltip": "Экспорт результатов поиска в файл"
+        "ExportButtonTooltip": "Экспорт результатов поиска в файл",
+        "Details": "Детальная информация",
+        "Open": "Открыть",
+        "Download": "Скачать",
+        "ErrorMessageTitle": "Ошибка",
+        "FileNotFoundError": "Файл {file} не найден.",
+        "OfflineModeIsOnMessageTitle": "Включен автономный режим",
+        "OfflineModeIsOnMessageText": "Скачивание файлов недоступно в автономном режиме. Вы можете отключить автономный режим в окне настроек.",
+        "NoDownloadMirrorError": "Не выбрано зеркало для загрузки файлов. Пожалуйста, выберите одно из доступных зеркал в окне настроек."
     },
     "NonFictionSearchResultsTab":
     {
@@ -536,7 +544,7 @@
         "TotalArticles": "Всего статей",
         "LastUpdate": "Последнее обновление",
         "Never": "никогда",
-        "CreatingIndexes": "Идет создание отсутствующих индексов.{new-line}Пожалуйста, подождите...",
+        "CreatingIndexes": "Идет создание отсутствующих индексов.{new-line}Пожалуйста, подождите...{new-line}Эта операция не может быть прервана.",
         "ChangeDatabase": "СМЕНИТЬ БАЗУ ДАННЫХ...",
         "BrowseDatabaseDialogTitle": "Местоположение файла базы данных",
         "Databases": "Базы данных",

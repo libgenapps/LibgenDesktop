@@ -1,0 +1,15 @@
+﻿<ContextMenu x:Class="LibgenDesktop.Views.Controls.BookDataGridContextMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+    <MenuItem Header="{Binding DataContext.Localization.Details, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
+              FontWeight="Bold"
+              Command="{Binding DataContext.OpenDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
+              CommandParameter="{Binding}" />
+    <MenuItem Header="{Binding DataContext.Localization.Open, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
+              Visibility="{Binding ExistsInLibrary, Converter={StaticResource booleanToCollapsedConverter}}"
+              Command="{Binding DataContext.OpenFileCommand, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}" />
+    <MenuItem Header="{Binding DataContext.Localization.Download, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
+              Visibility="{Binding ExistsInLibrary, Converter={StaticResource booleanToCollapsedInverseConverter}}"
+              Command="{Binding DataContext.DownloadCommand, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}" />
+</ContextMenu>

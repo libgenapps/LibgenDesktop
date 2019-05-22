@@ -2,7 +2,9 @@
                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                        xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
-                       Title="{Binding Localization.WindowTitle}" Style="{StaticResource DatabaseWindow}">
+                       Title="{Binding Localization.WindowTitle}"
+                       ClosingCommand="{Binding WindowClosingCommand}"
+                       Style="{StaticResource DatabaseWindow}">
     <Window.Resources>
         <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/DatabaseWindowStyles.xaml" />
     </Window.Resources>

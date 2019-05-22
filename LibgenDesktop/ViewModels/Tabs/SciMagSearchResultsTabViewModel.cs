@@ -10,8 +10,9 @@ using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
 using LibgenDesktop.Models.Localization.Localizators;
 using LibgenDesktop.Models.ProgressArgs;
+using LibgenDesktop.Models.Settings;
+using LibgenDesktop.Models.Utils;
 using LibgenDesktop.ViewModels.EventArguments;
-using LibgenDesktop.ViewModels.Panels;
 using LibgenDesktop.ViewModels.SearchResultItems;
 using static LibgenDesktop.Models.Settings.AppSettings;
 
@@ -23,9 +24,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         private ObservableCollection<SciMagSearchResultItemViewModel> articles;
         private SciMagSearchResultsTabLocalizator localization;
         private string articleCount;
-        private bool isArticleGridVisible;
         private string searchProgressStatus;
-        private bool isStatusBarVisible;
 
         public SciMagSearchResultsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, string searchQuery,
             List<SciMagArticle> searchResults)
@@ -35,12 +34,9 @@ namespace LibgenDesktop.ViewModels.Tabs
             LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
             articles = new ObservableCollection<SciMagSearchResultItemViewModel>(searchResults.Select(article =>
                 new SciMagSearchResultItemViewModel(article, formatter)));
-            ExportPanelViewModel.ClosePanel += CloseExportPanel;
             OpenDetailsCommand = new Command(param => OpenDetails((param as SciMagSearchResultItemViewModel)?.Article));
-            ExportCommand = new Command(ShowExportPanel);
             ArticleDataGridEnterKeyCommand = new Command(ArticleDataGridEnterKeyPressed);
             Initialize();
-            mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
         }
 
         public SciMagSearchResultsTabLocalizator Localization
@@ -65,19 +61,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             set
             {
                 articles = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool IsArticleGridVisible
-        {
-            get
-            {
-                return isArticleGridVisible;
-            }
-            set
-            {
-                isArticleGridVisible = value;
                 NotifyPropertyChanged();
             }
         }
@@ -179,19 +162,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public bool IsStatusBarVisible
-        {
-            get
-            {
-                return isStatusBarVisible;
-            }
-            set
-            {
-                isStatusBarVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         public string ArticleCount
         {
             get
@@ -208,35 +178,27 @@ namespace LibgenDesktop.ViewModels.Tabs
         public SciMagSearchResultItemViewModel SelectedArticle { get; set; }
 
         public Command OpenDetailsCommand { get; }
-        public Command ExportCommand { get; }
         public Command ArticleDataGridEnterKeyCommand { get; }
 
+        protected override string FileNameWithoutExtension => $"{SelectedArticle.Article.Authors} - {SelectedArticle.Article.Title}";
+        protected override string FileExtension => "pdf";
+        protected override string Md5Hash => SelectedArticle.Article.Md5Hash;
+
         public event EventHandler<OpenSciMagDetailsEventArgs> OpenSciMagDetailsRequested;
-
-        public override void ShowExportPanel()
-        {
-            if (IsArticleGridVisible)
-            {
-                IsArticleGridVisible = false;
-                IsStatusBarVisible = false;
-                IsExportPanelVisible = true;
-                ExportPanelViewModel.ShowPanel(SearchQuery);
-            }
-        }
-
-        public override void HandleTabClosing()
-        {
-            MainModel.Localization.LanguageChanged -= LocalizationLanguageChanged;
-        }
 
         protected override SearchResultsTabLocalizator GetLocalization()
         {
             return localization;
         }
 
+        protected override LibgenObject GetSelectedLibgenObject()
+        {
+            return SelectedArticle.Article;
+        }
+
         protected override async Task SearchAsync(string searchQuery, CancellationToken cancellationToken)
         {
-            IsArticleGridVisible = false;
+            IsSearchResultsGridVisible = false;
             IsStatusBarVisible = false;
             UpdateSearchProgressStatus(0);
             Progress<SearchProgress> searchProgressHandler = new Progress<SearchProgress>(HandleSearchProgress);
@@ -253,17 +215,41 @@ namespace LibgenDesktop.ViewModels.Tabs
             Articles = new ObservableCollection<SciMagSearchResultItemViewModel>(result.Select(article =>
                 new SciMagSearchResultItemViewModel(article, formatter)));
             UpdateArticleCount();
-            IsArticleGridVisible = true;
+            IsSearchResultsGridVisible = true;
             IsStatusBarVisible = true;
+        }
+
+        protected override void UpdateLocalization(Language newLanguage)
+        {
+            base.UpdateLocalization(newLanguage);
+            Localization = newLanguage.SciMagSearchResultsTab;
+            UpdateArticleCount();
+            LanguageFormatter newFormatter = newLanguage.Formatter;
+            foreach (SciMagSearchResultItemViewModel article in Articles)
+            {
+                article.UpdateLocalization(newFormatter);
+            }
+        }
+
+        protected override string GetDownloadMirrorName()
+        {
+            return MainModel.AppSettings.Mirrors.ArticlesMirrorName;
+        }
+
+        protected override string GenerateDownloadUrl(Mirrors.MirrorConfiguration mirrorConfiguration)
+        {
+            return UrlGenerator.GetSciMagDownloadUrl(mirrorConfiguration, SelectedArticle.Article);
+        }
+
+        protected override string GetDownloadTransformations(Mirrors.MirrorConfiguration mirrorConfiguration)
+        {
+            return mirrorConfiguration.SciMagDownloadTransformations;
         }
 
         private void Initialize()
         {
             localization = MainModel.Localization.CurrentLanguage.SciMagSearchResultsTab;
-            isArticleGridVisible = true;
-            isStatusBarVisible = true;
             UpdateArticleCount();
-            Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
         }
 
         private void UpdateArticleCount()
@@ -289,26 +275,6 @@ namespace LibgenDesktop.ViewModels.Tabs
         private void UpdateSearchProgressStatus(int articlesFound)
         {
             SearchProgressStatus = Localization.GetSearchProgressText(articlesFound);
-        }
-
-        private void CloseExportPanel(object sender, EventArgs e)
-        {
-            IsExportPanelVisible = false;
-            IsArticleGridVisible = true;
-            IsStatusBarVisible = true;
-        }
-
-        private void LocalizationLanguageChanged(object sender, EventArgs e)
-        {
-            Language newLanguage = MainModel.Localization.CurrentLanguage;
-            Localization = newLanguage.SciMagSearchResultsTab;
-            UpdateArticleCount();
-            LanguageFormatter newFormatter = newLanguage.Formatter;
-            foreach (SciMagSearchResultItemViewModel article in Articles)
-            {
-                article.UpdateLocalization(newFormatter);
-            }
-            ExportPanelViewModel.UpdateLocalization(newLanguage);
         }
     }
 }

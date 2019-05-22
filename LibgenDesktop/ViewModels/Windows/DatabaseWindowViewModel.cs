@@ -27,6 +27,7 @@ namespace LibgenDesktop.ViewModels.Windows
         {
             Localization = mainModel.Localization.CurrentLanguage.Database;
             formatter = mainModel.Localization.CurrentLanguage.Formatter;
+            WindowClosingCommand = new FuncCommand<bool>(WindowClosing);
             ChangeDatabaseCommand = new Command(ChangeDatabase);
             CloseButtonCommand = new Command(CloseButtonClick);
             GetStats();
@@ -151,6 +152,7 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
+        public FuncCommand<bool> WindowClosingCommand { get; }
         public Command ChangeDatabaseCommand { get; }
         public Command CloseButtonCommand { get; }
 
@@ -212,6 +214,11 @@ namespace LibgenDesktop.ViewModels.Windows
                     MainModel.OpenDatabase(MainModel.AppSettings.DatabaseFileName);
                 }
             }
+        }
+
+        private bool WindowClosing()
+        {
+            return !IsCreatingIndexesMessageVisible;
         }
 
         private void CloseButtonClick()

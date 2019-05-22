@@ -78,7 +78,10 @@
         "SearchInProgress": "Триває пошук...",
         "Interrupt": "ПЕРЕРВАТИ",
         "Interrupting": "ПЕРЕРИВАЄТЬСЯ...",
-        "ExportButtonTooltip": "Експорт результатів пошуку в файл"
+        "ExportButtonTooltip": "Експорт результатів пошуку в файл",
+        "ErrorMessageTitle": "Помилка",
+        "FileNotFoundError": "Файл {file} не знайдено.",
+        "OfflineModeIsOnMessageTitle": "Увімкнено автономний режим"
     },
     "NonFictionSearchResultsTab":
     {
@@ -505,7 +508,7 @@
         "TotalArticles": "Усього статей",
         "LastUpdate": "Останнє оновлення",
         "Never": "ніколи",
-        "CreatingIndexes": "Триває створення невистачаючих індексів.{new-line}Будь ласка, зачекайте...",
+        "CreatingIndexes": "Триває створення невистачаючих індексів.{new-line}Будь ласка, зачекайте...{new-line}This operation cannot be interrupted.",
         "ChangeDatabase": "ЗМІНИТИ БАЗУ ДАНИХ...",
         "BrowseDatabaseDialogTitle": "Місцезнаходження файлу бази даних",
         "Databases": "Бази даних",

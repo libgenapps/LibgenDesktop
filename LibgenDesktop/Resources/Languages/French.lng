@@ -83,7 +83,10 @@
         "Interrupting": "ARRÊT EN COURS...",
         "AddToBookmarksTooltip": "Ajouter aux marque-pages",
         "RemoveFromBookmarksTooltip": "Supprimer le marque-page",
-        "ExportButtonTooltip": "Exporter les résultats de la recherche dans un fichier"
+        "ExportButtonTooltip": "Exporter les résultats de la recherche dans un fichier",
+        "ErrorMessageTitle": "Erreur",
+        "FileNotFoundError": "Le fichier {file} est introuvable.",
+        "OfflineModeIsOnMessageTitle": "Le mode hors connexion est activé"
     },
     "NonFictionSearchResultsTab":
     {
@@ -529,7 +532,7 @@
         "TotalArticles": "Total des articles ",
         "LastUpdate": "Dernière mise à jour ",
         "Never": "jamais",
-        "CreatingIndexes": "Veuillez patienter. Création des index de base de données manquants...",
+        "CreatingIndexes": "Veuillez patienter. Création des index de base de données manquants...{new-line}This operation cannot be interrupted.",
         "ChangeDatabase": "CHANGER LA BASE DE DONNÉES...",
         "BrowseDatabaseDialogTitle": "Emplacement du fichier de base de données",
         "Databases": "Base de données",

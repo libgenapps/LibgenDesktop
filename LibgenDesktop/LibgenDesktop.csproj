@@ -286,6 +286,9 @@
     <Compile Include="ViewModels\Tabs\SearchTabViewModel.cs" />
     <Compile Include="ViewModels\Windows\SettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\Tabs\TabViewModel.cs" />
+    <Compile Include="Views\Controls\BookDataGridContextMenu.xaml.cs">
+      <DependentUpon>BookDataGridContextMenu.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\HorizontalScrollViewer.cs" />
     <Compile Include="Views\Utils\IconExtension.cs" />
     <Compile Include="Views\Windows\ApplicationUpdateWindow.xaml.cs">
@@ -392,6 +395,10 @@
     <Compile Include="Views\Utils\EventListenerExtensions.cs" />
     <Compile Include="Views\Utils\GridLengthConverter.cs" />
     <Compile Include="Views\Utils\PasswordBoxExtensions.cs" />
+    <Page Include="Views\Controls\BookDataGridContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Styles\AboutWindowStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

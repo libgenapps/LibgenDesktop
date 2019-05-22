@@ -15,6 +15,7 @@ namespace LibgenDesktop.Infrastructure
         private const int GWL_STYLE = -16;
         private const int WS_MAXIMIZEBOX = 0x10000;
         private const int WS_MINIMIZEBOX = 0x20000;
+        private const int WS_SYSMENU = 0x80000;
         private const int GWL_EXSTYLE = -20;
         private const int WS_EX_DLGMODALFRAME = 0x0001;
         private const int SWP_NOSIZE = 0x0001;
@@ -172,14 +173,19 @@ namespace LibgenDesktop.Infrastructure
             }
         }
 
+        public static void RemoveWindowMinimizeButton(Window window)
+        {
+            RemoveWindowStyle(window, WS_MINIMIZEBOX);
+        }
+
         public static void RemoveWindowMaximizeButton(Window window)
         {
             RemoveWindowStyle(window, WS_MAXIMIZEBOX);
         }
 
-        public static void RemoveWindowMinimizeButton(Window window)
+        public static void RemoveWindowCloseButton(Window window)
         {
-            RemoveWindowStyle(window, WS_MINIMIZEBOX);
+            RemoveWindowStyle(window, WS_SYSMENU);
         }
 
         public static void RemoveWindowIcon(Window window)

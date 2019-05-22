@@ -938,7 +938,7 @@ namespace LibgenDesktop.ViewModels.Windows
             mirrorsSelectedNonFictionSynchronizationMirror = GetDisplayMirrorName(appSettings.Mirrors.NonFictionSynchronizationMirrorName);
             mirrorsSelectedFictionBooksMirror = GetDisplayMirrorName(appSettings.Mirrors.FictionBooksMirrorName);
             mirrorsSelectedFictionCoversMirror = GetDisplayMirrorName(appSettings.Mirrors.FictionCoversMirrorName);
-            mirrorsSelectedArticlesMirror = GetDisplayMirrorName(appSettings.Mirrors.ArticlesMirrorMirrorName);
+            mirrorsSelectedArticlesMirror = GetDisplayMirrorName(appSettings.Mirrors.ArticlesMirrorName);
             searchMaximumResultCountDefaultValues = new ObservableCollection<string> { "100", "250", "500", "1000", "2500", "5000", "10000", "25000", "50000", "100000", "250000", "500000", "1000000" };
             searchIsLimitResultsOn = appSettings.Search.LimitResults;
             searchMaximumResultCount = appSettings.Search.MaximumResultCount.ToString();
@@ -1057,7 +1057,7 @@ namespace LibgenDesktop.ViewModels.Windows
                 NonFictionSynchronizationMirrorName = ParseDisplayMirrorName(MirrorsSelectedNonFictionSynchronizationMirror),
                 FictionBooksMirrorName = ParseDisplayMirrorName(MirrorsSelectedFictionBooksMirror),
                 FictionCoversMirrorName = ParseDisplayMirrorName(MirrorsSelectedFictionCoversMirror),
-                ArticlesMirrorMirrorName = ParseDisplayMirrorName(MirrorsSelectedArticlesMirror)
+                ArticlesMirrorName = ParseDisplayMirrorName(MirrorsSelectedArticlesMirror)
             };
             MainModel.AppSettings.Search = new SearchSettings
             {

@@ -22,8 +22,7 @@ namespace LibgenDesktop.Views.Utils
 
         private static void DoubleClick_PropertyChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
-            DataGridRow row = dependencyObject as DataGridRow;
-            if (row == null)
+            if (!(dependencyObject is DataGridRow row))
             {
                 return;
             }

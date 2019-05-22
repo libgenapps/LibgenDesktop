@@ -1140,8 +1140,8 @@ namespace LibgenDesktop.Models
                 ValidateAndCorrectSelectedMirror(mirrorSettings.FictionBooksMirrorName, mirror => mirror.FictionDownloadUrl);
             mirrorSettings.FictionCoversMirrorName =
                 ValidateAndCorrectSelectedMirror(mirrorSettings.FictionCoversMirrorName, mirror => mirror.FictionCoverUrl);
-            mirrorSettings.ArticlesMirrorMirrorName =
-                ValidateAndCorrectSelectedMirror(mirrorSettings.ArticlesMirrorMirrorName, mirror => mirror.SciMagDownloadUrl);
+            mirrorSettings.ArticlesMirrorName =
+                ValidateAndCorrectSelectedMirror(mirrorSettings.ArticlesMirrorName, mirror => mirror.SciMagDownloadUrl);
         }
 
         private string ValidateAndCorrectSelectedMirror(string selectedMirrorName, Func<Mirrors.MirrorConfiguration, string> mirrorProperty)

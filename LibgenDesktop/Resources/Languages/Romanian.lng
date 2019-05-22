@@ -84,7 +84,10 @@
         "Interrupting": "SE ÎNTRERUPE...",
         "AddToBookmarksTooltip": "Adaugă la Marcaje",
         "RemoveFromBookmarksTooltip": "Șterge din Marcaje",
-        "ExportButtonTooltip": "Exportă rezultatele căutării într-un fișier"
+        "ExportButtonTooltip": "Exportă rezultatele căutării într-un fișier",
+        "ErrorMessageTitle": "Eroare",
+        "FileNotFoundError": "fișierul {file} nu a fost găsit.",
+        "OfflineModeIsOnMessageTitle": "Modul Offline este dezactivat"
     },
     "NonFictionSearchResultsTab":
     {
@@ -535,7 +538,7 @@
         "TotalArticles": "Articole disponibile",
         "LastUpdate": "Ultima actualizare",
         "Never": "niciodată",
-        "CreatingIndexes": "Vă rugăm așteptați. Se creează indecșii lipsă...",
+        "CreatingIndexes": "Vă rugăm așteptați. Se creează indecșii lipsă...{new-line}This operation cannot be interrupted.",
         "ChangeDatabase": "SCHIMBĂ BAZA DE DATE...",
         "BrowseDatabaseDialogTitle": "Locația Bazei e date",
         "Databases": "Baza de date",

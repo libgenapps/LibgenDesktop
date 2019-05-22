@@ -15,7 +15,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         private SciMagDetailsItemViewModel detailsItem;
 
         public SciMagDetailsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, SciMagArticle article, bool isInModalWindow)
-            : base(mainModel, parentWindowContext, article, article.Title, isInModalWindow, mainModel.AppSettings.Mirrors.ArticlesMirrorMirrorName, null)
+            : base(mainModel, parentWindowContext, article, article.Title, isInModalWindow, mainModel.AppSettings.Mirrors.ArticlesMirrorName, null)
         {
             localization = mainModel.Localization.CurrentLanguage.SciMagDetailsTab;
         }
@@ -46,11 +46,8 @@ namespace LibgenDesktop.ViewModels.Tabs
         }
 
         protected override string FileNameWithoutExtension => $"{DetailsItem.Authors} - {DetailsItem.Title}";
-
         protected override string FileExtension => "pdf";
-
         protected override string Md5Hash => DetailsItem.Md5Hash;
-
         protected override bool HasCover => false;
 
         protected override string GenerateDownloadUrl(Mirrors.MirrorConfiguration mirrorConfiguration)

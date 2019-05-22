@@ -10,8 +10,9 @@ using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
 using LibgenDesktop.Models.Localization.Localizators;
 using LibgenDesktop.Models.ProgressArgs;
+using LibgenDesktop.Models.Settings;
+using LibgenDesktop.Models.Utils;
 using LibgenDesktop.ViewModels.EventArguments;
-using LibgenDesktop.ViewModels.Panels;
 using LibgenDesktop.ViewModels.SearchResultItems;
 using static LibgenDesktop.Models.Settings.AppSettings;
 
@@ -23,9 +24,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         private ObservableCollection<FictionSearchResultItemViewModel> books;
         private FictionSearchResultsTabLocalizator localization;
         private string bookCount;
-        private bool isBookGridVisible;
         private string searchProgressStatus;
-        private bool isStatusBarVisible;
 
         public FictionSearchResultsTabViewModel(MainModel mainModel, IWindowContext parentWindowContext, string searchQuery,
             List<FictionBook> searchResults)
@@ -35,12 +34,9 @@ namespace LibgenDesktop.ViewModels.Tabs
             LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
             books = new ObservableCollection<FictionSearchResultItemViewModel>(searchResults.Select(book =>
                 new FictionSearchResultItemViewModel(book, formatter)));
-            ExportPanelViewModel.ClosePanel += CloseExportPanel;
             OpenDetailsCommand = new Command(param => OpenDetails((param as FictionSearchResultItemViewModel)?.Book));
-            ExportCommand = new Command(ShowExportPanel);
             BookDataGridEnterKeyCommand = new Command(BookDataGridEnterKeyPressed);
             Initialize();
-            mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
         }
 
         public FictionSearchResultsTabLocalizator Localization
@@ -65,19 +61,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             set
             {
                 books = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool IsBookGridVisible
-        {
-            get
-            {
-                return isBookGridVisible;
-            }
-            set
-            {
-                isBookGridVisible = value;
                 NotifyPropertyChanged();
             }
         }
@@ -191,19 +174,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public bool IsStatusBarVisible
-        {
-            get
-            {
-                return isStatusBarVisible;
-            }
-            set
-            {
-                isStatusBarVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         public string BookCount
         {
             get
@@ -220,35 +190,27 @@ namespace LibgenDesktop.ViewModels.Tabs
         public FictionSearchResultItemViewModel SelectedBook { get; set; }
 
         public Command OpenDetailsCommand { get; }
-        public Command ExportCommand { get; }
         public Command BookDataGridEnterKeyCommand { get; }
 
+        protected override string FileNameWithoutExtension => $"{SelectedBook.Book.Authors} - {SelectedBook.Book.Title}";
+        protected override string FileExtension => SelectedBook.Book.Format;
+        protected override string Md5Hash => SelectedBook.Book.Md5Hash;
+
         public event EventHandler<OpenFictionDetailsEventArgs> OpenFictionDetailsRequested;
-
-        public override void ShowExportPanel()
-        {
-            if (IsBookGridVisible)
-            {
-                IsBookGridVisible = false;
-                IsStatusBarVisible = false;
-                IsExportPanelVisible = true;
-                ExportPanelViewModel.ShowPanel(SearchQuery);
-            }
-        }
-
-        public override void HandleTabClosing()
-        {
-            MainModel.Localization.LanguageChanged -= LocalizationLanguageChanged;
-        }
 
         protected override SearchResultsTabLocalizator GetLocalization()
         {
             return localization;
         }
 
+        protected override LibgenObject GetSelectedLibgenObject()
+        {
+            return SelectedBook.Book;
+        }
+
         protected override async Task SearchAsync(string searchQuery, CancellationToken cancellationToken)
         {
-            IsBookGridVisible = false;
+            IsSearchResultsGridVisible = false;
             IsStatusBarVisible = false;
             UpdateSearchProgressStatus(0);
             Progress<SearchProgress> searchProgressHandler = new Progress<SearchProgress>(HandleSearchProgress);
@@ -265,17 +227,41 @@ namespace LibgenDesktop.ViewModels.Tabs
             Books = new ObservableCollection<FictionSearchResultItemViewModel>(result.Select(book =>
                 new FictionSearchResultItemViewModel(book, formatter)));
             UpdateBookCount();
-            IsBookGridVisible = true;
+            IsSearchResultsGridVisible = true;
             IsStatusBarVisible = true;
+        }
+
+        protected override void UpdateLocalization(Language newLanguage)
+        {
+            base.UpdateLocalization(newLanguage);
+            Localization = newLanguage.FictionSearchResultsTab;
+            UpdateBookCount();
+            LanguageFormatter newFormatter = newLanguage.Formatter;
+            foreach (FictionSearchResultItemViewModel book in Books)
+            {
+                book.UpdateLocalization(newFormatter);
+            }
+        }
+
+        protected override string GetDownloadMirrorName()
+        {
+            return MainModel.AppSettings.Mirrors.FictionBooksMirrorName;
+        }
+
+        protected override string GenerateDownloadUrl(Mirrors.MirrorConfiguration mirrorConfiguration)
+        {
+            return UrlGenerator.GetFictionDownloadUrl(mirrorConfiguration, SelectedBook?.Book);
+        }
+
+        protected override string GetDownloadTransformations(Mirrors.MirrorConfiguration mirrorConfiguration)
+        {
+            return mirrorConfiguration.FictionDownloadTransformations;
         }
 
         private void Initialize()
         {
             localization = MainModel.Localization.CurrentLanguage.FictionSearchResultsTab;
-            isBookGridVisible = true;
-            isStatusBarVisible = true;
             UpdateBookCount();
-            Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
         }
 
         private void UpdateBookCount()
@@ -301,26 +287,6 @@ namespace LibgenDesktop.ViewModels.Tabs
         private void UpdateSearchProgressStatus(int booksFound)
         {
             SearchProgressStatus = Localization.GetSearchProgressText(booksFound);
-        }
-
-        private void CloseExportPanel(object sender, EventArgs e)
-        {
-            IsExportPanelVisible = false;
-            IsBookGridVisible = true;
-            IsStatusBarVisible = true;
-        }
-
-        private void LocalizationLanguageChanged(object sender, EventArgs e)
-        {
-            Language newLanguage = MainModel.Localization.CurrentLanguage;
-            Localization = newLanguage.FictionSearchResultsTab;
-            UpdateBookCount();
-            LanguageFormatter newFormatter = newLanguage.Formatter;
-            foreach (FictionSearchResultItemViewModel book in Books)
-            {
-                book.UpdateLocalization(newFormatter);
-            }
-            ExportPanelViewModel.UpdateLocalization(newLanguage);
         }
     }
 }

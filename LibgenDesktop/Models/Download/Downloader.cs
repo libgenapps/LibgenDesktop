@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -886,15 +887,33 @@ namespace LibgenDesktop.Models.Download
                 CancellationTokenSource combinedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 Task<HttpResponseMessage> innerTask = httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead,
                     combinedCancellationTokenSource.Token);
-                bool success = innerTask.Wait(TimeSpan.FromSeconds(downloadSettings.Timeout));
-                if (success)
+                try
                 {
-                    return innerTask.Result;
+                    bool success = innerTask.Wait(TimeSpan.FromSeconds(downloadSettings.Timeout));
+                    if (success)
+                    {
+                        return innerTask.Result;
+                    }
+                    else
+                    {
+                        combinedCancellationTokenSource.Cancel();
+                        throw new TimeoutException();
+                    }
                 }
-                else
+                catch (Exception exception)
                 {
-                    combinedCancellationTokenSource.Cancel();
-                    throw new TimeoutException();
+                    while (!(exception is SocketException) && exception.InnerException != null)
+                    {
+                        exception = exception.InnerException;
+                    }
+                    if (exception is SocketException socketException && socketException.SocketErrorCode == SocketError.TimedOut)
+                    {
+                        throw new TimeoutException();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             });
         }
