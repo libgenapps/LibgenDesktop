@@ -5,7 +5,7 @@ using LibgenDesktop.Models;
 
 namespace LibgenDesktop.ViewModels.Tabs
 {
-    internal abstract class TabViewModel : ContainerViewModel
+    internal abstract class TabViewModel : ContainerViewModel, ITabViewModel
     {
         private readonly SynchronizationContext synchronizationContext;
         private string title;

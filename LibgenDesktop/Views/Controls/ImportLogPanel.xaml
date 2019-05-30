@@ -27,9 +27,9 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
             <TextBlock Text="{Binding ResultLogLine}" Visibility="{Binding IsResultLogLineVisible, Converter={StaticResource booleanToCollapsedConverter}}"
-                           Style="{StaticResource ResultLogLine}" />
+                       Style="{StaticResource ResultLogLine}" />
             <TextBlock Text="{Binding ErrorLogLine}" Visibility="{Binding IsErrorLogLineVisible, Converter={StaticResource booleanToCollapsedConverter}}"
-                           Style="{StaticResource ErrorLogLine}" />
+                       Style="{StaticResource ErrorLogLine}" />
         </StackPanel>
     </ScrollViewer>
 </UserControl>

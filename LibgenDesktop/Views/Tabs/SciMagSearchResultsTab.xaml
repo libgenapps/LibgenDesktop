@@ -55,19 +55,22 @@
             <Button Grid.Column="2" Command="{Binding ExportCommand}" Style="{StaticResource ExportButton}" ToolTip="{Binding Localization.ExportButtonTooltip}"
                     IsEnabled="{Binding IsExportPanelVisible, Converter={StaticResource booleanInverseConverter}}" />
         </Grid>
-        <DataGrid Name="articleGrid" Grid.Row="1" ItemsSource="{Binding Articles, IsAsync=True}" SelectedItem="{Binding SelectedArticle, Mode=TwoWay}"
-                  Visibility="{Binding IsSearchResultsGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
-                  Style="{StaticResource ArticleDataGrid}">
+        <c:BookDataGrid x:Name="articleGrid" Grid.Row="1" ItemsSource="{Binding Articles, IsAsync=True}"
+                        SelectedRows="{Binding SelectedRows, Mode=OneWayToSource}"
+                        Visibility="{Binding IsSearchResultsGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                        Style="{StaticResource ArticleDataGrid}">
             <DataGrid.Resources>
                 <u:BindingProxy x:Key="dataGridViewModel" DataContext="{Binding}" />
+                <c:BookDataGridContextMenu x:Key="dataGridRowMenu" />
             </DataGrid.Resources>
             <DataGrid.RowStyle>
                 <Style TargetType="DataGridRow" BasedOn="{StaticResource MaterialDesignDataGridRow}">
                     <Setter Property="u:DataGridExtensions.DoubleClickCommand" Value="{Binding ElementName=articleGrid, Path=DataContext.OpenDetailsCommand}" />
+                    <Setter Property="ContextMenu" Value="{StaticResource dataGridRowMenu}" />
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.InputBindings>
-                <KeyBinding Command="{Binding ArticleDataGridEnterKeyCommand}" Key="Enter" />
+                <KeyBinding Command="{Binding OpenDetailsCommand}" Key="Enter" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Title}"
@@ -115,7 +118,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-        </DataGrid>
+        </c:BookDataGrid>
         <StackPanel Grid.Row="1" Style="{StaticResource ArticleSearchProgressPanel}"
                     Visibility="{Binding IsSearchProgressPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
             <StackPanel Style="{StaticResource SearchProgressHeader}">

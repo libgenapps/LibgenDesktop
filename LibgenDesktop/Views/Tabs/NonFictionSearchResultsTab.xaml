@@ -55,9 +55,10 @@
             <Button Grid.Column="2" Command="{Binding ExportCommand}" Style="{StaticResource ExportButton}" ToolTip="{Binding Localization.ExportButtonTooltip}"
                     IsEnabled="{Binding IsExportPanelVisible, Converter={StaticResource booleanInverseConverter}}" />
         </Grid>
-        <DataGrid Name="bookGrid" Grid.Row="1" ItemsSource="{Binding Books, IsAsync=True}" SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
-                  Visibility="{Binding IsSearchResultsGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
-                  Style="{StaticResource BookDataGrid}">
+        <c:BookDataGrid x:Name="bookGrid" Grid.Row="1" ItemsSource="{Binding Books, IsAsync=True}"
+                        SelectedRows="{Binding SelectedRows, Mode=OneWayToSource}"
+                        Visibility="{Binding IsSearchResultsGridVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                        Style="{StaticResource BookDataGrid}">
             <DataGrid.Resources>
                 <u:BindingProxy x:Key="dataGridViewModel" DataContext="{Binding}" />
                 <c:BookDataGridContextMenu x:Key="dataGridRowMenu" />
@@ -69,7 +70,7 @@
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.InputBindings>
-                <KeyBinding Command="{Binding BookDataGridEnterKeyCommand}" Key="Enter" />
+                <KeyBinding Command="{Binding OpenDetailsCommand}" Key="Enter" />
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Title}"
@@ -137,7 +138,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
-        </DataGrid>
+        </c:BookDataGrid>
         <StackPanel Grid.Row="1" Style="{StaticResource BookSearchProgressPanel}"
                     Visibility="{Binding IsSearchProgressPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
             <StackPanel Style="{StaticResource SearchProgressHeader}">

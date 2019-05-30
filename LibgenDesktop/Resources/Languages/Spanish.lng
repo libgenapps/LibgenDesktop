@@ -500,7 +500,7 @@
             "SynchronizationProgressAddedAndUpdated": "Libros descargados: {downloaded}, añadidos: {added}, actualizados: {updated}.",
             "SynchronizationSuccessful": "Sincronización completada satisfactoriamente.",
             "SynchronizationCancelled": "La sincronización ha sido cancelada por el usuario.",
-            "SynchronizationError": "Ocurrió un error duante la sincronización."
+            "SynchronizationError": "Ocurrió un error duante la sincronización: {error}"
         }
     },
     "Library":
@@ -594,7 +594,7 @@
             "ServerResponseTimeout": "El servidor respondió con un tiempo de espera agotado.",
             "DownloadIncompleteError": "El servidor indica que la descarga está completa, pero no es así. Reintente la descarga",
             "FileWriteError": "Error de escritura del archivo.",
-            "UnexpectedError": "Ocurrió un error inesperado."
+            "UnexpectedError": "Ocurrió un error inesperado: {error}"
         }
     },
     "ApplicationUpdate":

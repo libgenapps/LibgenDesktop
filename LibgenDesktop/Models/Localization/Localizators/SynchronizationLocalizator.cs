@@ -30,7 +30,6 @@ namespace LibgenDesktop.Models.Localization.Localizators
             LogLineDownloadingNewBooks = FormatLogLine(translation => translation?.DownloadingNewBooks);
             LogLineSynchronizationSuccessful = FormatLogLine(translation => translation?.SynchronizationSuccessful);
             LogLineSynchronizationCancelled = FormatLogLine(translation => translation?.SynchronizationCancelled);
-            LogLineSynchronizationError = FormatLogLine(translation => translation?.SynchronizationError);
         }
 
         public string WindowTitle { get; }
@@ -55,7 +54,6 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string LogLineDownloadingNewBooks { get; set; }
         public string LogLineSynchronizationSuccessful { get; set; }
         public string LogLineSynchronizationCancelled { get; set; }
-        public string LogLineSynchronizationError { get; set; }
 
         public string GetElapsedString(string elapsed) => Format(translation => translation?.Elapsed, new { elapsed });
         public string GetStatusStep(int current, int total) => FormatStatus(translation => translation?.Step, new { current, total });
@@ -70,6 +68,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             FormatLogLine(translation => translation?.SynchronizationProgressUpdated, new { downloaded, updated });
         public string GetLogLineSynchronizationProgressAddedAndUpdated(int downloaded, int added, int updated) =>
             FormatLogLine(translation => translation?.SynchronizationProgressAddedAndUpdated, new { downloaded, added, updated });
+        public string GetLogLineSynchronizationError(string error) => FormatLogLine(translation => translation?.SynchronizationError, new { error });
 
         private string Format(Func<Translation.SynchronizationTranslation, string> field, object templateArguments = null)
         {

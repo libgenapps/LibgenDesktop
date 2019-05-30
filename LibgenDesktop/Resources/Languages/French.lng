@@ -500,7 +500,7 @@
             "SynchronizationProgressAddedAndUpdated": "Livres téléchargés : {downloaded}, ajoutés : {added}, actualisés : {updated}.",
             "SynchronizationSuccessful": "La synchronisation s'est terminée avec succès.",
             "SynchronizationCancelled": "La synchronisation a été annulée par l'utilisateur.",
-            "SynchronizationError": "Une erreur est apparue lors de la synchronisation."
+            "SynchronizationError": "Une erreur est apparue lors de la synchronisation: {error}"
         }
     },
     "Library":
@@ -594,7 +594,7 @@
             "ServerResponseTimeout": "Délai de réponse du serveur.",
             "DownloadIncompleteError": "Le serveur indique que le téléchargement du fichier est terminé, mais il ne l'est pas.",
             "FileWriteError": "Erreur d'écriture de fichier.",
-            "UnexpectedError": "Une erreur inattendue est apparue."
+            "UnexpectedError": "Une erreur inattendue est apparue: {error}"
         }
     },
     "ApplicationUpdate":

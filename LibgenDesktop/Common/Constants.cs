@@ -5,9 +5,9 @@ namespace LibgenDesktop.Common
     internal static class Constants
     {
         public const string DATABASE_METADATA_APP_NAME = "LibgenDesktop";
-        public const string CURRENT_VERSION = "1.3.0";
-        public const string CURRENT_GITHUB_RELEASE_NAME = "1.3.0";
-        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2019, 5, 22);
+        public const string CURRENT_VERSION = "1.3.1";
+        public const string CURRENT_GITHUB_RELEASE_NAME = "1.3.1";
+        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2019, 5, 30);
         public const string CURRENT_DATABASE_VERSION = "1.2.1";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
@@ -119,6 +119,7 @@ namespace LibgenDesktop.Common
         public const double SYNCHRONIZATION_PROGRESS_UPDATE_INTERVAL = 0.1;
         public const int DATABASE_TRANSACTION_BATCH = 500;
         public const int MAX_EXPORT_ROWS_PER_FILE = 1048575;
+        public const int LARGE_NUMBER_OF_ITEMS_TO_DOWNLOAD_WARNING_THRESHOLD = 1000;
         public const int MIN_DOWNLOAD_TIMEOUT = 15;
         public const int MAX_DOWNLOAD_TIMEOUT = 9999;
         public const int DEFAULT_DOWNLOAD_TIMEOUT = 120;

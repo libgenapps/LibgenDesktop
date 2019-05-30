@@ -22,7 +22,7 @@ namespace LibgenDesktop.ViewModels.Windows
     {
         private MainWindowLocalizator localization;
         private SearchTabViewModel defaultSearchTabViewModel;
-        private TabViewModel selectedTabViewModel;
+        private ITabViewModel selectedTabViewModel;
         private bool isDownloadManagerButtonHighlighted;
         private bool isCompletedDownloadCounterVisible;
         private int completedDownloadCount;
@@ -48,7 +48,7 @@ namespace LibgenDesktop.ViewModels.Windows
             SettingsCommand = new Command(SettingsMenuItemClick);
             AboutCommand = new Command(AboutMenuItemClick);
             WindowClosedCommand = new Command(WindowClosed);
-            TabViewModels = new ObservableCollection<TabViewModel>();
+            TabViewModels = new ObservableCollection<ITabViewModel>();
             Initialize();
             mainModel.ApplicationUpdateCheckCompleted += ApplicationUpdateCheckCompleted;
             mainModel.BookmarksChanged += BookmarksChanged;
@@ -62,7 +62,7 @@ namespace LibgenDesktop.ViewModels.Windows
         public int WindowTop { get; set; }
         public bool IsWindowMaximized { get; set; }
         public EventProvider Events { get; }
-        public ObservableCollection<TabViewModel> TabViewModels { get; }
+        public ObservableCollection<ITabViewModel> TabViewModels { get; }
 
         public MainWindowLocalizator Localization
         {
@@ -89,7 +89,7 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
-        public TabViewModel SelectedTabViewModel
+        public ITabViewModel SelectedTabViewModel
         {
             get
             {
@@ -469,13 +469,13 @@ namespace LibgenDesktop.ViewModels.Windows
 
         private void Export()
         {
-            if (SelectedTabViewModel is SearchResultsTabViewModel searchResultsTabViewModel)
+            if (SelectedTabViewModel is ISearchResultsTabViewModel searchResultsTabViewModel)
             {
                 searchResultsTabViewModel.ShowExportPanel();
             }
         }
 
-        private void CloseTab(TabViewModel tabViewModel)
+        private void CloseTab(ITabViewModel tabViewModel)
         {
             tabViewModel.HandleTabClosing();
             switch (tabViewModel)
@@ -701,11 +701,11 @@ namespace LibgenDesktop.ViewModels.Windows
             }
             if (useCurrentTab)
             {
-                (SelectedTabViewModel as SearchResultsTabViewModel).Search(bookmarkViewModel.SearchQuery);
+                (SelectedTabViewModel as ISearchResultsTabViewModel).Search(bookmarkViewModel.SearchQuery);
             }
             else
             {
-                SearchResultsTabViewModel newTab;
+                ISearchResultsTabViewModel newTab;
                 switch (bookmarkViewModel.LibgenObjectType)
                 {
                     case LibgenObjectType.NON_FICTION_BOOK:

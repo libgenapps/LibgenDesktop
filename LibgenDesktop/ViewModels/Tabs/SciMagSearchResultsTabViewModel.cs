@@ -18,7 +18,7 @@ using static LibgenDesktop.Models.Settings.AppSettings;
 
 namespace LibgenDesktop.ViewModels.Tabs
 {
-    internal class SciMagSearchResultsTabViewModel : SearchResultsTabViewModel
+    internal class SciMagSearchResultsTabViewModel : SearchResultsTabViewModel<SciMagArticle>
     {
         private readonly SciMagColumnSettings columnSettings;
         private ObservableCollection<SciMagSearchResultItemViewModel> articles;
@@ -34,8 +34,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
             articles = new ObservableCollection<SciMagSearchResultItemViewModel>(searchResults.Select(article =>
                 new SciMagSearchResultItemViewModel(article, formatter)));
-            OpenDetailsCommand = new Command(param => OpenDetails((param as SciMagSearchResultItemViewModel)?.Article));
-            ArticleDataGridEnterKeyCommand = new Command(ArticleDataGridEnterKeyPressed);
             Initialize();
         }
 
@@ -175,25 +173,11 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public SciMagSearchResultItemViewModel SelectedArticle { get; set; }
-
-        public Command OpenDetailsCommand { get; }
-        public Command ArticleDataGridEnterKeyCommand { get; }
-
-        protected override string FileNameWithoutExtension => $"{SelectedArticle.Article.Authors} - {SelectedArticle.Article.Title}";
-        protected override string FileExtension => "pdf";
-        protected override string Md5Hash => SelectedArticle.Article.Md5Hash;
-
         public event EventHandler<OpenSciMagDetailsEventArgs> OpenSciMagDetailsRequested;
 
         protected override SearchResultsTabLocalizator GetLocalization()
         {
             return localization;
-        }
-
-        protected override LibgenObject GetSelectedLibgenObject()
-        {
-            return SelectedArticle.Article;
         }
 
         protected override async Task SearchAsync(string searchQuery, CancellationToken cancellationToken)
@@ -231,14 +215,19 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        protected override void OpenDetails(SciMagArticle article)
+        {
+            OpenSciMagDetailsRequested?.Invoke(this, new OpenSciMagDetailsEventArgs(article));
+        }
+
         protected override string GetDownloadMirrorName()
         {
             return MainModel.AppSettings.Mirrors.ArticlesMirrorName;
         }
 
-        protected override string GenerateDownloadUrl(Mirrors.MirrorConfiguration mirrorConfiguration)
+        protected override string GenerateDownloadUrl(Mirrors.MirrorConfiguration mirrorConfiguration, SciMagArticle article)
         {
-            return UrlGenerator.GetSciMagDownloadUrl(mirrorConfiguration, SelectedArticle.Article);
+            return UrlGenerator.GetSciMagDownloadUrl(mirrorConfiguration, article);
         }
 
         protected override string GetDownloadTransformations(Mirrors.MirrorConfiguration mirrorConfiguration)
@@ -255,16 +244,6 @@ namespace LibgenDesktop.ViewModels.Tabs
         private void UpdateArticleCount()
         {
             ArticleCount = Localization.GetStatusBarText(Articles.Count);
-        }
-
-        private void ArticleDataGridEnterKeyPressed()
-        {
-            OpenDetails(SelectedArticle.Article);
-        }
-
-        private void OpenDetails(SciMagArticle article)
-        {
-            OpenSciMagDetailsRequested?.Invoke(this, new OpenSciMagDetailsEventArgs(article));
         }
 
         private void HandleSearchProgress(SearchProgress searchProgress)

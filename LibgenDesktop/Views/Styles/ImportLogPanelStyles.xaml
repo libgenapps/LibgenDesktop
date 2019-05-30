@@ -22,9 +22,11 @@
     <Style x:Key="ResultLogLine" TargetType="TextBlock">
         <Setter Property="FontWeight" Value="Medium" />
         <Setter Property="Foreground" Value="DarkGreen" />
+        <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
     <Style x:Key="ErrorLogLine" TargetType="TextBlock">
         <Setter Property="FontWeight" Value="Medium" />
         <Setter Property="Foreground" Value="Red" />
+        <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
 </ResourceDictionary>

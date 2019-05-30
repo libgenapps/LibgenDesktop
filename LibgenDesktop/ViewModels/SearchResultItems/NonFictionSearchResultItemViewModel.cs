@@ -21,6 +21,10 @@ namespace LibgenDesktop.ViewModels.SearchResultItems
         public long SizeInBytes => Book.SizeInBytes;
         public bool Ocr => Book.Searchable == "1";
 
+        public override string FileNameWithoutExtension => $"{Authors} - {Title}";
+        public override string FileExtension => Format;
+        public override string Md5Hash => Book.Md5Hash;
+
         protected override void UpdateLocalizableProperties()
         {
             NotifyPropertyChanged(nameof(FileSize));

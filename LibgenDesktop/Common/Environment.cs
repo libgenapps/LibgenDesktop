@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Management;
 using System.Reflection;
 using Microsoft.Win32;
 using static LibgenDesktop.Common.Constants;
@@ -10,6 +8,7 @@ namespace LibgenDesktop.Common
 {
     internal static class Environment
     {
+        private const string WINDOWS_NT_CURRENT_VERSION_REGISTRY_KEY = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\";
         private const string NET_FRAMEWORK_REGISTRY_KEY = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
 
         static Environment()
@@ -56,13 +55,16 @@ namespace LibgenDesktop.Common
 
         private static string GetOsVersion()
         {
-            ManagementObject osInfo = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem").Get().OfType<ManagementObject>().FirstOrDefault();
-            if (osInfo != null)
+            using (RegistryKey windowsNtCurrentVersionRegistryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Default).
+                OpenSubKey(WINDOWS_NT_CURRENT_VERSION_REGISTRY_KEY))
             {
-                return $"{osInfo.Properties["Caption"].Value.ToString()} {osInfo.Properties["Version"].Value.ToString()} {osInfo.Properties["OSArchitecture"].Value.ToString()}";
-            }
-            else
-            {
+                if (windowsNtCurrentVersionRegistryKey != null)
+                {
+                    string productName = windowsNtCurrentVersionRegistryKey.GetValue("ProductName")?.ToString() ?? "Unknown";
+                    string releaseId = windowsNtCurrentVersionRegistryKey.GetValue("ReleaseId")?.ToString() ?? "Unknown";
+                    string build = windowsNtCurrentVersionRegistryKey.GetValue("CurrentBuildNumber")?.ToString() ?? "Unknown";
+                    return $"{productName} (release: {releaseId}, build: {build})";
+                }
                 return "Unknown";
             }
         }
@@ -79,9 +81,17 @@ namespace LibgenDesktop.Common
                     {
                         if (Int32.TryParse(releaseValue.ToString(), out int releaseNumber))
                         {
-                            if (releaseNumber >= 461308)
+                            if (releaseNumber >= 528040)
                             {
-                                return "4.7.1 or later";
+                                return "4.8 or later";
+                            }
+                            else if (releaseNumber >= 461808)
+                            {
+                                return "4.7.2";
+                            }
+                            else if (releaseNumber >= 461308)
+                            {
+                                return "4.7.1";
                             }
                             else if (releaseNumber >= 460798)
                             {

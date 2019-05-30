@@ -495,7 +495,7 @@
             "SynchronizationProgressAddedAndUpdated": " Завантажено книг: {downloaded}, додано книг: {added}, оновлено книг: {updated}.",
             "SynchronizationSuccessful": "Синхронізація виконана успішно.",
             "SynchronizationCancelled": "Синхронізація була перервана користувачем.",
-            "SynchronizationError": "Синхронізація завершилася з помилками."
+            "SynchronizationError": "Синхронізація завершилася з помилками: {error}"
         }
     },
     "Database":
@@ -570,7 +570,7 @@
             "ServerResponseTimeout": "Ви перевищили час очікування відповіді від сервера.",
             "DownloadIncompleteError": "Завантаження завершено в повному обсязі.",
             "FileWriteError": "Не можу записати файлу на диск.",
-            "UnexpectedError": "Виникла непередбачена помилка."
+            "UnexpectedError": "Виникла непередбачена помилка: {error}"
         }
     },
     "ApplicationUpdate":

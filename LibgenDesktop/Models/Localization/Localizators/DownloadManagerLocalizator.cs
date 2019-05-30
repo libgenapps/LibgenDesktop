@@ -41,7 +41,6 @@ namespace LibgenDesktop.Models.Localization.Localizators
             LogLineServerResponseTimeout = Format(translation => translation?.LogMessages?.ServerResponseTimeout);
             LogLineDownloadIncompleteError = Format(translation => translation?.LogMessages?.DownloadIncompleteError);
             LogLineFileWriteError = Format(translation => translation?.LogMessages?.FileWriteError);
-            LogLineUnexpectedError = Format(translation => translation?.LogMessages?.UnexpectedError);
         }
 
         public string TabTitle { get; }
@@ -77,7 +76,6 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string LogLineServerResponseTimeout { get; }
         public string LogLineDownloadIncompleteError { get; }
         public string LogLineFileWriteError { get; }
-        public string LogLineUnexpectedError { get; }
 
         public string GetDownloadProgressKnownFileSize(long downloaded, long total, int percent) =>
             Format(translation => translation?.DownloadProgressKnownFileSize,
@@ -107,6 +105,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string GetLogLineCannotRenamePartFile(string source, string destination) =>
             Format(translation => translation?.LogMessages?.CannotRenamePartFile, new { source, destination });
         public string GetLogLineRequestError(string url) => Format(translation => translation?.LogMessages?.LogLineRequestError, new { url });
+        public string GetLogLineUnexpectedError(string error) => Format(translation => translation?.LogMessages?.UnexpectedError, new { error });
 
         private string Format(Func<Translation.DownloadManagerTranslation, string> field, object templateArguments = null)
         {

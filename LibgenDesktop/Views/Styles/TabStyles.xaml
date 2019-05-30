@@ -113,7 +113,7 @@
         <Setter Property="EnableRowVirtualization" Value="True" />
         <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
         <Setter Property="IsReadOnly" Value="True" />
-        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="SelectionMode" Value="Extended" />
         <Setter Property="SelectionUnit" Value="FullRow" />
         <Setter Property="RowHeaderWidth" Value="0" />
         <Setter Property="GridLinesVisibility" Value="Vertical" />

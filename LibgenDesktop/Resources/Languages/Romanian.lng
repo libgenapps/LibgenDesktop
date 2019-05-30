@@ -85,9 +85,14 @@
         "AddToBookmarksTooltip": "Adaugă la Marcaje",
         "RemoveFromBookmarksTooltip": "Șterge din Marcaje",
         "ExportButtonTooltip": "Exportă rezultatele căutării într-un fișier",
+        "Details": "Detalii",
+        "Open": "Deschide",
+        "Download": "Descarcă",
         "ErrorMessageTitle": "Eroare",
-        "FileNotFoundError": "fișierul {file} nu a fost găsit.",
-        "OfflineModeIsOnMessageTitle": "Modul Offline este dezactivat"
+        "FileNotFoundError": "Fișierul {file} nu a fost găsit.",
+        "OfflineModeIsOnMessageTitle": "Modul Offline este activat",
+        "OfflineModeIsOnMessageText": "Descărcarea este dezactivată în modul de lucru Offline. O poți activa în fereastra de setări.",
+        "NoDownloadMirrorError": "Nu a fost selectat un link de descărcare. Vă rugăm alegeți unul din link-urile de descărcare în fereastra de setări."    
     },
     "NonFictionSearchResultsTab":
     {
@@ -501,7 +506,7 @@
             "SynchronizationProgressAddedAndUpdated": "Cărți descărcate: {downloaded}, adăugate: {added}, actualizate: {updated}.",
             "SynchronizationSuccessful": "Sincronizarea s-a încheiat cu succes.",
             "SynchronizationCancelled": "Sincronizarea a fost oprită de utilizator.",
-            "SynchronizationError": "S-a produs o eroare în timpul sincronizării."
+            "SynchronizationError": "S-a produs o eroare în timpul sincronizării: {error}"
         }
     },
     "Library":
@@ -531,6 +536,7 @@
     "Database":
     {
         "WindowTitle": "Informații despre Baza de date",
+        "CurrentDatabase": "Baza de date curentă:",
         "NonFiction": "Cărți non-ficțiune",
         "Fiction": "Cărți ficțiune",
         "SciMagArticles": "Articole științifice",
@@ -538,9 +544,9 @@
         "TotalArticles": "Articole disponibile",
         "LastUpdate": "Ultima actualizare",
         "Never": "niciodată",
-        "CreatingIndexes": "Vă rugăm așteptați. Se creează indecșii lipsă...{new-line}This operation cannot be interrupted.",
+        "CreatingIndexes": "Vă rugăm așteptați. Se creează indecșii lipsă...{new-line}Această operațiune nu poate fi întreruptă.",
         "ChangeDatabase": "SCHIMBĂ BAZA DE DATE...",
-        "BrowseDatabaseDialogTitle": "Locația Bazei e date",
+        "BrowseDatabaseDialogTitle": "Locația Bazei de date",
         "Databases": "Baza de date",
         "AllFiles": "Toate fișierele",
         "Error": "Eroare",
@@ -600,7 +606,8 @@
             "ServerResponseTimeout": "Intervalul de răspuns al serverului a expirat.",
             "DownloadIncompleteError": "Serverul indică faptul că descărcarea fișierelor este completă, dar nu este.",
             "FileWriteError": "eroare de scriere a fișierului.",
-            "UnexpectedError": "S-a produs o eroare neașteptată."
+            "LogLineRequestError": "Nu s-a putut trimte cererea către {url}",
+            "UnexpectedError": "S-a produs o eroare neașteptată: {error}"
         }
     },
     "ApplicationUpdate":

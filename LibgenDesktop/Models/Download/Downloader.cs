@@ -93,17 +93,36 @@ namespace LibgenDesktop.Models.Download
             }
         }
 
-        public void EnqueueDownloadItem(string downloadPageUrl, string fileNameWithoutExtension, string fileExtension, string md5Hash,
-            string downloadTransformations, bool restartSessionOnTimeout)
+        public void EnqueueDownloadItem(DownloadItemRequest downloadItemRequest)
         {
-            string fileName = String.Concat(FileUtils.RemoveInvalidFileNameCharacters(fileNameWithoutExtension, md5Hash), ".", fileExtension.ToLower());
+            string fileName = String.Concat(FileUtils.RemoveInvalidFileNameCharacters(downloadItemRequest.FileNameWithoutExtension,
+                downloadItemRequest.Md5Hash), ".", downloadItemRequest.FileExtension.ToLower());
             lock (downloadQueueLock)
             {
-                DownloadItem newDownloadItem = new DownloadItem(Guid.NewGuid(), downloadPageUrl, downloadSettings.DownloadDirectory, fileName,
-                    downloadTransformations, md5Hash, restartSessionOnTimeout);
+                DownloadItem newDownloadItem = new DownloadItem(Guid.NewGuid(), downloadItemRequest.DownloadPageUrl, downloadSettings.DownloadDirectory,
+                    fileName, downloadItemRequest.DownloadTransformations, downloadItemRequest.Md5Hash, downloadItemRequest.RestartSessionOnTimeout);
                 downloadQueue.Add(newDownloadItem);
                 eventQueue.Add(new DownloadItemAddedEventArgs(newDownloadItem));
                 AddLogLine(newDownloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineQueued);
+                SaveDownloadQueue();
+                ResumeDownloadTask();
+            }
+        }
+
+        public void EnqueueDownloadItems(List<DownloadItemRequest> downloadItemRequests)
+        {
+            lock (downloadQueueLock)
+            {
+                foreach (DownloadItemRequest downloadItemRequest in downloadItemRequests)
+                {
+                    string fileName = String.Concat(FileUtils.RemoveInvalidFileNameCharacters(downloadItemRequest.FileNameWithoutExtension,
+                        downloadItemRequest.Md5Hash), ".", downloadItemRequest.FileExtension.ToLower());
+                    DownloadItem newDownloadItem = new DownloadItem(Guid.NewGuid(), downloadItemRequest.DownloadPageUrl, downloadSettings.DownloadDirectory,
+                        fileName, downloadItemRequest.DownloadTransformations, downloadItemRequest.Md5Hash, downloadItemRequest.RestartSessionOnTimeout);
+                    downloadQueue.Add(newDownloadItem);
+                    eventQueue.Add(new DownloadItemAddedEventArgs(newDownloadItem));
+                    AddLogLine(newDownloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineQueued);
+                }
                 SaveDownloadQueue();
                 ResumeDownloadTask();
             }
@@ -571,7 +590,7 @@ namespace LibgenDesktop.Models.Download
             catch (Exception exception)
             {
                 Logger.Exception(exception);
-                ReportError(downloadItem, localization.LogLineUnexpectedError);
+                ReportError(downloadItem, localization.GetLogLineUnexpectedError(exception.GetInnermostException().Message));
             }
         }
 
@@ -727,7 +746,7 @@ namespace LibgenDesktop.Models.Download
                     if (!expectedError)
                     {
                         Logger.Exception(ioException);
-                        ReportError(downloadItem, localization.LogLineUnexpectedError);
+                        ReportError(downloadItem, localization.GetLogLineUnexpectedError(ioException.GetInnermostException().Message));
                     }
                     break;
                 }
@@ -739,7 +758,7 @@ namespace LibgenDesktop.Models.Download
                         break;
                     }
                     Logger.Exception(exception);
-                    ReportError(downloadItem, localization.LogLineUnexpectedError);
+                    ReportError(downloadItem, localization.GetLogLineUnexpectedError(exception.GetInnermostException().Message));
                     break;
                 }
                 if (bytesRead == 0)
@@ -840,14 +859,14 @@ namespace LibgenDesktop.Models.Download
                 else
                 {
                     Logger.Exception(aggregateException);
-                    ReportError(downloadItem, localization.LogLineUnexpectedError);
+                    ReportError(downloadItem, localization.GetLogLineUnexpectedError(aggregateException.GetInnermostException().Message));
                 }
                 return null;
             }
             catch (Exception exception)
             {
                 Logger.Exception(exception);
-                ReportError(downloadItem, localization.LogLineUnexpectedError);
+                ReportError(downloadItem, localization.GetLogLineUnexpectedError(exception.GetInnermostException().Message));
                 return null;
             }
             Logger.Debug($"Response status code: {(int)response.StatusCode} {response.StatusCode}.");
@@ -902,11 +921,7 @@ namespace LibgenDesktop.Models.Download
                 }
                 catch (Exception exception)
                 {
-                    while (!(exception is SocketException) && exception.InnerException != null)
-                    {
-                        exception = exception.InnerException;
-                    }
-                    if (exception is SocketException socketException && socketException.SocketErrorCode == SocketError.TimedOut)
+                    if (exception.GetInnermostException() is SocketException socketException && socketException.SocketErrorCode == SocketError.TimedOut)
                     {
                         throw new TimeoutException();
                     }

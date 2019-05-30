@@ -18,7 +18,7 @@ using static LibgenDesktop.Models.Settings.AppSettings;
 
 namespace LibgenDesktop.ViewModels.Tabs
 {
-    internal class FictionSearchResultsTabViewModel : SearchResultsTabViewModel
+    internal class FictionSearchResultsTabViewModel : SearchResultsTabViewModel<FictionBook>
     {
         private readonly FictionColumnSettings columnSettings;
         private ObservableCollection<FictionSearchResultItemViewModel> books;
@@ -34,8 +34,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
             books = new ObservableCollection<FictionSearchResultItemViewModel>(searchResults.Select(book =>
                 new FictionSearchResultItemViewModel(book, formatter)));
-            OpenDetailsCommand = new Command(param => OpenDetails((param as FictionSearchResultItemViewModel)?.Book));
-            BookDataGridEnterKeyCommand = new Command(BookDataGridEnterKeyPressed);
             Initialize();
         }
 
@@ -187,25 +185,11 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public FictionSearchResultItemViewModel SelectedBook { get; set; }
-
-        public Command OpenDetailsCommand { get; }
-        public Command BookDataGridEnterKeyCommand { get; }
-
-        protected override string FileNameWithoutExtension => $"{SelectedBook.Book.Authors} - {SelectedBook.Book.Title}";
-        protected override string FileExtension => SelectedBook.Book.Format;
-        protected override string Md5Hash => SelectedBook.Book.Md5Hash;
-
         public event EventHandler<OpenFictionDetailsEventArgs> OpenFictionDetailsRequested;
 
         protected override SearchResultsTabLocalizator GetLocalization()
         {
             return localization;
-        }
-
-        protected override LibgenObject GetSelectedLibgenObject()
-        {
-            return SelectedBook.Book;
         }
 
         protected override async Task SearchAsync(string searchQuery, CancellationToken cancellationToken)
@@ -243,14 +227,19 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        protected override void OpenDetails(FictionBook book)
+        {
+            OpenFictionDetailsRequested?.Invoke(this, new OpenFictionDetailsEventArgs(book));
+        }
+
         protected override string GetDownloadMirrorName()
         {
             return MainModel.AppSettings.Mirrors.FictionBooksMirrorName;
         }
 
-        protected override string GenerateDownloadUrl(Mirrors.MirrorConfiguration mirrorConfiguration)
+        protected override string GenerateDownloadUrl(Mirrors.MirrorConfiguration mirrorConfiguration, FictionBook book)
         {
-            return UrlGenerator.GetFictionDownloadUrl(mirrorConfiguration, SelectedBook?.Book);
+            return UrlGenerator.GetFictionDownloadUrl(mirrorConfiguration, book);
         }
 
         protected override string GetDownloadTransformations(Mirrors.MirrorConfiguration mirrorConfiguration)
@@ -267,16 +256,6 @@ namespace LibgenDesktop.ViewModels.Tabs
         private void UpdateBookCount()
         {
             BookCount = Localization.GetStatusBarText(Books.Count);
-        }
-
-        private void BookDataGridEnterKeyPressed()
-        {
-            OpenDetails(SelectedBook.Book);
-        }
-
-        private void OpenDetails(FictionBook book)
-        {
-            OpenFictionDetailsRequested?.Invoke(this, new OpenFictionDetailsEventArgs(book));
         }
 
         private void HandleSearchProgress(SearchProgress searchProgress)

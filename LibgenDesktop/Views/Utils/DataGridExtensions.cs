@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System.Collections;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace LibgenDesktop.Views.Utils
@@ -28,15 +30,15 @@ namespace LibgenDesktop.Views.Utils
             }
             if (e.NewValue != null)
             {
-                row.AddHandler(Control.MouseDoubleClickEvent, new RoutedEventHandler(DataGrid_MouseDoubleClick));
+                row.AddHandler(Control.MouseDoubleClickEvent, new RoutedEventHandler(DataGridRow_MouseDoubleClick));
             }
             else
             {
-                row.RemoveHandler(Control.MouseDoubleClickEvent, new RoutedEventHandler(DataGrid_MouseDoubleClick));
+                row.RemoveHandler(Control.MouseDoubleClickEvent, new RoutedEventHandler(DataGridRow_MouseDoubleClick));
             }
         }
 
-        private static void DataGrid_MouseDoubleClick(object sender, RoutedEventArgs e)
+        private static void DataGridRow_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
             if (sender is DataGridRow row)
             {

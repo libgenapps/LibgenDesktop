@@ -105,6 +105,8 @@
             public string OfflineModeIsOnMessageTitle { get; set; }
             public string OfflineModeIsOnMessageText { get; set; }
             public string NoDownloadMirrorError { get; set; }
+            public string LargeNumberOfItemsToDownloadPromptTitle { get; set; }
+            public string LargeNumberOfItemsToDownloadPromptText { get; set; }
         }
 
         internal class NonFictionSearchResultsGridColumnsTranslation

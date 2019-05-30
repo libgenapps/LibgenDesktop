@@ -92,7 +92,9 @@
         "FileNotFoundError": "File {file} not found.",
         "OfflineModeIsOnMessageTitle": "Offline mode is on",
         "OfflineModeIsOnMessageText": "Downloading is disabled while the offline mode is on. You can turn it off in the settings window.",
-        "NoDownloadMirrorError": "No download mirror has been selected. Please choose one of the mirrors in the settings window."
+        "NoDownloadMirrorError": "No download mirror has been selected. Please choose one of the mirrors in the settings window.",
+        "LargeNumberOfItemsToDownloadPromptTitle": "Large number of items to download",
+        "LargeNumberOfItemsToDownloadPromptText":  "You are about to download {number} items. Are you sure?"
     },
     "NonFictionSearchResultsTab":
     {
@@ -506,7 +508,7 @@
             "SynchronizationProgressAddedAndUpdated": "Books downloaded: {downloaded}, added: {added}, updated: {updated}.",
             "SynchronizationSuccessful": "Synchronization completed successfully.",
             "SynchronizationCancelled": "Synchronization has been cancelled by the user.",
-            "SynchronizationError": "An error occurred during the synchronization."
+            "SynchronizationError": "An error occurred during the synchronization: {error}"
         }
     },
     "Library":
@@ -607,7 +609,7 @@
             "DownloadIncompleteError": "Server indicates that file download is complete, but it is not.",
             "FileWriteError": "File write error.",
             "LogLineRequestError": "Couldn't send request to {url}",
-            "UnexpectedError": "An unexpected error occurred."
+            "UnexpectedError": "An unexpected error occurred: {error}"
         }
     },
     "ApplicationUpdate":

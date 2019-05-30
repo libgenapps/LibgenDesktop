@@ -21,6 +21,10 @@ namespace LibgenDesktop.ViewModels.SearchResultItems
         public string FileSize => Formatter.FileSizeToString(Book.SizeInBytes, false);
         public long SizeInBytes => Book.SizeInBytes;
 
+        public override string FileNameWithoutExtension => $"{Authors} - {Title}";
+        public override string FileExtension => Format;
+        public override string Md5Hash => Book.Md5Hash;
+
         protected override void UpdateLocalizableProperties()
         {
             NotifyPropertyChanged(nameof(FileSize));

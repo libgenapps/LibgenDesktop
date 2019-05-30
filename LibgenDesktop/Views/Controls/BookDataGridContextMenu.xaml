@@ -4,12 +4,15 @@
              DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
     <MenuItem Header="{Binding DataContext.Localization.Details, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
               FontWeight="Bold"
-              Command="{Binding DataContext.OpenDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
-              CommandParameter="{Binding}" />
+              Visibility="{Binding DataContext.ShowOpenDetailsMenuItem, Converter={StaticResource booleanToCollapsedConverter},
+                                   RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
+              Command="{Binding DataContext.OpenDetailsCommand, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}" />
     <MenuItem Header="{Binding DataContext.Localization.Open, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
-              Visibility="{Binding ExistsInLibrary, Converter={StaticResource booleanToCollapsedConverter}}"
+              Visibility="{Binding DataContext.ShowOpenFileMenuItem, Converter={StaticResource booleanToCollapsedConverter},
+                                   RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
               Command="{Binding DataContext.OpenFileCommand, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}" />
     <MenuItem Header="{Binding DataContext.Localization.Download, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
-              Visibility="{Binding ExistsInLibrary, Converter={StaticResource booleanToCollapsedInverseConverter}}"
+              Visibility="{Binding DataContext.ShowDownloadMenuItem, Converter={StaticResource booleanToCollapsedConverter},
+                                   RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
               Command="{Binding DataContext.DownloadCommand, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}" />
 </ContextMenu>

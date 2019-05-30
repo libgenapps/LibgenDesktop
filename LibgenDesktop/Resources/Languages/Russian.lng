@@ -92,7 +92,9 @@
         "FileNotFoundError": "Файл {file} не найден.",
         "OfflineModeIsOnMessageTitle": "Включен автономный режим",
         "OfflineModeIsOnMessageText": "Скачивание файлов недоступно в автономном режиме. Вы можете отключить автономный режим в окне настроек.",
-        "NoDownloadMirrorError": "Не выбрано зеркало для загрузки файлов. Пожалуйста, выберите одно из доступных зеркал в окне настроек."
+        "NoDownloadMirrorError": "Не выбрано зеркало для загрузки файлов. Пожалуйста, выберите одно из доступных зеркал в окне настроек.",
+        "LargeNumberOfItemsToDownloadPromptTitle": "Большое количество элементов для загрузки",
+        "LargeNumberOfItemsToDownloadPromptText": "Вы выбрали большое количество элементов для загрузки ({number}). Продолжить?"
     },
     "NonFictionSearchResultsTab":
     {
@@ -506,7 +508,7 @@
             "SynchronizationProgressAddedAndUpdated": "Скачано книг: {downloaded}, добавлено книг: {added}, обновлено книг: {updated}.",
             "SynchronizationSuccessful": "Синхронизация выполнена успешно.",
             "SynchronizationCancelled": "Синхронизация была прервана пользователем.",
-            "SynchronizationError": "Синхронизация завершилась с ошибками."
+            "SynchronizationError": "Синхронизация завершилась с ошибками: {error}"
         }
     },
     "Library":
@@ -607,7 +609,7 @@
             "DownloadIncompleteError": "Загрузка завершена не полностью.",
             "FileWriteError": "Ошибка записи файла на диск.",
             "LogLineRequestError": "Не удалось отправить запрос по адресу {url}",
-            "UnexpectedError": "Возникла непредвиденная ошибка."
+            "UnexpectedError": "Возникла непредвиденная ошибка: {error}"
         }
     },
     "ApplicationUpdate":

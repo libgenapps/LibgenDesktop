@@ -22,6 +22,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             OfflineModeIsOnMessageTitle = Format(translation => translation?.OfflineModeIsOnMessageTitle);
             OfflineModeIsOnMessageText = Format(translation => translation?.OfflineModeIsOnMessageText);
             NoDownloadMirrorError = Format(translation => translation?.NoDownloadMirrorError);
+            LargeNumberOfItemsToDownloadPromptTitle = Format(translation => translation?.LargeNumberOfItemsToDownloadPromptTitle);
         }
 
         public string SearchPlaceHolder { get; }
@@ -38,8 +39,12 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string OfflineModeIsOnMessageTitle { get; }
         public string OfflineModeIsOnMessageText { get; }
         public string NoDownloadMirrorError { get; }
+        public string LargeNumberOfItemsToDownloadPromptTitle { get; }
 
         public string GetFileNotFoundErrorText(string file) => Format(translation => translation?.FileNotFoundError, new { file });
+
+        public string GetLargeNumberOfItemsToDownloadPromptText(int number) =>
+            Format(translation => translation?.LargeNumberOfItemsToDownloadPromptText, new { number });
 
         private string Format(Func<Translation.SearchResultsTabsTranslation, string> field, object templateArguments = null)
         {

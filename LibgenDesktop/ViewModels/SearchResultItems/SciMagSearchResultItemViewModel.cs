@@ -19,6 +19,10 @@ namespace LibgenDesktop.ViewModels.SearchResultItems
         public long SizeInBytes => Article.SizeInBytes;
         public string Doi => Article.DoiString;
 
+        public override string FileNameWithoutExtension => $"{Authors} - {Title}";
+        public override string FileExtension => "pdf";
+        public override string Md5Hash => Article.Md5Hash;
+
         protected override void UpdateLocalizableProperties()
         {
             NotifyPropertyChanged(nameof(FileSize));

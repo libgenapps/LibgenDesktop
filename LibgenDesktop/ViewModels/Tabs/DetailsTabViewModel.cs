@@ -350,8 +350,16 @@ namespace LibgenDesktop.ViewModels.Tabs
                     if (MainModel.AppSettings.Download.UseDownloadManager)
                     {
                         Mirrors.MirrorConfiguration mirror = MainModel.Mirrors[downloadMirrorName];
-                        MainModel.Downloader.EnqueueDownloadItem(downloadUrl, FileNameWithoutExtension, FileExtension.ToLower(), Md5Hash,
-                            GetDownloadTransformations(mirror), mirror.RestartSessionOnTimeout);
+                        DownloadItemRequest downloadItemRequest = new DownloadItemRequest
+                        {
+                            DownloadPageUrl = downloadUrl,
+                            FileNameWithoutExtension = FileNameWithoutExtension,
+                            FileExtension = FileExtension.ToLower(),
+                            Md5Hash = Md5Hash,
+                            DownloadTransformations = GetDownloadTransformations(mirror),
+                            RestartSessionOnTimeout = mirror.RestartSessionOnTimeout
+                        };
+                        MainModel.Downloader.EnqueueDownloadItem(downloadItemRequest);
                     }
                     else
                     {

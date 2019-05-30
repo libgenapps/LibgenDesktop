@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Localization.Localizators;
 using LibgenDesktop.Models.ProgressArgs;
+using LibgenDesktop.Models.Utils;
 using LibgenDesktop.ViewModels.Panels;
 
 namespace LibgenDesktop.ViewModels.Windows
@@ -183,13 +185,17 @@ namespace LibgenDesktop.ViewModels.Windows
             }
             catch (Exception exception)
             {
+                exception = exception.GetInnermostException();
                 elapsedTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
-                Logs.ShowErrorLogLine(Localization.LogLineSynchronizationError);
+                Logs.ShowErrorLogLine(Localization.GetLogLineSynchronizationError(exception.Message));
                 IsInProgress = false;
                 Status = Localization.StatusSynchronizationError;
                 IsCancelButtonVisible = false;
                 IsCloseButtonVisible = true;
-                ShowErrorWindow(exception, CurrentWindowContext);
+                if (!(exception is TimeoutException) && !(exception is SocketException))
+                {
+                    ShowErrorWindow(exception, CurrentWindowContext);
+                }
                 return;
             }
             elapsedTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);

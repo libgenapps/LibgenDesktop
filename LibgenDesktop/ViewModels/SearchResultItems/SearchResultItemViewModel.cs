@@ -11,9 +11,13 @@ namespace LibgenDesktop.ViewModels.SearchResultItems
             Formatter = formatter;
         }
 
+        public T LibgenObject { get; }
         public bool ExistsInLibrary => LibgenObject.FileId.HasValue;
 
-        protected T LibgenObject { get; }
+        public abstract string FileNameWithoutExtension { get; }
+        public abstract string FileExtension { get; }
+        public abstract string Md5Hash { get; }
+
         protected LanguageFormatter Formatter { get; private set; }
 
         public void UpdateLocalization(LanguageFormatter newFormatter)
