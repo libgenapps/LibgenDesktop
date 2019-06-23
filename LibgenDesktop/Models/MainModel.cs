@@ -41,13 +41,15 @@ namespace LibgenDesktop.Models
         {
             COMPLETED = 1,
             CANCELLED,
-            DATA_NOT_FOUND
+            DATA_NOT_FOUND,
+            LOW_DISK_SPACE
         }
 
         internal enum SynchronizationResult
         {
             COMPLETED = 1,
-            CANCELLED
+            CANCELLED,
+            LOW_DISK_SPACE
         }
 
         internal enum DownloadFileResult
@@ -57,7 +59,7 @@ namespace LibgenDesktop.Models
             CANCELLED
         }
 
-        private Updater updater;
+        private readonly Updater updater;
         private LocalDatabase localDatabase;
         private bool disposed;
 
@@ -83,6 +85,7 @@ namespace LibgenDesktop.Models
             ConfigureUpdater();
             Downloader = new Downloader();
             ConfigureDownloader();
+            CoverCache = new CoverCache(COVER_CACHE_CAPACITY, HttpClient, AppSettings.Network.OfflineMode);
             disposed = false;
         }
 
@@ -93,6 +96,7 @@ namespace LibgenDesktop.Models
         public LocalizationStorage Localization { get; }
         public HttpClient HttpClient { get; private set; }
         public Downloader Downloader { get; }
+        public CoverCache CoverCache { get; }
         public int NonFictionBookCount { get; private set; }
         public int FictionBookCount { get; private set; }
         public int SciMagArticleCount { get; private set; }
@@ -100,6 +104,7 @@ namespace LibgenDesktop.Models
         public Updater.UpdateCheckResult LastApplicationUpdateCheckResult { get; set; }
 
         public event EventHandler ApplicationUpdateCheckCompleted;
+        public event EventHandler AppSettingsChanged;
         public event EventHandler BookmarksChanged;
 
         public Task<List<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
@@ -185,6 +190,13 @@ namespace LibgenDesktop.Models
             return Task.Run(() =>
             {
                 Logger.Debug("SQL dump import has started.");
+                long? freeSpaceAtStart = GetFreeSpaceOnDatabaseDiskDrive();
+                progressHandler.Report(new ImportDiskSpaceProgress(freeSpaceAtStart));
+                if (freeSpaceAtStart.HasValue && freeSpaceAtStart.Value < LOW_DISK_SPACE_THRESHOLD_BYTES)
+                {
+                    Logger.Debug($"Insufficient disk space: {freeSpaceAtStart.Value} bytes.");
+                    return ImportSqlDumpResult.LOW_DISK_SPACE;
+                }
                 using (SqlDumpReader sqlDumpReader = new SqlDumpReader(sqlDumpFilePath))
                 {
                     while (true)
@@ -299,12 +311,14 @@ namespace LibgenDesktop.Models
                             Logger.Debug("SQL dump import has been cancelled.");
                             return ImportSqlDumpResult.CANCELLED;
                         }
-                        Importer.ImportProgressReporter importProgressReporter = (int objectsAdded, int objectsUpdated) =>
+                        Importer.ImportProgressReporter importProgressReporter = (int objectsAdded, int objectsUpdated, long? freeSpace) =>
                         {
                             progressHandler.Report(new ImportObjectsProgress(objectsAdded, objectsUpdated));
+                            progressHandler.Report(new ImportDiskSpaceProgress(freeSpace));
                         };
                         Logger.Debug("Importing data.");
-                        importer.Import(sqlDumpReader, importProgressReporter, IMPORT_PROGRESS_UPDATE_INTERVAL, cancellationToken, parsedTableDefinition);
+                        Importer.ImportResult importResult = importer.Import(sqlDumpReader, importProgressReporter, IMPORT_PROGRESS_UPDATE_INTERVAL,
+                            cancellationToken, parsedTableDefinition, localDatabase.DatabaseFullPath);
                         switch (tableType)
                         {
                             case TableType.NON_FICTION:
@@ -316,11 +330,6 @@ namespace LibgenDesktop.Models
                             case TableType.SCI_MAG:
                                 UpdateSciMagArticleCount();
                                 break;
-                        }
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            Logger.Debug("SQL dump import has been cancelled.");
-                            return ImportSqlDumpResult.CANCELLED;
                         }
                         switch (tableType)
                         {
@@ -335,6 +344,16 @@ namespace LibgenDesktop.Models
                                 break;
                         }
                         localDatabase.UpdateMetadata(DatabaseMetadata);
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            Logger.Debug("SQL dump import has been cancelled by the user.");
+                            return ImportSqlDumpResult.CANCELLED;
+                        }
+                        if (importResult.ErrorLowDiskSpace)
+                        {
+                            Logger.Debug("SQL dump import has been cancelled due to insufficient disk space.");
+                            return ImportSqlDumpResult.LOW_DISK_SPACE;
+                        }
                         Logger.Debug("SQL dump import has been completed successfully.");
                         return ImportSqlDumpResult.COMPLETED;
                     }
@@ -350,6 +369,13 @@ namespace LibgenDesktop.Models
                 if (NonFictionBookCount == 0)
                 {
                     throw new Exception("Non-fiction table must not be empty.");
+                }
+                long? freeSpaceAtStart = GetFreeSpaceOnDatabaseDiskDrive();
+                progressHandler.Report(new SynchronizationDiskSpaceProgress(freeSpaceAtStart));
+                if (freeSpaceAtStart.HasValue && freeSpaceAtStart.Value < LOW_DISK_SPACE_THRESHOLD_BYTES)
+                {
+                    Logger.Debug($"Insufficient disk space: {freeSpaceAtStart.Value} bytes.");
+                    return SynchronizationResult.LOW_DISK_SPACE;
                 }
                 CheckAndCreateNonFictionIndexes(progressHandler, cancellationToken);
                 if (cancellationToken.IsCancellationRequested)
@@ -370,15 +396,18 @@ namespace LibgenDesktop.Models
                 progressHandler.Report(new ImportLoadLibgenIdsProgress());
                 BitArray existingLibgenIds = localDatabase.GetNonFictionLibgenIdsBitArray();
                 NonFictionImporter importer = new NonFictionImporter(localDatabase, existingLibgenIds, lastModifiedNonFictionBook);
-                progressHandler.Report(new SynchronizationProgress(0, 0, 0));
+                progressHandler.Report(new SynchronizationObjectsProgress(0, 0, 0));
                 int downloadedBookCount = 0;
                 int totalAddedBookCount = 0;
                 int totalUpdatedBookCount = 0;
-                Importer.ImportProgressReporter importProgressReporter = (int objectsAdded, int objectsUpdated) =>
+                Importer.ImportProgressReporter importProgressReporter = (int objectsAdded, int objectsUpdated, long? freeSpace) =>
                 {
-                    progressHandler.Report(new SynchronizationProgress(downloadedBookCount, totalAddedBookCount + objectsAdded,
+                    progressHandler.Report(new SynchronizationObjectsProgress(downloadedBookCount, totalAddedBookCount + objectsAdded,
                         totalUpdatedBookCount + objectsUpdated));
+                    progressHandler.Report(new SynchronizationDiskSpaceProgress(freeSpace));
                 };
+                Importer.ImportResult importResult = null;
+                bool isCancelled = false;
                 while (true)
                 {
                     List<NonFictionBook> currentBatch;
@@ -389,8 +418,8 @@ namespace LibgenDesktop.Models
                     }
                     catch (TaskCanceledException)
                     {
-                        Logger.Debug("Synchronization has been cancelled.");
-                        return SynchronizationResult.CANCELLED;
+                        isCancelled = true;
+                        break;
                     }
                     if (!currentBatch.Any())
                     {
@@ -399,23 +428,33 @@ namespace LibgenDesktop.Models
                     }
                     downloadedBookCount += currentBatch.Count;
                     Logger.Debug($"Batch download is complete, {downloadedBookCount} books have been downloaded so far.");
-                    progressHandler.Report(new SynchronizationProgress(downloadedBookCount, totalAddedBookCount, totalUpdatedBookCount));
+                    progressHandler.Report(new SynchronizationObjectsProgress(downloadedBookCount, totalAddedBookCount, totalUpdatedBookCount));
                     if (cancellationToken.IsCancellationRequested)
                     {
-                        Logger.Debug("Synchronization has been cancelled.");
-                        return SynchronizationResult.CANCELLED;
+                        isCancelled = true;
+                        break;
                     }
                     Logger.Debug("Importing downloaded batch.");
-                    Importer.ImportResult importResult =
-                        importer.Import(currentBatch, importProgressReporter, SYNCHRONIZATION_PROGRESS_UPDATE_INTERVAL, cancellationToken);
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        Logger.Debug("Synchronization has been cancelled.");
-                        return SynchronizationResult.CANCELLED;
-                    }
+                    importResult = importer.Import(currentBatch, importProgressReporter, SYNCHRONIZATION_PROGRESS_UPDATE_INTERVAL,
+                        cancellationToken, localDatabase.DatabaseFullPath);
                     totalAddedBookCount += importResult.AddedObjectCount;
                     totalUpdatedBookCount += importResult.UpdatedObjectCount;
                     Logger.Debug($"Batch has been imported, total added book count = {totalAddedBookCount}, total updated book count = {totalUpdatedBookCount}.");
+                    if (!importResult.IsSuccessful || cancellationToken.IsCancellationRequested)
+                    {
+                        isCancelled = cancellationToken.IsCancellationRequested;
+                        break;
+                    }
+                }
+                if (isCancelled)
+                {
+                    Logger.Debug("Synchronization has been cancelled.");
+                    return SynchronizationResult.CANCELLED;
+                }
+                if (importResult != null && importResult.ErrorLowDiskSpace)
+                {
+                    Logger.Debug("Synchronization has been cancelled due to insufficient disk space.");
+                    return SynchronizationResult.LOW_DISK_SPACE;
                 }
                 Logger.Debug("Synchronization has been completed successfully.");
                 return SynchronizationResult.COMPLETED;
@@ -517,6 +556,44 @@ namespace LibgenDesktop.Models
                 Logger.Debug($"Adding {files.Count} files to the database.");
                 localDatabase.AddFiles(files);
                 Logger.Debug($"{files.Count} files have been added to the database.");
+            });
+        }
+
+        public Task<bool> CheckIfDatabaseStatsIndexesCreated()
+        {
+            return Task.Run(() =>
+            {
+                if (NonFictionBookCount > 0)
+                {
+                    Logger.Debug("Retrieving the list of non-fiction table indexes.");
+                    List<string> nonFictionIndexes = localDatabase.GetNonFictionIndexList();
+                    Logger.Debug("Checking the index on LastModifiedDateTime column.");
+                    if (!CheckIfIndexExists(nonFictionIndexes, SqlScripts.NON_FICTION_INDEX_PREFIX, "LastModifiedDateTime"))
+                    {
+                        return false;
+                    }
+                }
+                if (FictionBookCount > 0)
+                {
+                    Logger.Debug("Retrieving the list of fiction table indexes.");
+                    List<string> fictionIndexes = localDatabase.GetFictionIndexList();
+                    Logger.Debug("Checking the index on LastModifiedDateTime column.");
+                    if (!CheckIfIndexExists(fictionIndexes, SqlScripts.FICTION_INDEX_PREFIX, "LastModifiedDateTime"))
+                    {
+                        return false;
+                    }
+                }
+                if (SciMagArticleCount > 0)
+                {
+                    Logger.Debug("Retrieving the list of scimag table indexes.");
+                    List<string> sciMagIndexes = localDatabase.GetSciMagIndexList();
+                    Logger.Debug("Checking the index on AddedDateTime column.");
+                    if (!CheckIfIndexExists(sciMagIndexes, SqlScripts.SCIMAG_INDEX_PREFIX, "AddedDateTime"))
+                    {
+                        return false;
+                    }
+                }
+                return true;
             });
         }
 
@@ -629,6 +706,16 @@ namespace LibgenDesktop.Models
         public void SaveSettings()
         {
             SettingsStorage.SaveSettings(AppSettings, Environment.AppSettingsFilePath);
+            AppSettingsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void ReconfigureSettingsDependencies()
+        {
+            Localization.SwitchLanguage(AppSettings.General.Language);
+            CreateNewHttpClient();
+            ConfigureUpdater();
+            ConfigureDownloader();
+            ConfigureCoverCache();
         }
 
         public string GetDatabaseNormalizedPath(string databaseFullPath)
@@ -675,7 +762,8 @@ namespace LibgenDesktop.Models
                 {
                     try
                     {
-                        localDatabase = LocalDatabase.OpenDatabase(databaseFilePath);
+                        string databaseFullPath = GetDatabaseFullPath(databaseFilePath);
+                        localDatabase = LocalDatabase.OpenDatabase(databaseFullPath);
                         if (!localDatabase.CheckIfMetadataExists())
                         {
                             LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
@@ -732,7 +820,8 @@ namespace LibgenDesktop.Models
             }
             try
             {
-                localDatabase = LocalDatabase.CreateDatabase(databaseFilePath);
+                string databaseFullPath = GetDatabaseFullPath(databaseFilePath);
+                localDatabase = LocalDatabase.CreateDatabase(databaseFullPath);
                 localDatabase.CreateMetadataTable();
                 localDatabase.CreateFilesTable();
                 localDatabase.CreateNonFictionTables();
@@ -819,6 +908,19 @@ namespace LibgenDesktop.Models
         public void ConfigureDownloader()
         {
             Downloader.Configure(Localization.CurrentLanguage, AppSettings.Network, AppSettings.Download);
+        }
+
+        public void ConfigureCoverCache()
+        {
+            CoverCache.Configure(HttpClient, AppSettings.Network.OfflineMode);
+        }
+
+        public Task<string> RunCustomSqlQuery(string sqlQuery)
+        {
+            return Task.Run(() =>
+            {
+                return localDatabase.RunCustomSqlQuery(sqlQuery);
+            });
         }
 
         public void Dispose()
@@ -1091,10 +1193,15 @@ namespace LibgenDesktop.Models
             CheckAndCreateIndex(sciMagIndexes, SqlScripts.SCIMAG_INDEX_PREFIX, "AddedDateTime", progressHandler, localDatabase.CreateSciMagAddedDateTimeIndex);
         }
 
+        private bool CheckIfIndexExists(List<string> existingIndexes, string prefix, string fieldName)
+        {
+            return existingIndexes.Contains(prefix + fieldName);
+        }
+
         private void CheckAndCreateIndex(List<string> existingIndexes, string prefix, string fieldName, IProgress<object> progressHandler,
             Action createIndexAction)
         {
-            if (!existingIndexes.Contains(prefix + fieldName))
+            if (!CheckIfIndexExists(existingIndexes, prefix, fieldName))
             {
                 Logger.Debug($"Index on {fieldName} doesn't exist, creating it.");
                 if (progressHandler != null)
@@ -1125,6 +1232,11 @@ namespace LibgenDesktop.Models
             Logger.Debug("Updating article count.");
             SciMagArticleCount = localDatabase.CountSciMagArticles();
             Logger.Debug($"Article count = {SciMagArticleCount}.");
+        }
+
+        private long? GetFreeSpaceOnDatabaseDiskDrive()
+        {
+            return FileUtils.GetFreeSpaceForDiskByPath(Path.GetDirectoryName(localDatabase.DatabaseFullPath));
         }
 
         private void ValidateAndCorrectSelectedMirrors()

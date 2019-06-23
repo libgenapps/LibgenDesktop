@@ -16,6 +16,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             FormatColumn = Format(translation => translation?.Format);
             FileSize = Format(translation => translation?.FileSize);
             Ocr = Format(translation => translation?.Ocr);
+            InLocalLibrary = Format(translation => translation?.InLocalLibrary);
         }
 
         public string Title { get; }
@@ -26,6 +27,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string FormatColumn { get; }
         public string FileSize { get; }
         public string Ocr { get; }
+        public string InLocalLibrary { get; }
 
         private string Format(Func<Translation.NonFictionSearchResultsGridColumnsTranslation, string> field)
         {

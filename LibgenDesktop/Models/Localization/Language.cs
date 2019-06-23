@@ -24,10 +24,11 @@ namespace LibgenDesktop.Models.Localization
         private FictionExporterLocalizator fictionExporter;
         private SciMagExporterLocalizator sciMagExporter;
         private SynchronizationLocalizator synchronization;
+        private DatabaseWindowLocalizator database;
+        private SqlDebuggerWindowLocalizator sqlDebugger;
         private DownloadManagerLocalizator downloadManager;
         private ApplicationUpdateLocalizator applicationUpdate;
         private LibraryTabLocalizator library;
-        private DatabaseWindowLocalizator database;
         private SettingsWindowLocalizator settings;
         private AboutWindowLocalizator about;
         private MessageBoxLocalizator messageBox;
@@ -52,9 +53,10 @@ namespace LibgenDesktop.Models.Localization
             fictionExporter = null;
             sciMagExporter = null;
             synchronization = null;
+            database = null;
+            sqlDebugger = null;
             downloadManager = null;
             applicationUpdate = null;
-            database = null;
             settings = null;
             about = null;
             messageBox = null;
@@ -123,14 +125,16 @@ namespace LibgenDesktop.Models.Localization
 
         public SynchronizationLocalizator Synchronization => synchronization ?? (synchronization = new SynchronizationLocalizator(translations, Formatter));
 
+        public DatabaseWindowLocalizator Database => database ?? (database = new DatabaseWindowLocalizator(translations, Formatter));
+
+        public SqlDebuggerWindowLocalizator SqlDebugger => sqlDebugger ?? (sqlDebugger = new SqlDebuggerWindowLocalizator(translations, Formatter));
+
         public DownloadManagerLocalizator DownloadManager => downloadManager ?? (downloadManager = new DownloadManagerLocalizator(translations, Formatter));
 
         public ApplicationUpdateLocalizator ApplicationUpdate =>
             applicationUpdate ?? (applicationUpdate = new ApplicationUpdateLocalizator(translations, Formatter));
 
         public LibraryTabLocalizator Library => library ?? (library = new LibraryTabLocalizator(translations, Formatter));
-
-        public DatabaseWindowLocalizator Database => database ?? (database = new DatabaseWindowLocalizator(translations, Formatter));
 
         public SettingsWindowLocalizator Settings => settings ?? (settings = new SettingsWindowLocalizator(translations, Formatter));
 

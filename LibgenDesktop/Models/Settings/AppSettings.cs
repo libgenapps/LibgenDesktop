@@ -484,12 +484,14 @@ namespace LibgenDesktop.Models.Settings
                 {
                     return new AdvancedSettings
                     {
-                        LoggingEnabled = false
+                        LoggingEnabled = false,
+                        SqlDebuggerEnabled = false
                     };
                 }
             }
 
             public bool LoggingEnabled { get; set; }
+            public bool SqlDebuggerEnabled { get; set; }
         }
 
         public static AppSettings Default

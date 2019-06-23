@@ -67,6 +67,7 @@ namespace LibgenDesktop.ViewModels.Windows
         private ObservableCollection<string> exportMaximumRowsPerFileDefaultValues;
         private string exportMaximumRowsPerFile;
         private bool advancedIsLoggingEnabled;
+        private bool advancedIsSqlDebuggerEnabled;
         private bool isOkButtonEnabled;
         private bool settingsChanged;
 
@@ -771,6 +772,20 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
+        public bool AdvancedIsSqlDebuggerEnabled
+        {
+            get
+            {
+                return advancedIsSqlDebuggerEnabled;
+            }
+            set
+            {
+                advancedIsSqlDebuggerEnabled = value;
+                NotifyPropertyChanged();
+                settingsChanged = true;
+            }
+        }
+
         public bool IsOkButtonEnabled
         {
             get
@@ -962,6 +977,7 @@ namespace LibgenDesktop.ViewModels.Windows
             exportMaximumRowsPerFileDefaultValues = new ObservableCollection<string> { "50000", "100000", "250000", "500000", "1000000" };
             exportMaximumRowsPerFile = appSettings.Export.MaximumRowsPerFile.ToString();
             advancedIsLoggingEnabled = appSettings.Advanced.LoggingEnabled;
+            advancedIsSqlDebuggerEnabled = appSettings.Advanced.SqlDebuggerEnabled;
             Validate();
         }
 
@@ -1094,11 +1110,9 @@ namespace LibgenDesktop.ViewModels.Windows
                     MainModel.DisableLogging();
                 }
             }
+            MainModel.AppSettings.Advanced.SqlDebuggerEnabled = AdvancedIsSqlDebuggerEnabled;
             MainModel.SaveSettings();
-            MainModel.Localization.SwitchLanguage(GeneralSelectedLanguage.Value);
-            MainModel.CreateNewHttpClient();
-            MainModel.ConfigureUpdater();
-            MainModel.ConfigureDownloader();
+            MainModel.ReconfigureSettingsDependencies();
             settingsChanged = false;
             CurrentWindowContext.CloseDialog(true);
         }

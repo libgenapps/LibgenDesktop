@@ -5,8 +5,8 @@ namespace LibgenDesktop.Infrastructure
 {
     internal class Command : ICommand
     {
-        Predicate<object> canExecute = null;
-        Action<Object> executeAction = null;
+        private readonly Predicate<object> canExecute = null;
+        private readonly Action<Object> executeAction = null;
 
         public Command(Action executeAction)
             : this(param => true, param => executeAction())

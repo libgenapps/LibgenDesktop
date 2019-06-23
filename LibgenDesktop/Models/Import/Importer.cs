@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using LibgenDesktop.Models.Database;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.SqlDump;
+using LibgenDesktop.Models.Utils;
 using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.Models.Import
 {
     internal abstract class Importer
     {
-        internal delegate void ImportProgressReporter(int objectsAdded, int objectsUpdated);
+        internal delegate void ImportProgressReporter(int objectsAdded, int objectsUpdated, long? freeSpace);
 
         internal class ImportResult
         {
@@ -24,10 +26,12 @@ namespace LibgenDesktop.Models.Import
 
             public int AddedObjectCount { get; }
             public int UpdatedObjectCount { get; }
+            public bool IsSuccessful { get; set; }
+            public bool ErrorLowDiskSpace { get; set; }
         }
 
         public abstract ImportResult Import(SqlDumpReader sqlDumpReader, ImportProgressReporter progressReporter, double progressUpdateInterval,
-            CancellationToken cancellationToken, SqlDumpReader.ParsedTableDefinition parsedTableDefinition);
+            CancellationToken cancellationToken, SqlDumpReader.ParsedTableDefinition parsedTableDefinition, string databaseFullPath);
     }
 
     internal abstract class Importer<T> : Importer where T : LibgenObject, new()
@@ -51,22 +55,33 @@ namespace LibgenDesktop.Models.Import
         protected bool IsUpdateMode { get; }
 
         public override ImportResult Import(SqlDumpReader sqlDumpReader, ImportProgressReporter progressReporter, double progressUpdateInterval,
-            CancellationToken cancellationToken, SqlDumpReader.ParsedTableDefinition parsedTableDefinition)
+            CancellationToken cancellationToken, SqlDumpReader.ParsedTableDefinition parsedTableDefinition, string databaseFullPath)
         {
             List<Action<T, string>> sortedColumnSetters =
                 tableDefinition.GetSortedColumnSetters(parsedTableDefinition.Columns.Select(column => column.ColumnName));
-            return Import(sqlDumpReader.ParseImportObjects(sortedColumnSetters), progressReporter, progressUpdateInterval, cancellationToken);
+            return Import(sqlDumpReader.ParseImportObjects(sortedColumnSetters), progressReporter, progressUpdateInterval, cancellationToken,
+                databaseFullPath);
         }
 
         public ImportResult Import(IEnumerable<T> importingObjects, ImportProgressReporter progressReporter, double progressUpdateInterval,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken, string databaseFullPath)
         {
             DateTime lastProgressUpdateDateTime = DateTime.Now;
             int addedObjectCount = 0;
             int updatedObjectCount = 0;
+            int importedObjectCountForDiskSpaceCheck = 0;
+            string databaseDirectoryPath = Path.GetDirectoryName(databaseFullPath);
+            long? freeSpace = FileUtils.GetFreeSpaceForDiskByPath(databaseDirectoryPath);
+            if (freeSpace.HasValue && freeSpace.Value < LOW_DISK_SPACE_THRESHOLD_BYTES)
+            {
+                return new ImportResult(addedObjectCount, updatedObjectCount)
+                {
+                    ErrorLowDiskSpace = true
+                };
+            }
+            progressReporter(addedObjectCount, updatedObjectCount, freeSpace);
             currentBatchObjectsToInsert.Clear();
             currentBatchObjectsToUpdate.Clear();
-            progressReporter(addedObjectCount, updatedObjectCount);
             foreach (T importingObject in importingObjects)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -96,6 +111,7 @@ namespace LibgenDesktop.Models.Import
                     {
                         InsertBatch(currentBatchObjectsToInsert);
                         addedObjectCount += currentBatchObjectsToInsert.Count;
+                        importedObjectCountForDiskSpaceCheck += currentBatchObjectsToInsert.Count;
                         currentBatchObjectsToInsert.Clear();
                         if (cancellationToken.IsCancellationRequested)
                         {
@@ -106,6 +122,7 @@ namespace LibgenDesktop.Models.Import
                     {
                         UpdateBatch(currentBatchObjectsToUpdate);
                         updatedObjectCount += currentBatchObjectsToUpdate.Count;
+                        importedObjectCountForDiskSpaceCheck += currentBatchObjectsToUpdate.Count;
                         currentBatchObjectsToUpdate.Clear();
                         if (cancellationToken.IsCancellationRequested)
                         {
@@ -115,8 +132,20 @@ namespace LibgenDesktop.Models.Import
                     DateTime now = DateTime.Now;
                     if ((now - lastProgressUpdateDateTime).TotalSeconds > progressUpdateInterval)
                     {
-                        progressReporter(addedObjectCount, updatedObjectCount);
+                        progressReporter(addedObjectCount, updatedObjectCount, freeSpace);
                         lastProgressUpdateDateTime = now;
+                    }
+                    if (importedObjectCountForDiskSpaceCheck >= DISK_SPACE_CHECK_FOR_EVERY_IMPORTED_ENTRY_COUNT)
+                    {
+                        importedObjectCountForDiskSpaceCheck = 0;
+                        freeSpace = FileUtils.GetFreeSpaceForDiskByPath(databaseDirectoryPath);
+                        if (freeSpace.HasValue && freeSpace.Value < LOW_DISK_SPACE_THRESHOLD_BYTES)
+                        {
+                            return new ImportResult(addedObjectCount, updatedObjectCount)
+                            {
+                                ErrorLowDiskSpace = true
+                            };
+                        }
                     }
                 }
             }
@@ -130,8 +159,12 @@ namespace LibgenDesktop.Models.Import
                 UpdateBatch(currentBatchObjectsToUpdate);
                 updatedObjectCount += currentBatchObjectsToUpdate.Count;
             }
-            progressReporter(addedObjectCount, updatedObjectCount);
-            return new ImportResult(addedObjectCount, updatedObjectCount);
+            freeSpace = FileUtils.GetFreeSpaceForDiskByPath(databaseDirectoryPath);
+            progressReporter(addedObjectCount, updatedObjectCount, freeSpace);
+            return new ImportResult(addedObjectCount, updatedObjectCount)
+            {
+                IsSuccessful = true
+            };
         }
 
         protected abstract void InsertBatch(List<T> objectBatch);

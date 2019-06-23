@@ -40,5 +40,6 @@
     </Style>
     <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
         <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="IsCancel" Value="True" />
     </Style>
 </ResourceDictionary>

@@ -21,7 +21,8 @@ namespace LibgenDesktop.Infrastructure
             APPLICATION_UPDATE_WINDOW,
             LIBRARY_WINDOW,
             DATABASE_WINDOW,
-            ABOUT_WINDOW
+            ABOUT_WINDOW,
+            SQL_DEBUGGER_WINDOW
         }
 
         internal class RegisteredWindow
@@ -53,6 +54,7 @@ namespace LibgenDesktop.Infrastructure
             RegisterWindow(WindowKey.APPLICATION_UPDATE_WINDOW, typeof(ApplicationUpdateWindow), typeof(ApplicationUpdateWindowViewModel));
             RegisterWindow(WindowKey.DATABASE_WINDOW, typeof(DatabaseWindow), typeof(DatabaseWindowViewModel));
             RegisterWindow(WindowKey.ABOUT_WINDOW, typeof(AboutWindow), typeof(AboutWindowViewModel));
+            RegisterWindow(WindowKey.SQL_DEBUGGER_WINDOW, typeof(SqlDebuggerWindow), typeof(SqlDebuggerWindowViewModel));
             MessageBox = new MessageBox();
         }
 

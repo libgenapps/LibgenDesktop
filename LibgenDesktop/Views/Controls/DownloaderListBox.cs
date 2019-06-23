@@ -1,7 +1,9 @@
-﻿using System.Windows;
+﻿using System.Collections;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using LibgenDesktop.Infrastructure;
 
 namespace LibgenDesktop.Views.Controls
 {
@@ -9,6 +11,7 @@ namespace LibgenDesktop.Views.Controls
     {
         public static readonly DependencyProperty SelectionChangedCommandProperty = DependencyProperty.Register("SelectionChangedCommand", typeof(ICommand), typeof(DownloaderListBox));
         public static readonly DependencyProperty DoubleClickCommandProperty = DependencyProperty.Register("DoubleClickCommand", typeof(ICommand), typeof(DownloaderListBox));
+        public static readonly DependencyProperty SelectedRowsProperty = DependencyProperty.Register("SelectedRows", typeof(IList), typeof(DownloaderListBox));
 
         public ICommand SelectionChangedCommand
         {
@@ -34,13 +37,23 @@ namespace LibgenDesktop.Views.Controls
             }
         }
 
+        public IList SelectedRows
+        {
+            get
+            {
+                return (IList)GetValue(SelectedRowsProperty);
+            }
+            set
+            {
+                SetValue(SelectedRowsProperty, value);
+            }
+        }
+
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
-            ICommand selectionChangedCommand = SelectionChangedCommand;
-            if (selectionChangedCommand != null)
-            {
-                selectionChangedCommand.Execute(null);
-            }
+            SelectedRows = SelectedItems;
+            SelectionChangedCommandArgs selectionChangedCommandArgs = new SelectionChangedCommandArgs(e.AddedItems, e.RemovedItems);
+            SelectionChangedCommand?.Execute(selectionChangedCommandArgs);
             base.OnSelectionChanged(e);
         }
 

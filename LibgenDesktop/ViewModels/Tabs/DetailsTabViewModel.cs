@@ -211,7 +211,7 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         public override void HandleTabClosing()
         {
-            MainModel.Downloader.DownloaderEvent -= DownloaderEvent;
+            MainModel.Downloader.DownloaderBatchEvent -= DownloaderBatchEvent;
             MainModel.Localization.LanguageChanged -= LocalizationLanguageChanged;
         }
 
@@ -271,8 +271,12 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
             UpdateMainActionButtonCaption();
             UpdateMainActionButtonTooltip();
-            UpdateDownloadStatus(MainModel.Downloader.GetDownloadItemByDownloadPageUrl(downloadUrl));
-            MainModel.Downloader.DownloaderEvent += DownloaderEvent;
+            DownloadItem downloadItem = MainModel.Downloader.GetDownloadItemByDownloadPageUrl(downloadUrl);
+            if (downloadItem != null)
+            {
+                UpdateDownloadStatus(downloadItem);
+            }
+            MainModel.Downloader.DownloaderBatchEvent += DownloaderBatchEvent;
             await InitializeCoverAsync();
         }
 
@@ -288,7 +292,12 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
             else
             {
-                if (coverMirrorName == null)
+                byte[] coverByteArray = MainModel.CoverCache.TryGetCoverFromCache(Md5Hash);
+                if (coverByteArray != null)
+                {
+                    ShowCover(coverByteArray);
+                }
+                else if (coverMirrorName == null)
                 {
                     coverNotificationOption = CoverNotificationOption.NO_COVER_MIRROR;
                     UpdateCoverNotification();
@@ -310,11 +319,8 @@ namespace LibgenDesktop.ViewModels.Tabs
                         IsCoverNotificationVisible = true;
                         try
                         {
-                            Cover = await LoadCoverAsync(coverUrl);
-                            CoverVisible = true;
-                            coverNotificationOption = CoverNotificationOption.NO_NOTIFICATION;
-                            UpdateCoverNotification();
-                            IsCoverNotificationVisible = false;
+                            coverByteArray = await MainModel.CoverCache.GetCoverAsync(Md5Hash, coverUrl);
+                            ShowCover(coverByteArray);
                         }
                         catch (Exception exception)
                         {
@@ -327,11 +333,28 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        private async Task<BitmapImage> LoadCoverAsync(string coverUrl)
+        private void ShowCover(byte[] coverByteArray)
         {
-            byte[] imageData = await MainModel.HttpClient.GetByteArrayAsync(coverUrl);
+            try
+            {
+                Cover = ConvertCoverByteArrayToBitmapImage(coverByteArray);
+                CoverVisible = true;
+                coverNotificationOption = CoverNotificationOption.NO_NOTIFICATION;
+                UpdateCoverNotification();
+                IsCoverNotificationVisible = false;
+            }
+            catch (Exception exception)
+            {
+                Logger.Exception(exception);
+                coverNotificationOption = CoverNotificationOption.COVER_LOADING_ERROR;
+                UpdateCoverNotification();
+            }
+        }
+
+        private BitmapImage ConvertCoverByteArrayToBitmapImage(byte[] coverByteArray)
+        {
             BitmapImage result = new BitmapImage();
-            using (MemoryStream memoryStream = new MemoryStream(imageData))
+            using (MemoryStream memoryStream = new MemoryStream(coverByteArray))
             {
                 result.BeginInit();
                 result.CacheOption = BitmapCacheOption.OnLoad;
@@ -359,7 +382,7 @@ namespace LibgenDesktop.ViewModels.Tabs
                             DownloadTransformations = GetDownloadTransformations(mirror),
                             RestartSessionOnTimeout = mirror.RestartSessionOnTimeout
                         };
-                        MainModel.Downloader.EnqueueDownloadItem(downloadItemRequest);
+                        MainModel.Downloader.EnqueueDownloadItems(new[] { downloadItemRequest });
                     }
                     else
                     {
@@ -382,87 +405,90 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        private void DownloaderEvent(object sender, EventArgs e)
+        private void DownloaderBatchEvent(object sender, DownloaderBatchEventArgs e)
         {
-            DownloadItem downloadItem;
-            switch (e)
+            foreach (DownloadItemEventArgs downloadItemEventArgs in e.BatchEvents)
             {
-                case DownloadItemAddedEventArgs downloadItemAddedEvent:
-                    downloadItem = downloadItemAddedEvent.AddedDownloadItem;
-                    break;
-                case DownloadItemChangedEventArgs downloadItemChangedEvent:
-                    downloadItem = downloadItemChangedEvent.ChangedDownloadItem;
-                    break;
-                case DownloadItemRemovedEventArgs downloadItemRemovedEvent:
-                    downloadItem = downloadItemRemovedEvent.RemovedDownloadItem;
-                    break;
-                default:
-                    downloadItem = null;
-                    break;
+                DownloadItem downloadItem;
+                switch (downloadItemEventArgs)
+                {
+                    case DownloadItemAddedEventArgs downloadItemAddedEvent:
+                        downloadItem = downloadItemAddedEvent.AddedDownloadItem;
+                        break;
+                    case DownloadItemChangedEventArgs downloadItemChangedEvent:
+                        downloadItem = downloadItemChangedEvent.ChangedDownloadItem;
+                        break;
+                    case DownloadItemRemovedEventArgs downloadItemRemovedEvent:
+                        downloadItem = downloadItemRemovedEvent.RemovedDownloadItem;
+                        break;
+                    default:
+                        downloadItem = null;
+                        break;
+                }
+                if (downloadItem != null && downloadItem.DownloadPageUrl == downloadUrl)
+                {
+                    UpdateDownloadStatus(downloadItem);
+                }
             }
-            UpdateDownloadStatus(downloadItem);
         }
 
         private void UpdateDownloadStatus(DownloadItem downloadItem)
         {
-            if (downloadItem != null && downloadItem.DownloadPageUrl == downloadUrl)
+            ExecuteInUiThread(() =>
             {
-                ExecuteInUiThread(() =>
+                switch (downloadItem.Status)
                 {
-                    switch (downloadItem.Status)
-                    {
-                        case DownloadItemStatus.QUEUED:
-                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.QUEUED;
-                            break;
-                        case DownloadItemStatus.DOWNLOADING:
-                        case DownloadItemStatus.RETRY_DELAY:
-                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.DOWNLOADING;
-                            break;
-                        case DownloadItemStatus.STOPPED:
-                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.STOPPED;
-                            break;
-                        case DownloadItemStatus.ERROR:
-                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.ERROR;
-                            break;
-                        case DownloadItemStatus.COMPLETED:
-                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.OPEN;
-                            break;
-                        case DownloadItemStatus.REMOVED:
-                            mainActionButtonCaptionOption = MainActionButtonCaptionOption.DOWNLOAD;
-                            break;
-                    }
-                    UpdateMainActionButtonCaption();
-                    switch (downloadItem.Status)
-                    {
-                        case DownloadItemStatus.QUEUED:
-                        case DownloadItemStatus.DOWNLOADING:
-                        case DownloadItemStatus.RETRY_DELAY:
-                        case DownloadItemStatus.STOPPED:
-                        case DownloadItemStatus.ERROR:
-                            downloadId = downloadItem.Id;
-                            mainActionButtonMode = MainActionButtonMode.SELECT_DOWNLOAD;
-                            break;
-                        case DownloadItemStatus.COMPLETED:
-                            localFilePath = Path.Combine(downloadItem.DownloadDirectory, downloadItem.FileName);
-                            mainActionButtonMode = MainActionButtonMode.OPEN_FILE;
-                            break;
-                        case DownloadItemStatus.REMOVED:
-                            downloadId = null;
-                            localFilePath = null;
-                            mainActionButtonMode = MainActionButtonMode.START_DOWNLOAD;
-                            break;
-                    }
-                    if (downloadItem.Status != DownloadItemStatus.REMOVED && downloadItem.DownloadedFileSize.HasValue &&
-                        downloadItem.TotalFileSize.HasValue && downloadItem.DownloadedFileSize.Value < downloadItem.TotalFileSize.Value)
-                    {
-                        MainActionProgress = (double)downloadItem.DownloadedFileSize.Value * 100 / downloadItem.TotalFileSize.Value;
-                    }
-                    else
-                    {
-                        MainActionProgress = 0;
-                    }
-                });
-            }
+                    case DownloadItemStatus.QUEUED:
+                        mainActionButtonCaptionOption = MainActionButtonCaptionOption.QUEUED;
+                        break;
+                    case DownloadItemStatus.DOWNLOADING:
+                    case DownloadItemStatus.RETRY_DELAY:
+                        mainActionButtonCaptionOption = MainActionButtonCaptionOption.DOWNLOADING;
+                        break;
+                    case DownloadItemStatus.STOPPED:
+                        mainActionButtonCaptionOption = MainActionButtonCaptionOption.STOPPED;
+                        break;
+                    case DownloadItemStatus.ERROR:
+                        mainActionButtonCaptionOption = MainActionButtonCaptionOption.ERROR;
+                        break;
+                    case DownloadItemStatus.COMPLETED:
+                        mainActionButtonCaptionOption = MainActionButtonCaptionOption.OPEN;
+                        break;
+                    case DownloadItemStatus.REMOVED:
+                        mainActionButtonCaptionOption = MainActionButtonCaptionOption.DOWNLOAD;
+                        break;
+                }
+                UpdateMainActionButtonCaption();
+                switch (downloadItem.Status)
+                {
+                    case DownloadItemStatus.QUEUED:
+                    case DownloadItemStatus.DOWNLOADING:
+                    case DownloadItemStatus.RETRY_DELAY:
+                    case DownloadItemStatus.STOPPED:
+                    case DownloadItemStatus.ERROR:
+                        downloadId = downloadItem.Id;
+                        mainActionButtonMode = MainActionButtonMode.SELECT_DOWNLOAD;
+                        break;
+                    case DownloadItemStatus.COMPLETED:
+                        localFilePath = Path.Combine(downloadItem.DownloadDirectory, downloadItem.FileName);
+                        mainActionButtonMode = MainActionButtonMode.OPEN_FILE;
+                        break;
+                    case DownloadItemStatus.REMOVED:
+                        downloadId = null;
+                        localFilePath = null;
+                        mainActionButtonMode = MainActionButtonMode.START_DOWNLOAD;
+                        break;
+                }
+                if (downloadItem.Status != DownloadItemStatus.REMOVED && downloadItem.DownloadedFileSize.HasValue &&
+                    downloadItem.TotalFileSize.HasValue && downloadItem.DownloadedFileSize.Value < downloadItem.TotalFileSize.Value)
+                {
+                    MainActionProgress = (double)downloadItem.DownloadedFileSize.Value * 100 / downloadItem.TotalFileSize.Value;
+                }
+                else
+                {
+                    MainActionProgress = 0;
+                }
+            });
         }
 
         private void UpdateMainActionButtonCaption()

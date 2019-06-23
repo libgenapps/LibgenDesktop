@@ -20,9 +20,6 @@
     <Style x:Key="BottomPanel" TargetType="Grid">
         <Setter Property="Margin" Value="0,16,0,0" />
     </Style>
-    <Style x:Key="ElapsedLabel" TargetType="TextBlock">
-        <Setter Property="VerticalAlignment" Value="Center" />
-    </Style>
     <Style x:Key="CancelButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}" />
     <Style x:Key="CloseButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}" />
 </ResourceDictionary>

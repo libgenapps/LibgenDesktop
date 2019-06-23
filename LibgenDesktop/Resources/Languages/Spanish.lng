@@ -274,6 +274,7 @@
         "Archives": "Archivos",
         "AllFiles": "Todos los archivos",
         "Elapsed": "Tiempo transcurrido: {elapsed}",
+        "Unknown": "desconocido",
         "Interrupt": "INTERRUMPIR",
         "Interrupting": "INTERRUMPIENDO...",
         "Close": "CERRAR",
@@ -471,6 +472,7 @@
         "OfflineModePromptTitle": "Modo sin conexión",
         "OfflineModePromptText": "La sincronización no se puede iniciar en el modo sin conexión activo. ¿Desea desactivar dicho modo?",
         "Elapsed": "Tiempo transcurrido: {elapsed}",
+        "Unknown": "desconocido",
         "Interrupt": "INTERRUMPIR",
         "Interrupting": "INTERRUMPIENDO...",
         "Close": "CERRAR",
@@ -539,6 +541,11 @@
         "AllFiles": "Todos los archivos",
         "Error": "Error",
         "CannotOpenDatabase": "Ocurrió un error mientras se abría la base de datos: {file}",
+        "Close": "CERRAR"
+    },
+    "SqlDebugger":
+    {
+        "Copy": "COPIAR AL PORTAPAPELES",
         "Close": "CERRAR"
     },
     "DownloadManager":

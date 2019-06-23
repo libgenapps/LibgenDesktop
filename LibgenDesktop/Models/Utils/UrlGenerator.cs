@@ -8,10 +8,10 @@ namespace LibgenDesktop.Models.Utils
 {
     internal static class UrlGenerator
     {
-        private static Regex regex;
-        private static Dictionary<string, Func<NonFictionBook, string>> nonFictionTransformations;
-        private static Dictionary<string, Func<FictionBook, string>> fictionTransformations;
-        private static Dictionary<string, Func<SciMagArticle, string>> sciMagTransformations;
+        private static readonly Regex regex;
+        private static readonly Dictionary<string, Func<NonFictionBook, string>> nonFictionTransformations;
+        private static readonly Dictionary<string, Func<FictionBook, string>> fictionTransformations;
+        private static readonly Dictionary<string, Func<SciMagArticle, string>> sciMagTransformations;
 
         static UrlGenerator()
         {

@@ -17,6 +17,8 @@ namespace LibgenDesktop.Models.Localization.Localizators
             TotalArticles = Format(translation => translation?.TotalArticles) + ":";
             LastUpdate = Format(translation => translation?.LastUpdate) + ":";
             Never = Format(translation => translation?.Never);
+            IndexesRequiredTitle = Format(translation => translation?.IndexesRequiredTitle);
+            IndexesRequiredText = Format(translation => translation?.IndexesRequiredText);
             CreatingIndexes = Format(translation => translation?.CreatingIndexes);
             ChangeDatabase = Format(translation => translation?.ChangeDatabase);
             BrowseDatabaseDialogTitle = Format(translation => translation?.BrowseDatabaseDialogTitle);
@@ -35,6 +37,8 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string TotalArticles { get; }
         public string LastUpdate { get; }
         public string Never { get; }
+        public string IndexesRequiredTitle { get; }
+        public string IndexesRequiredText { get; }
         public string CreatingIndexes { get; }
         public string ChangeDatabase { get; }
         public string BrowseDatabaseDialogTitle { get; }

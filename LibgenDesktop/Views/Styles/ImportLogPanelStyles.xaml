@@ -1,7 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:mw="clr-namespace:Lada.Windows.Input;assembly=WpfMouseWheelLib">
     <Style x:Key="LogScrollViewer" TargetType="ScrollViewer">
         <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="mw:MouseWheel.Enhanced" Value="True" />
+        <Setter Property="mw:MouseWheel.ScrollSmoothing" Value="Smooth" />
     </Style>
     <Style x:Key="LogContentPanel" TargetType="StackPanel">
         <Setter Property="Orientation" Value="Vertical" />

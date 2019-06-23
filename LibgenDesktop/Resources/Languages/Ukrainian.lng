@@ -269,6 +269,7 @@
         "Archives": "Архіви",
         "AllFiles": "Усі файли",
         "Elapsed": "Пройшло {elapsed}",
+        "Unknown": "невідомо",
         "Interrupt": "ПЕРЕРВАТИ",
         "Interrupting": "ПЕРЕРИВАЄТЬСЯ...",
         "Close": "ЗАКРИТИ",
@@ -466,6 +467,7 @@
         "OfflineModePromptTitle": "Автономний режим",
         "OfflineModePromptText": " Синхронізація неможлива при увімкненому автономному режимі. Вимкнути автономний режим?",
         "Elapsed": "Прйошло {elapsed}",
+        "Unknown": "невідомо",
         "Interrupt": "ПЕРЕРВАТИ",
         "Interrupting": "ПЕРЕРИВАЄТЬСЯ...",
         "Close": "ЗАКРИТИ",
@@ -515,6 +517,11 @@
         "AllFiles": "Усі файли",
         "Error": "Помилка",
         "CannotOpenDatabase": "Помилка під час відкриття файлу бази даних: {file}",
+        "Close": "ЗАКРИТИ"
+    },
+    "SqlDebugger":
+    {
+        "Copy": "СКОПІЮВАТИ ДО БУФЕРА ОБМІНУ",
         "Close": "ЗАКРИТИ"
     },
     "DownloadManager":

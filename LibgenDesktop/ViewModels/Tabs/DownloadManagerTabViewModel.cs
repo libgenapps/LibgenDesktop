@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -9,6 +10,7 @@ using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Download;
 using LibgenDesktop.Models.Localization.Localizators;
+using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.ViewModels.Tabs
 {
@@ -182,7 +184,10 @@ namespace LibgenDesktop.ViewModels.Tabs
         private bool isRemoveAllCompletedButtonEnabled;
         private int logPanelHeight;
         private bool showDebugDownloadLogs;
+        private ObservableCollection<DownloadItemViewModel> downloads;
+        private DownloadItemViewModel selectedDownload;
         private ObservableCollection<DownloadItemLogLineViewModel> selectedDownloadLogs;
+        private bool isSelectionChangedHandlerEnabled;
 
         public DownloadManagerTabViewModel(MainModel mainModel, IWindowContext parentWindowContext)
             : base(mainModel, parentWindowContext, mainModel.Localization.CurrentLanguage.DownloadManager.TabTitle)
@@ -190,7 +195,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             localization = mainModel.Localization.CurrentLanguage.DownloadManager;
             Downloads = new ObservableCollection<DownloadItemViewModel>(mainModel.Downloader.GetDownloadQueueSnapshot().Select(ToDownloadItemViewModel));
             downloadDictionary = Downloads.ToDictionary(downloadItem => downloadItem.Id);
-            SelectionChangedCommand = new Command(SelectionChangedHandler);
+            SelectionChangedCommand = new Command(param => SelectionChangedHandler(param as SelectionChangedCommandArgs));
             DownloaderListBoxDoubleClickCommand = new Command(DownloaderListBoxDoubleClick);
             StartSelectedDownloadsCommand = new Command(StartSelectedDownloads);
             StopSelectedDownloadsCommand = new Command(StopSelectedDownloads);
@@ -200,7 +205,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             RemoveAllCompletedDownloadsCommand = new Command(RemoveAllCompletedDownloads);
             CopyDownloadLogCommand = new Command(CopyDownloadLog);
             Initialize();
-            mainModel.Downloader.DownloaderEvent += DownloaderEvent;
+            mainModel.Downloader.DownloaderBatchEvent += DownloaderBatchEvent;
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
         }
 
@@ -216,6 +221,8 @@ namespace LibgenDesktop.ViewModels.Tabs
                 NotifyPropertyChanged();
             }
         }
+
+        public IList SelectedRows { get; set; }
 
         public bool IsStartButtonEnabled
         {
@@ -321,6 +328,19 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        public DownloadItemViewModel SelectedDownload
+        {
+            get
+            {
+                return selectedDownload;
+            }
+            set
+            {
+                selectedDownload = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public ObservableCollection<DownloadItemLogLineViewModel> SelectedDownloadLogs
         {
             get
@@ -334,7 +354,18 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        public ObservableCollection<DownloadItemViewModel> Downloads { get; }
+        public ObservableCollection<DownloadItemViewModel> Downloads
+        {
+            get
+            {
+                return downloads;
+            }
+            set
+            {
+                downloads = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public Command SelectionChangedCommand { get; }
         public Command DownloaderListBoxDoubleClickCommand { get; }
@@ -350,7 +381,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         {
             get
             {
-                return Downloads.Where(downloadItem => downloadItem.IsSelected);
+                return SelectedRows.OfType<DownloadItemViewModel>();
             }
         }
 
@@ -358,22 +389,24 @@ namespace LibgenDesktop.ViewModels.Tabs
         {
             ExecuteInUiThread(() =>
             {
-                foreach (DownloadItemViewModel downloadItemViewModel in Downloads)
+                DownloadItemViewModel downloadItemToSelect = Downloads.FirstOrDefault(downloadItemViewModel => downloadItemViewModel.Id == downloadId);
+                if (downloadItemToSelect != null)
                 {
-                    downloadItemViewModel.IsSelected = downloadItemViewModel.Id == downloadId;
+                    SelectedDownload = downloadItemToSelect;
+                    Events.RaiseEvent(ViewModelEvent.RegisteredEventId.SCROLL_TO_SELECTION);
                 }
-                Events.RaiseEvent(ViewModelEvent.RegisteredEventId.SCROLL_TO_SELECTION);
             });
         }
 
         public override void HandleTabClosing()
         {
-            MainModel.Downloader.DownloaderEvent -= DownloaderEvent;
+            MainModel.Downloader.DownloaderBatchEvent -= DownloaderBatchEvent;
             MainModel.Localization.LanguageChanged -= LocalizationLanguageChanged;
         }
 
         private void Initialize()
         {
+            SelectedRows = null;
             isStartButtonEnabled = false;
             isStopButtonEnabled = false;
             isRemoveButtonEnabled = false;
@@ -383,28 +416,67 @@ namespace LibgenDesktop.ViewModels.Tabs
             logPanelHeight = MainModel.AppSettings.DownloadManagerTab.LogPanelHeight;
             showDebugDownloadLogs = MainModel.AppSettings.DownloadManagerTab.ShowDebugLogs;
             selectedDownloadLogs = null;
+            isSelectionChangedHandlerEnabled = true;
             UpdateNonSelectionButtonStates();
         }
 
-        private void DownloaderEvent(object sender, EventArgs e)
+        private void DownloaderBatchEvent(object sender, DownloaderBatchEventArgs e)
         {
-            switch (e)
+            if (e.AddEventCount + e.RemoveEventCount < LARGE_DOWNLOADER_BATCH_UPDATE_ITEM_COUNT)
             {
-                case DownloadItemAddedEventArgs downloadItemAddedEvent:
-                    DownloadItemViewModel newDownloadItemViewModel = ToDownloadItemViewModel(downloadItemAddedEvent.AddedDownloadItem);
-                    downloadDictionary[newDownloadItemViewModel.Id] = newDownloadItemViewModel;
-                    ExecuteInUiThread(() =>
+                ExecuteInUiThread(() =>
+                {
+                    isSelectionChangedHandlerEnabled = false;
+                    ApplyDownloaderBatchEventArgs(Downloads, e, out bool selectionButtonStatesUpdateRequired, out bool nonSelectionButtonStatesUpdateRequired);
+                    if (selectionButtonStatesUpdateRequired)
                     {
-                        Downloads.Add(newDownloadItemViewModel);
+                        UpdateSelectionButtonStates();
+                    }
+                    if (nonSelectionButtonStatesUpdateRequired)
+                    {
                         UpdateNonSelectionButtonStates();
-                    });
-                    break;
-                case DownloadItemChangedEventArgs downloadItemChangedEvent:
-                    DownloadItem changedDownloadItem = downloadItemChangedEvent.ChangedDownloadItem;
-                    DownloadItemViewModel changedDownloadItemViewModel = downloadDictionary[changedDownloadItem.Id];
-                    bool statusChanged = changedDownloadItemViewModel.Status != changedDownloadItem.Status;
-                    ExecuteInUiThread(() =>
+                    }
+                    isSelectionChangedHandlerEnabled = true;
+                });
+            }
+            else
+            {
+                ObservableCollection<DownloadItemViewModel> newDownloads = new ObservableCollection<DownloadItemViewModel>(Downloads);
+                ApplyDownloaderBatchEventArgs(newDownloads, e, out bool selectionButtonStatesUpdateRequired, out bool nonSelectionButtonStatesUpdateRequired);
+                ExecuteInUiThread(() =>
+                {
+                    Downloads = newDownloads;
+                    if (selectionButtonStatesUpdateRequired)
                     {
+                        UpdateSelectionButtonStates();
+                    }
+                    if (nonSelectionButtonStatesUpdateRequired)
+                    {
+                        UpdateNonSelectionButtonStates();
+                    }
+                });
+            }
+        }
+
+        private void ApplyDownloaderBatchEventArgs(ObservableCollection<DownloadItemViewModel> downloads, DownloaderBatchEventArgs downloaderBatchEventArgs,
+            out bool selectionButtonStatesUpdateRequired, out bool nonSelectionButtonStatesUpdateRequired)
+        {
+            selectionButtonStatesUpdateRequired = false;
+            nonSelectionButtonStatesUpdateRequired = false;
+            foreach (DownloadItemEventArgs downloadItemEventArgs in downloaderBatchEventArgs.BatchEvents)
+            {
+                switch (downloadItemEventArgs)
+                {
+                    case DownloadItemAddedEventArgs downloadItemAddedEvent:
+                        DownloadItemViewModel newDownloadItemViewModel = ToDownloadItemViewModel(downloadItemAddedEvent.AddedDownloadItem);
+                        downloadDictionary[newDownloadItemViewModel.Id] = newDownloadItemViewModel;
+                        downloads.Add(newDownloadItemViewModel);
+                        nonSelectionButtonStatesUpdateRequired = true;
+                        break;
+                    case DownloadItemChangedEventArgs downloadItemChangedEvent:
+                        DownloadItem changedDownloadItem = downloadItemChangedEvent.ChangedDownloadItem;
+                        DownloadItemViewModel changedDownloadItemViewModel = downloadDictionary[changedDownloadItem.Id];
+                        bool statusChanged = changedDownloadItemViewModel.Status != changedDownloadItem.Status;
                         changedDownloadItemViewModel.Name = changedDownloadItem.FileName;
                         if (statusChanged)
                         {
@@ -416,40 +488,57 @@ namespace LibgenDesktop.ViewModels.Tabs
                         {
                             if (changedDownloadItemViewModel.IsSelected)
                             {
-                                UpdateSelectionButtonStates();
+                                selectionButtonStatesUpdateRequired = true;
                             }
-                            UpdateNonSelectionButtonStates();
+                            nonSelectionButtonStatesUpdateRequired = true;
                         }
-                    });
-                    break;
-                case DownloadItemRemovedEventArgs downloadItemRemovedEvent:
-                    DownloadItem removedDownloadItem = downloadItemRemovedEvent.RemovedDownloadItem;
-                    DownloadItemViewModel removedDownloadItemViewModel = downloadDictionary[removedDownloadItem.Id];
-                    ExecuteInUiThread(() =>
-                    {
-                        bool isSelected = removedDownloadItemViewModel.IsSelected;
-                        Downloads.Remove(removedDownloadItemViewModel);
-                        if (isSelected)
+                        break;
+                    case DownloadItemRemovedEventArgs downloadItemRemovedEvent:
+                        DownloadItem removedDownloadItem = downloadItemRemovedEvent.RemovedDownloadItem;
+                        DownloadItemViewModel removedDownloadItemViewModel = downloadDictionary[removedDownloadItem.Id];
+                        bool wasSelected = removedDownloadItemViewModel.IsSelected;
+                        downloads.Remove(removedDownloadItemViewModel);
+                        if (wasSelected)
                         {
-                            UpdateSelectionButtonStates();
+                            selectionButtonStatesUpdateRequired = true;
                         }
-                        UpdateNonSelectionButtonStates();
-                    });
-                    break;
-                case DownloadItemLogLineEventArgs downloadItemLogLineEvent:
-                    DownloadItemViewModel downloadItemViewModel = downloadDictionary[downloadItemLogLineEvent.DownloadItemId];
-                    if (downloadItemLogLineEvent.LineIndex >= downloadItemViewModel.Logs.Count)
-                    {
-                        ExecuteInUiThread(() => downloadItemViewModel.Logs.Add(ToDownloadItemLogLineViewModel(downloadItemLogLineEvent.LogLine)));
-                    }
-                    break;
+                        nonSelectionButtonStatesUpdateRequired = true;
+                        break;
+                    case DownloadItemLogLineEventArgs downloadItemLogLineEvent:
+                        DownloadItemViewModel downloadItemViewModel = downloadDictionary[downloadItemLogLineEvent.DownloadItemId];
+                        if (downloadItemLogLineEvent.LineIndex >= downloadItemViewModel.Logs.Count)
+                        {
+                            downloadItemViewModel.Logs.Add(ToDownloadItemLogLineViewModel(downloadItemLogLineEvent.LogLine));
+                        }
+                        break;
+                }
             }
         }
 
-        private void SelectionChangedHandler()
+        private void SelectionChangedHandler(SelectionChangedCommandArgs selectionChangedCommandArgs)
         {
-            UpdateSelectionButtonStates();
-            UpdateSelectedDownloadLogs();
+            if (isSelectionChangedHandlerEnabled)
+            {
+                if (selectionChangedCommandArgs != null)
+                {
+                    if (selectionChangedCommandArgs.AddedItems != null)
+                    {
+                        foreach (DownloadItemViewModel selectedDownloadItem in selectionChangedCommandArgs.AddedItems.OfType<DownloadItemViewModel>())
+                        {
+                            selectedDownloadItem.IsSelected = true;
+                        }
+                    }
+                    if (selectionChangedCommandArgs.RemovedItems != null)
+                    {
+                        foreach (DownloadItemViewModel unselectedDownloadItem in selectionChangedCommandArgs.RemovedItems.OfType<DownloadItemViewModel>())
+                        {
+                            unselectedDownloadItem.IsSelected = false;
+                        }
+                    }
+                }
+                UpdateSelectionButtonStates();
+                UpdateSelectedDownloadLogs();
+            }
         }
 
         private void UpdateSelectionButtonStates()
@@ -480,10 +569,9 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         private void UpdateSelectedDownloadLogs()
         {
-            List<DownloadItemViewModel> selectedDownloads = SelectedDownloads.Take(2).ToList();
-            if (selectedDownloads.Count == 1)
+            if (SelectedRows.Count == 1)
             {
-                SelectedDownloadLogs = selectedDownloads.First().Logs;
+                SelectedDownloadLogs = SelectedDownloads.First().Logs;
             }
             else
             {
@@ -522,10 +610,9 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         private void DownloaderListBoxDoubleClick()
         {
-            List<DownloadItemViewModel> selectedDownloads = SelectedDownloads.Take(2).ToList();
-            if (selectedDownloads.Count == 1)
+            if (SelectedRows.Count == 1)
             {
-                DownloadItemViewModel selectedDownload = selectedDownloads.First();
+                DownloadItemViewModel selectedDownload = SelectedDownloads.First();
                 if (selectedDownload.Status == DownloadItemStatus.COMPLETED)
                 {
                     string downloadedFilePath = Path.Combine(selectedDownload.DownloadDirectory, selectedDownload.Name);

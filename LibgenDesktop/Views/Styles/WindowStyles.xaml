@@ -93,6 +93,14 @@
         <Setter Property="Window.SizeToContent" Value="Height" />
         <Setter Property="c:LibgenDesktopWindow.ShowCloseButton" Value="False" />
     </Style>
+    <Style x:Key="SqlDebuggerWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.SQL_DEBUGGER_WINDOW_DEFAULT_WIDTH}}" />
+        <Setter Property="Window.Height" Value="{Binding Source={x:Static const:Constants.SQL_DEBUGGER_WINDOW_DEFAULT_HEIGHT}}" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.SQL_DEBUGGER_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.SQL_DEBUGGER_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowCloseButton" Value="False" />
+    </Style>
     <Style x:Key="AboutWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
         <Setter Property="Window.ResizeMode" Value="NoResize" />
         <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.ABOUT_WINDOW_WIDTH}}" />

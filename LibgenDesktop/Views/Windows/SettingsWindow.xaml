@@ -262,6 +262,8 @@
               Style="{StaticResource AdvancedTabContent}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -269,6 +271,8 @@
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.AdvancedUseLogging}" />
             <ToggleButton Grid.Row="0" Grid.Column="1" IsChecked="{Binding AdvancedIsLoggingEnabled}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.AdvancedEnableSqlDebugger}" />
+            <ToggleButton Grid.Row="2" Grid.Column="1" IsChecked="{Binding AdvancedIsSqlDebuggerEnabled}" />
         </Grid>
         <UniformGrid Grid.Row="1" Grid.Column="1" Rows="1" Columns="2" Style="{StaticResource ButtonPanel}">
             <Button Content="{Binding Localization.Ok}" Command="{Binding OkCommand}" IsEnabled="{Binding IsOkButtonEnabled}" Style="{StaticResource OkButton}" />

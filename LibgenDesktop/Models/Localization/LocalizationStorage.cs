@@ -22,12 +22,16 @@ namespace LibgenDesktop.Models.Localization
 
         public event EventHandler LanguageChanged;
 
-        public void SwitchLanguage(Language newLanguage)
+        public void SwitchLanguage(string newLanguageName)
         {
-            if (newLanguage != null && newLanguage != CurrentLanguage)
+            if (newLanguageName != null && newLanguageName != CurrentLanguage.Name)
             {
-                CurrentLanguage = newLanguage;
-                LanguageChanged?.Invoke(this, EventArgs.Empty);
+                Language newLanguage = Languages.FirstOrDefault(language => language.Name == newLanguageName);
+                if (newLanguage != null)
+                {
+                    CurrentLanguage = newLanguage;
+                    LanguageChanged?.Invoke(this, EventArgs.Empty);
+                }
             }
         }
 

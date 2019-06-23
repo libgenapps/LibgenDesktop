@@ -57,13 +57,9 @@
             </Button>
         </StackPanel>
         <c:DownloaderListBox Grid.Row="1" x:Name="downloaderListBox" ItemsSource="{Binding Downloads}"
+                             SelectedItem="{Binding SelectedDownload, Mode=OneWay}" SelectedRows="{Binding SelectedRows, Mode=OneWayToSource}"
                              SelectionChangedCommand="{Binding SelectionChangedCommand}" DoubleClickCommand="{Binding DownloaderListBoxDoubleClickCommand}"
-                             Style="{StaticResource DownloaderListBox}">
-            <c:DownloaderListBox.ItemContainerStyle>
-                <Style TargetType="ListBoxItem" BasedOn="{StaticResource DownloaderListBoxItem}">
-                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                </Style>
-            </c:DownloaderListBox.ItemContainerStyle>
+                             Style="{StaticResource DownloaderListBox}" ItemContainerStyle="{StaticResource DownloaderListBoxItem}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>

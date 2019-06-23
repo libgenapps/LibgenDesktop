@@ -14,8 +14,8 @@
             <StackPanel Style="{StaticResource SearchParamsPanel}"
                         Visibility="{Binding IsSearchParamsPanelVisible, Converter={StaticResource booleanToHiddenConverter}}">
                 <TextBox Name="searchTextBox" Style="{StaticResource SearchTextBox}"
-                            md:HintAssist.Hint="{Binding Localization.SearchPlaceHolder}" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                            ToolTipService.ToolTip="{Binding SearchBoxHint}">
+                         md:HintAssist.Hint="{Binding Localization.SearchPlaceHolder}" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                         ToolTipService.ToolTip="{Binding SearchBoxHint}">
                     <TextBox.InputBindings>
                         <KeyBinding Command="{Binding SearchCommand}" Key="Enter" />
                     </TextBox.InputBindings>
@@ -23,15 +23,15 @@
                 <StackPanel Style="{StaticResource LibraryPanel}"
                             Visibility="{Binding IsLibrarySelectorVisible, Converter={StaticResource booleanToCollapsedConverter}}">
                     <c:PressedSwitch Visibility="{Binding IsNonFictionLibraryAvailable, Converter={StaticResource booleanToCollapsedConverter}}"
-                                        IsChecked="{Binding IsNonFictionLibrarySelected}">
+                                     IsChecked="{Binding IsNonFictionLibrarySelected}">
                         <TextBlock Text="{Binding Localization.NonFictionSelector}" />
                     </c:PressedSwitch>
                     <c:PressedSwitch Visibility="{Binding IsFictionLibraryAvailable, Converter={StaticResource booleanToCollapsedConverter}}"
-                                        IsChecked="{Binding IsFictionLibrarySelected}">
+                                     IsChecked="{Binding IsFictionLibrarySelected}">
                         <TextBlock Text="{Binding Localization.FictionSelector}" />
                     </c:PressedSwitch>
                     <c:PressedSwitch Visibility="{Binding IsSciMagLibraryAvailable, Converter={StaticResource booleanToCollapsedConverter}}"
-                                        IsChecked="{Binding IsSciMagLibrarySelected}">
+                                     IsChecked="{Binding IsSciMagLibrarySelected}">
                         <TextBlock Text="{Binding Localization.SciMagSelector}" />
                     </c:PressedSwitch>
                 </StackPanel>

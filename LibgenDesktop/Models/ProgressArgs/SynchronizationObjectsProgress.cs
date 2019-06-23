@@ -1,8 +1,8 @@
 ﻿namespace LibgenDesktop.Models.ProgressArgs
 {
-    internal class SynchronizationProgress
+    internal class SynchronizationObjectsProgress
     {
-        public SynchronizationProgress(int objectsDownloaded, int objectsAdded, int objectsUpdated)
+        public SynchronizationObjectsProgress(int objectsDownloaded, int objectsAdded, int objectsUpdated)
         {
             ObjectsDownloaded = objectsDownloaded;
             ObjectsAdded = objectsAdded;

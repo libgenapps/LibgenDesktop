@@ -25,7 +25,10 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="{Binding Elapsed}" Style="{StaticResource ElapsedLabel}" />
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="{Binding Elapsed}" />
+                <TextBlock Text="{Binding FreeSpace}" />
+            </StackPanel>
             <Button Grid.Column="2" Content="{Binding CancelButtonText}" IsEnabled="{Binding IsCancelButtonEnabled}"
                     Visibility="{Binding IsCancelButtonVisible, Converter={StaticResource booleanToHiddenConverter}}"
                     Command="{Binding CancelCommand}" Style="{StaticResource CancelButton}" />

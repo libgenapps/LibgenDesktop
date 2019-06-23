@@ -28,7 +28,8 @@ namespace LibgenDesktop.Models.Download
         private readonly object downloadQueueLock;
         private readonly string downloadQueueFilePath;
         private readonly List<DownloadItem> downloadQueue;
-        private readonly BlockingCollection<EventArgs> eventQueue;
+        private readonly Dictionary<Guid, DownloadItem> downloadQueueKeyPairs;
+        private readonly BlockingCollection<DownloaderBatchEventArgs> eventQueue;
         private readonly Task downloadTask;
         private readonly AutoResetEvent downloadTaskResetEvent;
         private DownloadManagerLocalizator localization;
@@ -43,7 +44,8 @@ namespace LibgenDesktop.Models.Download
             downloadQueueLock = new object();
             downloadQueueFilePath = Path.Combine(Environment.AppDataDirectory, DOWNLOAD_LIST_FILE_NAME);
             downloadQueue = DownloadQueueStorage.LoadDownloadQueue(downloadQueueFilePath);
-            eventQueue = new BlockingCollection<EventArgs>();
+            downloadQueueKeyPairs = downloadQueue.ToDictionary(downloadItem => downloadItem.Id);
+            eventQueue = new BlockingCollection<DownloaderBatchEventArgs>();
             downloadTaskResetEvent = new AutoResetEvent(false);
             localization = null;
             httpClient = null;
@@ -55,7 +57,7 @@ namespace LibgenDesktop.Models.Download
             disposed = false;
         }
 
-        public event EventHandler DownloaderEvent;
+        public event EventHandler<DownloaderBatchEventArgs> DownloaderBatchEvent;
 
         public void Configure(Language currentLanguage, NetworkSettings networkSettings, DownloadSettings downloadSettings)
         {
@@ -75,6 +77,7 @@ namespace LibgenDesktop.Models.Download
                 isInOfflineMode = false;
                 ResumeDownloadTask();
             }
+            Logger.Debug("Downloader configuration complete.");
         }
 
         public List<DownloadItem> GetDownloadQueueSnapshot()
@@ -93,26 +96,11 @@ namespace LibgenDesktop.Models.Download
             }
         }
 
-        public void EnqueueDownloadItem(DownloadItemRequest downloadItemRequest)
-        {
-            string fileName = String.Concat(FileUtils.RemoveInvalidFileNameCharacters(downloadItemRequest.FileNameWithoutExtension,
-                downloadItemRequest.Md5Hash), ".", downloadItemRequest.FileExtension.ToLower());
-            lock (downloadQueueLock)
-            {
-                DownloadItem newDownloadItem = new DownloadItem(Guid.NewGuid(), downloadItemRequest.DownloadPageUrl, downloadSettings.DownloadDirectory,
-                    fileName, downloadItemRequest.DownloadTransformations, downloadItemRequest.Md5Hash, downloadItemRequest.RestartSessionOnTimeout);
-                downloadQueue.Add(newDownloadItem);
-                eventQueue.Add(new DownloadItemAddedEventArgs(newDownloadItem));
-                AddLogLine(newDownloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineQueued);
-                SaveDownloadQueue();
-                ResumeDownloadTask();
-            }
-        }
-
-        public void EnqueueDownloadItems(List<DownloadItemRequest> downloadItemRequests)
+        public void EnqueueDownloadItems(IEnumerable<DownloadItemRequest> downloadItemRequests)
         {
             lock (downloadQueueLock)
             {
+                DownloaderBatchEventArgs batchEventArgs = new DownloaderBatchEventArgs();
                 foreach (DownloadItemRequest downloadItemRequest in downloadItemRequests)
                 {
                     string fileName = String.Concat(FileUtils.RemoveInvalidFileNameCharacters(downloadItemRequest.FileNameWithoutExtension,
@@ -120,9 +108,13 @@ namespace LibgenDesktop.Models.Download
                     DownloadItem newDownloadItem = new DownloadItem(Guid.NewGuid(), downloadItemRequest.DownloadPageUrl, downloadSettings.DownloadDirectory,
                         fileName, downloadItemRequest.DownloadTransformations, downloadItemRequest.Md5Hash, downloadItemRequest.RestartSessionOnTimeout);
                     downloadQueue.Add(newDownloadItem);
-                    eventQueue.Add(new DownloadItemAddedEventArgs(newDownloadItem));
-                    AddLogLine(newDownloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineQueued);
+                    downloadQueueKeyPairs.Add(newDownloadItem.Id, newDownloadItem);
+                    batchEventArgs.Add(new DownloadItemAddedEventArgs(newDownloadItem));
+                    DownloadItemLogLineEventArgs logLineEventArgs =
+                        AddLogLine(newDownloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineQueued);
+                    batchEventArgs.Add(logLineEventArgs);
                 }
+                eventQueue.Add(batchEventArgs);
                 SaveDownloadQueue();
                 ResumeDownloadTask();
             }
@@ -132,28 +124,38 @@ namespace LibgenDesktop.Models.Download
         {
             lock (downloadQueueLock)
             {
+                bool resumeDownloadTask = false;
+                DownloaderBatchEventArgs batchEventArgs = new DownloaderBatchEventArgs();
                 foreach (Guid downloadItemId in downloadItemIds)
                 {
-                    DownloadItem downloadItem = downloadQueue.FirstOrDefault(item => item.Id == downloadItemId);
-                    if (downloadItem == null)
+                    if (!downloadQueueKeyPairs.TryGetValue(downloadItemId, out DownloadItem downloadItem))
                     {
                         Logger.Debug($"Download item with ID = {downloadItemId} not found.");
-                        return;
+                        continue;
                     }
                     Logger.Debug($"Start download requested for download ID = {downloadItemId}.");
                     if (downloadItem.Status == DownloadItemStatus.STOPPED || downloadItem.Status == DownloadItemStatus.ERROR)
                     {
                         downloadItem.CreateNewCancellationToken();
                         downloadItem.CurrentAttempt = 1;
-                        ReportStatusChange(downloadItem, DownloadItemStatus.QUEUED, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineQueued);
-                        ResumeDownloadTask();
+                        DownloadItemLogLineEventArgs logLineEventArgs =
+                            AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineQueued);
+                        batchEventArgs.Add(logLineEventArgs);
+                        downloadItem.Status = DownloadItemStatus.QUEUED;
+                        batchEventArgs.Add(new DownloadItemChangedEventArgs(downloadItem));
+                        resumeDownloadTask = true;
                     }
                     else
                     {
                         Logger.Debug($"Incorrect download item status = {downloadItem.Status} to start it.");
                     }
                 }
+                eventQueue.Add(batchEventArgs);
                 SaveDownloadQueue();
+                if (resumeDownloadTask)
+                {
+                    ResumeDownloadTask();
+                }
             }
         }
 
@@ -161,26 +163,31 @@ namespace LibgenDesktop.Models.Download
         {
             lock (downloadQueueLock)
             {
+                DownloaderBatchEventArgs batchEventArgs = new DownloaderBatchEventArgs();
                 foreach (Guid downloadItemId in downloadItemIds)
                 {
-                    DownloadItem downloadItem = downloadQueue.FirstOrDefault(item => item.Id == downloadItemId);
-                    if (downloadItem == null)
+                    if (!downloadQueueKeyPairs.TryGetValue(downloadItemId, out DownloadItem downloadItem))
                     {
                         Logger.Debug($"Download item with ID = {downloadItemId} not found.");
-                        return;
+                        continue;
                     }
                     Logger.Debug($"Stop download requested for download ID = {downloadItemId}.");
                     if (downloadItem.Status == DownloadItemStatus.QUEUED || downloadItem.Status == DownloadItemStatus.DOWNLOADING ||
                         downloadItem.Status == DownloadItemStatus.RETRY_DELAY)
                     {
                         downloadItem.CancelDownload();
-                        ReportStatusChange(downloadItem, DownloadItemStatus.STOPPED, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineStopped);
+                        DownloadItemLogLineEventArgs logLineEventArgs =
+                            AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineStopped);
+                        batchEventArgs.Add(logLineEventArgs);
+                        downloadItem.Status = DownloadItemStatus.STOPPED;
+                        batchEventArgs.Add(new DownloadItemChangedEventArgs(downloadItem));
                     }
                     else
                     {
                         Logger.Debug($"Incorrect download item status = {downloadItem.Status} to stop it.");
                     }
                 }
+                eventQueue.Add(batchEventArgs);
                 SaveDownloadQueue();
             }
         }
@@ -189,10 +196,10 @@ namespace LibgenDesktop.Models.Download
         {
             lock (downloadQueueLock)
             {
+                DownloaderBatchEventArgs batchEventArgs = new DownloaderBatchEventArgs();
                 foreach (Guid downloadItemId in downloadItemIds)
                 {
-                    DownloadItem downloadItem = downloadQueue.FirstOrDefault(item => item.Id == downloadItemId);
-                    if (downloadItem == null)
+                    if (!downloadQueueKeyPairs.TryGetValue(downloadItemId, out DownloadItem downloadItem))
                     {
                         Logger.Debug($"Download item with ID = {downloadItemId} not found.");
                         return;
@@ -200,8 +207,9 @@ namespace LibgenDesktop.Models.Download
                     Logger.Debug($"Remove download requested for download ID = {downloadItemId}.");
                     downloadItem.CancelDownload();
                     downloadQueue.Remove(downloadItem);
+                    downloadQueueKeyPairs.Remove(downloadItemId);
                     downloadItem.Status = DownloadItemStatus.REMOVED;
-                    eventQueue.Add(new DownloadItemRemovedEventArgs(downloadItem));
+                    batchEventArgs.Add(new DownloadItemRemovedEventArgs(downloadItem));
                     if (downloadItem.FileCreated && !downloadItem.FileHandleOpened)
                     {
                         string filePath = Path.Combine(downloadItem.DownloadDirectory, downloadItem.FileName);
@@ -219,6 +227,7 @@ namespace LibgenDesktop.Models.Download
                         }
                     }
                 }
+                eventQueue.Add(batchEventArgs);
                 SaveDownloadQueue();
             }
         }
@@ -417,7 +426,7 @@ namespace LibgenDesktop.Models.Download
                                 }
                                 else
                                 {
-                                    AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
+                                    ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
                                         localization.GetLogLineRetryDelay(downloadSettings.RetryDelay));
                                     bool isCancelled = false;
                                     try
@@ -439,7 +448,7 @@ namespace LibgenDesktop.Models.Download
                                             {
                                                 downloadItem.Referer = null;
                                             }
-                                            AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
+                                            ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
                                                 localization.GetLogLineAttempt(currentAttempt, downloadSettings.Attempts));
                                         }
                                     }
@@ -453,29 +462,35 @@ namespace LibgenDesktop.Models.Download
 
         private async Task<string> DownloadPageAsync(DownloadItem downloadItem, string url, string referer)
         {
-            AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.GetLogLineDownloadingPage(Uri.UnescapeDataString(url)));
+            ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.GetLogLineDownloadingPage(Uri.UnescapeDataString(url)));
             bool isRedirect;
             int redirectCount = 0;
             HttpResponseMessage response;
             do
             {
-                response = await SendDownloadRequestAsync(downloadItem, url, referer);
+                response = await SendDownloadRequestAsync(downloadItem, url, referer, waitForFullContent: true);
                 if (response == null)
                 {
                     return null;
                 }
-                isRedirect = response.StatusCode == HttpStatusCode.MovedPermanently || response.StatusCode == HttpStatusCode.Redirect ||
-                    response.StatusCode == HttpStatusCode.TemporaryRedirect;
+                isRedirect = IsRedirect(response.StatusCode);
                 if (isRedirect)
                 {
                     referer = url;
-                    url = response.Headers.Location.AbsoluteUri;
-                    AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.GetLogLineRedirect(Uri.UnescapeDataString(url)));
-                    redirectCount++;
-                    if (redirectCount == MAX_DOWNLOAD_REDIRECT_COUNT)
+                    if (!GenerateRedirectUrl(referer, response.Headers.Location, out url))
                     {
-                        ReportError(downloadItem, localization.LogLineTooManyRedirects);
+                        ReportError(downloadItem, localization.GetLogLineIncorrectRedirectUrl(Uri.UnescapeDataString(response.Headers.Location.ToString())));
                         return null;
+                    }
+                    else
+                    {
+                        ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.GetLogLineRedirect(Uri.UnescapeDataString(url)));
+                        redirectCount++;
+                        if (redirectCount == MAX_DOWNLOAD_REDIRECT_COUNT)
+                        {
+                            ReportError(downloadItem, localization.LogLineTooManyRedirects);
+                            return null;
+                        }
                     }
                 }
             }
@@ -503,7 +518,7 @@ namespace LibgenDesktop.Models.Download
         {
             try
             {
-                AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
+                ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
                     localization.GetLogLineDownloadingFile(Uri.UnescapeDataString(downloadItem.DirectFileUrl)));
                 if (!Directory.Exists(downloadItem.DownloadDirectory))
                 {
@@ -605,23 +620,29 @@ namespace LibgenDesktop.Models.Download
             HttpResponseMessage response;
             do
             {
-                response = await SendDownloadRequestAsync(downloadItem, url, referer, startPosition);
+                response = await SendDownloadRequestAsync(downloadItem, url, referer, waitForFullContent: false, startPosition: startPosition);
                 if (response == null)
                 {
                     return;
                 }
-                isRedirect = response.StatusCode == HttpStatusCode.MovedPermanently || response.StatusCode == HttpStatusCode.Redirect ||
-                    response.StatusCode == HttpStatusCode.TemporaryRedirect;
+                isRedirect = IsRedirect(response.StatusCode);
                 if (isRedirect)
                 {
                     referer = url;
-                    url = response.Headers.Location.AbsoluteUri;
-                    AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.GetLogLineRedirect(Uri.UnescapeDataString(url)));
-                    redirectCount++;
-                    if (redirectCount == MAX_DOWNLOAD_REDIRECT_COUNT)
+                    if (!GenerateRedirectUrl(referer, response.Headers.Location, out url))
                     {
-                        ReportError(downloadItem, localization.LogLineTooManyRedirects);
+                        ReportError(downloadItem, localization.GetLogLineIncorrectRedirectUrl(Uri.UnescapeDataString(response.Headers.Location.ToString())));
                         return;
+                    }
+                    else
+                    {
+                        ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.GetLogLineRedirect(Uri.UnescapeDataString(url)));
+                        redirectCount++;
+                        if (redirectCount == MAX_DOWNLOAD_REDIRECT_COUNT)
+                        {
+                            ReportError(downloadItem, localization.LogLineTooManyRedirects);
+                            return;
+                        }
                     }
                 }
             }
@@ -658,7 +679,7 @@ namespace LibgenDesktop.Models.Download
             if (!contentLength.HasValue)
             {
                 Logger.Debug("Server did not return Content-Length value.");
-                AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineNoContentLengthWarning);
+                ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineNoContentLengthWarning);
             }
             long? remainingSize = contentLength;
             lock (downloadQueueLock)
@@ -688,13 +709,13 @@ namespace LibgenDesktop.Models.Download
                 if (remainingSize.HasValue)
                 {
                     Logger.Debug($"Remaining download size is {remainingSize.Value} bytes.");
-                    AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
+                    ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
                         localization.GetLogLineResumingFileDownloadKnownFileSize(remainingSize.Value));
                 }
                 else
                 {
                     Logger.Debug($"Remaining download size is unknown.");
-                    AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineResumingFileDownloadUnknownFileSize);
+                    ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineResumingFileDownloadUnknownFileSize);
                 }
             }
             else
@@ -702,13 +723,13 @@ namespace LibgenDesktop.Models.Download
                 if (remainingSize.HasValue)
                 {
                     Logger.Debug($"Download file size is {remainingSize.Value} bytes.");
-                    AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
+                    ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL,
                         localization.GetLogLineStartingFileDownloadKnownFileSize(remainingSize.Value));
                 }
                 else
                 {
                     Logger.Debug($"Download file size is unknown.");
-                    AddLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineStartingFileDownloadUnknownFileSize);
+                    ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineStartingFileDownloadUnknownFileSize);
                 }
             }
             Stream downloadStream = await response.Content.ReadAsStreamAsync();
@@ -794,7 +815,13 @@ namespace LibgenDesktop.Models.Download
             }
         }
 
-        private async Task<HttpResponseMessage> SendDownloadRequestAsync(DownloadItem downloadItem, string url, string referer, long? startPosition = null)
+        private bool IsRedirect(HttpStatusCode statusCode)
+        {
+            return (int)statusCode >= 300 && (int)statusCode <= 399;
+        }
+
+        private async Task<HttpResponseMessage> SendDownloadRequestAsync(DownloadItem downloadItem, string url, string referer, bool waitForFullContent,
+            long? startPosition = null)
         {
             bool partialDownload = startPosition.HasValue && startPosition.Value > 0;
             if (!partialDownload)
@@ -837,11 +864,11 @@ namespace LibgenDesktop.Models.Download
             requestLogBuilder.Append("GET ");
             requestLogBuilder.AppendLine(url);
             requestLogBuilder.AppendLine(requestHeaders);
-            AddLogLine(downloadItem, DownloadItemLogLineType.DEBUG, requestLogBuilder.ToString().TrimEnd());
+            ReportLogLine(downloadItem, DownloadItemLogLineType.DEBUG, requestLogBuilder.ToString().TrimEnd());
             HttpResponseMessage response;
             try
             {
-                response = await SendRequestAsync(request, downloadItem.CancellationToken);
+                response = await SendRequestAsync(request, downloadItem.CancellationToken, waitForFullContent);
             }
             catch (TimeoutException)
             {
@@ -887,7 +914,7 @@ namespace LibgenDesktop.Models.Download
             {
                 responseLogBuilder.AppendLine(responseContentHeaders);
             }
-            AddLogLine(downloadItem, DownloadItemLogLineType.DEBUG, responseLogBuilder.ToString().TrimEnd());
+            ReportLogLine(downloadItem, DownloadItemLogLineType.DEBUG, responseLogBuilder.ToString().TrimEnd());
             if (response.Headers.TryGetValues("Set-Cookie", out IEnumerable<string> cookieHeaders))
             {
                 Uri uri = new Uri(url);
@@ -899,12 +926,13 @@ namespace LibgenDesktop.Models.Download
             return response;
         }
 
-        private Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        private Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken, bool waitForFullContent)
         {
             return Task.Run(() =>
             {
                 CancellationTokenSource combinedCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                Task<HttpResponseMessage> innerTask = httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead,
+                Task<HttpResponseMessage> innerTask = httpClient.SendAsync(request,
+                    waitForFullContent ? HttpCompletionOption.ResponseContentRead : HttpCompletionOption.ResponseHeadersRead,
                     combinedCancellationTokenSource.Token);
                 try
                 {
@@ -975,16 +1003,16 @@ namespace LibgenDesktop.Models.Download
             {
                 while (!eventQueue.IsCompleted)
                 {
-                    EventArgs eventArgs;
+                    DownloaderBatchEventArgs batchEventArgs;
                     try
                     {
-                        eventArgs = eventQueue.Take();
+                        batchEventArgs = eventQueue.Take();
                     }
                     catch (InvalidOperationException)
                     {
                         return;
                     }
-                    DownloaderEvent?.Invoke(this, eventArgs);
+                    DownloaderBatchEvent?.Invoke(this, batchEventArgs);
                 }
             });
         }
@@ -999,21 +1027,28 @@ namespace LibgenDesktop.Models.Download
                 UseCookies = false,
                 ReadWriteTimeout = downloadSettings.Timeout * 1000
             };
-            HttpClient result = new HttpClient(webRequestHandler);
-            result.Timeout = Timeout.InfiniteTimeSpan;
-            return result;
+            return new HttpClient(webRequestHandler)
+            {
+                Timeout = Timeout.InfiniteTimeSpan
+            };
         }
 
         private void SwitchToOfflineMode()
         {
             lock (downloadQueueLock)
             {
+                DownloaderBatchEventArgs batchEventArgs = new DownloaderBatchEventArgs();
                 foreach (DownloadItem downloadingItem in downloadQueue.Where(downloadItem => downloadItem.Status == DownloadItemStatus.DOWNLOADING ||
                     downloadItem.Status == DownloadItemStatus.RETRY_DELAY))
                 {
                     downloadingItem.CancelDownload();
-                    ReportStatusChange(downloadingItem, DownloadItemStatus.STOPPED, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineOfflineModeIsOn);
+                    DownloadItemLogLineEventArgs logLineEventArgs =
+                        AddLogLine(downloadingItem, DownloadItemLogLineType.INFORMATIONAL, localization.LogLineOfflineModeIsOn);
+                    batchEventArgs.Add(logLineEventArgs);
+                    downloadingItem.Status = DownloadItemStatus.STOPPED;
+                    batchEventArgs.Add(new DownloadItemChangedEventArgs(downloadingItem));
                 }
+                eventQueue.Add(batchEventArgs);
             }
         }
 
@@ -1079,14 +1114,45 @@ namespace LibgenDesktop.Models.Download
             return fileName;
         }
 
-        private void AddLogLine(DownloadItem downloadItem, DownloadItemLogLineType logLineType, string logLine)
+        private bool GenerateRedirectUrl(string requestUrl, Uri newLocationUri, out string redirectUrl)
+        {
+            if (!newLocationUri.IsWellFormedOriginalString())
+            {
+                redirectUrl = null;
+                return false;
+            }
+            else if (newLocationUri.IsAbsoluteUri)
+            {
+                redirectUrl = newLocationUri.ToString();
+                return true;
+            }
+            else
+            {
+                redirectUrl = new Uri(new Uri(requestUrl), newLocationUri).ToString();
+                return true;
+            }
+        }
+
+        private DownloadItemLogLineEventArgs AddLogLine(DownloadItem downloadItem, DownloadItemLogLineType logLineType, string logLine)
         {
             lock (downloadQueueLock)
             {
                 DownloadItemLogLine downloadItemLogLine = new DownloadItemLogLine(logLineType, DateTime.Now, logLine);
                 int lineIndex = downloadItem.Logs.Count;
                 downloadItem.Logs.Add(downloadItemLogLine);
-                eventQueue.Add(new DownloadItemLogLineEventArgs(downloadItem.Id, lineIndex, downloadItemLogLine));
+                Logger.Debug($"Downloader log line: type = {logLineType}, text = \"{logLine}\".");
+                return new DownloadItemLogLineEventArgs(downloadItem.Id, lineIndex, downloadItemLogLine);
+            }
+        }
+
+        private void ReportLogLine(DownloadItem downloadItem, DownloadItemLogLineType logLineType, string logLine)
+        {
+            lock (downloadQueueLock)
+            {
+                DownloaderBatchEventArgs batchEventArgs = new DownloaderBatchEventArgs();
+                DownloadItemLogLineEventArgs logLineEventArgs = AddLogLine(downloadItem, logLineType, logLine);
+                batchEventArgs.Add(logLineEventArgs);
+                eventQueue.Add(batchEventArgs);
             }
         }
 
@@ -1094,7 +1160,9 @@ namespace LibgenDesktop.Models.Download
         {
             lock (downloadQueueLock)
             {
-                eventQueue.Add(new DownloadItemChangedEventArgs(downloadItem));
+                DownloaderBatchEventArgs batchEventArgs = new DownloaderBatchEventArgs();
+                batchEventArgs.Add(new DownloadItemChangedEventArgs(downloadItem));
+                eventQueue.Add(batchEventArgs);
             }
         }
 
@@ -1102,9 +1170,12 @@ namespace LibgenDesktop.Models.Download
         {
             lock (downloadQueueLock)
             {
-                AddLogLine(downloadItem, logLineType, logMessage);
+                DownloaderBatchEventArgs batchEventArgs = new DownloaderBatchEventArgs();
+                DownloadItemLogLineEventArgs logLineEventArgs = AddLogLine(downloadItem, logLineType, logMessage);
+                batchEventArgs.Add(logLineEventArgs);
                 downloadItem.Status = newStatus;
-                ReportChange(downloadItem);
+                batchEventArgs.Add(new DownloadItemChangedEventArgs(downloadItem));
+                eventQueue.Add(batchEventArgs);
             }
         }
 

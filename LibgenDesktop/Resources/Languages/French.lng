@@ -274,6 +274,7 @@
         "Archives": "Archives",
         "AllFiles": "Tous les fichiers",
         "Elapsed": "Temps écoulé : {elapsed}",
+        "Unknown": "inconnu",
         "Interrupt": "ARRÊTER",
         "Interrupting": "ARRÊT EN COURS...",
         "Close": "FERMER",
@@ -471,6 +472,7 @@
         "OfflineModePromptTitle": "Mode hors connexion",
         "OfflineModePromptText": "La synchronisation ne peut pas être démarrée tant que le mode hors connexion est activé. Voulez-vous le désactiver ?",
         "Elapsed": "Temps écoulé : {elapsed}",
+        "Unknown": "inconnu",
         "Interrupt": "ARRÊTER",
         "Interrupting": "ARRÊT EN COURS...",
         "Close": "FERMER",
@@ -539,6 +541,11 @@
         "AllFiles": "Tous les fichiers",
         "Error": "Erreur",
         "CannotOpenDatabase": "Une erreur s'est produite lors de la tentative d'ouverture du fichier de base de données : {file}",
+        "Close": "FERMER"
+    },
+    "SqlDebugger":
+    {
+        "Copy": "COPIER DANS LE PRESSE-PAPIER",
         "Close": "FERMER"
     },
     "DownloadManager":

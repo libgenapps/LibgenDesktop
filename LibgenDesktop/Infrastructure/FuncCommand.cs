@@ -26,7 +26,7 @@ namespace LibgenDesktop.Infrastructure
 
         public TResult Execute()
         {
-            TResult result = executeFunction != null ? executeFunction() : default(TResult);
+            TResult result = executeFunction != null ? executeFunction() : default;
             OnCanExecuteChanged();
             return result;
         }

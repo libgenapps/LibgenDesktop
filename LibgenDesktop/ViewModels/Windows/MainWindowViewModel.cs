@@ -27,6 +27,7 @@ namespace LibgenDesktop.ViewModels.Windows
         private bool isCompletedDownloadCounterVisible;
         private int completedDownloadCount;
         private bool isApplicationUpdateAvailable;
+        private bool isSqlDebuggerMenuItemVisible;
         private BookmarkViewModelList bookmarks;
 
         public MainWindowViewModel(MainModel mainModel)
@@ -37,13 +38,14 @@ namespace LibgenDesktop.ViewModels.Windows
             NewTabCommand = new Command(NewTab);
             CloseTabCommand = new Command(param => CloseTab(param as TabViewModel));
             CloseCurrentTabCommand = new Command(CloseCurrentTab);
-            ExportCommand = new Command(Export);
+            ToggleExportPanelCommand = new Command(ToggleExportPanel);
             DownloadManagerCommand = new Command(ShowDownloadManager);
             ShowApplicationUpdateCommand = new Command(ShowApplicationUpdate);
             ImportCommand = new Command(Import);
             SynchronizeCommand = new Command(Synchronize);
             LibraryCommand = new Command(LibraryMenuItemClick);
             DatabaseCommand = new Command(DatabaseMenuItemClick);
+            SqlDebuggerCommand = new Command(SqlDebuggerMenuItemClick);
             BookmarkCommand = new Command(param => BookmarksMenuItemClick(param as BookmarkViewModel));
             SettingsCommand = new Command(SettingsMenuItemClick);
             AboutCommand = new Command(AboutMenuItemClick);
@@ -51,9 +53,10 @@ namespace LibgenDesktop.ViewModels.Windows
             TabViewModels = new ObservableCollection<ITabViewModel>();
             Initialize();
             mainModel.ApplicationUpdateCheckCompleted += ApplicationUpdateCheckCompleted;
+            mainModel.AppSettingsChanged += AppSettingsChanged;
             mainModel.BookmarksChanged += BookmarksChanged;
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
-            mainModel.Downloader.DownloaderEvent += DownloaderEvent;
+            mainModel.Downloader.DownloaderBatchEvent += DownloaderBatchEvent;
         }
 
         public int WindowWidth { get; set; }
@@ -179,6 +182,19 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
+        public bool IsSqlDebuggerMenuItemVisible
+        {
+            get
+            {
+                return isSqlDebuggerMenuItemVisible;
+            }
+            set
+            {
+                isSqlDebuggerMenuItemVisible = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public BookmarkViewModelList Bookmarks
         {
             get
@@ -195,13 +211,14 @@ namespace LibgenDesktop.ViewModels.Windows
         public Command NewTabCommand { get; }
         public Command CloseTabCommand { get; }
         public Command CloseCurrentTabCommand { get; }
-        public Command ExportCommand { get; }
+        public Command ToggleExportPanelCommand { get; }
         public Command DownloadManagerCommand { get; }
         public Command ShowApplicationUpdateCommand { get; }
         public Command ImportCommand { get; }
         public Command SynchronizeCommand { get; }
         public Command LibraryCommand { get; }
         public Command DatabaseCommand { get; }
+        public Command SqlDebuggerCommand { get; }
         public Command BookmarkCommand { get; }
         public Command SettingsCommand { get; }
         public Command AboutCommand { get; }
@@ -242,6 +259,7 @@ namespace LibgenDesktop.ViewModels.Windows
             isCompletedDownloadCounterVisible = false;
             completedDownloadCount = 0;
             isApplicationUpdateAvailable = false;
+            isSqlDebuggerMenuItemVisible = appSettings.Advanced.SqlDebuggerEnabled;
             bookmarks = new BookmarkViewModelList(MainModel);
         }
 
@@ -467,11 +485,11 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
-        private void Export()
+        private void ToggleExportPanel()
         {
             if (SelectedTabViewModel is ISearchResultsTabViewModel searchResultsTabViewModel)
             {
-                searchResultsTabViewModel.ShowExportPanel();
+                searchResultsTabViewModel.ToggleExportPanel();
             }
         }
 
@@ -674,6 +692,14 @@ namespace LibgenDesktop.ViewModels.Windows
             databaseWindowContext.ShowDialog();
         }
 
+        private void SqlDebuggerMenuItemClick()
+        {
+            SqlDebuggerWindowViewModel sqlDebuggerWindowViewModel = new SqlDebuggerWindowViewModel(MainModel);
+            IWindowContext sqlDebuggerWindowContext =
+                WindowManager.CreateWindow(RegisteredWindows.WindowKey.SQL_DEBUGGER_WINDOW, sqlDebuggerWindowViewModel, CurrentWindowContext);
+            sqlDebuggerWindowContext.ShowDialog();
+        }
+
         private void BookmarksMenuItemClick(BookmarkViewModel bookmarkViewModel)
         {
             bool useCurrentTab;
@@ -766,6 +792,11 @@ namespace LibgenDesktop.ViewModels.Windows
             IsApplicationUpdateAvailable = MainModel.LastApplicationUpdateCheckResult != null;
         }
 
+        private void AppSettingsChanged(object sender, EventArgs e)
+        {
+            IsSqlDebuggerMenuItemVisible = MainModel.AppSettings.Advanced.SqlDebuggerEnabled;
+        }
+
         private void BookmarksChanged(object sender, EventArgs e)
         {
             Bookmarks = new BookmarkViewModelList(MainModel);
@@ -776,23 +807,26 @@ namespace LibgenDesktop.ViewModels.Windows
             Localization = MainModel.Localization.CurrentLanguage.MainWindow;
         }
 
-        private void DownloaderEvent(object sender, EventArgs e)
+        private void DownloaderBatchEvent(object sender, DownloaderBatchEventArgs e)
         {
             if (!(SelectedTabViewModel is DownloadManagerTabViewModel))
             {
-                switch (e)
+                foreach (DownloadItemEventArgs downloadItemEventArgs in e.BatchEvents)
                 {
-                    case DownloadItemAddedEventArgs _:
-                        IsDownloadManagerButtonHighlighted = true;
-                        break;
-                    case DownloadItemChangedEventArgs downloadItemChangedEvent:
-                        DownloadItem changedDownloadItem = downloadItemChangedEvent.ChangedDownloadItem;
-                        if (changedDownloadItem.Status == DownloadItemStatus.COMPLETED)
-                        {
-                            CompletedDownloadCount++;
-                            IsCompletedDownloadCounterVisible = true;
-                        }
-                        break;
+                    switch (downloadItemEventArgs)
+                    {
+                        case DownloadItemAddedEventArgs _:
+                            IsDownloadManagerButtonHighlighted = true;
+                            break;
+                        case DownloadItemChangedEventArgs downloadItemChangedEvent:
+                            DownloadItem changedDownloadItem = downloadItemChangedEvent.ChangedDownloadItem;
+                            if (changedDownloadItem.Status == DownloadItemStatus.COMPLETED)
+                            {
+                                CompletedDownloadCount++;
+                                IsCompletedDownloadCounterVisible = true;
+                            }
+                            break;
+                    }
                 }
             }
         }

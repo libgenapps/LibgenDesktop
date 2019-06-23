@@ -5,9 +5,9 @@ namespace LibgenDesktop.Common
     internal static class Constants
     {
         public const string DATABASE_METADATA_APP_NAME = "LibgenDesktop";
-        public const string CURRENT_VERSION = "1.3.1";
-        public const string CURRENT_GITHUB_RELEASE_NAME = "1.3.1";
-        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2019, 5, 30);
+        public const string CURRENT_VERSION = "1.3.2";
+        public const string CURRENT_GITHUB_RELEASE_NAME = "1.3.2";
+        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2019, 6, 23);
         public const string CURRENT_DATABASE_VERSION = "1.2.1";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
@@ -29,8 +29,8 @@ namespace LibgenDesktop.Common
         public const int NON_FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH = 150;
         public const int NON_FICTION_GRID_FORMAT_COLUMN_MIN_WIDTH = 80;
         public const int NON_FICTION_GRID_FILESIZE_COLUMN_MIN_WIDTH = 130;
-        public const int NON_FICTION_GRID_OCR_COLUMN_MIN_WIDTH = 55;
-        public const int NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH = 55;
+        public const int NON_FICTION_GRID_OCR_COLUMN_MIN_WIDTH = 60;
+        public const int NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH = 60;
         public const int FICTION_DETAILS_WINDOW_MIN_WIDTH = 600;
         public const int FICTION_DETAILS_WINDOW_MIN_HEIGHT = 500;
         public const int FICTION_GRID_TITLE_COLUMN_MIN_WIDTH = 150;
@@ -40,7 +40,7 @@ namespace LibgenDesktop.Common
         public const int FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH = 150;
         public const int FICTION_GRID_FORMAT_COLUMN_MIN_WIDTH = 80;
         public const int FICTION_GRID_FILESIZE_COLUMN_MIN_WIDTH = 130;
-        public const int FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH = 55;
+        public const int FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH = 60;
         public const int SCI_MAG_DETAILS_WINDOW_MIN_WIDTH = 600;
         public const int SCI_MAG_DETAILS_WINDOW_MIN_HEIGHT = 500;
         public const int SCI_MAG_GRID_TITLE_COLUMN_MIN_WIDTH = 150;
@@ -49,7 +49,7 @@ namespace LibgenDesktop.Common
         public const int SCI_MAG_GRID_YEAR_COLUMN_MIN_WIDTH = 60;
         public const int SCI_MAG_GRID_FILESIZE_COLUMN_MIN_WIDTH = 130;
         public const int SCI_MAG_GRID_DOI_COLUMN_MIN_WIDTH = 150;
-        public const int SCI_MAG_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH = 55;
+        public const int SCI_MAG_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH = 60;
         public const int DOWNLOAD_MANAGER_TAB_DOWNLOADS_PANEL_MIN_HEIGHT = 100;
         public const int DOWNLOAD_MANAGER_TAB_LOG_PANEL_MIN_HEIGHT = 50;
         public const int DOWNLOAD_MANAGER_TAB_LOG_PANEL_DEFAULT_HEIGHT = 150;
@@ -75,6 +75,10 @@ namespace LibgenDesktop.Common
         public const int DATABASE_WINDOW_WIDTH = 500;
         public const int ABOUT_WINDOW_WIDTH = 670;
         public const int MESSAGE_BOX_WINDOW_WIDTH = 500;
+        public const int SQL_DEBUGGER_WINDOW_DEFAULT_WIDTH = 620;
+        public const int SQL_DEBUGGER_WINDOW_DEFAULT_HEIGHT = 450;
+        public const int SQL_DEBUGGER_WINDOW_MIN_WIDTH = 400;
+        public const int SQL_DEBUGGER_WINDOW_MIN_HEIGHT = 300;
 
         public const string DEFAULT_DATABASE_FILE_NAME = "libgen.db";
         public const string LIBGEN_SERVER_DATABASE_METADATA_APP_NAME = "LibgenServer";
@@ -117,9 +121,13 @@ namespace LibgenDesktop.Common
         public const double SEARCH_PROGRESS_REPORT_INTERVAL = 0.1;
         public const double IMPORT_PROGRESS_UPDATE_INTERVAL = 0.5;
         public const double SYNCHRONIZATION_PROGRESS_UPDATE_INTERVAL = 0.1;
+        public const int COVER_CACHE_CAPACITY = 1000;
+        public const long LOW_DISK_SPACE_THRESHOLD_BYTES = 1024 * 1024 * 1024;
+        public const int DISK_SPACE_CHECK_FOR_EVERY_IMPORTED_ENTRY_COUNT = 10000;
         public const int DATABASE_TRANSACTION_BATCH = 500;
         public const int MAX_EXPORT_ROWS_PER_FILE = 1048575;
         public const int LARGE_NUMBER_OF_ITEMS_TO_DOWNLOAD_WARNING_THRESHOLD = 1000;
+        public const int LARGE_DOWNLOADER_BATCH_UPDATE_ITEM_COUNT = 1000;
         public const int MIN_DOWNLOAD_TIMEOUT = 15;
         public const int MAX_DOWNLOAD_TIMEOUT = 9999;
         public const int DEFAULT_DOWNLOAD_TIMEOUT = 120;
@@ -128,6 +136,7 @@ namespace LibgenDesktop.Common
         public const int MAX_DOWNLOAD_RETRY_DELAY = 9999;
         public const int DEFAULT_DOWNLOAD_RETRY_DELAY = 60;
         public const int MAX_DOWNLOAD_REDIRECT_COUNT = 10;
+        public const int ASYNC_LOG_QUEUE_SIZE = 10000;
 
         public const string GITHUB_RELEASE_API_URL = "https://api.github.com/repos/libgenapps/LibgenDesktop/releases";
         public const string USER_AGENT = "LibgenDesktop/" + CURRENT_VERSION;

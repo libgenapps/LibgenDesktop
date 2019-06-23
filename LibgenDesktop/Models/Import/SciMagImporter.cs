@@ -9,18 +9,9 @@ namespace LibgenDesktop.Models.Import
 {
     internal class SciMagImporter : Importer<SciMagArticle>
     {
-        private readonly DateTime lastAddedDateTime;
-        private readonly int lastModifiedLibgenId;
-
         public SciMagImporter(LocalDatabase localDatabase, BitArray existingLibgenIds)
             : base(localDatabase, existingLibgenIds, TableDefinitions.SciMag)
         {
-            if (IsUpdateMode)
-            {
-                SciMagArticle lastAddedSciMagArticle = LocalDatabase.GetLastAddedSciMagArticle();
-                lastAddedDateTime = lastAddedSciMagArticle.AddedDateTime ?? DateTime.MinValue;
-                lastModifiedLibgenId = lastAddedSciMagArticle.LibgenId;
-            }
         }
 
         protected override void InsertBatch(List<SciMagArticle> objectBatch)
@@ -35,8 +26,7 @@ namespace LibgenDesktop.Models.Import
 
         protected override bool IsNewObject(SciMagArticle importingObject)
         {
-            return importingObject.AddedDateTime > lastAddedDateTime ||
-                (importingObject.AddedDateTime == lastAddedDateTime && importingObject.LibgenId != lastModifiedLibgenId);
+            return false;
         }
 
         protected override int? GetExistingObjectIdByLibgenId(int libgenId)

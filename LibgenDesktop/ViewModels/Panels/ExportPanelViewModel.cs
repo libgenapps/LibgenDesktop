@@ -59,6 +59,8 @@ namespace LibgenDesktop.ViewModels.Panels
             Initialize();
         }
 
+        public bool IsExportInProgress { get; private set; }
+
         public ExportPanelLocalizator Localization
         {
             get
@@ -378,6 +380,7 @@ namespace LibgenDesktop.ViewModels.Panels
                     throw new Exception($"Unknown object type: {libgenObjectType}.");
             }
             cancellationTokenSource = null;
+            IsExportInProgress = false;
             isSettingsPanelVisible = true;
             isXlsxSelected = exportPanelSettngs.Format == AppSettings.ExportPanelSettngs.ExportFormat.XLSX;
             isCsvSelected = exportPanelSettngs.Format == AppSettings.ExportPanelSettngs.ExportFormat.CSV;
@@ -639,6 +642,7 @@ namespace LibgenDesktop.ViewModels.Panels
             {
                 throw new Exception("Export task is null.");
             }
+            IsExportInProgress = true;
             UpdateProgressStatus(null, 0, 0);
             IsSettingsPanelVisible = false;
             IsProgressPanelVisible = true;
@@ -692,6 +696,7 @@ namespace LibgenDesktop.ViewModels.Panels
                 AreExportResultButtonsVisible = true;
                 IsShowResultButtonVisible = false;
             }
+            IsExportInProgress = false;
         }
 
         private void HandleExportProgress(ExportProgress exportProgress)

@@ -38,6 +38,7 @@
             public string Synchronize { get; set; }
             public string Library { get; set; }
             public string Database { get; set; }
+            public string SqlDebugger { get; set; }
             public string Settings { get; set; }
             public string About { get; set; }
         }
@@ -119,6 +120,7 @@
             public string Format { get; set; }
             public string FileSize { get; set; }
             public string Ocr { get; set; }
+            public string InLocalLibrary { get; set; }
         }
 
         internal class NonFictionSearchResultsTabTranslation
@@ -138,6 +140,7 @@
             public string Publisher { get; set; }
             public string Format { get; set; }
             public string FileSize { get; set; }
+            public string InLocalLibrary { get; set; }
         }
 
         internal class FictionSearchResultsTabTranslation
@@ -156,6 +159,7 @@
             public string Year { get; set; }
             public string FileSize { get; set; }
             public string Doi { get; set; }
+            public string InLocalLibrary { get; set; }
         }
 
         internal class SciMagSearchResultsTabTranslation
@@ -333,6 +337,7 @@
             public string ImportSuccessful { get; set; }
             public string ImportCancelled { get; set; }
             public string DataNotFound { get; set; }
+            public string InsufficientDiskSpace { get; set; }
             public string ImportError { get; set; }
         }
 
@@ -345,6 +350,8 @@
             public string Archives { get; set; }
             public string AllFiles { get; set; }
             public string Elapsed { get; set; }
+            public string FreeSpace { get; set; }
+            public string Unknown { get; set; }
             public string Interrupt { get; set; }
             public string Interrupting { get; set; }
             public string Close { get; set; }
@@ -536,6 +543,7 @@
             public string SynchronizationProgressAddedAndUpdated { get; set; }
             public string SynchronizationSuccessful { get; set; }
             public string SynchronizationCancelled { get; set; }
+            public string InsufficientDiskSpace { get; set; }
             public string SynchronizationError { get; set; }
         }
 
@@ -548,6 +556,8 @@
             public string OfflineModePromptTitle { get; set; }
             public string OfflineModePromptText { get; set; }
             public string Elapsed { get; set; }
+            public string FreeSpace { get; set; }
+            public string Unknown { get; set; }
             public string Interrupt { get; set; }
             public string Interrupting { get; set; }
             public string Close { get; set; }
@@ -593,6 +603,8 @@
             public string TotalArticles { get; set; }
             public string LastUpdate { get; set; }
             public string Never { get; set; }
+            public string IndexesRequiredTitle { get; set; }
+            public string IndexesRequiredText { get; set; }
             public string CreatingIndexes { get; set; }
             public string ChangeDatabase { get; set; }
             public string BrowseDatabaseDialogTitle { get; set; }
@@ -600,6 +612,14 @@
             public string AllFiles { get; set; }
             public string Error { get; set; }
             public string CannotOpenDatabase { get; set; }
+            public string Close { get; set; }
+        }
+
+        internal class SqlDebuggerWindowTranslation
+        {
+            public string WindowTitle { get; set; }
+            public string SqlQueryTextBoxHeader { get; set; }
+            public string Copy { get; set; }
             public string Close { get; set; }
         }
 
@@ -636,6 +656,7 @@
             public string DownloadIncompleteError { get; set; }
             public string FileWriteError { get; set; }
             public string LogLineRequestError { get; set; }
+            public string IncorrectRedirectUrl { get; set; }
             public string UnexpectedError { get; set; }
         }
 
@@ -769,6 +790,7 @@
         {
             public string TabHeader { get; set; }
             public string UseLogging { get; set; }
+            public string EnableSqlDebugger { get; set; }
         }
 
         internal class SettingsTranslation
@@ -833,10 +855,11 @@
         public ExportPanelTranslation ExportPanel { get; set; }
         public ExporterTranslation Exporter { get; set; }
         public SynchronizationTranslation Synchronization { get; set; }
+        public DatabaseTranslation Database { get; set; }
+        public SqlDebuggerWindowTranslation SqlDebugger { get; set; }
         public DownloadManagerTranslation DownloadManager { get; set; }
         public ApplicationUpdateTranslation ApplicationUpdate { get; set; }
         public LibraryTranslation Library { get; set; }
-        public DatabaseTranslation Database { get; set; }
         public SettingsTranslation Settings { get; set; }
         public AboutTranslation About { get; set; }
         public MessageBoxTranslation MessageBox { get; set; }

@@ -19,7 +19,7 @@
         <KeyBinding Key="F4" Modifiers="Ctrl" Command="{Binding CloseCurrentTabCommand}" />
         <KeyBinding Key="W" Modifiers="Ctrl" Command="{Binding CloseCurrentTabCommand}" />
         <KeyBinding Key="T" Modifiers="Ctrl" Command="{Binding NewTabCommand}" />
-        <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ExportCommand}" />
+        <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding ToggleExportPanelCommand}" />
     </Window.InputBindings>
     <Grid>
         <Grid Visibility="{Binding IsDefaultSearchTabVisible, Converter={StaticResource booleanToCollapsedConverter}}">

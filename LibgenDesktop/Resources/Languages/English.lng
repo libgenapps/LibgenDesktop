@@ -34,6 +34,7 @@
             "Synchronize": "Synchronization...",
             "Library": "Library",
             "Database": "Database...",
+            "SqlDebugger": "SQL debugger",
             "Settings": "Settings",
             "About": "About"
         }
@@ -94,7 +95,7 @@
         "OfflineModeIsOnMessageText": "Downloading is disabled while the offline mode is on. You can turn it off in the settings window.",
         "NoDownloadMirrorError": "No download mirror has been selected. Please choose one of the mirrors in the settings window.",
         "LargeNumberOfItemsToDownloadPromptTitle": "Large number of items to download",
-        "LargeNumberOfItemsToDownloadPromptText":  "You are about to download {number} items. Are you sure?"
+        "LargeNumberOfItemsToDownloadPromptText": "You are about to download {number} items. Are you sure?"
     },
     "NonFictionSearchResultsTab":
     {
@@ -110,7 +111,8 @@
             "Publisher": "Publisher",
             "Format": "Format",
             "FileSize": "File Size",
-            "Ocr": "OCR"
+            "Ocr": "OCR",
+            "InLocalLibrary": "In local library"
         }
     },
     "FictionSearchResultsTab":
@@ -126,7 +128,8 @@
             "Year": "Year",
             "Publisher": "Publisher",
             "Format": "Format",
-            "FileSize": "File Size"
+            "FileSize": "File Size",
+            "InLocalLibrary": "In local library"
         }
     },
     "SciMagSearchResultsTab":
@@ -141,7 +144,8 @@
             "Magazine": "Magazine",
             "Year": "Year",
             "FileSize": "File Size",
-            "Doi": "DOI"
+            "Doi": "DOI",
+            "InLocalLibrary": "In local library"
         }
     },
     "DetailsTabs":
@@ -282,6 +286,8 @@
         "Archives": "Archives",
         "AllFiles": "All files",
         "Elapsed": "Time elapsed: {elapsed}",
+        "FreeSpace": "Free space left on device: {freeSpace}",
+        "Unknown": "unknown",
         "Interrupt": "INTERRUPT",
         "Interrupting": "INTERRUPTING...",
         "Close": "CLOSE",
@@ -318,6 +324,7 @@
             "ImportSuccessful": "Import completed successfully.",
             "ImportCancelled": "Import has been cancelled by the user.",
             "DataNotFound": "Couldn't find the data to import.",
+            "InsufficientDiskSpace": "Insufficient disk space.",
             "ImportError": "An error occurred during the import."
         }
     },
@@ -479,6 +486,8 @@
         "OfflineModePromptTitle": "Offline mode",
         "OfflineModePromptText": "Synchronization cannot be started while the offline mode is on. Do you want to turn it off?",
         "Elapsed": "Time elapsed: {elapsed}",
+        "FreeSpace": "Free space left on device: {freeSpace}",
+        "Unknown": "unknown",
         "Interrupt": "INTERRUPT",
         "Interrupting": "INTERRUPTING...",
         "Close": "CLOSE",
@@ -508,6 +517,7 @@
             "SynchronizationProgressAddedAndUpdated": "Books downloaded: {downloaded}, added: {added}, updated: {updated}.",
             "SynchronizationSuccessful": "Synchronization completed successfully.",
             "SynchronizationCancelled": "Synchronization has been cancelled by the user.",
+            "InsufficientDiskSpace": "Insufficient disk space.",
             "SynchronizationError": "An error occurred during the synchronization: {error}"
         }
     },
@@ -546,6 +556,8 @@
         "TotalArticles": "Total articles",
         "LastUpdate": "Last update",
         "Never": "never",
+        "IndexesRequiredTitle": "Database indexes",
+        "IndexesRequiredText": "Libgen Desktop needs to create missing database indexes. This operation can take a long time (up to an hour) and cannot be interrupted. Do you want to continue?",
         "CreatingIndexes": "Please wait. Creating missing database indexes...{new-line}This operation cannot be interrupted.",
         "ChangeDatabase": "CHANGE DATABASE...",
         "BrowseDatabaseDialogTitle": "Database file location",
@@ -553,6 +565,13 @@
         "AllFiles": "All files",
         "Error": "Error",
         "CannotOpenDatabase": "An error occurred while trying to open database file: {file}",
+        "Close": "CLOSE"
+    },
+    "SqlDebugger":
+    {
+        "WindowTitle": "SQL debugger",
+        "SqlQueryTextBoxHeader": "Enter SQL query",
+        "Copy": "COPY TO CLIPBOARD",
         "Close": "CLOSE"
     },
     "DownloadManager":
@@ -609,6 +628,7 @@
             "DownloadIncompleteError": "Server indicates that file download is complete, but it is not.",
             "FileWriteError": "File write error.",
             "LogLineRequestError": "Couldn't send request to {url}",
+            "IncorrectRedirectUrl": "Server returned incorrect redirect URL: {url}",
             "UnexpectedError": "An unexpected error occurred: {error}"
         }
     },
@@ -715,7 +735,8 @@
         "Advanced":
         {
             "TabHeader": "Advanced",
-            "UseLogging": "Write diagnostic information into a file"
+            "UseLogging": "Write diagnostic information into a file",
+            "EnableSqlDebugger": "Enable SQL debugger"
         }
     },
     "About":

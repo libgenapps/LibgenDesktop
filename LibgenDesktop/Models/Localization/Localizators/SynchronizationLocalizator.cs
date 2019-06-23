@@ -14,6 +14,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             NoSynchronizationMirror = Format(translation => translation?.NoSynchronizationMirror);
             OfflineModePromptTitle = Format(translation => translation?.OfflineModePromptTitle);
             OfflineModePromptText = Format(translation => translation?.OfflineModePromptText);
+            Unknown = Format(translation => translation?.Unknown);
             Interrupt = Format(translation => translation?.Interrupt);
             Interrupting = Format(translation => translation?.Interrupting);
             Close = Format(translation => translation?.Close);
@@ -29,6 +30,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             LogLineSynchronizingBookList = FormatLogLine(translation => translation?.SynchronizingBookList);
             LogLineDownloadingNewBooks = FormatLogLine(translation => translation?.DownloadingNewBooks);
             LogLineSynchronizationSuccessful = FormatLogLine(translation => translation?.SynchronizationSuccessful);
+            LogLineInsufficientDiskSpace = FormatLogLine(translation => translation?.InsufficientDiskSpace);
             LogLineSynchronizationCancelled = FormatLogLine(translation => translation?.SynchronizationCancelled);
         }
 
@@ -38,6 +40,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string NoSynchronizationMirror { get; }
         public string OfflineModePromptTitle { get; }
         public string OfflineModePromptText { get; }
+        public string Unknown { get; set; }
         public string Interrupt { get; }
         public string Interrupting { get; }
         public string Close { get; }
@@ -53,9 +56,11 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string LogLineSynchronizingBookList { get; set; }
         public string LogLineDownloadingNewBooks { get; set; }
         public string LogLineSynchronizationSuccessful { get; set; }
+        public string LogLineInsufficientDiskSpace { get; }
         public string LogLineSynchronizationCancelled { get; set; }
 
         public string GetElapsedString(string elapsed) => Format(translation => translation?.Elapsed, new { elapsed });
+        public string GetFreeSpaceString(string freeSpace) => Format(translation => translation?.FreeSpace, new { freeSpace });
         public string GetStatusStep(int current, int total) => FormatStatus(translation => translation?.Step, new { current, total });
         public string GetLogLineStep(int step) => FormatLogLine(translation => translation?.Step, new { step });
         public string GetLogLineCreatingIndexForColumn(string column) => FormatLogLine(translation => translation?.CreatingIndexForColumn, new { column });

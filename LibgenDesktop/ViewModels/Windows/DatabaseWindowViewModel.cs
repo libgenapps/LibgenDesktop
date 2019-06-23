@@ -21,6 +21,7 @@ namespace LibgenDesktop.ViewModels.Windows
         private string sciMagTotalArticles;
         private string sciMagLastUpdate;
         private string databaseFilePath;
+        private bool isDatabaseOperationInProgress;
 
         public DatabaseWindowViewModel(MainModel mainModel)
             : base(mainModel)
@@ -158,16 +159,28 @@ namespace LibgenDesktop.ViewModels.Windows
 
         private async void GetStats()
         {
-            IsCreatingIndexesMessageVisible = true;
+            isDatabaseOperationInProgress = true; 
             AreDatabaseStatsVisible = false;
             DatabaseStats databaseStats;
             try
             {
+                bool databaseStatsIndexesCreated = await MainModel.CheckIfDatabaseStatsIndexesCreated();
+                if (!databaseStatsIndexesCreated)
+                {
+                    if (!ShowPrompt(Localization.IndexesRequiredTitle, Localization.IndexesRequiredText))
+                    {
+                        isDatabaseOperationInProgress = false;
+                        CurrentWindowContext.CloseDialog(false);
+                        return;
+                    }
+                }
+                IsCreatingIndexesMessageVisible = true;
                 databaseStats = await MainModel.GetDatabaseStatsAsync();
             }
             catch (Exception exception)
             {
                 ShowErrorWindow(exception, CurrentWindowContext);
+                isDatabaseOperationInProgress = false;
                 CurrentWindowContext.CloseDialog(false);
                 return;
             }
@@ -183,6 +196,7 @@ namespace LibgenDesktop.ViewModels.Windows
                 Localization.Never;
             IsCreatingIndexesMessageVisible = false;
             AreDatabaseStatsVisible = true;
+            isDatabaseOperationInProgress = false;
         }
 
         private void ChangeDatabase()
@@ -218,7 +232,7 @@ namespace LibgenDesktop.ViewModels.Windows
 
         private bool WindowClosing()
         {
-            return !IsCreatingIndexesMessageVisible;
+            return !isDatabaseOperationInProgress;
         }
 
         private void CloseButtonClick()

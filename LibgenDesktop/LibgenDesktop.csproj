@@ -80,7 +80,7 @@
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.5.11\lib\net45\NLog.dll</HintPath>
+      <HintPath>..\packages\NLog.4.6.5\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="SharpCompress, Version=0.22.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpCompress.0.22.0\lib\net45\SharpCompress.dll</HintPath>
@@ -113,6 +113,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WpfMouseWheelLib">
+      <HintPath>..\Libraries\WpfMouseWheelLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -134,6 +137,7 @@
     <Compile Include="Infrastructure\SaveFileDialogResult.cs" />
     <Compile Include="Infrastructure\SelectFolderDialogParameters.cs" />
     <Compile Include="Infrastructure\SelectFolderDialogResult.cs" />
+    <Compile Include="Infrastructure\SelectionChangedCommandArgs.cs" />
     <Compile Include="Infrastructure\ViewModelEvent.cs" />
     <Compile Include="Infrastructure\WindowContext.cs" />
     <Compile Include="Infrastructure\WindowManager.cs" />
@@ -141,12 +145,11 @@
     <Compile Include="Models\Database\DatabaseStats.cs" />
     <Compile Include="Models\Database\Migration.cs" />
     <Compile Include="Models\Database\SearchQueryParser.cs" />
+    <Compile Include="Models\Download\CoverCache.cs" />
     <Compile Include="Models\Download\Downloader.cs" />
+    <Compile Include="Models\Download\DownloaderBatchEventArgs.cs" />
+    <Compile Include="Models\Download\DownloaderEventArgs.cs" />
     <Compile Include="Models\Download\DownloadItem.cs" />
-    <Compile Include="Models\Download\DownloadItemLogLineEventArgs.cs" />
-    <Compile Include="Models\Download\DownloadItemChangedEventArgs.cs" />
-    <Compile Include="Models\Download\DownloadItemRemovedEventArgs.cs" />
-    <Compile Include="Models\Download\DownloadItemAddedEventArgs.cs" />
     <Compile Include="Models\Download\DownloadItemLogLine.cs" />
     <Compile Include="Models\Download\DownloadItemLogLineType.cs" />
     <Compile Include="Models\Download\DownloadItemRequest.cs" />
@@ -177,6 +180,7 @@
     <Compile Include="Models\Localization\Localizators\ApplicationUpdateLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\CommonDetailsTabLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\AboutWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SqlDebuggerWindowLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\LibraryTabLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\DatabaseWindowLocalizator.cs" />
     <Compile Include="Models\Localization\Localizators\CreateDatabaseWindowLocalizator.cs" />
@@ -211,6 +215,8 @@
     <Compile Include="Models\ProgressArgs\DownloadFileProgress.cs" />
     <Compile Include="Models\ProgressArgs\GenericProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportCreateIndexProgress.cs" />
+    <Compile Include="Models\ProgressArgs\SynchronizationDiskSpaceProgress.cs" />
+    <Compile Include="Models\ProgressArgs\ImportDiskSpaceProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportLoadLibgenIdsProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportObjectsProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportSearchTableDefinitionProgress.cs" />
@@ -220,7 +226,7 @@
     <Compile Include="Models\ProgressArgs\ScanCompleteProgress.cs" />
     <Compile Include="Models\ProgressArgs\ScanProgress.cs" />
     <Compile Include="Models\ProgressArgs\SearchProgress.cs" />
-    <Compile Include="Models\ProgressArgs\SynchronizationProgress.cs" />
+    <Compile Include="Models\ProgressArgs\SynchronizationObjectsProgress.cs" />
     <Compile Include="Models\Settings\Mirrors.cs" />
     <Compile Include="Models\Settings\MirrorStorage.cs" />
     <Compile Include="Models\SqlDump\ColumnDefinition.cs" />
@@ -268,6 +274,7 @@
     <Compile Include="ViewModels\Panels\ExportPanelViewModel.cs" />
     <Compile Include="ViewModels\Tabs\FictionDetailsTabViewModel.cs" />
     <Compile Include="ViewModels\Panels\ImportLogPanelViewModel.cs" />
+    <Compile Include="ViewModels\Windows\SqlDebuggerWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\LibgenWindowViewModel.cs" />
     <Compile Include="ViewModels\SearchResultItems\SearchResultItemViewModel.cs" />
     <Compile Include="ViewModels\Tabs\SearchResultsTabViewModel.cs" />
@@ -324,6 +331,9 @@
     </Compile>
     <Compile Include="Views\Windows\DatabaseWindow.xaml.cs">
       <DependentUpon>DatabaseWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\SqlDebuggerWindow.xaml.cs">
+      <DependentUpon>SqlDebuggerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\MessageBoxWindow.xaml.cs">
       <DependentUpon>MessageBoxWindow.xaml</DependentUpon>
@@ -407,6 +417,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Styles\SqlDebuggerWindowStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Styles\LibraryTabStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -448,6 +462,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Windows\DatabaseWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Windows\SqlDebuggerWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -675,6 +693,10 @@
     <ContentWithTargetPath Include="Resources\Mirrors\mirrors.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\mirrors.config</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_io_nonfiction.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\libgen_io_nonfiction.xslt</TargetPath>
     </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Mirrors\libgen_pw_nonfiction.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

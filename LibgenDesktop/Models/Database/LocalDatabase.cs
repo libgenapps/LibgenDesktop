@@ -6,6 +6,8 @@ using System.Data.SQLite;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
+using LibgenDesktop.Common;
 using LibgenDesktop.Models.Entities;
 
 namespace LibgenDesktop.Models.Database
@@ -15,10 +17,11 @@ namespace LibgenDesktop.Models.Database
         private SQLiteConnection connection;
         private bool disposed;
 
-        private LocalDatabase(string databaseFilePath)
+        private LocalDatabase(string databaseFullPath)
         {
+            DatabaseFullPath = databaseFullPath;
             disposed = false;
-            connection = new SQLiteConnection("Data Source = " + databaseFilePath);
+            connection = new SQLiteConnection("Data Source = " + databaseFullPath, parseViaFramework: true);
             connection.Open();
             connection.EnableExtensions(true);
             connection.LoadExtension("SQLite.Interop.dll", "sqlite3_fts5_init");
@@ -26,19 +29,27 @@ namespace LibgenDesktop.Models.Database
                 "PRAGMA SYNCHRONOUS = OFF");
         }
 
-        public static LocalDatabase CreateDatabase(string databaseFilePath)
+        public string DatabaseFullPath { get; }
+
+        public static LocalDatabase CreateDatabase(string databaseFullPath)
         {
-            SQLiteConnection.CreateFile(databaseFilePath);
-            return new LocalDatabase(databaseFilePath);
+            Logger.Debug($"Creating database file: {databaseFullPath}");
+            SQLiteConnection.CreateFile(databaseFullPath);
+            LocalDatabase result = new LocalDatabase(databaseFullPath);
+            Logger.Debug("Database file has been created successfully.");
+            return result;
         }
 
-        public static LocalDatabase OpenDatabase(string databaseFilePath)
+        public static LocalDatabase OpenDatabase(string databaseFullPath)
         {
-            if (!File.Exists(databaseFilePath))
+            if (!File.Exists(databaseFullPath))
             {
-                throw new FileNotFoundException("Database file not found", databaseFilePath);
+                throw new FileNotFoundException("Database file not found", databaseFullPath);
             }
-            return new LocalDatabase(databaseFilePath);
+            Logger.Debug($"Opening database file: {databaseFullPath}");
+            LocalDatabase result = new LocalDatabase(databaseFullPath);
+            Logger.Debug("Database file has been opened successfully.");
+            return result;
         }
 
         public void Dispose()
@@ -1349,6 +1360,73 @@ namespace LibgenDesktop.Models.Database
                 }
                 transaction.Commit();
             }
+        }
+
+        public string RunCustomSqlQuery(string sqlQuery)
+        {
+            StringBuilder resultBuilder = new StringBuilder();
+            resultBuilder.Append("[");
+            List<string> fieldNames = null;
+            bool firstLine = true;
+            using (SQLiteCommand command = connection.CreateCommand())
+            {
+                command.CommandText = sqlQuery;
+                using (SQLiteDataReader dataReader = command.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        if (fieldNames == null)
+                        {
+                            fieldNames = new List<string>();
+                            for (int i = 0; i < dataReader.FieldCount; i++)
+                            {
+                                fieldNames.Add(dataReader.GetName(i));
+                            }
+                        }
+                        if (firstLine)
+                        {
+                            firstLine = false;
+                        }
+                        else
+                        {
+                            resultBuilder.Append(",");
+                        }
+                        resultBuilder.AppendLine();
+                        resultBuilder.Append("  { ");
+                        for (int i = 0; i < dataReader.FieldCount; i++)
+                        {
+                            if (i > 0)
+                            {
+                                resultBuilder.Append(", ");
+                            }
+                            resultBuilder.Append(fieldNames[i]);
+                            resultBuilder.Append(" = ");
+                            object fieldValue = dataReader.GetValue(i);
+                            if (fieldValue == DBNull.Value)
+                            {
+                                resultBuilder.Append("(null)");
+                            }
+                            else if (fieldValue is string)
+                            {
+                                resultBuilder.Append("\"");
+                                resultBuilder.Append(fieldValue);
+                                resultBuilder.Append("\"");
+                            }
+                            else
+                            {
+                                resultBuilder.Append(fieldValue.ToString());
+                            }
+                        }
+                        resultBuilder.Append(" }");
+                    }
+                }
+            }
+            if (fieldNames != null)
+            {
+                resultBuilder.AppendLine();
+            }
+            resultBuilder.Append("]");
+            return resultBuilder.ToString();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

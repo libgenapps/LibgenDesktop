@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
+using NLog.Targets.Wrappers;
 using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.Common
@@ -55,9 +55,10 @@ namespace LibgenDesktop.Common
             FileTarget fileTarget = new FileTarget
             {
                 FileName = Environment.LogFilePath,
-                Layout = "${longdate} [${threadid}] ${callsite} ${level:uppercase=true} ${message}"
+                Layout = "${longdate} [${threadid}] ${callsite} ${level:uppercase=true} ${message}",
             };
-            loggingConfiguration.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, fileTarget));
+            AsyncTargetWrapper fileAsyncTargetWrapper = new AsyncTargetWrapper(fileTarget, ASYNC_LOG_QUEUE_SIZE, AsyncTargetWrapperOverflowAction.Grow);
+            loggingConfiguration.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, fileAsyncTargetWrapper));
             LogManager.Configuration = loggingConfiguration;
             logger = LogManager.GetLogger(String.Empty);
         }

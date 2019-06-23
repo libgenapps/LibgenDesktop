@@ -14,6 +14,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             SqlDumps = Format(translation => translation?.SqlDumps);
             Archives = Format(translation => translation?.Archives);
             AllFiles = Format(translation => translation?.AllFiles);
+            Unknown = Format(translation => translation?.Unknown);
             Interrupt = Format(translation => translation?.Interrupt);
             Interrupting = Format(translation => translation?.Interrupting);
             Close = Format(translation => translation?.Close);
@@ -36,40 +37,44 @@ namespace LibgenDesktop.Models.Localization.Localizators
             LogLineImportSuccessful = FormatLogLine(translation => translation?.ImportSuccessful);
             LogLineImportCancelled = FormatLogLine(translation => translation?.ImportCancelled);
             LogLineDataNotFound = FormatLogLine(translation => translation?.DataNotFound);
+            LogLineInsufficientDiskSpace = FormatLogLine(translation => translation?.InsufficientDiskSpace);
             LogLineImportError = FormatLogLine(translation => translation?.ImportError);
         }
 
-        public string WindowTitle { get; set; }
-        public string BrowseImportFileDialogTitle { get; set; }
-        public string AllSupportedFiles { get; set; }
-        public string SqlDumps { get; set; }
-        public string Archives { get; set; }
-        public string AllFiles { get; set; }
-        public string Interrupt { get; set; }
-        public string Interrupting { get; set; }
-        public string Close { get; set; }
-        public string StatusDataLookup { get; set; }
-        public string StatusCreatingIndexes { get; set; }
-        public string StatusLoadingIds { get; set; }
-        public string StatusImportingData { get; set; }
-        public string StatusImportComplete { get; set; }
-        public string StatusImportCancelled { get; set; }
-        public string StatusDataNotFound { get; set; }
-        public string StatusImportError { get; set; }
-        public string LogLineDataLookup { get; set; }
-        public string LogLineScanning { get; set; }
-        public string LogLineNonFictionTableFound { get; set; }
-        public string LogLineFictionTableFound { get; set; }
-        public string LogLineSciMagTableFound { get; set; }
-        public string LogLineCreatingIndexes { get; set; }
-        public string LogLineLoadingIds { get; set; }
-        public string LogLineImportingData { get; set; }
-        public string LogLineImportSuccessful { get; set; }
-        public string LogLineImportCancelled { get; set; }
-        public string LogLineDataNotFound { get; set; }
-        public string LogLineImportError { get; set; }
+        public string WindowTitle { get; }
+        public string BrowseImportFileDialogTitle { get; }
+        public string AllSupportedFiles { get; }
+        public string SqlDumps { get; }
+        public string Archives { get; }
+        public string AllFiles { get; }
+        public string Unknown { get; set; }
+        public string Interrupt { get; }
+        public string Interrupting { get; }
+        public string Close { get; }
+        public string StatusDataLookup { get; }
+        public string StatusCreatingIndexes { get; }
+        public string StatusLoadingIds { get; }
+        public string StatusImportingData { get; }
+        public string StatusImportComplete { get; }
+        public string StatusImportCancelled { get; }
+        public string StatusDataNotFound { get; }
+        public string StatusImportError { get; }
+        public string LogLineDataLookup { get; }
+        public string LogLineScanning { get; }
+        public string LogLineNonFictionTableFound { get; }
+        public string LogLineFictionTableFound { get; }
+        public string LogLineSciMagTableFound { get; }
+        public string LogLineCreatingIndexes { get; }
+        public string LogLineLoadingIds { get; }
+        public string LogLineImportingData { get; }
+        public string LogLineImportSuccessful { get; }
+        public string LogLineImportCancelled { get; }
+        public string LogLineDataNotFound { get; }
+        public string LogLineInsufficientDiskSpace { get; }
+        public string LogLineImportError { get; }
 
         public string GetElapsedString(string elapsed) => Format(translation => translation?.Elapsed, new { elapsed });
+        public string GetFreeSpaceString(string freeSpace) => Format(translation => translation?.FreeSpace, new { freeSpace });
         public string GetStatusStep(int current, int total) => FormatStatus(translation => translation?.Step, new { current, total });
         public string GetLogLineStep(int step) => FormatLogLine(translation => translation?.Step, new { step });
         public string GetLogLineScannedProgress(decimal percent) =>

@@ -61,7 +61,7 @@
     {
         "TabTitle": "Căutare",
         "SearchPlaceHolder": "Caută",
-        "NonFictionSelector": "Cărți științifice",
+        "NonFictionSelector": "Cărți non-ficțiune",
         "FictionSelector": "Cărți de ficțiune",
         "SciMagSelector": "Articole științifice",
         "NonFictionSearchBoxTooltip": "Caută după Titlu, Autor(i), Colecție, Editură și ISBN fără cratimă",
@@ -92,7 +92,9 @@
         "FileNotFoundError": "Fișierul {file} nu a fost găsit.",
         "OfflineModeIsOnMessageTitle": "Modul Offline este activat",
         "OfflineModeIsOnMessageText": "Descărcarea este dezactivată în modul de lucru Offline. O poți activa în fereastra de setări.",
-        "NoDownloadMirrorError": "Nu a fost selectat un link de descărcare. Vă rugăm alegeți unul din link-urile de descărcare în fereastra de setări."    
+        "NoDownloadMirrorError": "Nu a fost selectat un link de descărcare. Vă rugăm alegeți unul din link-urile de descărcare în fereastra de setări.",
+        "LargeNumberOfItemsToDownloadPromptTitle": "Număr mare de cărți selectate pentru descărcat",
+        "LargeNumberOfItemsToDownloadPromptText": "Ești pe cale să descarci {number} de cărți. Ești sigur?"
     },
     "NonFictionSearchResultsTab":
     {
@@ -280,6 +282,7 @@
         "Archives": "Arhiva",
         "AllFiles": "Toate fișierele",
         "Elapsed": "Timp scurs: {elapsed}",
+        "Unknown": "necunoscut",
         "Interrupt": "OPREȘTE",
         "Interrupting": "SE OPREȘTE...",
         "Close": "ÎNCHIDE",
@@ -477,6 +480,7 @@
         "OfflineModePromptTitle": "Modul Offline",
         "OfflineModePromptText": "Sincronizarea nu poate începe cât timp este activat Modul Offline. Vreți să activați Modul Online?",
         "Elapsed": "Timp scurs: {elapsed}",
+        "Unknown": "necunoscut",
         "Interrupt": "ÎNTRERUPE",
         "Interrupting": "SE ÎNTRERUPE...",
         "Close": "ÎNCHIDE",
@@ -512,16 +516,16 @@
     "Library":
     {
         "TabTitle": "Biblioteca",
-        "ScanNonFiction": "SCANEAZĂ CĂRȚI ȘTIINȚIFICE (NON-FICTION)...",
+        "ScanNonFiction": "SCANEAZĂ CĂRȚI ȘTIINȚIFICE (NON-FICȚIUNE)...",
         "ScanFiction": "SCANEAZĂ CĂRȚI DE FICȚIUNE...",
         "ScanSciMag": "SCANEAZĂ ARTICOLE ȘTIINȚIFICE...",
-		"BrowseDirectoryDialogTitle": "Scanează în...",
+        "BrowseDirectoryDialogTitle": "Scanează în...",
         "ScanStarted": "Scanarea pornită în {directory}",
         "CreatingIndexes": "Așteptați. Se creează indecșii lipsă a Bazei de Date...",
         "Found": "S-au găsit ({count})",
         "AddAll": "ADAUGĂ TOATE FIȘIERELE GĂSITE LA BIBLIOTECĂ",
         "Adding": "ADAUGAREA FIȘIERELOR LA BIBLIOTECĂ...",
-        "Added": "TOATE FIȘIERELE AU FOST ADĂUGATE LA BIBLIOTECĂ",		
+        "Added": "TOATE FIȘIERELE AU FOST ADĂUGATE LA BIBLIOTECĂ",
         "NotFound": "Lipsesc ({count})",
         "ScanLog": "Log-ul scanării",
         "Error": "eroare",
@@ -551,6 +555,11 @@
         "AllFiles": "Toate fișierele",
         "Error": "Eroare",
         "CannotOpenDatabase": "A apărut o eroare în timp ce s-a încercat deschiderea fișierului Bazei de date: {file}",
+        "Close": "ÎNCHIDE"
+    },
+    "SqlDebugger":
+    {
+        "Copy": "COPIE IN CLIPBOARD",
         "Close": "ÎNCHIDE"
     },
     "DownloadManager":

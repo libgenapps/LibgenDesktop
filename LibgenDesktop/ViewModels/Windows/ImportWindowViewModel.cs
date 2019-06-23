@@ -2,6 +2,7 @@
 using System.Threading;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
+using LibgenDesktop.Models.Localization;
 using LibgenDesktop.Models.Localization.Localizators;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.SqlDump;
@@ -21,10 +22,12 @@ namespace LibgenDesktop.ViewModels.Windows
 
         private readonly string dumpFilePath;
         private readonly CancellationTokenSource cancellationTokenSource;
+        private readonly LanguageFormatter languageFormatter;
         private readonly Timer elapsedTimer;
         private bool isInProgress;
         private string status;
         private string elapsed;
+        private string freeSpace;
         private string cancelButtonText;
         private bool isCancelButtonVisible;
         private bool isCancelButtonEnabled;
@@ -43,6 +46,7 @@ namespace LibgenDesktop.ViewModels.Windows
             this.dumpFilePath = dumpFilePath;
             cancellationTokenSource = new CancellationTokenSource();
             Localization = mainModel.Localization.CurrentLanguage.Import;
+            languageFormatter = mainModel.Localization.CurrentLanguage.Formatter;
             elapsedTimer = new Timer(state => UpdateElapsedTime());
             Logs = new ImportLogPanelViewModel();
             CancelCommand = new Command(Cancel);
@@ -89,6 +93,19 @@ namespace LibgenDesktop.ViewModels.Windows
             set
             {
                 elapsed = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string FreeSpace
+        {
+            get
+            {
+                return freeSpace;
+            }
+            set
+            {
+                freeSpace = value;
                 NotifyPropertyChanged();
             }
         }
@@ -169,6 +186,7 @@ namespace LibgenDesktop.ViewModels.Windows
             lastElapsedTime = TimeSpan.Zero;
             elapsedTimer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
             elapsed = GetElapsedString(lastElapsedTime);
+            freeSpace = String.Empty;
             cancelButtonText = Localization.Interrupt;
             isCancelButtonVisible = true;
             isCancelButtonEnabled = true;
@@ -212,6 +230,10 @@ namespace LibgenDesktop.ViewModels.Windows
                 case MainModel.ImportSqlDumpResult.DATA_NOT_FOUND:
                     Logs.ShowErrorLogLine(Localization.LogLineDataNotFound);
                     Status = Localization.StatusDataNotFound;
+                    break;
+                case MainModel.ImportSqlDumpResult.LOW_DISK_SPACE:
+                    Logs.ShowErrorLogLine(Localization.LogLineInsufficientDiskSpace);
+                    Status = Localization.StatusImportCancelled;
                     break;
             }
             IsInProgress = false;
@@ -283,6 +305,11 @@ namespace LibgenDesktop.ViewModels.Windows
                         }
                         string logLine = GetImportedObjectCountLogLine(importObjectsProgress.ObjectsAdded, importObjectsProgress.ObjectsUpdated);
                         CurrentLogItem.LogLine = logLine;
+                        break;
+                    case ImportDiskSpaceProgress importDiskSpaceProgress:
+                        string freeSpaceInBytesString = importDiskSpaceProgress.FreeSpaceInBytes.HasValue ?
+                            languageFormatter.FileSizeToString(importDiskSpaceProgress.FreeSpaceInBytes.Value, false) : Localization.Unknown;
+                        FreeSpace = Localization.GetFreeSpaceString(freeSpaceInBytesString);
                         break;
                 }
             }

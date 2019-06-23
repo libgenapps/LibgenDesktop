@@ -4,6 +4,11 @@
         <Setter Property="Margin" Value="12" />
     </Style>
     <Style x:Key="TabsPanel" TargetType="StackPanel">
+        <Style.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+            </Style>
+        </Style.Resources>
         <Setter Property="Orientation" Value="Vertical" />
         <Setter Property="Width" Value="160" />
         <Setter Property="Margin" Value="0,0,24,0" />

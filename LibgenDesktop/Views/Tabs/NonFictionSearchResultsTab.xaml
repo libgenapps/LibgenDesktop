@@ -52,7 +52,8 @@
                     </Style>
                 </Button.Style>
             </Button>
-            <Button Grid.Column="2" Command="{Binding ExportCommand}" Style="{StaticResource ExportButton}" ToolTip="{Binding Localization.ExportButtonTooltip}"
+            <Button Grid.Column="2" Command="{Binding ToggleExportPanelCommand}" Style="{StaticResource ExportButton}"
+                    ToolTip="{Binding Localization.ExportButtonTooltip}"
                     IsEnabled="{Binding IsExportPanelVisible, Converter={StaticResource booleanInverseConverter}}" />
         </Grid>
         <c:BookDataGrid x:Name="bookGrid" Grid.Row="1" ItemsSource="{Binding Books, IsAsync=True}"
@@ -77,41 +78,42 @@
                                     Header="{Binding DataContext.Localization.Columns.Title, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.TitleColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_TITLE_COLUMN_MIN_WIDTH}}"
-                                    ElementStyle="{StaticResource TitleColumnStyle}" />
+                                    HeaderStyle="{StaticResource TitleHeaderStyle}" ElementStyle="{StaticResource TitleColumnStyle}" />
                 <DataGridTextColumn Binding="{Binding Authors}"
                                     Header="{Binding DataContext.Localization.Columns.Authors, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.AuthorsColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_AUTHORS_COLUMN_MIN_WIDTH}}"
-                                    ElementStyle="{StaticResource AuthorsColumnStyle}" />
+                                    HeaderStyle="{StaticResource AuthorsHeaderStyle}" ElementStyle="{StaticResource AuthorsColumnStyle}" />
                 <DataGridTextColumn Binding="{Binding Series}"
                                     Header="{Binding DataContext.Localization.Columns.Series, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.SeriesColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_SERIES_COLUMN_MIN_WIDTH}}"
-                                    ElementStyle="{StaticResource SeriesColumnStyle}" />
+                                    HeaderStyle="{StaticResource SeriesHeaderStyle}" ElementStyle="{StaticResource SeriesColumnStyle}" />
                 <DataGridTextColumn Binding="{Binding Year}"
                                     Header="{Binding DataContext.Localization.Columns.Year, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.YearColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_YEAR_COLUMN_MIN_WIDTH}}"
-                                    ElementStyle="{StaticResource YearColumnStyle}" />
+                                    HeaderStyle="{StaticResource YearHeaderStyle}" ElementStyle="{StaticResource YearColumnStyle}" />
                 <DataGridTextColumn Binding="{Binding Publisher}"
                                     Header="{Binding DataContext.Localization.Columns.Publisher, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.PublisherColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH}}"
-                                    ElementStyle="{StaticResource PublisherColumnStyle}" />
+                                    HeaderStyle="{StaticResource PublisherHeaderStyle}" ElementStyle="{StaticResource PublisherColumnStyle}" />
                 <DataGridTextColumn Binding="{Binding Format}"
                                     Header="{Binding DataContext.Localization.Columns.FormatColumn, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.FormatColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_FORMAT_COLUMN_MIN_WIDTH}}"
-                                    ElementStyle="{StaticResource FormatColumnStyle}" />
+                                    HeaderStyle="{StaticResource FormatHeaderStyle}" ElementStyle="{StaticResource FormatColumnStyle}" />
                 <DataGridTextColumn Binding="{Binding FileSize}"
                                     Header="{Binding DataContext.Localization.Columns.FileSize, Source={StaticResource dataGridViewModel}}" SortMemberPath="SizeInBytes"
                                     Width="{Binding DataContext.FileSizeColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_FILESIZE_COLUMN_MIN_WIDTH}}"
-                                    ElementStyle="{StaticResource FileSizeColumnStyle}" />
+                                    HeaderStyle="{StaticResource FileSizeHeaderStyle}" ElementStyle="{StaticResource FileSizeColumnStyle}" />
                 <DataGridTemplateColumn Header="{Binding DataContext.Localization.Columns.Ocr, Source={StaticResource dataGridViewModel}}"
                                         SortMemberPath="Ocr"
                                         Width="{Binding DataContext.OcrColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
-                                        MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_OCR_COLUMN_MIN_WIDTH}}">
+                                        MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_OCR_COLUMN_MIN_WIDTH}}"
+                                        HeaderStyle="{StaticResource OcrHeaderStyle}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ContentControl Name="tickMarkContainer" Content="{StaticResource tickMark}" Visibility="Hidden" />
@@ -125,7 +127,12 @@
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn SortMemberPath="ExistsInLibrary"
                                         Width="{Binding DataContext.ExistsInLibraryColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
-                                        MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH}}">
+                                        MinWidth="{Binding Source={x:Static const:Constants.NON_FICTION_GRID_EXISTS_IN_LIBRARY_COLUMN_MIN_WIDTH}}"
+                                        HeaderStyle="{StaticResource ExistsInLibraryHeaderStyle}">
+                    <DataGridTemplateColumn.Header>
+                        <md:PackIcon Kind="BookMultiple"
+                                     ToolTip="{Binding DataContext.Localization.Columns.InLocalLibrary, Source={StaticResource dataGridViewModel}}" />
+                    </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <ContentControl Name="tickMarkContainer" Content="{StaticResource tickMark}" Visibility="Hidden" />

@@ -64,15 +64,21 @@ namespace LibgenDesktop.Models.Download
 
         public static void SaveDownloadQueue(string downloadQueueFilePath, List<DownloadItem> downloadQueue)
         {
+            string downloadQueueTempFilePath = downloadQueueFilePath + ".new";
             List<StorageDownloadItem> storageDownloads = downloadQueue.Select(ToStorageDownloadItem).ToList();
             JsonSerializer jsonSerializer = new JsonSerializer();
-            using (StreamWriter streamWriter = new StreamWriter(downloadQueueFilePath))
+            using (StreamWriter streamWriter = new StreamWriter(downloadQueueTempFilePath))
             using (JsonTextWriter jsonTextWriter = new JsonTextWriter(streamWriter))
             {
                 jsonTextWriter.Formatting = Formatting.Indented;
                 jsonTextWriter.Indentation = 4;
                 jsonSerializer.Serialize(jsonTextWriter, storageDownloads);
             }
+            if (File.Exists(downloadQueueFilePath))
+            {
+                File.Delete(downloadQueueFilePath);
+            }
+            File.Move(downloadQueueTempFilePath, downloadQueueFilePath);
         }
 
         private static StorageDownloadItem ToStorageDownloadItem(DownloadItem downloadItem)

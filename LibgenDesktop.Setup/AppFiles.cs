@@ -22,6 +22,7 @@ namespace LibgenDesktop.Setup
             AddFile("HtmlAgilityPack.dll");
             AddFile("Microsoft.WindowsAPICodePack.dll");
             AddFile("Microsoft.WindowsAPICodePack.Shell.dll");
+            AddFile("WpfMouseWheelLib.dll");
             X86.Add(new AppFile(@"x86\SQLite.Interop.dll", "SQLite.Interop.dll"));
             X64.Add(new AppFile(@"x64\SQLite.Interop.dll", "SQLite.Interop.dll"));
             AddFile(@"Languages\English.lng");
@@ -31,6 +32,7 @@ namespace LibgenDesktop.Setup
             AddFile(@"Languages\Spanish.lng");
             AddFile(@"Languages\French.lng");
             AddFile(@"Mirrors\mirrors.config");
+            AddFile(@"Mirrors\libgen_io_nonfiction.xslt");
             AddFile(@"Mirrors\libgen_pw_nonfiction.xslt");
             AddFile(@"Mirrors\libgen_pw_fiction.xslt");
             AddFile(@"Mirrors\libgen_pw_scimag.xslt");

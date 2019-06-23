@@ -34,6 +34,7 @@
             "Synchronize": "Синхронизация...",
             "Library": "Библиотека",
             "Database": "База данных...",
+            "SqlDebugger": "Отладчик SQL",
             "Settings": "Настройки",
             "About": "О программе"
         }
@@ -110,7 +111,8 @@
             "Publisher": "Издатель",
             "Format": "Формат",
             "FileSize": "Размер файла",
-            "Ocr": "OCR"
+            "Ocr": "OCR",
+            "InLocalLibrary": "В локальной библиотеке"
         }
     },
     "FictionSearchResultsTab":
@@ -126,7 +128,8 @@
             "Year": "Год",
             "Publisher": "Издатель",
             "Format": "Формат",
-            "FileSize": "Размер файла"
+            "FileSize": "Размер файла",
+            "InLocalLibrary": "В локальной библиотеке"
         }
     },
     "SciMagSearchResultsTab":
@@ -141,7 +144,8 @@
             "Magazine": "Журнал",
             "Year": "Год",
             "FileSize": "Размер файла",
-            "Doi": "DOI"
+            "Doi": "DOI",
+            "InLocalLibrary": "В локальной библиотеке"
         }
     },
     "DetailsTabs":
@@ -282,6 +286,8 @@
         "Archives": "Архивы",
         "AllFiles": "Все файлы",
         "Elapsed": "Прошло {elapsed}",
+        "FreeSpace": "Свободное место на диске: {freeSpace}",
+        "Unknown": "неизвестно",
         "Interrupt": "ПРЕРВАТЬ",
         "Interrupting": "ПРЕРЫВАЕТСЯ...",
         "Close": "ЗАКРЫТЬ",
@@ -318,6 +324,7 @@
             "ImportSuccessful": "Импорт выполнен успешно.",
             "ImportCancelled": "Импорт был прерван пользователем.",
             "DataNotFound": "Не найдены данные для импорта.",
+            "InsufficientDiskSpace": "Недостаточно места на диске.",
             "ImportError": "Импорт завершился с ошибками."
         }
     },
@@ -479,6 +486,8 @@
         "OfflineModePromptTitle": "Автономный режим",
         "OfflineModePromptText": "Синхронизация невозможна при включенном автономном режиме. Выключить автономный режим?",
         "Elapsed": "Прошло {elapsed}",
+        "FreeSpace": "Свободное место на диске: {freeSpace}",
+        "Unknown": "неизвестно",
         "Interrupt": "ПРЕРВАТЬ",
         "Interrupting": "ПРЕРЫВАЕТСЯ...",
         "Close": "ЗАКРЫТЬ",
@@ -508,6 +517,7 @@
             "SynchronizationProgressAddedAndUpdated": "Скачано книг: {downloaded}, добавлено книг: {added}, обновлено книг: {updated}.",
             "SynchronizationSuccessful": "Синхронизация выполнена успешно.",
             "SynchronizationCancelled": "Синхронизация была прервана пользователем.",
+            "InsufficientDiskSpace": "Недостаточно места на диске.",
             "SynchronizationError": "Синхронизация завершилась с ошибками: {error}"
         }
     },
@@ -546,6 +556,8 @@
         "TotalArticles": "Всего статей",
         "LastUpdate": "Последнее обновление",
         "Never": "никогда",
+        "IndexesRequiredTitle": "Индексы базы данных",
+        "IndexesRequiredText": "Требуется создать отсутствующие индексы базы данных. Эта операция может занять длительное время (до одного часа) и не может быть прервана. Вы хотите продолжить?",
         "CreatingIndexes": "Идет создание отсутствующих индексов.{new-line}Пожалуйста, подождите...{new-line}Эта операция не может быть прервана.",
         "ChangeDatabase": "СМЕНИТЬ БАЗУ ДАННЫХ...",
         "BrowseDatabaseDialogTitle": "Местоположение файла базы данных",
@@ -553,6 +565,13 @@
         "AllFiles": "Все файлы",
         "Error": "Ошибка",
         "CannotOpenDatabase": "Произошла ошибка при открытии файла базы данных: {file}",
+        "Close": "ЗАКРЫТЬ"
+    },
+    "SqlDebugger":
+    {
+        "WindowTitle": "Отладчик SQL",
+        "SqlQueryTextBoxHeader": "Введите SQL-запрос",
+        "Copy": "СКОПИРОВАТЬ В БУФЕР ОБМЕНА",
         "Close": "ЗАКРЫТЬ"
     },
     "DownloadManager":
@@ -609,6 +628,7 @@
             "DownloadIncompleteError": "Загрузка завершена не полностью.",
             "FileWriteError": "Ошибка записи файла на диск.",
             "LogLineRequestError": "Не удалось отправить запрос по адресу {url}",
+            "IncorrectRedirectUrl": "Сервер вернул некорректный адрес для переадресации: {url}",
             "UnexpectedError": "Возникла непредвиденная ошибка: {error}"
         }
     },
@@ -715,7 +735,8 @@
         "Advanced":
         {
             "TabHeader": "Дополнительно",
-            "UseLogging": "Записывать отладочную информацию в файл"
+            "UseLogging": "Записывать отладочную информацию в файл",
+            "EnableSqlDebugger": "Включить отладчик SQL"
         }
     },
     "About":

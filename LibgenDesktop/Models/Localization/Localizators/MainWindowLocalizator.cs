@@ -17,6 +17,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             ToolbarSynchronize = Format(translation => translation?.Synchronize);
             ToolbarLibrary = Format(translation => translation?.Library);
             ToolbarDatabase = Format(translation => translation?.Database);
+            ToolbarSqlDebugger = Format(translation => translation?.SqlDebugger);
             ToolbarSettings = Format(translation => translation?.Settings);
             ToolbarAbout = Format(translation => translation?.About);
         }
@@ -30,6 +31,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string ToolbarSynchronize { get; }
         public string ToolbarLibrary { get; }
         public string ToolbarDatabase { get; }
+        public string ToolbarSqlDebugger { get; }
         public string ToolbarSettings { get; }
         public string ToolbarAbout { get; }
 

@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
+using LibgenDesktop.Models.Localization;
 using LibgenDesktop.Models.Localization.Localizators;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Utils;
@@ -22,10 +23,12 @@ namespace LibgenDesktop.ViewModels.Windows
         }
 
         private readonly CancellationTokenSource cancellationTokenSource;
+        private readonly LanguageFormatter languageFormatter;
         private readonly Timer elapsedTimer;
         private bool isInProgress;
         private string status;
         private string elapsed;
+        private string freeSpace;
         private string cancelButtonText;
         private bool isCancelButtonVisible;
         private bool isCancelButtonEnabled;
@@ -41,6 +44,7 @@ namespace LibgenDesktop.ViewModels.Windows
         {
             cancellationTokenSource = new CancellationTokenSource();
             Localization = mainModel.Localization.CurrentLanguage.Synchronization;
+            languageFormatter = mainModel.Localization.CurrentLanguage.Formatter;
             elapsedTimer = new Timer(state => UpdateElapsedTime());
             Logs = new ImportLogPanelViewModel();
             CancelCommand = new Command(Cancel);
@@ -87,6 +91,19 @@ namespace LibgenDesktop.ViewModels.Windows
             set
             {
                 elapsed = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string FreeSpace
+        {
+            get
+            {
+                return freeSpace;
+            }
+            set
+            {
+                freeSpace = value;
                 NotifyPropertyChanged();
             }
         }
@@ -167,6 +184,7 @@ namespace LibgenDesktop.ViewModels.Windows
             lastElapsedTime = TimeSpan.Zero;
             elapsedTimer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
             elapsed = GetElapsedString(lastElapsedTime);
+            freeSpace = String.Empty;
             cancelButtonText = Localization.Interrupt;
             isCancelButtonVisible = true;
             isCancelButtonEnabled = true;
@@ -209,6 +227,10 @@ namespace LibgenDesktop.ViewModels.Windows
                     Logs.ShowErrorLogLine(Localization.LogLineSynchronizationCancelled);
                     Status = Localization.StatusSynchronizationCancelled;
                     break;
+                case MainModel.SynchronizationResult.LOW_DISK_SPACE:
+                    Logs.ShowErrorLogLine(Localization.LogLineInsufficientDiskSpace);
+                    Status = Localization.StatusSynchronizationCancelled;
+                    break;
             }
             IsInProgress = false;
             IsCancelButtonVisible = false;
@@ -242,9 +264,9 @@ namespace LibgenDesktop.ViewModels.Windows
                         }
                         CurrentLogItem.LogLines.Add(Localization.GetLogLineLoadingColumnValues("LibgenId"));
                         break;
-                    case SynchronizationProgress synchronizationProgress:
-                        string secondLogLine = GetSynchronizedBookCountLogLine(synchronizationProgress.ObjectsDownloaded, synchronizationProgress.ObjectsAdded,
-                            synchronizationProgress.ObjectsUpdated);
+                    case SynchronizationObjectsProgress synchronizationObjectsProgress:
+                        string secondLogLine = GetSynchronizedBookCountLogLine(synchronizationObjectsProgress.ObjectsDownloaded,
+                            synchronizationObjectsProgress.ObjectsAdded, synchronizationObjectsProgress.ObjectsUpdated);
                         if (currentStep != Step.SYNCHRONIZATION)
                         {
                             currentStep = Step.SYNCHRONIZATION;
@@ -258,6 +280,11 @@ namespace LibgenDesktop.ViewModels.Windows
                         {
                             CurrentLogItem.LogLines[1] = secondLogLine;
                         }
+                        break;
+                    case SynchronizationDiskSpaceProgress synchronizationDiskSpaceProgress:
+                        string freeSpaceInBytesString = synchronizationDiskSpaceProgress.FreeSpaceInBytes.HasValue ?
+                            languageFormatter.FileSizeToString(synchronizationDiskSpaceProgress.FreeSpaceInBytes.Value, false) : Localization.Unknown;
+                        FreeSpace = Localization.GetFreeSpaceString(freeSpaceInBytesString);
                         break;
                 }
             }

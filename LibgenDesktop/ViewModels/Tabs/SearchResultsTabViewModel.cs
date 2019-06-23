@@ -53,7 +53,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             OpenDetailsCommand = new Command(OpenDetails);
             OpenFileCommand = new Command(OpenFile);
             DownloadCommand = new Command(Download);
-            ExportCommand = new Command(ShowExportPanel);
+            ToggleExportPanelCommand = new Command(ToggleExportPanel);
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
             Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
         }
@@ -214,7 +214,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         public Command SearchCommand { get; }
         public Command InterruptSearchCommand { get; }
         public Command ToggleBookmarkCommand { get; }
-        public Command ExportCommand { get; }
+        public Command ToggleExportPanelCommand { get; }
         public Command BookDataGridEnterKeyCommand { get; }
         public Command OpenDetailsCommand { get; }
         public Command OpenFileCommand { get; }
@@ -250,7 +250,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             Search();
         }
 
-        public void ShowExportPanel()
+        public void ToggleExportPanel()
         {
             if (IsSearchResultsGridVisible)
             {
@@ -258,6 +258,12 @@ namespace LibgenDesktop.ViewModels.Tabs
                 IsStatusBarVisible = false;
                 IsExportPanelVisible = true;
                 ExportPanelViewModel.ShowPanel(SearchQuery);
+            }
+            else if (!ExportPanelViewModel.IsExportInProgress)
+            {
+                IsExportPanelVisible = false;
+                IsSearchResultsGridVisible = true;
+                IsStatusBarVisible = true;
             }
         }
 

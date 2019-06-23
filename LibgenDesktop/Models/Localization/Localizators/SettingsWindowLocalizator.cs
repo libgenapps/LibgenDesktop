@@ -64,64 +64,66 @@ namespace LibgenDesktop.Models.Localization.Localizators
             ExportMaximumRowsPerFile = Format(translation => translation?.Export?.MaximumRowsPerFile);
             AdvancedTabHeader = Format(translation => translation?.Advanced?.TabHeader);
             AdvancedUseLogging = Format(translation => translation?.Advanced?.UseLogging);
+            AdvancedEnableSqlDebugger = Format(translation => translation?.Advanced?.EnableSqlDebugger);
         }
 
-        public string WindowTitle { get; set; }
-        public string Ok { get; set; }
-        public string Cancel { get; set; }
-        public string DiscardChangesPromptTitle { get; set; }
-        public string DiscardChangesPromptText { get; set; }
-        public string GeneralTabHeader { get; set; }
-        public string GeneralLanguage { get; set; }
-        public string GeneralCheckUpdates { get; set; }
-        public string GeneralUpdateCheckIntervalNever { get; set; }
-        public string GeneralUpdateCheckIntervalDaily { get; set; }
-        public string GeneralUpdateCheckIntervalWeekly { get; set; }
-        public string GeneralUpdateCheckIntervalMonthly { get; set; }
-        public string NetworkTabHeader { get; set; }
-        public string NetworkOfflineMode { get; set; }
-        public string NetworkUseHttpProxy { get; set; }
-        public string NetworkProxyAddress { get; set; }
-        public string NetworkProxyAddressRequired { get; set; }
-        public string NetworkProxyPort { get; set; }
-        public string NetworkProxyUserName { get; set; }
-        public string NetworkProxyPassword { get; set; }
-        public string NetworkProxyPasswordWarning { get; set; }
-        public string DownloadTabHeader { get; set; }
-        public string DownloadDownloadMode { get; set; }
-        public string DownloadOpenInBrowser { get; set; }
-        public string DownloadUseDownloadManager { get; set; }
-        public string DownloadDownloadDirectory { get; set; }
-        public string DownloadBrowseDirectoryDialogTitle { get; set; }
-        public string DownloadDownloadDirectoryNotFound { get; set; }
-        public string DownloadTimeout { get; set; }
-        public string DownloadSeconds { get; set; }
-        public string DownloadDownloadAttempts { get; set; }
-        public string DownloadTimes { get; set; }
-        public string DownloadRetryDelay { get; set; }
-        public string MirrorsTabHeader { get; set; }
-        public string MirrorsNonFiction { get; set; }
-        public string MirrorsFiction { get; set; }
-        public string MirrorsSciMagArticles { get; set; }
-        public string MirrorsBooks { get; set; }
-        public string MirrorsArticles { get; set; }
-        public string MirrorsCovers { get; set; }
-        public string MirrorsSynchronization { get; set; }
-        public string MirrorsNoMirror { get; set; }
-        public string SearchTabHeader { get; set; }
-        public string SearchLimitResults { get; set; }
-        public string SearchMaximumResults { get; set; }
-        public string SearchPositiveNumbersOnly { get; set; }
-        public string SearchOpenDetails { get; set; }
-        public string SearchInModalWindow { get; set; }
-        public string SearchInNonModalWindow { get; set; }
-        public string SearchInNewTab { get; set; }
-        public string ExportTabHeader { get; set; }
-        public string ExportOpenResults { get; set; }
-        public string ExportSplitIntoMultipleFiles { get; set; }
-        public string ExportMaximumRowsPerFile { get; set; }
-        public string AdvancedTabHeader { get; set; }
-        public string AdvancedUseLogging { get; set; }
+        public string WindowTitle { get; }
+        public string Ok { get; }
+        public string Cancel { get; }
+        public string DiscardChangesPromptTitle { get; }
+        public string DiscardChangesPromptText { get; }
+        public string GeneralTabHeader { get; }
+        public string GeneralLanguage { get; }
+        public string GeneralCheckUpdates { get; }
+        public string GeneralUpdateCheckIntervalNever { get; }
+        public string GeneralUpdateCheckIntervalDaily { get; }
+        public string GeneralUpdateCheckIntervalWeekly { get; }
+        public string GeneralUpdateCheckIntervalMonthly { get; }
+        public string NetworkTabHeader { get; }
+        public string NetworkOfflineMode { get; }
+        public string NetworkUseHttpProxy { get; }
+        public string NetworkProxyAddress { get; }
+        public string NetworkProxyAddressRequired { get; }
+        public string NetworkProxyPort { get; }
+        public string NetworkProxyUserName { get; }
+        public string NetworkProxyPassword { get; }
+        public string NetworkProxyPasswordWarning { get; }
+        public string DownloadTabHeader { get; }
+        public string DownloadDownloadMode { get; }
+        public string DownloadOpenInBrowser { get; }
+        public string DownloadUseDownloadManager { get; }
+        public string DownloadDownloadDirectory { get; }
+        public string DownloadBrowseDirectoryDialogTitle { get; }
+        public string DownloadDownloadDirectoryNotFound { get; }
+        public string DownloadTimeout { get; }
+        public string DownloadSeconds { get; }
+        public string DownloadDownloadAttempts { get; }
+        public string DownloadTimes { get; }
+        public string DownloadRetryDelay { get; }
+        public string MirrorsTabHeader { get; }
+        public string MirrorsNonFiction { get; }
+        public string MirrorsFiction { get; }
+        public string MirrorsSciMagArticles { get; }
+        public string MirrorsBooks { get; }
+        public string MirrorsArticles { get; }
+        public string MirrorsCovers { get; }
+        public string MirrorsSynchronization { get; }
+        public string MirrorsNoMirror { get; }
+        public string SearchTabHeader { get; }
+        public string SearchLimitResults { get; }
+        public string SearchMaximumResults { get; }
+        public string SearchPositiveNumbersOnly { get; }
+        public string SearchOpenDetails { get; }
+        public string SearchInModalWindow { get; }
+        public string SearchInNonModalWindow { get; }
+        public string SearchInNewTab { get; }
+        public string ExportTabHeader { get; }
+        public string ExportOpenResults { get; }
+        public string ExportSplitIntoMultipleFiles { get; }
+        public string ExportMaximumRowsPerFile { get; }
+        public string AdvancedTabHeader { get; }
+        public string AdvancedUseLogging { get; }
+        public string AdvancedEnableSqlDebugger { get; }
 
         public string GetNetworkProxyPortValidation(int min, int max) => Format(translation => translation?.Network?.ProxyPortValidation, new { min, max });
         public string GetDownloadTimeoutValidation(int min, int max) => Format(translation => translation?.Download?.TimeoutValidation, new { min, max });
