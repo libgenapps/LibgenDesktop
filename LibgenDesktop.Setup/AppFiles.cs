@@ -31,8 +31,10 @@ namespace LibgenDesktop.Setup
             AddFile(@"Languages\Ukrainian.lng");
             AddFile(@"Languages\Spanish.lng");
             AddFile(@"Languages\French.lng");
+            AddFile(@"Languages\Simplified Chinese.lng");
             AddFile(@"Mirrors\mirrors.config");
             AddFile(@"Mirrors\libgen_io_nonfiction.xslt");
+            AddFile(@"Mirrors\libgen_io_scimag.xslt");
             AddFile(@"Mirrors\libgen_pw_nonfiction.xslt");
             AddFile(@"Mirrors\libgen_pw_fiction.xslt");
             AddFile(@"Mirrors\libgen_pw_scimag.xslt");

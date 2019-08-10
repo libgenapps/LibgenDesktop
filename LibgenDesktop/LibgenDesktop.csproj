@@ -698,6 +698,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\libgen_io_nonfiction.xslt</TargetPath>
     </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_io_scimag.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\libgen_io_scimag.xslt</TargetPath>
+    </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Mirrors\libgen_pw_nonfiction.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\libgen_pw_nonfiction.xslt</TargetPath>
@@ -753,6 +757,10 @@
     <ContentWithTargetPath Include="Resources\Languages\French.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Languages\French.lng</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Languages\Simplified Chinese.lng">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Languages\Simplified Chinese.lng</TargetPath>
     </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>

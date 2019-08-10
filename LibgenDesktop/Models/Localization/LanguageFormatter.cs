@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using LibgenDesktop.Common;
 
 namespace LibgenDesktop.Models.Localization
 {
     internal class LanguageFormatter
     {
         private readonly List<Translation> prioritizedTranslationList;
+        private readonly CultureInfo cultureInfo;
         private readonly NumberFormatInfo numberFormatInfo;
         private readonly string dateFormat;
         private readonly string timeFormat;
@@ -16,7 +19,20 @@ namespace LibgenDesktop.Models.Localization
 
         public LanguageFormatter(List<Translation> prioritizedTranslationList)
         {
+            if (!prioritizedTranslationList.Any())
+            {
+                throw new Exception("No available translations.");
+            }
             this.prioritizedTranslationList = prioritizedTranslationList;
+            try
+            {
+                cultureInfo = new CultureInfo(prioritizedTranslationList.First().General.CultureCode);
+            }
+            catch (Exception exception)
+            {
+                Logger.Exception(exception);
+                cultureInfo = CultureInfo.InvariantCulture;
+            }
             numberFormatInfo = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
             numberFormatInfo.NumberDecimalSeparator = GetTranslationFieldValue(translation => translation?.DecimalSeparator);
             numberFormatInfo.NumberGroupSeparator = GetTranslationFieldValue(translation => translation?.ThousandsSeparator);
@@ -50,17 +66,17 @@ namespace LibgenDesktop.Models.Localization
 
         public string ToFormattedDateString(DateTime dateTime)
         {
-            return dateTime.ToString(dateFormat, CultureInfo.InvariantCulture);
+            return dateTime.ToString(dateFormat, cultureInfo);
         }
 
         public string ToFormattedTimeString(DateTime dateTime)
         {
-            return dateTime.ToString(timeFormat, CultureInfo.InvariantCulture);
+            return dateTime.ToString(timeFormat, cultureInfo);
         }
 
         public string ToFormattedDateTimeString(DateTime dateTime)
         {
-            return dateTime.ToString(dateTimeFormat, CultureInfo.InvariantCulture);
+            return dateTime.ToString(dateTimeFormat, cultureInfo);
         }
 
         public string FileSizeToString(long fileSize, bool showBytes)
