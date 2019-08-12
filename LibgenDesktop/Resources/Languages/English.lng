@@ -636,7 +636,7 @@
     {
         "WindowTitle": "Application update",
         "UpdateAvailable": "New version of Libgen Desktop is available",
-        "NewVersion": "New version: {version} released at {date}",
+        "NewVersion": "New version: {version} released on {date}",
         "Download": "DOWNLOAD",
         "DownloadAndInstall": "DOWNLOAD AND INSTALL",
         "SkipThisVersion": "SKIP THIS VERSION",
@@ -743,12 +743,12 @@
     {
         "WindowTitle": "About Libgen Desktop",
         "ApplicationName": "Libgen Desktop",
-        "Version": "Current version: {version} released at {date}",
+        "Version": "Current version: {version} released on {date}",
         "CheckForUpdates": "CHECK FOR UPDATES",
         "CheckingUpdates": "CHECKING UPDATES...",
         "OfflineModeIsOnTooltip": "Offline mode is on",
         "LatestVersion": "You are using the latest version.",
-        "NewVersionAvailable": "New version is available: {version} released at {date}",
+        "NewVersionAvailable": "New version is available: {version} released on {date}",
         "Update": "UPDATE",
         "Translators": "Translators:"
     },

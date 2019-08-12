@@ -5,9 +5,9 @@ namespace LibgenDesktop.Common
     internal static class Constants
     {
         public const string DATABASE_METADATA_APP_NAME = "LibgenDesktop";
-        public const string CURRENT_VERSION = "1.3.2";
-        public const string CURRENT_GITHUB_RELEASE_NAME = "1.3.2";
-        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2019, 6, 23);
+        public const string CURRENT_VERSION = "1.3.3";
+        public const string CURRENT_GITHUB_RELEASE_NAME = "1.3.3";
+        public static readonly DateTime CURRENT_GITHUB_RELEASE_DATE = new DateTime(2019, 8, 12);
         public const string CURRENT_DATABASE_VERSION = "1.2.1";
 
         public const string APP_SETTINGS_FILE_NAME = "libgen.config";
@@ -114,7 +114,7 @@ namespace LibgenDesktop.Common
         public const int DEFAULT_SCI_MAG_GRID_FILESIZE_COLUMN_WIDTH = 150;
         public const int DEFAULT_SCI_MAG_GRID_DOI_COLUMN_WIDTH = 290;
         public const int DEFAULT_SCI_MAG_GRID_EXISTS_IN_LIBRARY_COLUMN_WIDTH = 55;
-        public const string DEFAULT_DOWNLOAD_MIRROR_NAME = "libgen.io";
+        public const string DEFAULT_DOWNLOAD_MIRROR_NAME = "gen.lib.rus.ec";
         public const string DEFAULT_SYNCHRONIZATION_MIRROR_NAME = "gen.lib.rus.ec";
         public const int DEFAULT_MAXIMUM_SEARCH_RESULT_COUNT = 50000;
 

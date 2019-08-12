@@ -431,6 +431,7 @@ namespace LibgenDesktop.ViewModels.Tabs
                     if (selectionButtonStatesUpdateRequired)
                     {
                         UpdateSelectionButtonStates();
+                        UpdateSelectedDownloadLogs();
                     }
                     if (nonSelectionButtonStatesUpdateRequired)
                     {
@@ -449,6 +450,7 @@ namespace LibgenDesktop.ViewModels.Tabs
                     if (selectionButtonStatesUpdateRequired)
                     {
                         UpdateSelectionButtonStates();
+                        UpdateSelectedDownloadLogs();
                     }
                     if (nonSelectionButtonStatesUpdateRequired)
                     {

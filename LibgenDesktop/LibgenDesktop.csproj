@@ -694,25 +694,41 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\mirrors.config</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_io_nonfiction.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\booksdescr_org_nonfiction.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_io_nonfiction.xslt</TargetPath>
+      <TargetPath>Mirrors\booksdescr_org_nonfiction.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_io_scimag.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\booksdescr_org_fiction.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_io_scimag.xslt</TargetPath>
+      <TargetPath>Mirrors\booksdescr_org_fiction.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_pw_nonfiction.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\booksdescr_org_scimag.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_pw_nonfiction.xslt</TargetPath>
+      <TargetPath>Mirrors\booksdescr_org_scimag.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_pw_fiction.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_nonfiction_step1.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_pw_fiction.xslt</TargetPath>
+      <TargetPath>Mirrors\libgen_me_nonfiction_step1.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_pw_scimag.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_nonfiction_step2.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_pw_scimag.xslt</TargetPath>
+      <TargetPath>Mirrors\libgen_me_nonfiction_step2.xslt</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_fiction_step1.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\libgen_me_fiction_step1.xslt</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_fiction_step2.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\libgen_me_fiction_step2.xslt</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_scimag_step1.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\libgen_me_scimag_step1.xslt</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_scimag_step2.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\libgen_me_scimag_step2.xslt</TargetPath>
     </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Mirrors\bookfi_net.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using LibgenDesktop.Common;
 using LibgenDesktop.Models.Entities;
+using LibgenDesktop.Models.Utils;
 
 namespace LibgenDesktop.Models.Database
 {
@@ -371,10 +372,10 @@ namespace LibgenDesktop.Models.Database
                         identifierPlainParameter.Value = book.IdentifierPlain;
                         libgenIdParameter.Value = book.LibgenId;
                         insertCommand.ExecuteNonQuery();
-                        titleFtsParameter.Value = book.Title;
-                        seriesFtsParameter.Value = book.Series;
-                        authorsFtsParameter.Value = book.Authors;
-                        publisherFtsParameter.Value = book.Publisher;
+                        titleFtsParameter.Value = book.Title.SeparateCjkCharactersWithSpaces();
+                        seriesFtsParameter.Value = book.Series.SeparateCjkCharactersWithSpaces();
+                        authorsFtsParameter.Value = book.Authors.SeparateCjkCharactersWithSpaces();
+                        publisherFtsParameter.Value = book.Publisher.SeparateCjkCharactersWithSpaces();
                         identifierPlainFtsParameter.Value = book.IdentifierPlain;
                         insertFtsCommand.ExecuteNonQuery();
                     }
@@ -456,10 +457,10 @@ namespace LibgenDesktop.Models.Database
                     foreach (NonFictionBook book in books)
                     {
                         idDeleteFtsParameter.Value = book.Id;
-                        titleDeleteFtsParameter.Value = book.Title;
-                        seriesDeleteFtsParameter.Value = book.Series;
-                        authorsDeleteFtsParameter.Value = book.Authors;
-                        publisherDeleteFtsParameter.Value = book.Publisher;
+                        titleDeleteFtsParameter.Value = book.Title.SeparateCjkCharactersWithSpaces();
+                        seriesDeleteFtsParameter.Value = book.Series.SeparateCjkCharactersWithSpaces();
+                        authorsDeleteFtsParameter.Value = book.Authors.SeparateCjkCharactersWithSpaces();
+                        publisherDeleteFtsParameter.Value = book.Publisher.SeparateCjkCharactersWithSpaces();
                         identifierPlainDeleteFtsParameter.Value = book.IdentifierPlain;
                         deleteFtsCommand.ExecuteNonQuery();
                         idParameter.Value = book.Id;
@@ -511,10 +512,10 @@ namespace LibgenDesktop.Models.Database
                         identifierPlainParameter.Value = book.IdentifierPlain;
                         updateCommand.ExecuteNonQuery();
                         idFtsParameter.Value = book.Id;
-                        titleFtsParameter.Value = book.Title;
-                        seriesFtsParameter.Value = book.Series;
-                        authorsFtsParameter.Value = book.Authors;
-                        publisherFtsParameter.Value = book.Publisher;
+                        titleFtsParameter.Value = book.Title.SeparateCjkCharactersWithSpaces();
+                        seriesFtsParameter.Value = book.Series.SeparateCjkCharactersWithSpaces();
+                        authorsFtsParameter.Value = book.Authors.SeparateCjkCharactersWithSpaces();
+                        publisherFtsParameter.Value = book.Publisher.SeparateCjkCharactersWithSpaces();
                         identifierPlainFtsParameter.Value = book.IdentifierPlain;
                         insertFtsWithIdCommand.ExecuteNonQuery();
                     }
@@ -786,31 +787,31 @@ namespace LibgenDesktop.Models.Database
                         visibleParameter.Value = book.Visible;
                         libgenIdParameter.Value = book.LibgenId;
                         insertCommand.ExecuteNonQuery();
-                        titleFtsParameter.Value = book.Title;
-                        authorFamily1FtsParameter.Value = book.AuthorFamily1;
-                        authorName1FtsParameter.Value = book.AuthorName1;
-                        authorSurname1FtsParameter.Value = book.AuthorSurname1;
-                        pseudonim1FtsParameter.Value = book.Pseudonim1;
-                        authorFamily2FtsParameter.Value = book.AuthorFamily2;
-                        authorName2FtsParameter.Value = book.AuthorName2;
-                        authorSurname2FtsParameter.Value = book.AuthorSurname2;
-                        pseudonim2FtsParameter.Value = book.Pseudonim2;
-                        authorFamily3FtsParameter.Value = book.AuthorFamily3;
-                        authorName3FtsParameter.Value = book.AuthorName3;
-                        authorSurname3FtsParameter.Value = book.AuthorSurname3;
-                        pseudonim3FtsParameter.Value = book.Pseudonim3;
-                        authorFamily4FtsParameter.Value = book.AuthorFamily4;
-                        authorName4FtsParameter.Value = book.AuthorName4;
-                        authorSurname4FtsParameter.Value = book.AuthorSurname4;
-                        pseudonim4FtsParameter.Value = book.Pseudonim4;
+                        titleFtsParameter.Value = book.Title.SeparateCjkCharactersWithSpaces();
+                        authorFamily1FtsParameter.Value = book.AuthorFamily1.SeparateCjkCharactersWithSpaces();
+                        authorName1FtsParameter.Value = book.AuthorName1.SeparateCjkCharactersWithSpaces();
+                        authorSurname1FtsParameter.Value = book.AuthorSurname1.SeparateCjkCharactersWithSpaces();
+                        pseudonim1FtsParameter.Value = book.Pseudonim1.SeparateCjkCharactersWithSpaces();
+                        authorFamily2FtsParameter.Value = book.AuthorFamily2.SeparateCjkCharactersWithSpaces();
+                        authorName2FtsParameter.Value = book.AuthorName2.SeparateCjkCharactersWithSpaces();
+                        authorSurname2FtsParameter.Value = book.AuthorSurname2.SeparateCjkCharactersWithSpaces();
+                        pseudonim2FtsParameter.Value = book.Pseudonim2.SeparateCjkCharactersWithSpaces();
+                        authorFamily3FtsParameter.Value = book.AuthorFamily3.SeparateCjkCharactersWithSpaces();
+                        authorName3FtsParameter.Value = book.AuthorName3.SeparateCjkCharactersWithSpaces();
+                        authorSurname3FtsParameter.Value = book.AuthorSurname3.SeparateCjkCharactersWithSpaces();
+                        pseudonim3FtsParameter.Value = book.Pseudonim3.SeparateCjkCharactersWithSpaces();
+                        authorFamily4FtsParameter.Value = book.AuthorFamily4.SeparateCjkCharactersWithSpaces();
+                        authorName4FtsParameter.Value = book.AuthorName4.SeparateCjkCharactersWithSpaces();
+                        authorSurname4FtsParameter.Value = book.AuthorSurname4.SeparateCjkCharactersWithSpaces();
+                        pseudonim4FtsParameter.Value = book.Pseudonim4.SeparateCjkCharactersWithSpaces();
                         russianAuthorFamilyFtsParameter.Value = book.RussianAuthorFamily;
                         russianAuthorNameFtsParameter.Value = book.RussianAuthorName;
                         russianAuthorSurnameFtsParameter.Value = book.RussianAuthorSurname;
-                        series1FtsParameter.Value = book.Series1;
-                        series2FtsParameter.Value = book.Series2;
-                        series3FtsParameter.Value = book.Series3;
-                        series4FtsParameter.Value = book.Series4;
-                        publisherFtsParameter.Value = book.Publisher;
+                        series1FtsParameter.Value = book.Series1.SeparateCjkCharactersWithSpaces();
+                        series2FtsParameter.Value = book.Series2.SeparateCjkCharactersWithSpaces();
+                        series3FtsParameter.Value = book.Series3.SeparateCjkCharactersWithSpaces();
+                        series4FtsParameter.Value = book.Series4.SeparateCjkCharactersWithSpaces();
+                        publisherFtsParameter.Value = book.Publisher.SeparateCjkCharactersWithSpaces();
                         identifierFtsParameter.Value = book.Identifier;
                         insertFtsCommand.ExecuteNonQuery();
                     }
@@ -936,31 +937,31 @@ namespace LibgenDesktop.Models.Database
                     foreach (FictionBook book in books)
                     {
                         idDeleteFtsParameter.Value = book.Id;
-                        titleDeleteFtsParameter.Value = book.Title;
-                        authorFamily1DeleteFtsParameter.Value = book.AuthorFamily1;
-                        authorName1DeleteFtsParameter.Value = book.AuthorName1;
-                        authorSurname1DeleteFtsParameter.Value = book.AuthorSurname1;
-                        pseudonim1DeleteFtsParameter.Value = book.Pseudonim1;
-                        authorFamily2DeleteFtsParameter.Value = book.AuthorFamily2;
-                        authorName2DeleteFtsParameter.Value = book.AuthorName2;
-                        authorSurname2DeleteFtsParameter.Value = book.AuthorSurname2;
-                        pseudonim2DeleteFtsParameter.Value = book.Pseudonim2;
-                        authorFamily3DeleteFtsParameter.Value = book.AuthorFamily3;
-                        authorName3DeleteFtsParameter.Value = book.AuthorName3;
-                        authorSurname3DeleteFtsParameter.Value = book.AuthorSurname3;
-                        pseudonim3DeleteFtsParameter.Value = book.Pseudonim3;
-                        authorFamily4DeleteFtsParameter.Value = book.AuthorFamily4;
-                        authorName4DeleteFtsParameter.Value = book.AuthorName4;
-                        authorSurname4DeleteFtsParameter.Value = book.AuthorSurname4;
-                        pseudonim4DeleteFtsParameter.Value = book.Pseudonim4;
+                        titleDeleteFtsParameter.Value = book.Title.SeparateCjkCharactersWithSpaces();
+                        authorFamily1DeleteFtsParameter.Value = book.AuthorFamily1.SeparateCjkCharactersWithSpaces();
+                        authorName1DeleteFtsParameter.Value = book.AuthorName1.SeparateCjkCharactersWithSpaces();
+                        authorSurname1DeleteFtsParameter.Value = book.AuthorSurname1.SeparateCjkCharactersWithSpaces();
+                        pseudonim1DeleteFtsParameter.Value = book.Pseudonim1.SeparateCjkCharactersWithSpaces();
+                        authorFamily2DeleteFtsParameter.Value = book.AuthorFamily2.SeparateCjkCharactersWithSpaces();
+                        authorName2DeleteFtsParameter.Value = book.AuthorName2.SeparateCjkCharactersWithSpaces();
+                        authorSurname2DeleteFtsParameter.Value = book.AuthorSurname2.SeparateCjkCharactersWithSpaces();
+                        pseudonim2DeleteFtsParameter.Value = book.Pseudonim2.SeparateCjkCharactersWithSpaces();
+                        authorFamily3DeleteFtsParameter.Value = book.AuthorFamily3.SeparateCjkCharactersWithSpaces();
+                        authorName3DeleteFtsParameter.Value = book.AuthorName3.SeparateCjkCharactersWithSpaces();
+                        authorSurname3DeleteFtsParameter.Value = book.AuthorSurname3.SeparateCjkCharactersWithSpaces();
+                        pseudonim3DeleteFtsParameter.Value = book.Pseudonim3.SeparateCjkCharactersWithSpaces();
+                        authorFamily4DeleteFtsParameter.Value = book.AuthorFamily4.SeparateCjkCharactersWithSpaces();
+                        authorName4DeleteFtsParameter.Value = book.AuthorName4.SeparateCjkCharactersWithSpaces();
+                        authorSurname4DeleteFtsParameter.Value = book.AuthorSurname4.SeparateCjkCharactersWithSpaces();
+                        pseudonim4DeleteFtsParameter.Value = book.Pseudonim4.SeparateCjkCharactersWithSpaces();
                         russianAuthorFamilyDeleteFtsParameter.Value = book.RussianAuthorFamily;
                         russianAuthorNameDeleteFtsParameter.Value = book.RussianAuthorName;
                         russianAuthorSurnameDeleteFtsParameter.Value = book.RussianAuthorSurname;
-                        series1DeleteFtsParameter.Value = book.Series1;
-                        series2DeleteFtsParameter.Value = book.Series2;
-                        series3DeleteFtsParameter.Value = book.Series3;
-                        series4DeleteFtsParameter.Value = book.Series4;
-                        publisherDeleteFtsParameter.Value = book.Publisher;
+                        series1DeleteFtsParameter.Value = book.Series1.SeparateCjkCharactersWithSpaces();
+                        series2DeleteFtsParameter.Value = book.Series2.SeparateCjkCharactersWithSpaces();
+                        series3DeleteFtsParameter.Value = book.Series3.SeparateCjkCharactersWithSpaces();
+                        series4DeleteFtsParameter.Value = book.Series4.SeparateCjkCharactersWithSpaces();
+                        publisherDeleteFtsParameter.Value = book.Publisher.SeparateCjkCharactersWithSpaces();
                         identifierDeleteFtsParameter.Value = book.Identifier;
                         deleteFtsCommand.ExecuteNonQuery();
                         idParameter.Value = book.Id;
@@ -1014,31 +1015,31 @@ namespace LibgenDesktop.Models.Database
                         visibleParameter.Value = book.Visible;
                         updateCommand.ExecuteNonQuery();
                         idFtsParameter.Value = book.Id;
-                        titleFtsParameter.Value = book.Title;
-                        authorFamily1FtsParameter.Value = book.AuthorFamily1;
-                        authorName1FtsParameter.Value = book.AuthorName1;
-                        authorSurname1FtsParameter.Value = book.AuthorSurname1;
-                        pseudonim1FtsParameter.Value = book.Pseudonim1;
-                        authorFamily2FtsParameter.Value = book.AuthorFamily2;
-                        authorName2FtsParameter.Value = book.AuthorName2;
-                        authorSurname2FtsParameter.Value = book.AuthorSurname2;
-                        pseudonim2FtsParameter.Value = book.Pseudonim2;
-                        authorFamily3FtsParameter.Value = book.AuthorFamily3;
-                        authorName3FtsParameter.Value = book.AuthorName3;
-                        authorSurname3FtsParameter.Value = book.AuthorSurname3;
-                        pseudonim3FtsParameter.Value = book.Pseudonim3;
-                        authorFamily4FtsParameter.Value = book.AuthorFamily4;
-                        authorName4FtsParameter.Value = book.AuthorName4;
-                        authorSurname4FtsParameter.Value = book.AuthorSurname4;
-                        pseudonim4FtsParameter.Value = book.Pseudonim4;
+                        titleFtsParameter.Value = book.Title.SeparateCjkCharactersWithSpaces();
+                        authorFamily1FtsParameter.Value = book.AuthorFamily1.SeparateCjkCharactersWithSpaces();
+                        authorName1FtsParameter.Value = book.AuthorName1.SeparateCjkCharactersWithSpaces();
+                        authorSurname1FtsParameter.Value = book.AuthorSurname1.SeparateCjkCharactersWithSpaces();
+                        pseudonim1FtsParameter.Value = book.Pseudonim1.SeparateCjkCharactersWithSpaces();
+                        authorFamily2FtsParameter.Value = book.AuthorFamily2.SeparateCjkCharactersWithSpaces();
+                        authorName2FtsParameter.Value = book.AuthorName2.SeparateCjkCharactersWithSpaces();
+                        authorSurname2FtsParameter.Value = book.AuthorSurname2.SeparateCjkCharactersWithSpaces();
+                        pseudonim2FtsParameter.Value = book.Pseudonim2.SeparateCjkCharactersWithSpaces();
+                        authorFamily3FtsParameter.Value = book.AuthorFamily3.SeparateCjkCharactersWithSpaces();
+                        authorName3FtsParameter.Value = book.AuthorName3.SeparateCjkCharactersWithSpaces();
+                        authorSurname3FtsParameter.Value = book.AuthorSurname3.SeparateCjkCharactersWithSpaces();
+                        pseudonim3FtsParameter.Value = book.Pseudonim3.SeparateCjkCharactersWithSpaces();
+                        authorFamily4FtsParameter.Value = book.AuthorFamily4.SeparateCjkCharactersWithSpaces();
+                        authorName4FtsParameter.Value = book.AuthorName4.SeparateCjkCharactersWithSpaces();
+                        authorSurname4FtsParameter.Value = book.AuthorSurname4.SeparateCjkCharactersWithSpaces();
+                        pseudonim4FtsParameter.Value = book.Pseudonim4.SeparateCjkCharactersWithSpaces();
                         russianAuthorFamilyFtsParameter.Value = book.RussianAuthorFamily;
                         russianAuthorNameFtsParameter.Value = book.RussianAuthorName;
                         russianAuthorSurnameFtsParameter.Value = book.RussianAuthorSurname;
-                        series1FtsParameter.Value = book.Series1;
-                        series2FtsParameter.Value = book.Series2;
-                        series3FtsParameter.Value = book.Series3;
-                        series4FtsParameter.Value = book.Series4;
-                        publisherFtsParameter.Value = book.Publisher;
+                        series1FtsParameter.Value = book.Series1.SeparateCjkCharactersWithSpaces();
+                        series2FtsParameter.Value = book.Series2.SeparateCjkCharactersWithSpaces();
+                        series3FtsParameter.Value = book.Series3.SeparateCjkCharactersWithSpaces();
+                        series4FtsParameter.Value = book.Series4.SeparateCjkCharactersWithSpaces();
+                        publisherFtsParameter.Value = book.Publisher.SeparateCjkCharactersWithSpaces();
                         identifierFtsParameter.Value = book.Identifier;
                         insertFtsWithIdCommand.ExecuteNonQuery();
                     }
@@ -1251,8 +1252,8 @@ namespace LibgenDesktop.Models.Database
                         piiParameter.Value = article.Pii;
                         libgenIdParameter.Value = article.LibgenId;
                         insertCommand.ExecuteNonQuery();
-                        titleFtsParameter.Value = article.Title;
-                        authorsFtsParameter.Value = article.Authors;
+                        titleFtsParameter.Value = article.Title.SeparateCjkCharactersWithSpaces();
+                        authorsFtsParameter.Value = article.Authors.SeparateCjkCharactersWithSpaces();
                         doiFtsParameter.Value = article.Doi;
                         doi2FtsParameter.Value = article.Doi2;
                         pubmedIdFtsParameter.Value = article.PubmedId;
@@ -1597,7 +1598,7 @@ namespace LibgenDesktop.Models.Database
 
         private string EscapeSearchQuery(string originalSearchQuery)
         {
-            return SearchQueryParser.GetEscapedQuery(originalSearchQuery);
+            return SearchQueryParser.GetEscapedQuery(originalSearchQuery.SeparateCjkCharactersWithSpaces());
         }
 
         private string GetSearchCommandWithLimit(string searchCommand, int? resultLimit)

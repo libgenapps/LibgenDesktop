@@ -56,7 +56,7 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-        <c:DownloaderListBox Grid.Row="1" x:Name="downloaderListBox" ItemsSource="{Binding Downloads}"
+        <c:DownloaderListBox Grid.Row="1" x:Name="downloaderListBox" ItemsSource="{Binding Downloads, IsAsync=True}"
                              SelectedItem="{Binding SelectedDownload, Mode=OneWay}" SelectedRows="{Binding SelectedRows, Mode=OneWayToSource}"
                              SelectionChangedCommand="{Binding SelectionChangedCommand}" DoubleClickCommand="{Binding DownloaderListBoxDoubleClickCommand}"
                              Style="{StaticResource DownloaderListBox}" ItemContainerStyle="{StaticResource DownloaderListBoxItem}">

@@ -34,6 +34,7 @@
             "Synchronize": "Sincronizare...",
             "Library": "Bibliotecă",
             "Database": "Bază de date...",
+            "SqlDebugger": "Depanator SQL",
             "Settings": "Setări",
             "About": "Despre"
         }
@@ -110,8 +111,9 @@
             "Publisher": "Editura",
             "Format": "Formatul",
             "FileSize": "Dimensiunea",
-            "Ocr": "Recunoaștere text"
-        }
+            "Ocr": "Recunoaștere text",
+            "InLocalLibrary": "În Biblioteca locală"
+       }
     },
     "FictionSearchResultsTab":
     {
@@ -126,7 +128,8 @@
             "Year": "Anul",
             "Publisher": "Editura",
             "Format": "Formatul",
-            "FileSize": "Dimensiunea"
+            "FileSize": "Dimensiunea",
+            "InLocalLibrary": "În Biblioteca locală"
         }
     },
     "SciMagSearchResultsTab":
@@ -141,8 +144,9 @@
             "Magazine": "Periodicul",
             "Year": "Anul",
             "FileSize": "Dimensiunea",
-            "Doi": "DOI"
-        }
+            "Doi": "DOI",
+            "InLocalLibrary": "În Biblioteca locală"
+       }
     },
     "DetailsTabs":
     {
@@ -190,8 +194,8 @@
         "City": "Orașul",
         "Edition": "Editura",
         "Pages": "Pagini",
-        "BodyMatterPages": "Nr. pagini fără coperți",
-        "TotalPages": "Toate paginile",
+        "BodyMatterPages": "format fizic",
+        "TotalPages": "format electronic",
         "Tags": "Tag-uri",
         "Md5Hash": "MD5 hash",
         "Comments": "Comentarii",
@@ -282,6 +286,7 @@
         "Archives": "Arhiva",
         "AllFiles": "Toate fișierele",
         "Elapsed": "Timp scurs: {elapsed}",
+        "FreeSpace": "Spațiu liber rămas pe dispozitiv: {freeSpace}",
         "Unknown": "necunoscut",
         "Interrupt": "OPREȘTE",
         "Interrupting": "SE OPREȘTE...",
@@ -319,6 +324,7 @@
             "ImportSuccessful": "Importarea a fost încheiată cu succes.",
             "ImportCancelled": "Importarea a fost oprită de către utilizator.",
             "DataNotFound": "Nu s-au găsit datele pentru importare.",
+            "InsufficientDiskSpace": "Spațiu de stocare insuficient.",
             "ImportError": "S-a produs o eroare în timpul importării."
         }
     },
@@ -480,6 +486,7 @@
         "OfflineModePromptTitle": "Modul Offline",
         "OfflineModePromptText": "Sincronizarea nu poate începe cât timp este activat Modul Offline. Vreți să activați Modul Online?",
         "Elapsed": "Timp scurs: {elapsed}",
+        "FreeSpace": "Spațiu liber rămas pe dispozitiv: {freeSpace}",
         "Unknown": "necunoscut",
         "Interrupt": "ÎNTRERUPE",
         "Interrupting": "SE ÎNTRERUPE...",
@@ -510,6 +517,7 @@
             "SynchronizationProgressAddedAndUpdated": "Cărți descărcate: {downloaded}, adăugate: {added}, actualizate: {updated}.",
             "SynchronizationSuccessful": "Sincronizarea s-a încheiat cu succes.",
             "SynchronizationCancelled": "Sincronizarea a fost oprită de utilizator.",
+            "InsufficientDiskSpace": "Spațiu de stocare insuficient.",
             "SynchronizationError": "S-a produs o eroare în timpul sincronizării: {error}"
         }
     },
@@ -548,6 +556,8 @@
         "TotalArticles": "Articole disponibile",
         "LastUpdate": "Ultima actualizare",
         "Never": "niciodată",
+        "IndexesRequiredTitle": "Indecșii Bazei de date",
+        "IndexesRequiredText": "Libgen Desktop trebuie să creeze indecșii lipsă ai Bazei de date. Această operație poate dura mai mult timp (aproximativ o oră) și nu poate fi întreruptă. Vreți să continuați?",
         "CreatingIndexes": "Vă rugăm așteptați. Se creează indecșii lipsă...{new-line}Această operațiune nu poate fi întreruptă.",
         "ChangeDatabase": "SCHIMBĂ BAZA DE DATE...",
         "BrowseDatabaseDialogTitle": "Locația Bazei de date",
@@ -559,6 +569,8 @@
     },
     "SqlDebugger":
     {
+        "WindowTitle": "Depanator SQL",
+        "SqlQueryTextBoxHeader": "Introdu comanda/interogarea SQL",
         "Copy": "COPIE IN CLIPBOARD",
         "Close": "ÎNCHIDE"
     },
@@ -616,6 +628,7 @@
             "DownloadIncompleteError": "Serverul indică faptul că descărcarea fișierelor este completă, dar nu este.",
             "FileWriteError": "eroare de scriere a fișierului.",
             "LogLineRequestError": "Nu s-a putut trimte cererea către {url}",
+            "IncorrectRedirectUrl": "Serverul a returnat un URL de redirecționare incorect: {url}",
             "UnexpectedError": "S-a produs o eroare neașteptată: {error}"
         }
     },
@@ -722,7 +735,8 @@
         "Advanced":
         {
             "TabHeader": "Avansat",
-            "UseLogging": "Scrie diagnosticul într-un fișier"
+            "UseLogging": "Scrie diagnosticul într-un fișier",
+            "EnableSqlDebugger": "Activează Depanatorul SQL"
         }
     },
     "About":
