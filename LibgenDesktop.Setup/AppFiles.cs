@@ -32,21 +32,17 @@ namespace LibgenDesktop.Setup
             AddFile(@"Languages\Spanish.lng");
             AddFile(@"Languages\French.lng");
             AddFile(@"Languages\Simplified Chinese.lng");
+            AddFile(@"Languages\Turkish.lng");
             AddFile(@"Mirrors\mirrors.config");
-            AddFile(@"Mirrors\booksdescr_org_nonfiction.xslt");
-            AddFile(@"Mirrors\booksdescr_org_fiction.xslt");
-            AddFile(@"Mirrors\booksdescr_org_scimag.xslt");
-            AddFile(@"Mirrors\libgen_me_nonfiction_step1.xslt");
-            AddFile(@"Mirrors\libgen_me_nonfiction_step2.xslt");
-            AddFile(@"Mirrors\libgen_me_fiction_step1.xslt");
-            AddFile(@"Mirrors\libgen_me_fiction_step2.xslt");
-            AddFile(@"Mirrors\libgen_me_scimag_step1.xslt");
-            AddFile(@"Mirrors\libgen_me_scimag_step2.xslt");
-            AddFile(@"Mirrors\bookfi_net.xslt");
             AddFile(@"Mirrors\b_ok_xyz_step1.xslt");
             AddFile(@"Mirrors\b_ok_xyz_step2.xslt");
+            AddFile(@"Mirrors\booklid_org_step1.xslt");
+            AddFile(@"Mirrors\booklid_org_step2.xslt");
             AddFile(@"Mirrors\booksc_org_step1.xslt");
             AddFile(@"Mirrors\booksc_org_step2.xslt");
+            AddFile(@"Mirrors\libgen_lc_fiction.xslt");
+            AddFile(@"Mirrors\libgen_lc_nonfiction.xslt");
+            AddFile(@"Mirrors\libgen_lc_scimag.xslt");
         }
 
         public static string GetBinariesDirectoryPath(bool is64Bit)

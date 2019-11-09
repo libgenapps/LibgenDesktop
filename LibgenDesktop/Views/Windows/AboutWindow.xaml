@@ -7,6 +7,9 @@
     <Window.Resources>
         <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/AboutWindowStyles.xaml" />
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Key="Esc" Command="{Binding CloseWindowCommand}" />
+    </Window.InputBindings>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

@@ -301,6 +301,9 @@
       <DependentUpon>BookDataGridContextMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\HorizontalScrollViewer.cs" />
+    <Compile Include="Views\Controls\LibraryTabHeader.xaml.cs">
+      <DependentUpon>LibraryTabHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Utils\IconExtension.cs" />
     <Compile Include="Views\Windows\ApplicationUpdateWindow.xaml.cs">
       <DependentUpon>ApplicationUpdateWindow.xaml</DependentUpon>
@@ -410,6 +413,10 @@
     <Compile Include="Views\Utils\GridLengthConverter.cs" />
     <Compile Include="Views\Utils\PasswordBoxExtensions.cs" />
     <Page Include="Views\Controls\BookDataGridContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\LibraryTabHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -694,45 +701,25 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\mirrors.config</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\booksdescr_org_nonfiction.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_lc_nonfiction.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\booksdescr_org_nonfiction.xslt</TargetPath>
+      <TargetPath>Mirrors\libgen_lc_nonfiction.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\booksdescr_org_fiction.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_lc_fiction.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\booksdescr_org_fiction.xslt</TargetPath>
+      <TargetPath>Mirrors\libgen_lc_fiction.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\booksdescr_org_scimag.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\libgen_lc_scimag.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\booksdescr_org_scimag.xslt</TargetPath>
+      <TargetPath>Mirrors\libgen_lc_scimag.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_nonfiction_step1.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\booklid_org_step1.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_me_nonfiction_step1.xslt</TargetPath>
+      <TargetPath>Mirrors\booklid_org_step1.xslt</TargetPath>
     </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_nonfiction_step2.xslt">
+    <ContentWithTargetPath Include="Resources\Mirrors\booklid_org_step2.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_me_nonfiction_step2.xslt</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_fiction_step1.xslt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_me_fiction_step1.xslt</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_fiction_step2.xslt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_me_fiction_step2.xslt</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_scimag_step1.xslt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_me_scimag_step1.xslt</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\libgen_me_scimag_step2.xslt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\libgen_me_scimag_step2.xslt</TargetPath>
-    </ContentWithTargetPath>
-    <ContentWithTargetPath Include="Resources\Mirrors\bookfi_net.xslt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>Mirrors\bookfi_net.xslt</TargetPath>
+      <TargetPath>Mirrors\booklid_org_step2.xslt</TargetPath>
     </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Mirrors\b_ok_xyz_step1.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -777,6 +764,10 @@
     <ContentWithTargetPath Include="Resources\Languages\Simplified Chinese.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Languages\Simplified Chinese.lng</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Languages\Turkish.lng">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Languages\Turkish.lng</TargetPath>
     </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>

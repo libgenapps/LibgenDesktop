@@ -1,10 +1,10 @@
-﻿<RadioButton x:Class="LibgenDesktop.Views.Controls.SettingsTabHeader"
+﻿<RadioButton x:Class="LibgenDesktop.Views.Controls.LibraryTabHeader"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              Cursor="Hand">
     <RadioButton.Template>
         <ControlTemplate TargetType="RadioButton">
-            <Border Name="outerBorder" BorderThickness="0,0,2,0">
+            <Border Name="outerBorder" BorderThickness="0,0,0,2">
                 <ContentPresenter Name="Content" />
             </Border>
             <ControlTemplate.Triggers>

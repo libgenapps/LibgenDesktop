@@ -53,6 +53,7 @@ namespace LibgenDesktop.ViewModels.Windows
             isUpdatePanelVisible = false;
             CheckForUpdatesCommand = new Command(CheckForUpdates);
             UpdateCommand = new Command(Update);
+            CloseWindowCommand = new Command(CloseWindow);
         }
 
         public AboutWindowLocalizator Localization { get; }
@@ -178,6 +179,7 @@ namespace LibgenDesktop.ViewModels.Windows
 
         public Command CheckForUpdatesCommand { get; }
         public Command UpdateCommand { get; }
+        public Command CloseWindowCommand { get; }
 
         private async void CheckForUpdates()
         {
@@ -209,6 +211,11 @@ namespace LibgenDesktop.ViewModels.Windows
         private void Update()
         {
             ApplicationUpdateRequested = true;
+            CurrentWindowContext.CloseDialog(true);
+        }
+
+        private void CloseWindow()
+        {
             CurrentWindowContext.CloseDialog(true);
         }
     }

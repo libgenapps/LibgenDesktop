@@ -476,14 +476,14 @@ namespace LibgenDesktop.Models.Download
                 isRedirect = IsRedirect(response.StatusCode);
                 if (isRedirect)
                 {
-                    referer = url;
-                    if (!GenerateRedirectUrl(referer, response.Headers.Location, out url))
+                    if (!GenerateRedirectUrl(url, response.Headers.Location, out string redirectUrl))
                     {
                         ReportError(downloadItem, localization.GetLogLineIncorrectRedirectUrl(Uri.UnescapeDataString(response.Headers.Location.ToString())));
                         return null;
                     }
                     else
                     {
+                        url = redirectUrl;
                         ReportLogLine(downloadItem, DownloadItemLogLineType.INFORMATIONAL, localization.GetLogLineRedirect(Uri.UnescapeDataString(url)));
                         redirectCount++;
                         if (redirectCount == MAX_DOWNLOAD_REDIRECT_COUNT)

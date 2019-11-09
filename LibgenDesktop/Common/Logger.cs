@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using NLog;
 using NLog.Config;
 using NLog.Targets;
@@ -56,6 +57,7 @@ namespace LibgenDesktop.Common
             {
                 FileName = Environment.LogFilePath,
                 Layout = "${longdate} [${threadid}] ${callsite} ${level:uppercase=true} ${message}",
+                Encoding = Encoding.UTF8
             };
             AsyncTargetWrapper fileAsyncTargetWrapper = new AsyncTargetWrapper(fileTarget, ASYNC_LOG_QUEUE_SIZE, AsyncTargetWrapperOverflowAction.Grow);
             loggingConfiguration.LoggingRules.Add(new LoggingRule("*", LogLevel.Debug, fileAsyncTargetWrapper));

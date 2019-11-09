@@ -7,6 +7,7 @@
         <Style.Resources>
             <Style TargetType="TextBlock">
                 <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+                <Setter Property="Padding" Value="8" />
             </Style>
         </Style.Resources>
         <Setter Property="Orientation" Value="Vertical" />
