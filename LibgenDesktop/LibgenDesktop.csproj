@@ -737,6 +737,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\booksc_org_step2.xslt</TargetPath>
     </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\sci-hub.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\sci-hub.xslt</TargetPath>
+    </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Languages\Russian.lng">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Languages\Russian.lng</TargetPath>
