@@ -380,7 +380,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
             if (Errors != null)
             {
-                ErrorsTabHeaderTitle = Localization.GetErrorString(Errors.Count);
+                ErrorsTabHeaderTitle = Localization.GetErrorsString(Errors.Count);
             }
         }
 

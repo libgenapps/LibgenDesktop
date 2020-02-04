@@ -585,6 +585,7 @@
             public string FileInUse { get; set; }
             public string IoException { get; set; }
             public string MD5HashError { get; set; }
+            public string OtherException { get; set; }
         }
 
         internal class LibraryTranslation

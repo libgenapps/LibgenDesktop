@@ -524,8 +524,9 @@
       "FilePathTooLong": "File path is too long",
       "FileAccess": "Insufficient access rights to file",
       "FileInUse": "File is being used by another process",
-      "IoException": "Other IO exception occured",
-      "MD5HashError": "Error creating MD5 hash for file"
+      "IoException": "Unhandled IO exception occured",
+      "MD5HashError": "Error creating MD5 hash for file",
+      "OtherException": "Unhandled exception occured"
     }
   },
   "Database": {
