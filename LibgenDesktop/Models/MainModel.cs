@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1071,11 +1070,6 @@ namespace LibgenDesktop.Models
             });
         }
 
-        private static bool HasEbookExtension(string source)
-        {
-            return (source.EndsWith(".djvu") || source.EndsWith(".mobi") || source.EndsWith(".pdf") || source.EndsWith(".epub")|| source.EndsWith(".doc") || source.EndsWith(".docx")  );
-        }
-
         private void ScanDirectory<T>(string rootScanDirectory, string scanDirectory, IProgress<object> progressHandler,
             Func<string, T> getObjectByMd5HashFunction, ref int found, ref int notFound, ref int errors)
             where T : LibgenObject
@@ -1090,7 +1084,7 @@ namespace LibgenDesktop.Models
                         relativeFilePath = relativeFilePath.Substring(rootScanDirectory.Length + 1);
                     }
 
-                    if (!HasEbookExtension(relativeFilePath))
+                    if (!StringExtensions.HasEbookExtension(relativeFilePath))
                     {
                         progressHandler.Report(new ScanUnknownProgress(relativeFilePath, false, ErrorTypes.ERROR_NONE));
                         notFound++;
@@ -1115,9 +1109,10 @@ namespace LibgenDesktop.Models
                     }
                     catch (IOException ex)
                     {
-                        int hresult = GetHRForException(ex);
+                        int hresult = ExceptionUtils.GetHRForException(ex);
                         const int E_PATHTOOLONG = unchecked((int) 0x800700CE);
                         const int E_FILENOTFOUND = unchecked((int) 0x80070002);
+                        const int E_ACCESSDENIED = unchecked((int) 0x80070005);
                         const int E_SHARING_VIOLATION = unchecked((int) 0x80070020);
 
                         switch (hresult)
@@ -1134,15 +1129,21 @@ namespace LibgenDesktop.Models
                                 progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_FILE_NOT_FOUND));
                                 errors++;
                                 continue;
-                            case E_SHARING_VIOLATION:
+                            case E_ACCESSDENIED:
                                 Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_FILE_ACCESS).Replace("_", " ")}, filePath: {filePath}");
+                                Logger.Exception(ex);
+                                progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_FILE_ACCESS));
+                                errors++;
+                                continue;
+                            case E_SHARING_VIOLATION:
+                                Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_FILE_IN_USE).Replace("_", " ")}, filePath: {filePath}");
                                 Logger.Exception(ex);
                                 progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_FILE_IN_USE));
                                 errors++;
                                 continue;
                         }
 
-                        Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_IO_EXCEPTION).Replace("_", " ")}, IO-EXCEPTION: {ex}");
+                        Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_IO_EXCEPTION).Replace("_", " ")}, IOException: {ex}");
                         Logger.Exception(ex);
                         progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_IO_EXCEPTION));
                         errors++;
@@ -1192,14 +1193,14 @@ namespace LibgenDesktop.Models
             }
             catch (IOException ex)
             {
-                int hresult = GetHRForException(ex);
+                int hresult = ExceptionUtils.GetHRForException(ex);
                 const int E_DIRECTORYNOTFOUND = unchecked((int)0x80070003);
 
                 if (hresult == E_DIRECTORYNOTFOUND)
                 {
                     Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_DIRECTORY_NOT_FOUND).Replace("_", " ")}, filePath: {scanDirectory}");
                     Logger.Exception(ex);
-                    progressHandler.Report(new ScanUnknownProgress(scanDirectory, true, ErrorTypes.ERROR_FILE_PATH_TOO_LONG));
+                    progressHandler.Report(new ScanUnknownProgress(scanDirectory, true, ErrorTypes.ERROR_DIRECTORY_NOT_FOUND));
                     errors++;
                 }
             }
@@ -1209,17 +1210,6 @@ namespace LibgenDesktop.Models
                 progressHandler.Report(new ScanUnknownProgress(scanDirectory, true, ErrorTypes.ERROR_OTHER));
                 errors++;
             }
-        }
-
-        private static int GetHRForException(Exception exception)
-        {
-            if (exception == null) throw new ArgumentNullException();
-
-            //on first call there is possible pollution of thread IErrorInfo with sensitive data
-            int hr = Marshal.GetHRForException(exception);
-            //therefore call with empty ex. obj. to cleanup IErrorInfo
-            Marshal.GetHRForException(new Exception());
-            return hr;
         }
 
         private void CheckAndCreateNonFictionIndexes(IProgress<object> progressHandler, CancellationToken cancellationToken)
