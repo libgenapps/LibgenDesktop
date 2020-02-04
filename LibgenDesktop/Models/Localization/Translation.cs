@@ -570,6 +570,21 @@
             public string File { get; set; }
             public string Authors { get; set; }
             public string Title { get; set; }
+            public string ErrorType { get; set; }
+            public string ErrorDescription { get; set; }
+        }
+
+        internal class LibraryErrorDescriptionsTranslation
+        {
+            public string DirectoryAccess { get; set; }
+            public string DirectoryNotFound { get; set; }
+            public string FileSize { get; set; }
+            public string FileNotFound { get; set; }
+            public string FilePathTooLong { get; set; }
+            public string FileAccess { get; set; }
+            public string FileInUse { get; set; }
+            public string IoException { get; set; }
+            public string MD5HashError { get; set; }
         }
 
         internal class LibraryTranslation
@@ -588,8 +603,10 @@
             public string NotFound { get; set; }
             public string ScanLog { get; set; }
             public string Error { get; set; }
+            public string Errors { get; set; }
             public string ScanComplete { get; set; }
             public LibraryColumnsTranslation Columns { get; set; }
+            public LibraryErrorDescriptionsTranslation ErrorDescriptions { get; set; }
         }
 
         internal class DatabaseTranslation

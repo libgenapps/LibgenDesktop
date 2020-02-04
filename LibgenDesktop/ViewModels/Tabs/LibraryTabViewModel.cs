@@ -30,6 +30,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         private bool isResultsPanelVisible;
         private string foundTabHeaderTitle;
         private string notFoundTabHeaderTitle;
+        private string errorsTabHeaderTitle;
         private bool isScanLogTabSelected;
         private bool isAddAllFilesToLibraryButtonVisible;
         private bool isAddAllFilesToLibraryButtonEnabled;
@@ -37,6 +38,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         private ObservableCollection<ScanResultItemViewModel> foundItems;
         private ScanResultItemViewModel selectedFoundItem;
         private ObservableCollection<string> notFoundItems;
+        private ObservableCollection<ScanResultErrorItemViewModel> errors;
         private ObservableCollection<string> scanLogs;
         private string scanDirectory;
         private bool hasFilesToAdd;
@@ -117,6 +119,19 @@ namespace LibgenDesktop.ViewModels.Tabs
             set
             {
                 notFoundTabHeaderTitle = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string ErrorsTabHeaderTitle
+        {
+            get
+            {
+                return errorsTabHeaderTitle;
+            }
+            set
+            {
+                errorsTabHeaderTitle = value;
                 NotifyPropertyChanged();
             }
         }
@@ -212,6 +227,19 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        public ObservableCollection<ScanResultErrorItemViewModel> Errors
+        {
+            get
+            {
+                return errors;
+            }
+            set
+            {
+                errors = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public ObservableCollection<string> ScanLogs
         {
             get
@@ -277,6 +305,7 @@ namespace LibgenDesktop.ViewModels.Tabs
                 mode = Mode.SCANNING;
                 FoundItems = new ObservableCollection<ScanResultItemViewModel>();
                 NotFoundItems = new ObservableCollection<string>();
+                Errors = new ObservableCollection<ScanResultErrorItemViewModel>();
                 UpdateResultTabHeaders();
                 UpdateAddAllFilesToLibraryButton();
                 IsScanLogTabSelected = true;
@@ -317,12 +346,15 @@ namespace LibgenDesktop.ViewModels.Tabs
                             FoundItems.Add(new SciMagScanResultItemViewModel(scanProgress.RelativeFilePath, sciMagArticle));
                             break;
                     }
-                    UpdateResultTabHeaders();
+                        UpdateResultTabHeaders();
                     break;
                 case ScanUnknownProgress scanUnknownProgress:
                     if (scanUnknownProgress.Error)
                     {
-                        ScanLogs.Add($"{scanUnknownProgress.RelativeFilePath} — {Localization.Error}.");
+                        var error = new ScanResultErrorItemViewModel(scanUnknownProgress.RelativeFilePath, scanUnknownProgress.ErrorType);
+                        ResolveErrorDescription(error);
+                        Errors.Add(error);
+                        UpdateResultTabHeaders();
                     }
                     else
                     {
@@ -346,6 +378,16 @@ namespace LibgenDesktop.ViewModels.Tabs
             {
                 NotFoundTabHeaderTitle = Localization.GetNotFoundString(NotFoundItems.Count);
             }
+            if (Errors != null)
+            {
+                ErrorsTabHeaderTitle = Localization.GetErrorString(Errors.Count);
+            }
+        }
+
+        private void ResolveErrorDescription(ScanResultErrorItemViewModel error)
+        {
+            if (Errors == null || error == null) return;
+            error.Description = Localization.GetErrorDescription(error.ErrorType);
         }
 
         private void UpdateAddAllFilesToLibraryButton()

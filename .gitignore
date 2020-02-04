@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/packages
+/LibgenDesktop
+/LibgenDesktop.Setup/obj/Debug x64
