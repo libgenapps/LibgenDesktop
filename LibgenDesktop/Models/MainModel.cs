@@ -648,7 +648,7 @@ namespace LibgenDesktop.Models
 
         public async Task<Updater.UpdateCheckResult> CheckForApplicationUpdateAsync()
         {
-            Updater.UpdateCheckResult result = await updater.CheckForUpdateAsync(ignoreSpecifiedRelease: false);
+            Updater.UpdateCheckResult result = await updater.CheckForUpdateAsync(false);
             if (result != null && result.NewReleaseName != AppSettings.LastUpdate.IgnoreReleaseName)
             {
                 LastApplicationUpdateCheckResult = result;
@@ -1083,27 +1083,83 @@ namespace LibgenDesktop.Models
                     {
                         relativeFilePath = relativeFilePath.Substring(rootScanDirectory.Length + 1);
                     }
+
+                    if (!StringExtensions.HasEbookExtension(relativeFilePath))
+                    {
+                        progressHandler.Report(new ScanUnknownProgress(relativeFilePath, false, ErrorTypes.ERROR_NONE));
+                        notFound++;
+                        continue;
+                    }
+
                     string md5Hash;
                     try
                     {
-                        using (MD5 md5 = MD5.Create())
-                        using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (var md5 = MD5.Create())
+                        using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 8192, true))
                         {
-                            byte[] md5HashArray = md5.ComputeHash(fileStream);
-                            md5Hash = BitConverter.ToString(md5HashArray).Replace("-", String.Empty).ToLowerInvariant();
+                            if (fileStream.Length <= 0)
+                            {
+                                progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_FILE_SIZE_ZERO));
+                                errors++;
+                                continue;
+                            }
+                            var md5HashArray = md5.ComputeHash(fileStream);
+                            md5Hash = BitConverter.ToString(md5HashArray).Replace("-", "").ToLowerInvariant();
                         }
+                    }
+                    catch (IOException ex)
+                    {
+                        int hresult = ExceptionUtils.GetHRForException(ex);
+                        const int E_PATHTOOLONG = unchecked((int) 0x800700CE);
+                        const int E_FILENOTFOUND = unchecked((int) 0x80070002);
+                        const int E_ACCESSDENIED = unchecked((int) 0x80070005);
+                        const int E_SHARING_VIOLATION = unchecked((int) 0x80070020);
+
+                        switch (hresult)
+                        {
+                            case E_PATHTOOLONG:
+                                Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_FILE_PATH_TOO_LONG).Replace("_", " ")}, length: {filePath.Length}");
+                                Logger.Exception(ex);
+                                progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_FILE_PATH_TOO_LONG));
+                                errors++;
+                                continue;
+                            case E_FILENOTFOUND:
+                                Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_FILE_NOT_FOUND).Replace("_", " ")}, filePath: {filePath}");
+                                Logger.Exception(ex);
+                                progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_FILE_NOT_FOUND));
+                                errors++;
+                                continue;
+                            case E_ACCESSDENIED:
+                                Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_FILE_ACCESS).Replace("_", " ")}, filePath: {filePath}");
+                                Logger.Exception(ex);
+                                progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_FILE_ACCESS));
+                                errors++;
+                                continue;
+                            case E_SHARING_VIOLATION:
+                                Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_FILE_IN_USE).Replace("_", " ")}, filePath: {filePath}");
+                                Logger.Exception(ex);
+                                progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_FILE_IN_USE));
+                                errors++;
+                                continue;
+                        }
+
+                        Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_IO_EXCEPTION).Replace("_", " ")}, IOException: {ex}");
+                        Logger.Exception(ex);
+                        progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_IO_EXCEPTION));
+                        errors++;
+                        continue;
                     }
                     catch (Exception exception)
                     {
                         Logger.Debug($"Couldn't calculate MD5 hash for the file: {filePath}");
                         Logger.Exception(exception);
-                        progressHandler.Report(new ScanUnknownProgress(relativeFilePath, error: true));
+                        progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_OTHER));
                         errors++;
                         continue;
                     }
                     try
                     {
-                        T libgenObject = getObjectByMd5HashFunction(md5Hash);
+                        var libgenObject = getObjectByMd5HashFunction(md5Hash);
                         if (libgenObject != null)
                         {
                             progressHandler.Report(new ScanProgress<T>(relativeFilePath, libgenObject));
@@ -1111,17 +1167,16 @@ namespace LibgenDesktop.Models
                         }
                         else
                         {
-                            progressHandler.Report(new ScanUnknownProgress(relativeFilePath, error: false));
+                            progressHandler.Report(new ScanUnknownProgress(relativeFilePath, false, ErrorTypes.ERROR_NONE));
                             notFound++;
                         }
                     }
                     catch (Exception exception)
                     {
-                        Logger.Debug($"Couldn't lookup the MD5 hash: {md5Hash} in the database for the file: {filePath}");
+                        Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_MD5_HASH_NOT_IN_DB).Replace("_", " ")}, MD5 hash: {md5Hash} in the database for the file: {filePath}");
                         Logger.Exception(exception);
-                        progressHandler.Report(new ScanUnknownProgress(relativeFilePath, error: true));
+                        progressHandler.Report(new ScanUnknownProgress(relativeFilePath, true, ErrorTypes.ERROR_MD5_HASH_NOT_IN_DB));
                         errors++;
-                        continue;
                     }
                 }
                 foreach (string directoryPath in Directory.EnumerateDirectories(scanDirectory))
@@ -1129,10 +1184,30 @@ namespace LibgenDesktop.Models
                     ScanDirectory(rootScanDirectory, directoryPath, progressHandler, getObjectByMd5HashFunction, ref found, ref notFound, ref errors);
                 }
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_DIRECTORY_ACCESS).Replace("_", " ")}, filePath: {scanDirectory}");
+                Logger.Exception(ex);
+                progressHandler.Report(new ScanUnknownProgress(scanDirectory, true, ErrorTypes.ERROR_DIRECTORY_ACCESS));
+                errors++;
+            }
+            catch (IOException ex)
+            {
+                int hresult = ExceptionUtils.GetHRForException(ex);
+                const int E_DIRECTORYNOTFOUND = unchecked((int)0x80070003);
+
+                if (hresult == E_DIRECTORYNOTFOUND)
+                {
+                    Logger.Debug($"Error: {nameof(ErrorTypes.ERROR_DIRECTORY_NOT_FOUND).Replace("_", " ")}, filePath: {scanDirectory}");
+                    Logger.Exception(ex);
+                    progressHandler.Report(new ScanUnknownProgress(scanDirectory, true, ErrorTypes.ERROR_DIRECTORY_NOT_FOUND));
+                    errors++;
+                }
+            }
             catch (Exception exception)
             {
                 Logger.Exception(exception);
-                progressHandler.Report(new ScanUnknownProgress(scanDirectory, error: true));
+                progressHandler.Report(new ScanUnknownProgress(scanDirectory, true, ErrorTypes.ERROR_OTHER));
                 errors++;
             }
         }

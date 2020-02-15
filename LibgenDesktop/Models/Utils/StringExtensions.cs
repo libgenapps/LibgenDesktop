@@ -6,6 +6,11 @@ namespace LibgenDesktop.Models.Utils
 {
     internal static class StringExtensions
     {
+        public static bool HasEbookExtension(string source)
+        {
+            return (source.EndsWith(".djvu") || source.EndsWith(".mobi") || source.EndsWith(".pdf") || source.EndsWith(".epub")|| source.EndsWith(".doc") || source.EndsWith(".docx")  );
+        }
+
         public static bool CompareOrdinalIgnoreCase(this string currentString, string otherString)
         {
             return String.Compare(currentString, otherString, StringComparison.OrdinalIgnoreCase) == 0;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using LibgenDesktop.Models.ProgressArgs;
 
 namespace LibgenDesktop.Models.Localization.Localizators
 {
@@ -22,6 +23,8 @@ namespace LibgenDesktop.Models.Localization.Localizators
             ColumnsFile = Format(translation => translation?.File);
             ColumnsAuthors = Format(translation => translation?.Authors);
             ColumnsTitle = Format(translation => translation?.Title);
+            ColumnsErrorType = Format(translation => translation?.ErrorType);
+            ColumnsErrorDescription = Format(translation => translation?.ErrorDescription);
         }
 
         public string TabTitle { get; }
@@ -35,6 +38,8 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string Added { get; }
         public string ScanLog { get; }
         public string Error { get; }
+        public string ColumnsErrorType { get; }
+        public string ColumnsErrorDescription { get; }
         public string ColumnsFile { get; }
         public string ColumnsAuthors { get; }
         public string ColumnsTitle { get; }
@@ -42,6 +47,37 @@ namespace LibgenDesktop.Models.Localization.Localizators
         public string GetScanStartedString(string directory) => Format(translation => translation?.ScanStarted, new { directory });
         public string GetFoundString(int count) => Format(translation => translation?.Found, new { count });
         public string GetNotFoundString(int count) => Format(translation => translation?.NotFound, new { count });
+        public string GetErrorsString(int count) => Format(translation => translation?.Errors, new { count });
+        public string GetErrorDescription(ErrorTypes errorType)
+        {
+            switch (errorType)
+            {
+                case ErrorTypes.ERROR_NONE:
+                    return "";
+                case ErrorTypes.ERROR_DIRECTORY_ACCESS:
+                    return Format(translation => translation?.Library.ErrorDescriptions.DirectoryAccess);
+                case ErrorTypes.ERROR_DIRECTORY_NOT_FOUND:
+                    return Format(translation => translation?.Library.ErrorDescriptions.DirectoryNotFound);
+                case ErrorTypes.ERROR_FILE_SIZE_ZERO:
+                    return Format(translation => translation?.Library.ErrorDescriptions.FileSize);
+                case ErrorTypes.ERROR_FILE_NOT_FOUND:
+                    return Format(translation => translation?.Library.ErrorDescriptions.FileNotFound);
+                case ErrorTypes.ERROR_FILE_PATH_TOO_LONG:
+                    return Format(translation => translation?.Library.ErrorDescriptions.FilePathTooLong);
+                case ErrorTypes.ERROR_FILE_ACCESS:
+                    return Format(translation => translation?.Library.ErrorDescriptions.FileAccess);
+                case ErrorTypes.ERROR_FILE_IN_USE:
+                    return Format(translation => translation?.Library.ErrorDescriptions.FileInUse);
+                case ErrorTypes.ERROR_IO_EXCEPTION:
+                    return Format(translation => translation?.Library.ErrorDescriptions.IoException);
+                case ErrorTypes.ERROR_MD5_HASH_NOT_IN_DB:
+                    return Format(translation => translation?.Library.ErrorDescriptions.MD5HashError);
+                case ErrorTypes.ERROR_OTHER:
+                    return Format(translation => translation?.Library.ErrorDescriptions.OtherException);
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
+
         public string GetScanCompleteString(int found, int notFound, int errors) => Format(translation => translation?.ScanComplete,
             new { found = Formatter.ToFormattedString(found), notFound = Formatter.ToFormattedString(notFound),
                 errors = Formatter.ToFormattedString(errors) });

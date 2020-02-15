@@ -95,6 +95,39 @@
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
+            <TabItem Header="{Binding ErrorsTabHeaderTitle}">
+                <DataGrid ItemsSource="{Binding Errors}" ColumnWidth="*" Style="{StaticResource NotFoundDataGrid}">
+                    <DataGrid.Resources>
+                        <u:BindingProxy x:Key="dataGridViewModel" DataContext="{Binding}" />
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding RelativeFilePath}"
+                                            Header="{Binding DataContext.Localization.ColumnsFile, Source={StaticResource dataGridViewModel}}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style>
+                                        <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        <DataGridTextColumn Binding="{Binding ErrorType}"
+                                            Header="{Binding DataContext.Localization.ColumnsErrorType, Source={StaticResource dataGridViewModel}}">
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style>
+                                        <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                        <DataGridTextColumn Binding="{Binding Description}"
+                                            Header="{Binding DataContext.Localization.ColumnsErrorDescription, Source={StaticResource dataGridViewModel}}">
+                            <DataGridTextColumn.ElementStyle>
+                                <Style>
+                                    <Setter Property="TextBlock.TextWrapping" Value="Wrap" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
             <TabItem Header="{Binding Localization.ScanLog}" IsSelected="{Binding IsScanLogTabSelected}">
                 <c:AutoScrollViewer Style="{StaticResource LogPanel}">
                     <ItemsControl ItemsSource="{Binding ScanLogs}">
