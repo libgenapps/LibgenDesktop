@@ -94,6 +94,36 @@ namespace LibgenDesktop.Infrastructure
             Window.Focus();
         }
 
+        public void AddWindowMinimizeButton()
+        {
+            Window.AddWindowMinimizeButton();
+        }
+
+        public void AddWindowMaximizeButton()
+        {
+            Window.AddWindowMaximizeButton();
+        }
+
+        public void AddWindowCloseButton()
+        {
+            Window.AddWindowCloseButton();
+        }
+
+        public void RemoveWindowMinimizeButton()
+        {
+            Window.RemoveWindowMinimizeButton();
+        }
+
+        public void RemoveWindowMaximizeButton()
+        {
+            Window.RemoveWindowMaximizeButton();
+        }
+
+        public void RemoveWindowCloseButton()
+        {
+            Window.RemoveWindowCloseButton();
+        }
+
         protected virtual void OnActivated()
         {
             Activated?.Invoke(this, EventArgs.Empty);
@@ -114,16 +144,16 @@ namespace LibgenDesktop.Infrastructure
             Closed?.Invoke(this, EventArgs.Empty);
         }
 
+        private static WindowState GetWindowState(bool isMaximized)
+        {
+            return isMaximized ? WindowState.Maximized : WindowState.Normal;
+        }
+
         private bool? ShowDialog(bool showMaximized, bool showInTaskbar)
         {
             Window.ShowInTaskbar = showInTaskbar;
             Window.WindowState = GetWindowState(showMaximized);
             return Window.ShowDialog();
-        }
-
-        private WindowState GetWindowState(bool isMaximized)
-        {
-            return isMaximized ? WindowState.Maximized : WindowState.Normal;
         }
 
         private void Window_Activated(object sender, EventArgs e)

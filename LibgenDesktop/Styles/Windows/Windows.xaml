@@ -1,0 +1,134 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                    xmlns:const="clr-namespace:LibgenDesktop.Common">
+    <Style x:Key="LibgenDesktopWindow">
+        <Setter Property="TextElement.Foreground" Value="{DynamicResource MaterialDesignBody}" />
+        <Setter Property="Window.Background" Value="{DynamicResource MaterialDesignPaper}" />
+        <Setter Property="Window.FontWeight" Value="Light" />
+        <Setter Property="Window.FontSize" Value="{Binding Source={x:Static const:Constants.DEFAULT_FONT_SIZE}}" />
+        <Setter Property="Window.FontFamily" Value="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto" />
+        <Setter Property="Window.UseLayoutRounding" Value="True" />
+    </Style>
+    <Style x:Key="MainWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.MAIN_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.MAIN_WINDOW_MIN_HEIGHT}}" />
+    </Style>
+    <Style x:Key="SetupWizardWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.DEFAULT_SETUP_WIZARD_WINDOW_WIDTH}}" />
+        <Setter Property="Window.Height" Value="{Binding Source={x:Static const:Constants.DEFAULT_SETUP_WIZARD_WINDOW_HEIGHT}}" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.SETUP_WIZARD_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.SETUP_WIZARD_WINDOW_MIN_HEIGHT}}" />
+    </Style>
+    <Style x:Key="SetupWizardProxySettingsWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="NoResize" />
+        <Setter Property="Window.SizeToContent" Value="WidthAndHeight" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="NonFictionDetailsWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.NON_FICTION_DETAILS_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.NON_FICTION_DETAILS_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="FictionDetailsWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.FICTION_DETAILS_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.FICTION_DETAILS_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="SciMagDetailsWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.SCI_MAG_DETAILS_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.SCI_MAG_DETAILS_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="ErrorWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.ERROR_WINDOW_DEFAULT_WIDTH}}" />
+        <Setter Property="Window.Height" Value="{Binding Source={x:Static const:Constants.ERROR_WINDOW_DEFAULT_HEIGHT}}" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.ERROR_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.ERROR_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="ImportWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.IMPORT_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.Height" Value="{Binding Source={x:Static const:Constants.IMPORT_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.IMPORT_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.IMPORT_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="SettingsWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.SETTINGS_WINDOW_DEFAULT_WIDTH}}" />
+        <Setter Property="Window.Height" Value="{Binding Source={x:Static const:Constants.SETTINGS_WINDOW_DEFAULT_HEIGHT}}" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.SETTINGS_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.SETTINGS_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+        <Setter Property="Window.FontSize" Value="18" />
+    </Style>
+    <Style x:Key="SynchronizationWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.SYNCHRONIZATION_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.Height" Value="{Binding Source={x:Static const:Constants.SYNCHRONIZATION_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.SYNCHRONIZATION_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.SYNCHRONIZATION_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+    <Style x:Key="ApplicationUpdateWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="NoResize" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.APPLICATION_UPDATE_WINDOW_WIDTH}}" />
+        <Setter Property="Window.SizeToContent" Value="Height" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+    </Style>
+    <Style x:Key="DatabaseWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="NoResize" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.DATABASE_WINDOW_WIDTH}}" />
+        <Setter Property="Window.SizeToContent" Value="Height" />
+        <Setter Property="c:LibgenDesktopWindow.ShowCloseButton" Value="False" />
+    </Style>
+    <Style x:Key="DatabaseErrorWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="NoResize" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.DATABASE_ERROR_WINDOW_WIDTH}}" />
+        <Setter Property="Window.SizeToContent" Value="Height" />
+        <Setter Property="c:LibgenDesktopWindow.ShowCloseButton" Value="False" />
+    </Style>
+    <Style x:Key="SqlDebuggerWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="CanResizeWithGrip" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.SQL_DEBUGGER_WINDOW_DEFAULT_WIDTH}}" />
+        <Setter Property="Window.Height" Value="{Binding Source={x:Static const:Constants.SQL_DEBUGGER_WINDOW_DEFAULT_HEIGHT}}" />
+        <Setter Property="Window.MinWidth" Value="{Binding Source={x:Static const:Constants.SQL_DEBUGGER_WINDOW_MIN_WIDTH}}" />
+        <Setter Property="Window.MinHeight" Value="{Binding Source={x:Static const:Constants.SQL_DEBUGGER_WINDOW_MIN_HEIGHT}}" />
+        <Setter Property="c:LibgenDesktopWindow.ShowCloseButton" Value="False" />
+    </Style>
+    <Style x:Key="AboutWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="NoResize" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.ABOUT_WINDOW_WIDTH}}" />
+        <Setter Property="Window.SizeToContent" Value="Height" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+    </Style>
+    <Style x:Key="MessageBoxWindow" BasedOn="{StaticResource LibgenDesktopWindow}">
+        <Setter Property="Window.ResizeMode" Value="NoResize" />
+        <Setter Property="Window.Width" Value="{Binding Source={x:Static const:Constants.MESSAGE_BOX_WINDOW_WIDTH}}" />
+        <Setter Property="Window.SizeToContent" Value="Height" />
+        <Setter Property="c:LibgenDesktopWindow.ShowIcon" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMinimizeButton" Value="False" />
+        <Setter Property="c:LibgenDesktopWindow.ShowMaximizeButton" Value="False" />
+    </Style>
+</ResourceDictionary>

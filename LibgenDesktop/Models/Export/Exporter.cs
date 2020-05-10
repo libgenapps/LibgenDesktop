@@ -56,7 +56,6 @@ namespace LibgenDesktop.Models.Export
             DateTime lastReportDateTime = DateTime.Now;
             TExportObject exportObject = null;
             TExportWriter exportWriter = null;
-            string filePath = null;
             string firstFilePath = null;
             try
             {
@@ -72,7 +71,7 @@ namespace LibgenDesktop.Models.Export
                             File.Move(oldFilePath, newFilePath);
                             firstFilePath = newFilePath;
                         }
-                        filePath = GenerateFilePath(fileSequence == 1 ? (int?)null : fileSequence, fileExtension);
+                        string filePath = GenerateFilePath(fileSequence == 1 ? (int?)null : fileSequence, fileExtension);
                         if (fileSequence == 1)
                         {
                             firstFilePath = filePath;

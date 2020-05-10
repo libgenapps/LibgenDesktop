@@ -27,6 +27,8 @@ namespace LibgenDesktop.Setup
             X64.Add(new AppFile(@"x64\SQLite.Interop.dll", "SQLite.Interop.dll"));
             AddFile(@"Languages\English.lng");
             AddFile(@"Languages\French.lng");
+            AddFile(@"Languages\Italian.lng");
+            AddFile(@"Languages\Portuguse_BR.lng");
             AddFile(@"Languages\Romanian.lng");
             AddFile(@"Languages\Russian.lng");
             AddFile(@"Languages\Simplified Chinese.lng");
@@ -39,6 +41,7 @@ namespace LibgenDesktop.Setup
             AddFile(@"Mirrors\booklid_org_step2.xslt");
             AddFile(@"Mirrors\booksc_org_step1.xslt");
             AddFile(@"Mirrors\booksc_org_step2.xslt");
+            AddFile(@"Mirrors\genlibrusec_dbdumps.xslt");
             AddFile(@"Mirrors\libgen_lc_fiction.xslt");
             AddFile(@"Mirrors\libgen_lc_nonfiction.xslt");
             AddFile(@"Mirrors\libgen_lc_scimag.xslt");

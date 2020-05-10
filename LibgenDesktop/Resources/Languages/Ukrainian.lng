@@ -35,24 +35,6 @@
             "About": "Про програму"
         }
     },
-    "CreateDatabaseWindow":
-    {
-        "WindowTitle": "Libgen Desktop",
-        "FirstRunMessage": "Ласкаво просимо до Libgen Desktop.",
-        "DatabaseNotFound": "База даних {database} не знайдена.",
-        "DatabaseCorrupted": "База даних {database} пошкоджена.",
-        "ChooseOption": "Оберіть дію",
-        "CreateNewDatabase": "Створити нову базу даних",
-        "OpenExistingDatabase": "Відкрити існуючу базу даних",
-        "BrowseNewDatabaseDialogTitle": "Збереження нової бази даних",
-        "BrowseExistingDatabaseDialogTitle": "Вибір бази даних",
-        "Databases": "Бази даних",
-        "AllFiles": "Усі файли",
-        "Error": "Помилка",
-        "CannotCreateDatabase": "Не вдалося створити базу даних.",
-        "Ok": "OK",
-        "Cancel": "СКАСУВАТИ"
-    },
     "SearchTab":
     {
         "TabTitle": "Пошук",
@@ -207,7 +189,6 @@
     {
         "Title": "Найменування",
         "Authors": "Автори",
-        "RussianAuthor": "Автор (рос.)",
         "Series": "Серія",
         "Publisher": "Видавець",
         "Edition": "Видання",
@@ -215,7 +196,6 @@
         "Language": "Мова",
         "Format": "Формат",
         "Pages": "Сторінок",
-        "Version": "Версія",
         "FileSize": "Розмір файлу",
         "Added": "Додано",
         "LastModified": "Оновлено",
@@ -405,7 +385,6 @@
             "Id": "ID",
             "Title": "Найменування",
             "Authors": "Автори",
-            "RussianAuthor": "Автор (рос.)",
             "Series": "Серія",
             "Publisher": "Видавець",
             "Edition": "Видання",
@@ -413,7 +392,6 @@
             "Language": "Мова",
             "Format": "Формат",
             "Pages": "Сторінок",
-            "Version": "Версія",
             "FileSize": "Розмір файлу",
             "Added": "Додано",
             "LastModified": "Оновлено",

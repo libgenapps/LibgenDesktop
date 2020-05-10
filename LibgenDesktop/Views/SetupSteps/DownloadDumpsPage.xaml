@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.SetupSteps.DownloadDumpsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:d="clr-namespace:LibgenDesktop.Models.Download">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/SetupSteps/DownloadDumps.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource DownloadDumpsPanel}">
+        <TextBlock Text="{Binding Header}" Style="{StaticResource Header}"
+                   Visibility="{Binding IsHeaderVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <ItemsControl ItemsSource="{Binding Downloads}" Style="{StaticResource DownloadList}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Style="{StaticResource DownloadItem}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <md:PackIcon Grid.Row="0" Grid.Column="0" Name="Icon" Style="{StaticResource DownloadItemIcon}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Style="{StaticResource DownloadItemName}" />
+                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding ProgressText}" Style="{StaticResource DownloadItemProgressText}" />
+                        <ProgressBar Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Name="ProgressBar" Value="{Binding ProgressValue}"
+                                     Style="{StaticResource DownloadItemProgressBar}" />
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.QUEUED}">
+                            <Setter TargetName="Icon" Property="Kind" Value="Clock" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.DOWNLOADING}">
+                            <Setter TargetName="Icon" Property="Kind" Value="Play" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.STOPPED}">
+                            <Setter TargetName="Icon" Property="Kind" Value="Stop" />
+                            <Setter TargetName="ProgressBar" Property="Background" Value="{StaticResource StoppedProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="BorderBrush" Value="{StaticResource StoppedProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Foreground" Value="{StaticResource StoppedProgressBarForegroundBrush}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.ERROR}">
+                            <Setter TargetName="Icon" Property="Kind" Value="AlertCircle" />
+                            <Setter TargetName="Icon" Property="Foreground" Value="{StaticResource ErrorIconForegroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Background" Value="{StaticResource ErrorProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="BorderBrush" Value="{StaticResource ErrorProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Foreground" Value="{StaticResource ErrorProgressBarForegroundBrush}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="{x:Static d:DownloadItemStatus.COMPLETED}">
+                            <Setter TargetName="Icon" Property="Kind" Value="Check" />
+                            <Setter TargetName="Icon" Property="Foreground" Value="{StaticResource CompletedIconForegroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Background" Value="{StaticResource CompletedProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="BorderBrush" Value="{StaticResource CompletedProgressBarBackgroundBrush}" />
+                            <Setter TargetName="ProgressBar" Property="Foreground" Value="{StaticResource CompletedProgressBarForegroundBrush}" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <StackPanel Style="{StaticResource ButtonPanel}">
+            <Button Content="Spacer" Visibility="Hidden" />
+            <Button Content="{Binding InterruptButtonText}" Style="{StaticResource InterruptButton}"
+                    IsEnabled="{Binding IsInterruptButtonEnabled}"
+                    Visibility="{Binding IsInterruptButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                    Command="{Binding InterruptCommand}" />
+            <Button Content="{Binding Localization.Retry}"
+                    Visibility="{Binding IsRetryButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                    Command="{Binding RetryCommand}" />
+            <Button Content="Spacer" Visibility="Hidden" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

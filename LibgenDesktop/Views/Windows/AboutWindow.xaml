@@ -5,7 +5,7 @@
                        xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
                        Title="{Binding Localization.WindowTitle}" Style="{StaticResource AboutWindow}">
     <Window.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/AboutWindowStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/About.xaml" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="Esc" Command="{Binding CloseWindowCommand}" />

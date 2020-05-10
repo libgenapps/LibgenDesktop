@@ -1,0 +1,13 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.SetupSteps.LanguagePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:c="clr-namespace:LibgenDesktop.Views.Controls">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/SetupSteps/Language.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource LanguagePanel}">
+        <TextBlock Text="{Binding Localization.ChooseLanguage}" Style="{StaticResource ChooseLanguage}" />
+        <c:LanguageComboBox ItemsSource="{Binding LanguagesList}" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                            Style="{StaticResource LanguageComboBox}" />
+    </StackPanel>
+</UserControl>

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Download;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Update;
 using Environment = LibgenDesktop.Common.Environment;
@@ -34,7 +34,7 @@ namespace LibgenDesktop.ViewModels.Windows
             isSkipButtonVisible = showSkipVersionButton;
             cancellationTokenSource = new CancellationTokenSource();
             Localization = mainModel.Localization.CurrentLanguage.ApplicationUpdate;
-            WindowClosingCommand = new FuncCommand<bool>(WindowClosing);
+            WindowClosingCommand = new FuncCommand<bool?, bool>(WindowClosing);
             SkipVersionCommand = new Command(SkipVersion);
             DownloadCommand = new Command(DownloadAsync);
             CancelCommand = new Command(Cancel);
@@ -43,7 +43,7 @@ namespace LibgenDesktop.ViewModels.Windows
             Initialize();
         }
 
-        public ApplicationUpdateLocalizator Localization { get; }
+        public ApplicationUpdateWindowLocalizator Localization { get; }
 
         public string NewVersionText
         {
@@ -175,7 +175,7 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
-        public FuncCommand<bool> WindowClosingCommand { get; }
+        public FuncCommand<bool?, bool> WindowClosingCommand { get; }
         public Command SkipVersionCommand { get; }
         public Command DownloadCommand { get; }
         public Command CancelCommand { get; }
@@ -212,28 +212,20 @@ namespace LibgenDesktop.ViewModels.Windows
             IsDownloadButtonVisible = false;
             IsCancelButtonVisible = false;
             IsInterruptButtonVisible = true;
-            string downloadFilePath = null;
-            MainModel.DownloadFileResult? result = null;
+            Updater.UpdateDownloadResult result = null;
             try
             {
-                string downloadDirectory = Path.Combine(Environment.AppDataDirectory, "Updates");
-                if (!Directory.Exists(downloadDirectory))
-                {
-                    Directory.CreateDirectory(downloadDirectory);
-                }
-                downloadFilePath = Path.Combine(downloadDirectory, updateCheckResult.FileName);
                 Progress<object> downloadProgressHandler = new Progress<object>(HandleDownloadProgress);
-                result = await MainModel.DownloadFileAsync(updateCheckResult.DownloadUrl, downloadFilePath, downloadProgressHandler,
-                    cancellationTokenSource.Token);
+                result = await MainModel.Updater.DownloadUpdateAsync(updateCheckResult, downloadProgressHandler, cancellationTokenSource.Token);
             }
             catch (Exception exception)
             {
                 ShowErrorWindow(exception, CurrentWindowContext);
                 error = true;
             }
-            if (!error && result != MainModel.DownloadFileResult.COMPLETED)
+            if (!error && result.DownloadResult != DownloadUtils.DownloadResult.COMPLETED)
             {
-                if (result == MainModel.DownloadFileResult.INCOMPLETE)
+                if ((result.DownloadResult == DownloadUtils.DownloadResult.INCOMPLETE) || (result.DownloadResult == DownloadUtils.DownloadResult.ERROR))
                 {
                     ShowMessage(Localization.Error, Localization.IncompleteDownload);
                 }
@@ -245,12 +237,12 @@ namespace LibgenDesktop.ViewModels.Windows
             {
                 if (Environment.IsInPortableMode)
                 {
-                    Process.Start("explorer.exe", $@"/select, ""{downloadFilePath}""");
+                    Process.Start("explorer.exe", $@"/select, ""{result.DownloadFilePath}""");
                     CurrentWindowContext.CloseDialog(false);
                 }
                 else
                 {
-                    Process.Start(downloadFilePath);
+                    Process.Start(result.DownloadFilePath);
                     CurrentWindowContext.CloseDialog(false);
                     ApplicationShutdownRequested?.Invoke(this, EventArgs.Empty);
                 }
@@ -282,7 +274,7 @@ namespace LibgenDesktop.ViewModels.Windows
             CurrentWindowContext.CloseDialog(!error);
         }
 
-        private bool WindowClosing()
+        private bool WindowClosing(bool? dialogResult)
         {
             if (IsInterruptButtonVisible)
             {

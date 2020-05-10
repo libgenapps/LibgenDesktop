@@ -1,14 +1,16 @@
-﻿namespace LibgenDesktop.Models.ProgressArgs
+﻿using LibgenDesktop.Models.SqlDump;
+
+namespace LibgenDesktop.Models.ProgressArgs
 {
-    internal class ImportObjectsProgress
+    internal class ImportWrongTableDefinitionProgress
     {
-        public ImportObjectsProgress(int objectsAdded, int objectsUpdated)
+        public ImportWrongTableDefinitionProgress(TableType expectedTableType, TableType actualTableType)
         {
-            ObjectsAdded = objectsAdded;
-            ObjectsUpdated = objectsUpdated;
+            ExpectedTableType = expectedTableType;
+            ActualTableType = actualTableType;
         }
 
-        public int ObjectsAdded { get; }
-        public int ObjectsUpdated { get; }
+        public TableType ExpectedTableType { get; }
+        public TableType ActualTableType { get; }
     }
 }

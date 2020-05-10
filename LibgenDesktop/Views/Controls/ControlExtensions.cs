@@ -30,8 +30,7 @@ namespace LibgenDesktop.Views.Controls
             for (int i = 0; i < childrenCount; i++)
             {
                 DependencyObject child = VisualTreeHelper.GetChild(parent, i);
-                T childType = child as T;
-                if (childType == null)
+                if (!(child is T))
                 {
                     result = FindChild<T>(child, childName);
                     if (result != null)

@@ -7,7 +7,8 @@
             FOCUS_SEARCH_TEXT_BOX = 1,
             SCROLL_TO_SELECTION,
             BRING_TO_FRONT,
-            FOCUS_SQL_QUERY_TEXT_BOX
+            FOCUS_SQL_QUERY_TEXT_BOX,
+            FOCUS_SETUP_WIZARD_PROXY_SETTINGS_ADDRESS_TEXT_BOX
         }
 
         public ViewModelEvent(RegisteredEventId eventId)

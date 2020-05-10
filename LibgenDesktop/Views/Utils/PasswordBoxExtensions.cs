@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace LibgenDesktop.Views.Utils
@@ -23,33 +22,29 @@ namespace LibgenDesktop.Views.Utils
 
         private static void OnPasswordBindingChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
-            PasswordBox passwordBox = dependencyObject as PasswordBox;
-            if (passwordBox == null)
+            if (dependencyObject is PasswordBox passwordBox)
             {
-                return;
-            }
-            passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
-            if (e.Property == PasswordBindingProperty)
-            {
-                if (!isUpdating)
+                passwordBox.PasswordChanged += PasswordBox_PasswordChanged;
+                if (e.Property == PasswordBindingProperty)
                 {
-                    isUpdating = true;
-                    passwordBox.Password = e.NewValue as string;
-                    isUpdating = false;
+                    if (!isUpdating)
+                    {
+                        isUpdating = true;
+                        passwordBox.Password = e.NewValue as string;
+                        isUpdating = false;
+                    }
                 }
             }
         }
 
         private static void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
-            PasswordBox passwordBox = sender as PasswordBox;
-            if (passwordBox == null)
+            if (sender is PasswordBox passwordBox)
             {
-                return;
+                isUpdating = true;
+                SetPasswordBinding(passwordBox, passwordBox.Password);
+                isUpdating = false;
             }
-            isUpdating = true;
-            SetPasswordBinding(passwordBox, passwordBox.Password);
-            isUpdating = false;
         }
     }
 }

@@ -74,6 +74,7 @@ namespace LibgenDesktop.Models.Export
             if (!disposed)
             {
                 excelPackage.SaveAs(new FileInfo(filePath));
+                worksheet.Dispose();
                 excelPackage.Dispose();
                 disposed = true;
             }

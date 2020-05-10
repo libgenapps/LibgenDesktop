@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Export;
 
 namespace LibgenDesktop.Models.Export
 {
     internal class FictionExportObject : ExportObject<FictionBook>
     {
-        private FictionExporterLocalizator localization;
+        private readonly FictionExporterLocalizator localization;
 
         public FictionExportObject(ExportWriter exportWriter, Language currentLanguage)
             : base(exportWriter)
@@ -24,7 +24,6 @@ namespace LibgenDesktop.Models.Export
                     localization.Id,
                     localization.Title,
                     localization.Authors,
-                    localization.RussianAuthor,
                     localization.Series,
                     localization.Publisher,
                     localization.Edition,
@@ -32,8 +31,9 @@ namespace LibgenDesktop.Models.Export
                     localization.Language,
                     localization.FormatHeader,
                     localization.Pages,
-                    localization.Version,
                     localization.FileSize,
+                    localization.Library,
+                    localization.Issue,
                     localization.Added,
                     localization.LastModified,
                     localization.Md5Hash,
@@ -51,7 +51,6 @@ namespace LibgenDesktop.Models.Export
             WriteField(book.Id);
             WriteField(book.Title);
             WriteField(book.Authors);
-            WriteField(book.RussianAuthor);
             WriteField(book.Series);
             WriteField(book.Publisher);
             WriteField(book.Edition);
@@ -59,8 +58,9 @@ namespace LibgenDesktop.Models.Export
             WriteField(book.Language);
             WriteField(book.Format);
             WriteField(localization.GetPagesString(book.Pages));
-            WriteField(book.Version);
             WriteField(book.SizeInBytes);
+            WriteField(book.Library);
+            WriteField(book.Issue);
             WriteField(book.AddedDateTime);
             WriteField(book.LastModifiedDateTime);
             WriteField(book.Md5Hash);

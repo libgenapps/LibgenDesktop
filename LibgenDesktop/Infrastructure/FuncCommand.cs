@@ -3,11 +3,11 @@ using System.Windows.Input;
 
 namespace LibgenDesktop.Infrastructure
 {
-    public class FuncCommand<TResult> : ICommand
+    public class FuncCommand<TParameter, TResult> : ICommand
     {
-        private readonly Func<TResult> executeFunction;
+        private readonly Func<TParameter, TResult> executeFunction;
 
-        public FuncCommand(Func<TResult> executeFunction)
+        public FuncCommand(Func<TParameter, TResult> executeFunction)
         {
             this.executeFunction = executeFunction;
         }
@@ -21,12 +21,20 @@ namespace LibgenDesktop.Infrastructure
 
         public void Execute(object parameter)
         {
-            Execute();
+            switch (parameter)
+            {
+                case TParameter typedParameter:
+                    ExecuteWithTypedParameter(typedParameter);
+                    break;
+                default:
+                    ExecuteWithTypedParameter(default);
+                    break;
+            }
         }
 
-        public TResult Execute()
+        public TResult ExecuteWithTypedParameter(TParameter parameter)
         {
-            TResult result = executeFunction != null ? executeFunction() : default;
+            TResult result = executeFunction != null ? executeFunction(parameter) : default;
             OnCanExecuteChanged();
             return result;
         }

@@ -39,15 +39,19 @@ namespace LibgenDesktop.Models.Localization
             dateFormat = GetTranslationFieldValue(translation => translation?.DateFormat);
             timeFormat = GetTranslationFieldValue(translation => translation?.TimeFormat);
             dateTimeFormat = dateFormat + " " + timeFormat;
-            fileSizePostfixes = new[]
-            {
-                GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Byte),
-                GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Kilobyte),
-                GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Megabyte),
-                GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Gigabyte),
-                GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Terabyte)
-            };
+            BytePostfix = GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Byte);
+            KilobytePostfix = GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Kilobyte);
+            MegabytePostfix = GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Megabyte);
+            GigabytePostfix = GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Gigabyte);
+            TerabytePostfix = GetTranslationFieldValue(translation => translation?.FileSizePostfixes?.Terabyte);
+            fileSizePostfixes = new[] { BytePostfix, KilobytePostfix, MegabytePostfix, GigabytePostfix, TerabytePostfix };
         }
+
+        public string BytePostfix { get; }
+        public string KilobytePostfix { get; }
+        public string MegabytePostfix { get; }
+        public string GigabytePostfix { get; }
+        public string TerabytePostfix { get; }
 
         public string ToFormattedString(int value)
         {
@@ -62,6 +66,16 @@ namespace LibgenDesktop.Models.Localization
         public string ToFormattedString(decimal value)
         {
             return value.ToString(numberFormatInfo);
+        }
+
+        public string ToFormattedString(decimal value, int decimalPlaces)
+        {
+            return value.ToString($"N{decimalPlaces}", numberFormatInfo);
+        }
+
+        public string ToDecimalFormattedString(int value)
+        {
+            return value.ToString("D");
         }
 
         public string ToFormattedDateString(DateTime dateTime)

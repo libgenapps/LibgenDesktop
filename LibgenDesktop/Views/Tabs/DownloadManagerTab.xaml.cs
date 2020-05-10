@@ -13,9 +13,9 @@ namespace LibgenDesktop.Views.Tabs
         {
             if (viewModelEvent.EventId == ViewModelEvent.RegisteredEventId.SCROLL_TO_SELECTION)
             {
-                if (downloaderListBox.SelectedItems.Count > 0)
+                if (downloadManagerListBox.SelectedItems.Count > 0)
                 {
-                    downloaderListBox.ScrollIntoView(downloaderListBox.SelectedItems[0]);
+                    downloadManagerListBox.ScrollIntoView(downloadManagerListBox.SelectedItems[0]);
                 }
             }
         }

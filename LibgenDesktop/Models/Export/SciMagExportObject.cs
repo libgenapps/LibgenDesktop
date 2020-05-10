@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Export;
 
 namespace LibgenDesktop.Models.Export
 {
     internal class SciMagExportObject : ExportObject<SciMagArticle>
     {
-        private SciMagExporterLocalizator localization;
+        private readonly SciMagExporterLocalizator localization;
 
         public SciMagExportObject(ExportWriter exportWriter, Language currentLanguage)
             : base(exportWriter)

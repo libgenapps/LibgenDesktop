@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.SetupSteps.SetupModePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/SetupSteps/SetupMode.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource OptionPanel}">
+        <TextBlock Text="{Binding Localization.WelcomeAndChooseOption}" Style="{StaticResource Header}" />
+        <RadioButton Content="{Binding Localization.FirstTimeUser}" IsChecked="{Binding IsBasicModeSelected}"
+                     Style="{StaticResource Option}" />
+        <RadioButton Content="{Binding Localization.ExperiencedUser}" IsChecked="{Binding IsAdvancedModeSelected}"
+                     Style="{StaticResource Option}" />
+    </StackPanel>
+</UserControl>

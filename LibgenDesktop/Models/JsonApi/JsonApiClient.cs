@@ -33,7 +33,7 @@ namespace LibgenDesktop.Models.JsonApi
 
         public async Task<List<NonFictionBook>> DownloadNextBatchAsync(CancellationToken cancellationToken)
         {
-            string url = $"{jsonApiUrl}?fields={FIELD_LIST}&timenewer={lastModifiedDateTime.ToString("yyyy-MM-dd HH:mm:ss")}&idnewer={lastLibgenId}&mode=newer";
+            string url = $"{jsonApiUrl}?fields={FIELD_LIST}&timenewer={lastModifiedDateTime:yyyy-MM-dd HH:mm:ss}&idnewer={lastLibgenId}&mode=newer";
             Logger.Debug($"Sending a request to {url}");
             HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
             Logger.Debug($"Response status code: {(int)response.StatusCode} {response.StatusCode}.");
@@ -59,6 +59,15 @@ namespace LibgenDesktop.Models.JsonApi
             {
                 lastModifiedDateTime = result.Last().LastModifiedDateTime;
                 lastLibgenId = result.Last().LibgenId;
+            }
+            return result;
+        }
+
+        private static DateTime ParseDateTime(string input)
+        {
+            if (!DateTime.TryParseExact(input, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
+            {
+                return DateTime.UtcNow;
             }
             return result;
         }
@@ -115,15 +124,6 @@ namespace LibgenDesktop.Models.JsonApi
                 IdentifierPlain = jsonApiNonFictionBook.IdentifierPlain,
                 LibgenId = jsonApiNonFictionBook.LibgenId
             };
-        }
-
-        private DateTime ParseDateTime(string input)
-        {
-            if (!DateTime.TryParseExact(input, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime result))
-            {
-                return DateTime.UtcNow;
-            }
-            return result;
         }
     }
 }

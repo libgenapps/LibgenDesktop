@@ -37,6 +37,8 @@ namespace LibgenDesktop.Models.SqlDump
             public ColumnType ColumnType { get; set; }
         }
 
+        public static string[] SUPPORTED_DUMP_FILE_EXTENSIONS = new[] { ".zip", ".rar", ".gz", ".7z", ".sql" };
+
         private readonly StreamReader streamReader;
         private readonly ZipArchive zipArchive;
         private readonly RarArchive rarArchive;
@@ -47,7 +49,11 @@ namespace LibgenDesktop.Models.SqlDump
 
         public SqlDumpReader(string filePath)
         {
-            string fileExtension = Path.GetExtension(filePath);
+            string fileExtension = Path.GetExtension(filePath).ToLower();
+            if (!SUPPORTED_DUMP_FILE_EXTENSIONS.Contains(fileExtension))
+            {
+                throw new Exception($"{fileExtension} is not in the list of supported database dump file extensions.");
+            }
             switch (fileExtension.ToLower())
             {
                 case ".zip":
@@ -118,9 +124,11 @@ namespace LibgenDesktop.Models.SqlDump
 
         public ParsedTableDefinition ParseTableDefinition()
         {
-            ParsedTableDefinition result = new ParsedTableDefinition();
-            result.TableName = ParseTableName(CurrentLine);
-            result.Columns = new List<ParsedColumnDefinition>();
+            ParsedTableDefinition result = new ParsedTableDefinition
+            {
+                TableName = ParseTableName(CurrentLine),
+                Columns = new List<ParsedColumnDefinition>()
+            };
             bool tableParsed = false;
             while (ReadLine())
             {
@@ -226,7 +234,7 @@ namespace LibgenDesktop.Models.SqlDump
             }
         }
 
-        private string ParseTableName(string line)
+        private static string ParseTableName(string line)
         {
             int position = "CREATE TABLE".Length;
             int tableNameStartPosition = 0;
@@ -257,7 +265,7 @@ namespace LibgenDesktop.Models.SqlDump
             throw new Exception($"Couldn't parse table name from the line:\r\n{line}");
         }
 
-        private string ParseString(string line, ref int position)
+        private static string ParseString(string line, ref int position)
         {
             bool openQuote = false;
             bool closingQuote = false;

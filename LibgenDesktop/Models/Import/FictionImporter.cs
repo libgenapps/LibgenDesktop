@@ -18,7 +18,7 @@ namespace LibgenDesktop.Models.Import
             if (IsUpdateMode)
             {
                 FictionBook lastModifiedFictionBook = LocalDatabase.GetLastModifiedFictionBook();
-                lastModifiedDateTime = lastModifiedFictionBook.LastModifiedDateTime;
+                lastModifiedDateTime = lastModifiedFictionBook.LastModifiedDateTime ?? new DateTime();
                 lastModifiedLibgenId = lastModifiedFictionBook.LibgenId;
             }
         }

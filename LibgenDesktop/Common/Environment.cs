@@ -43,11 +43,12 @@ namespace LibgenDesktop.Common
                     Directory.CreateDirectory(AppDataDirectory);
                 }
             }
-            string logFileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.log";
+            string logFileName = $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log";
             LogFilePath = Path.Combine(AppDataDirectory, "Logs", logFileName);
             AppSettingsFilePath = Path.Combine(AppDataDirectory, APP_SETTINGS_FILE_NAME);
             MirrorsDirectoryPath = Path.Combine(AppBinariesDirectory, MIRRORS_DIRECTORY_NAME);
             LanguagesDirectoryPath = Path.Combine(AppBinariesDirectory, LANGUAGES_DIRECTORY_NAME);
+            TempDirectoryPath = Path.Combine(Path.GetTempPath(), "LibgenDesktop");
             OsVersion = GetOsVersion();
             NetFrameworkVersion = GetNetFrameworkVersion();
             IsIn64BitProcess = System.Environment.Is64BitProcess;
@@ -134,6 +135,7 @@ namespace LibgenDesktop.Common
         public static string AppSettingsFilePath { get; }
         public static string MirrorsDirectoryPath { get; }
         public static string LanguagesDirectoryPath { get; }
+        public static string TempDirectoryPath { get; }
         public static string OsVersion { get; }
         public static string NetFrameworkVersion { get; }
         public static bool IsInPortableMode { get; }

@@ -13,7 +13,7 @@
                        u:EventListenerExtensions.EventProvider="{Binding Events}"
                        Style="{StaticResource MainWindow}">
     <Window.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/MainWindowStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/Main.xaml" />
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Key="F4" Modifiers="Ctrl" Command="{Binding CloseCurrentTabCommand}" />

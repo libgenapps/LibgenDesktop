@@ -7,7 +7,7 @@
              xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
              u:EventListenerExtensions.EventProvider="{Binding Events}">
     <UserControl.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/FictionSearchResultsTabStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Tabs/FictionSearchResults.xaml" />
     </UserControl.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>
@@ -94,6 +94,11 @@
                                     Width="{Binding DataContext.YearColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
                                     MinWidth="{Binding Source={x:Static const:Constants.FICTION_GRID_YEAR_COLUMN_MIN_WIDTH}}"
                                     HeaderStyle="{StaticResource YearHeaderStyle}" ElementStyle="{StaticResource YearColumnStyle}" />
+                <DataGridTextColumn Binding="{Binding Language}"
+                                    Header="{Binding DataContext.Localization.Columns.Language, Source={StaticResource dataGridViewModel}}"
+                                    Width="{Binding DataContext.LanguageColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"
+                                    MinWidth="{Binding Source={x:Static const:Constants.FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH}}"
+                                    HeaderStyle="{StaticResource LanguageHeaderStyle}" ElementStyle="{StaticResource LanguageColumnStyle}" />
                 <DataGridTextColumn Binding="{Binding Publisher}"
                                     Header="{Binding DataContext.Localization.Columns.Publisher, Source={StaticResource dataGridViewModel}}"
                                     Width="{Binding DataContext.PublisherColumnWidth, Source={StaticResource dataGridViewModel}, Converter={StaticResource dataGridLengthConverter}, Mode=TwoWay}"

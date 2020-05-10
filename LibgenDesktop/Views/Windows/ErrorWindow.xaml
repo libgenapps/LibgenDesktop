@@ -4,7 +4,7 @@
                        xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
                        Title="{Binding WindowTitle}" Style="{StaticResource ErrorWindow}">
     <Window.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/ErrorWindowStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/Error.xaml" />
     </Window.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>

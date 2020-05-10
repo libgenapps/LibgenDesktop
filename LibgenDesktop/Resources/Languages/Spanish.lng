@@ -38,24 +38,6 @@
             "About": "Acerca de"
         }
     },
-    "CreateDatabaseWindow":
-    {
-        "WindowTitle": "Libgen Desktop",
-        "FirstRunMessage": "Bienvenido a Libgen Desktop.",
-        "DatabaseNotFound": "Base de datos {database} no encontrada.",
-        "DatabaseCorrupted": "La base de datos {database} está corrupta.",
-        "ChooseOption": "Escoja una opción",
-        "CreateNewDatabase": "Crear una base de datos",
-        "OpenExistingDatabase": "Abrir una base de datos existente",
-        "BrowseNewDatabaseDialogTitle": "Localización de la nueva base de datos",
-        "BrowseExistingDatabaseDialogTitle": "Localización de la base de datos existente",
-        "Databases": "Bases de datos",
-        "AllFiles": "Todos los archivos",
-        "Error": "Error",
-        "CannotCreateDatabase": "No se puede crear la base de datos.",
-        "Ok": "OK",
-        "Cancel": "CANCELAR"
-    },
     "SearchTab":
     {
         "TabTitle": "Buscar",
@@ -212,7 +194,6 @@
     {
         "Title": "Título",
         "Authors": "Autores",
-        "RussianAuthor": "Autor en ruso",
         "Series": "Series",
         "Publisher": "Editorial",
         "Edition": "Edición",
@@ -220,7 +201,6 @@
         "Language": "Idioma",
         "Format": "Formato",
         "Pages": "Páginas",
-        "Version": "Versión",
         "FileSize": "Tamaño",
         "Added": "Añadido",
         "LastModified": "Última modificación",
@@ -410,7 +390,6 @@
             "Id": "ID",
             "Title": "Título",
             "Authors": "Autores",
-            "RussianAuthor": "Author in Russian",
             "Series": "Series",
             "Publisher": "Editorial",
             "Edition": "Edición",
@@ -418,7 +397,6 @@
             "Language": "Idioma",
             "Format": "Formato",
             "Pages": "Páginas",
-            "Version": "Versión",
             "FileSize": "Tamaño",
             "Added": "Añadido",
             "LastModified": "Última modificación",

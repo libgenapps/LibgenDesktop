@@ -8,12 +8,23 @@ namespace LibgenDesktop.Views.Controls
 {
     public class LibgenDesktopWindow : Window
     {
-        public static readonly DependencyProperty ShowIconProperty = DependencyProperty.Register("ShowIcon", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
-        public static readonly DependencyProperty ShowMinimizeButtonProperty = DependencyProperty.Register("ShowMinimizeButton", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
-        public static readonly DependencyProperty ShowMaximizeButtonProperty = DependencyProperty.Register("ShowMaximizeButton", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
-        public static readonly DependencyProperty ShowCloseButtonProperty = DependencyProperty.Register("ShowCloseButton", typeof(bool), typeof(LibgenDesktopWindow), new PropertyMetadata(true));
-        public static readonly DependencyProperty ClosingCommandProperty = DependencyProperty.Register("ClosingCommand", typeof(FuncCommand<bool>), typeof(LibgenDesktopWindow));
-        public static readonly DependencyProperty ClosedCommandProperty = DependencyProperty.Register("ClosedCommand", typeof(ICommand), typeof(LibgenDesktopWindow));
+        public static readonly DependencyProperty ShowIconProperty = DependencyProperty.Register("ShowIcon", typeof(bool), typeof(LibgenDesktopWindow),
+            new PropertyMetadata(true));
+
+        public static readonly DependencyProperty ShowMinimizeButtonProperty = DependencyProperty.Register("ShowMinimizeButton", typeof(bool),
+            typeof(LibgenDesktopWindow), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty ShowMaximizeButtonProperty = DependencyProperty.Register("ShowMaximizeButton", typeof(bool),
+            typeof(LibgenDesktopWindow), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty ShowCloseButtonProperty = DependencyProperty.Register("ShowCloseButton", typeof(bool),
+            typeof(LibgenDesktopWindow), new PropertyMetadata(true));
+
+        public static readonly DependencyProperty ClosingCommandProperty = DependencyProperty.Register("ClosingCommand", typeof(FuncCommand<bool?, bool>),
+            typeof(LibgenDesktopWindow));
+
+        public static readonly DependencyProperty ClosedCommandProperty = DependencyProperty.Register("ClosedCommand", typeof(ICommand),
+            typeof(LibgenDesktopWindow));
 
         public bool ShowIcon
         {
@@ -63,11 +74,11 @@ namespace LibgenDesktop.Views.Controls
             }
         }
 
-        public FuncCommand<bool> ClosingCommand
+        public FuncCommand<bool?, bool> ClosingCommand
         {
             get
             {
-                return (FuncCommand<bool>)GetValue(ClosingCommandProperty);
+                return (FuncCommand<bool?, bool>)GetValue(ClosingCommandProperty);
             }
             set
             {
@@ -92,28 +103,28 @@ namespace LibgenDesktop.Views.Controls
             base.OnSourceInitialized(e);
             if (!ShowIcon)
             {
-                WindowManager.RemoveWindowIcon(this);
+                this.RemoveWindowIcon();
             }
             if (!ShowMinimizeButton)
             {
-                WindowManager.RemoveWindowMinimizeButton(this);
+                this.RemoveWindowMinimizeButton();
             }
             if (!ShowMaximizeButton)
             {
-                WindowManager.RemoveWindowMaximizeButton(this);
+                this.RemoveWindowMaximizeButton();
             }
             if (!ShowCloseButton)
             {
-                WindowManager.RemoveWindowCloseButton(this);
+                this.RemoveWindowCloseButton();
             }
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            FuncCommand<bool> closingCommand = ClosingCommand;
+            FuncCommand<bool?, bool> closingCommand = ClosingCommand;
             if (closingCommand != null)
             {
-                e.Cancel = !closingCommand.Execute();
+                e.Cancel = !closingCommand.ExecuteWithTypedParameter(DialogResult);
             }
             if (!e.Cancel)
             {

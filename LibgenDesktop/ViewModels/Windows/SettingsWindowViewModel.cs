@@ -7,9 +7,9 @@ using System.IO;
 using System.Linq;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
-using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 using LibgenDesktop.Models.Settings;
+using LibgenDesktop.ViewModels.Settings;
 using static LibgenDesktop.Common.Constants;
 using static LibgenDesktop.Models.Settings.AppSettings;
 
@@ -25,8 +25,8 @@ namespace LibgenDesktop.ViewModels.Windows
         private bool isSearchTabSelected;
         private bool isExportTabSelected;
         private bool isAdvancedTabSelected;
-        private Dictionary<string, Language> generalLanguagesList;
-        private KeyValuePair<string, Language> generalSelectedLanguage;
+        private ObservableCollection<LanguageItemViewModel> generalLanguagesList;
+        private LanguageItemViewModel generalSelectedLanguage;
         private Dictionary<GeneralSettings.UpdateCheckInterval, string> generalUpdateCheckIntervalList;
         private KeyValuePair<GeneralSettings.UpdateCheckInterval, string> generalSelectedUpdateCheckInterval;
         private bool networkIsOfflineModeOn;
@@ -79,7 +79,7 @@ namespace LibgenDesktop.ViewModels.Windows
             DownloadSelectDirectoryCommand = new Command(DownloadSelectDirectory);
             OkCommand = new Command(OkButtonClick);
             CancelCommand = new Command(CancelButtonClick);
-            WindowClosingCommand = new FuncCommand<bool>(WindowClosing);
+            WindowClosingCommand = new FuncCommand<bool?, bool>(WindowClosing);
             Initialize();
         }
 
@@ -176,7 +176,7 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
-        public Dictionary<string, Language> GeneralLanguagesList
+        public ObservableCollection<LanguageItemViewModel> GeneralLanguagesList
         {
             get
             {
@@ -189,7 +189,7 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
-        public KeyValuePair<string, Language> GeneralSelectedLanguage
+        public LanguageItemViewModel GeneralSelectedLanguage
         {
             get
             {
@@ -801,10 +801,18 @@ namespace LibgenDesktop.ViewModels.Windows
 
         public bool HasErrors => errors.Any();
 
+        public IEnumerable GetErrors(string propertyName)
+        {
+            if (errors.TryGetValue(propertyName, out string error))
+            {
+                yield return error;
+            }
+        }
+
         public Command DownloadSelectDirectoryCommand { get; }
         public Command OkCommand { get; }
         public Command CancelCommand { get; }
-        public FuncCommand<bool> WindowClosingCommand { get; }
+        public FuncCommand<bool?, bool> WindowClosingCommand { get; }
 
         private int? NetworkProxyPortValue
         {
@@ -898,14 +906,6 @@ namespace LibgenDesktop.ViewModels.Windows
 
         public event EventHandler<DataErrorsChangedEventArgs> ErrorsChanged;
 
-        public IEnumerable GetErrors(string propertyName)
-        {
-            if (errors.TryGetValue(propertyName, out string error))
-            {
-                yield return error;
-            }
-        }
-
         private void Initialize()
         {
             AppSettings appSettings = MainModel.AppSettings;
@@ -917,8 +917,9 @@ namespace LibgenDesktop.ViewModels.Windows
             isSearchTabSelected = false;
             isExportTabSelected = false;
             isAdvancedTabSelected = false;
-            generalLanguagesList = MainModel.Localization.Languages.ToDictionary(language => language.DisplayName);
-            generalSelectedLanguage = generalLanguagesList.First(language => language.Value == MainModel.Localization.CurrentLanguage);
+            generalLanguagesList = new ObservableCollection<LanguageItemViewModel>(MainModel.Localization.Languages.Select(language =>
+                new LanguageItemViewModel(language)));
+            generalSelectedLanguage = generalLanguagesList.First(languageItem => languageItem.Language == MainModel.Localization.CurrentLanguage);
             generalUpdateCheckIntervalList = new Dictionary<GeneralSettings.UpdateCheckInterval, string>
             {
                 { GeneralSettings.UpdateCheckInterval.NEVER, Localization.GeneralUpdateCheckIntervalNever },
@@ -1046,7 +1047,7 @@ namespace LibgenDesktop.ViewModels.Windows
         {
             MainModel.AppSettings.General = new GeneralSettings
             {
-                Language = GeneralSelectedLanguage.Value.Name,
+                Language = GeneralSelectedLanguage.Language.Name,
                 UpdateCheck = GeneralSelectedUpdateCheckInterval.Key
             };
             MainModel.AppSettings.Network = new NetworkSettings
@@ -1132,7 +1133,7 @@ namespace LibgenDesktop.ViewModels.Windows
             return displayMirrorName != Localization.MirrorsNoMirror ? displayMirrorName : null;
         }
 
-        private bool WindowClosing()
+        private bool WindowClosing(bool? dialogResult)
         {
             return !settingsChanged || ShowPrompt(Localization.DiscardChangesPromptTitle, Localization.DiscardChangesPromptText);
         }

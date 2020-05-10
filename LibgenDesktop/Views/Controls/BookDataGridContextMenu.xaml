@@ -15,4 +15,18 @@
               Visibility="{Binding DataContext.ShowDownloadMenuItem, Converter={StaticResource booleanToCollapsedConverter},
                                    RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
               Command="{Binding DataContext.DownloadCommand, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}" />
+    <Separator Visibility="{Binding DataContext.ShowCopyMenuItem, Converter={StaticResource booleanToCollapsedConverter},
+                                   RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}" />
+    <MenuItem Header="{Binding DataContext.Localization.Copy, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
+              Visibility="{Binding DataContext.ShowCopyMenuItem, Converter={StaticResource booleanToCollapsedConverter},
+                                   RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}"
+              ItemsSource="{Binding DataContext.SelectedItemFields, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}">
+        <MenuItem.ItemContainerStyle>
+            <Style TargetType="MenuItem" BasedOn="{StaticResource MaterialDesignMenuItem}">
+                <Setter Property="Header" Value="{Binding}" />
+                <Setter Property="Command" Value="{Binding DataContext.CopyCommand, RelativeSource={RelativeSource AncestorType=DataGrid, Mode=FindAncestor}}" />
+                <Setter Property="CommandParameter" Value="{Binding}" />
+            </Style>
+        </MenuItem.ItemContainerStyle>
+    </MenuItem>
 </ContextMenu>

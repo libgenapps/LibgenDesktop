@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.ViewModels.EventArguments;
 using LibgenDesktop.ViewModels.Library;

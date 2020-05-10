@@ -63,57 +63,32 @@ namespace LibgenDesktop.Models.SqlDump
         internal class FictionTableDefinition : TableDefinition<FictionBook>
         {
             public FictionTableDefinition()
-                : base("main", TableType.FICTION)
+                : base("fiction", TableType.FICTION)
             {
                 AddColumn("ID", ColumnType.INT, (book, value) => book.LibgenId = ParseInt(value));
-                AddColumn("AuthorFamily1", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorFamily1 = value);
-                AddColumn("AuthorName1", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorName1 = value);
-                AddColumn("AuthorSurname1", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorSurname1 = value);
-                AddColumn("Role1", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Role1 = value);
-                AddColumn("Pseudonim1", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Pseudonim1 = value);
-                AddColumn("AuthorFamily2", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorFamily2 = value);
-                AddColumn("AuthorName2", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorName2 = value);
-                AddColumn("AuthorSurname2", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorSurname2 = value);
-                AddColumn("Role2", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Role2 = value);
-                AddColumn("Pseudonim2", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Pseudonim2 = value);
-                AddColumn("AuthorFamily3", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorFamily3 = value);
-                AddColumn("AuthorName3", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorName3 = value);
-                AddColumn("AuthorSurname3", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorSurname3 = value);
-                AddColumn("Role3", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Role3 = value);
-                AddColumn("Pseudonim3", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Pseudonim3 = value);
-                AddColumn("AuthorFamily4", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorFamily4 = value);
-                AddColumn("AuthorName4", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorName4 = value);
-                AddColumn("AuthorSurname4", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorSurname4 = value);
-                AddColumn("Role4", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Role4 = value);
-                AddColumn("Pseudonim4", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Pseudonim4 = value);
-                AddColumn("Series1", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Series1 = value);
-                AddColumn("Series2", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Series2 = value);
-                AddColumn("Series3", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Series3 = value);
-                AddColumn("Series4", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Series4 = value);
-                AddColumn("Title", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Title = value);
-                AddColumn("Extension", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Format = value);
-                AddColumn("Version", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Version = value);
-                AddColumn("Filesize", ColumnType.INT, (book, value) => book.SizeInBytes = ParseLong(value));
                 AddColumn("MD5", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Md5Hash = value);
-                AddColumn("Path", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Path = value);
+                AddColumn("Title", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Title = value);
+                AddColumn("Author", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Authors = value);
+                AddColumn("Series", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Series = value);
+                AddColumn("Edition", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Edition = value);
                 AddColumn("Language", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Language = value);
-                AddColumn("Pages", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Pages = value);
-                AddColumn("Identifier", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Identifier = value);
                 AddColumn("Year", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Year = value);
                 AddColumn("Publisher", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Publisher = value);
-                AddColumn("Edition", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Edition = value);
-                AddColumn("Commentary", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Commentary = value);
-                AddColumn("TimeAdded", ColumnType.TIMESTAMP, (book, value) => book.AddedDateTime = ParseNullableDateTime(value));
-                AddColumn("TimeLastModified", ColumnType.TIMESTAMP, (book, value) => book.LastModifiedDateTime = ParseDateTime(value));
-                AddColumn("RussianAuthorFamily", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.RussianAuthorFamily = value);
-                AddColumn("RussianAuthorName", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.RussianAuthorName = value);
-                AddColumn("RussianAuthorSurname", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.RussianAuthorSurname = value);
-                AddColumn("Cover", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Cover = value);
+                AddColumn("Pages", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Pages = value);
+                AddColumn("Identifier", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Identifier = value);
                 AddColumn("GooglebookID", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.GoogleBookId = value);
                 AddColumn("ASIN", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Asin = value);
-                AddColumn("AuthorHash", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.AuthorHash = value);
-                AddColumn("TitleHash", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.TitleHash = value);
+                AddColumn("Coverurl", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.CoverUrl = value);
+                AddColumn("Extension", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Format = value);
+                AddColumn("Filesize", ColumnType.INT, (book, value) => book.SizeInBytes = ParseInt(value));
+                AddColumn("Library", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Library = value);
+                AddColumn("Issue", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Issue = value);
+                AddColumn("Locator", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Locator = value);
+                AddColumn("Commentary", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Commentary = value);
+                AddColumn("Generic", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Generic = value);
                 AddColumn("Visible", ColumnType.CHAR_OR_VARCHAR, (book, value) => book.Visible = value);
+                AddColumn("TimeAdded", ColumnType.TIMESTAMP, (book, value) => book.AddedDateTime = ParseNullableDateTime(value));
+                AddColumn("TimeLastModified", ColumnType.TIMESTAMP, (book, value) => book.LastModifiedDateTime = ParseNullableDateTime(value));
             }
         }
 

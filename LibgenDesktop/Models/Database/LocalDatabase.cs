@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -659,158 +660,66 @@ namespace LibgenDesktop.Models.Database
                 {
                     insertCommand.CommandText = SqlScripts.INSERT_FICTION;
                     insertCommand.Parameters.AddWithValue("@Id", null);
-                    SQLiteParameter authorFamily1Parameter = insertCommand.Parameters.Add("@AuthorFamily1", DbType.String);
-                    SQLiteParameter authorName1Parameter = insertCommand.Parameters.Add("@AuthorName1", DbType.String);
-                    SQLiteParameter authorSurname1Parameter = insertCommand.Parameters.Add("@AuthorSurname1", DbType.String);
-                    SQLiteParameter role1Parameter = insertCommand.Parameters.Add("@Role1", DbType.String);
-                    SQLiteParameter pseudonim1Parameter = insertCommand.Parameters.Add("@Pseudonim1", DbType.String);
-                    SQLiteParameter authorFamily2Parameter = insertCommand.Parameters.Add("@AuthorFamily2", DbType.String);
-                    SQLiteParameter authorName2Parameter = insertCommand.Parameters.Add("@AuthorName2", DbType.String);
-                    SQLiteParameter authorSurname2Parameter = insertCommand.Parameters.Add("@AuthorSurname2", DbType.String);
-                    SQLiteParameter role2Parameter = insertCommand.Parameters.Add("@Role2", DbType.String);
-                    SQLiteParameter pseudonim2Parameter = insertCommand.Parameters.Add("@Pseudonim2", DbType.String);
-                    SQLiteParameter authorFamily3Parameter = insertCommand.Parameters.Add("@AuthorFamily3", DbType.String);
-                    SQLiteParameter authorName3Parameter = insertCommand.Parameters.Add("@AuthorName3", DbType.String);
-                    SQLiteParameter authorSurname3Parameter = insertCommand.Parameters.Add("@AuthorSurname3", DbType.String);
-                    SQLiteParameter role3Parameter = insertCommand.Parameters.Add("@Role3", DbType.String);
-                    SQLiteParameter pseudonim3Parameter = insertCommand.Parameters.Add("@Pseudonim3", DbType.String);
-                    SQLiteParameter authorFamily4Parameter = insertCommand.Parameters.Add("@AuthorFamily4", DbType.String);
-                    SQLiteParameter authorName4Parameter = insertCommand.Parameters.Add("@AuthorName4", DbType.String);
-                    SQLiteParameter authorSurname4Parameter = insertCommand.Parameters.Add("@AuthorSurname4", DbType.String);
-                    SQLiteParameter role4Parameter = insertCommand.Parameters.Add("@Role4", DbType.String);
-                    SQLiteParameter pseudonim4Parameter = insertCommand.Parameters.Add("@Pseudonim4", DbType.String);
-                    SQLiteParameter series1Parameter = insertCommand.Parameters.Add("@Series1", DbType.String);
-                    SQLiteParameter series2Parameter = insertCommand.Parameters.Add("@Series2", DbType.String);
-                    SQLiteParameter series3Parameter = insertCommand.Parameters.Add("@Series3", DbType.String);
-                    SQLiteParameter series4Parameter = insertCommand.Parameters.Add("@Series4", DbType.String);
-                    SQLiteParameter titleParameter = insertCommand.Parameters.Add("@Title", DbType.String);
-                    SQLiteParameter formatParameter = insertCommand.Parameters.Add("@Format", DbType.String);
-                    SQLiteParameter versionParameter = insertCommand.Parameters.Add("@Version", DbType.String);
-                    SQLiteParameter sizeInBytesParameter = insertCommand.Parameters.Add("@SizeInBytes", DbType.Int64);
                     SQLiteParameter md5HashParameter = insertCommand.Parameters.Add("@Md5Hash", DbType.String);
-                    SQLiteParameter pathParameter = insertCommand.Parameters.Add("@Path", DbType.String);
+                    SQLiteParameter titleParameter = insertCommand.Parameters.Add("@Title", DbType.String);
+                    SQLiteParameter authorsParameter = insertCommand.Parameters.Add("@Authors", DbType.String);
+                    SQLiteParameter seriesParameter = insertCommand.Parameters.Add("@Series", DbType.String);
+                    SQLiteParameter editionParameter = insertCommand.Parameters.Add("@Edition", DbType.String);
                     SQLiteParameter languageParameter = insertCommand.Parameters.Add("@Language", DbType.String);
-                    SQLiteParameter pagesParameter = insertCommand.Parameters.Add("@Pages", DbType.String);
-                    SQLiteParameter identifierParameter = insertCommand.Parameters.Add("@Identifier", DbType.String);
                     SQLiteParameter yearParameter = insertCommand.Parameters.Add("@Year", DbType.String);
                     SQLiteParameter publisherParameter = insertCommand.Parameters.Add("@Publisher", DbType.String);
-                    SQLiteParameter editionParameter = insertCommand.Parameters.Add("@Edition", DbType.String);
-                    SQLiteParameter commentaryParameter = insertCommand.Parameters.Add("@Commentary", DbType.String);
-                    SQLiteParameter addedDateTimeParameter = insertCommand.Parameters.Add("@AddedDateTime", DbType.String);
-                    SQLiteParameter lastModifiedDateTimeParameter = insertCommand.Parameters.Add("@LastModifiedDateTime", DbType.String);
-                    SQLiteParameter russianAuthorFamilyParameter = insertCommand.Parameters.Add("@RussianAuthorFamily", DbType.String);
-                    SQLiteParameter russianAuthorNameParameter = insertCommand.Parameters.Add("@RussianAuthorName", DbType.String);
-                    SQLiteParameter russianAuthorSurnameParameter = insertCommand.Parameters.Add("@RussianAuthorSurname", DbType.String);
-                    SQLiteParameter coverParameter = insertCommand.Parameters.Add("@Cover", DbType.String);
+                    SQLiteParameter pagesParameter = insertCommand.Parameters.Add("@Pages", DbType.String);
+                    SQLiteParameter identifierParameter = insertCommand.Parameters.Add("@Identifier", DbType.String);
                     SQLiteParameter googleBookIdParameter = insertCommand.Parameters.Add("@GoogleBookId", DbType.String);
                     SQLiteParameter asinParameter = insertCommand.Parameters.Add("@Asin", DbType.String);
-                    SQLiteParameter authorHashParameter = insertCommand.Parameters.Add("@AuthorHash", DbType.String);
-                    SQLiteParameter titleHashParameter = insertCommand.Parameters.Add("@TitleHash", DbType.String);
+                    SQLiteParameter coverUrlParameter = insertCommand.Parameters.Add("@CoverUrl", DbType.String);
+                    SQLiteParameter formatParameter = insertCommand.Parameters.Add("@Format", DbType.String);
+                    SQLiteParameter sizeInBytesParameter = insertCommand.Parameters.Add("@SizeInBytes", DbType.Int64);
+                    SQLiteParameter libraryParameter = insertCommand.Parameters.Add("@Library", DbType.String);
+                    SQLiteParameter issueParameter = insertCommand.Parameters.Add("@Issue", DbType.String);
+                    SQLiteParameter locatorParameter = insertCommand.Parameters.Add("@Locator", DbType.String);
+                    SQLiteParameter commentaryParameter = insertCommand.Parameters.Add("@Commentary", DbType.String);
+                    SQLiteParameter genericParameter = insertCommand.Parameters.Add("@Generic", DbType.String);
                     SQLiteParameter visibleParameter = insertCommand.Parameters.Add("@Visible", DbType.String);
+                    SQLiteParameter addedDateTimeParameter = insertCommand.Parameters.Add("@AddedDateTime", DbType.String);
+                    SQLiteParameter lastModifiedDateTimeParameter = insertCommand.Parameters.Add("@LastModifiedDateTime", DbType.String);
                     SQLiteParameter libgenIdParameter = insertCommand.Parameters.Add("@LibgenId", DbType.Int32);
                     insertFtsCommand.CommandText = SqlScripts.INSERT_FICTION_FTS_WITHOUT_ID;
                     SQLiteParameter titleFtsParameter = insertFtsCommand.Parameters.Add("@Title", DbType.String);
-                    SQLiteParameter authorFamily1FtsParameter = insertFtsCommand.Parameters.Add("@AuthorFamily1", DbType.String);
-                    SQLiteParameter authorName1FtsParameter = insertFtsCommand.Parameters.Add("@AuthorName1", DbType.String);
-                    SQLiteParameter authorSurname1FtsParameter = insertFtsCommand.Parameters.Add("@AuthorSurname1", DbType.String);
-                    SQLiteParameter pseudonim1FtsParameter = insertFtsCommand.Parameters.Add("@Pseudonim1", DbType.String);
-                    SQLiteParameter authorFamily2FtsParameter = insertFtsCommand.Parameters.Add("@AuthorFamily2", DbType.String);
-                    SQLiteParameter authorName2FtsParameter = insertFtsCommand.Parameters.Add("@AuthorName2", DbType.String);
-                    SQLiteParameter authorSurname2FtsParameter = insertFtsCommand.Parameters.Add("@AuthorSurname2", DbType.String);
-                    SQLiteParameter pseudonim2FtsParameter = insertFtsCommand.Parameters.Add("@Pseudonim2", DbType.String);
-                    SQLiteParameter authorFamily3FtsParameter = insertFtsCommand.Parameters.Add("@AuthorFamily3", DbType.String);
-                    SQLiteParameter authorName3FtsParameter = insertFtsCommand.Parameters.Add("@AuthorName3", DbType.String);
-                    SQLiteParameter authorSurname3FtsParameter = insertFtsCommand.Parameters.Add("@AuthorSurname3", DbType.String);
-                    SQLiteParameter pseudonim3FtsParameter = insertFtsCommand.Parameters.Add("@Pseudonim3", DbType.String);
-                    SQLiteParameter authorFamily4FtsParameter = insertFtsCommand.Parameters.Add("@AuthorFamily4", DbType.String);
-                    SQLiteParameter authorName4FtsParameter = insertFtsCommand.Parameters.Add("@AuthorName4", DbType.String);
-                    SQLiteParameter authorSurname4FtsParameter = insertFtsCommand.Parameters.Add("@AuthorSurname4", DbType.String);
-                    SQLiteParameter pseudonim4FtsParameter = insertFtsCommand.Parameters.Add("@Pseudonim4", DbType.String);
-                    SQLiteParameter russianAuthorFamilyFtsParameter = insertFtsCommand.Parameters.Add("@RussianAuthorFamily", DbType.String);
-                    SQLiteParameter russianAuthorNameFtsParameter = insertFtsCommand.Parameters.Add("@RussianAuthorName", DbType.String);
-                    SQLiteParameter russianAuthorSurnameFtsParameter = insertFtsCommand.Parameters.Add("@RussianAuthorSurname", DbType.String);
-                    SQLiteParameter series1FtsParameter = insertFtsCommand.Parameters.Add("@Series1", DbType.String);
-                    SQLiteParameter series2FtsParameter = insertFtsCommand.Parameters.Add("@Series2", DbType.String);
-                    SQLiteParameter series3FtsParameter = insertFtsCommand.Parameters.Add("@Series3", DbType.String);
-                    SQLiteParameter series4FtsParameter = insertFtsCommand.Parameters.Add("@Series4", DbType.String);
+                    SQLiteParameter authorsFtsParameter = insertFtsCommand.Parameters.Add("@Authors", DbType.String);
+                    SQLiteParameter seriesFtsParameter = insertFtsCommand.Parameters.Add("@Series", DbType.String);
                     SQLiteParameter publisherFtsParameter = insertFtsCommand.Parameters.Add("@Publisher", DbType.String);
                     SQLiteParameter identifierFtsParameter = insertFtsCommand.Parameters.Add("@Identifier", DbType.String);
                     foreach (FictionBook book in books)
                     {
-                        authorFamily1Parameter.Value = book.AuthorFamily1;
-                        authorName1Parameter.Value = book.AuthorName1;
-                        authorSurname1Parameter.Value = book.AuthorSurname1;
-                        role1Parameter.Value = book.Role1;
-                        pseudonim1Parameter.Value = book.Pseudonim1;
-                        authorFamily2Parameter.Value = book.AuthorFamily2;
-                        authorName2Parameter.Value = book.AuthorName2;
-                        authorSurname2Parameter.Value = book.AuthorSurname2;
-                        role2Parameter.Value = book.Role2;
-                        pseudonim2Parameter.Value = book.Pseudonim2;
-                        authorFamily3Parameter.Value = book.AuthorFamily3;
-                        authorName3Parameter.Value = book.AuthorName3;
-                        authorSurname3Parameter.Value = book.AuthorSurname3;
-                        role3Parameter.Value = book.Role3;
-                        pseudonim3Parameter.Value = book.Pseudonim3;
-                        authorFamily4Parameter.Value = book.AuthorFamily4;
-                        authorName4Parameter.Value = book.AuthorName4;
-                        authorSurname4Parameter.Value = book.AuthorSurname4;
-                        role4Parameter.Value = book.Role4;
-                        pseudonim4Parameter.Value = book.Pseudonim4;
-                        series1Parameter.Value = book.Series1;
-                        series2Parameter.Value = book.Series2;
-                        series3Parameter.Value = book.Series3;
-                        series4Parameter.Value = book.Series4;
-                        titleParameter.Value = book.Title;
-                        formatParameter.Value = book.Format;
-                        versionParameter.Value = book.Version;
-                        sizeInBytesParameter.Value = book.SizeInBytes;
                         md5HashParameter.Value = book.Md5Hash;
-                        pathParameter.Value = book.Path;
+                        titleParameter.Value = book.Title;
+                        authorsParameter.Value = book.Authors;
+                        seriesParameter.Value = book.Series;
+                        editionParameter.Value = book.Edition;
                         languageParameter.Value = book.Language;
-                        pagesParameter.Value = book.Pages;
-                        identifierParameter.Value = book.Identifier;
                         yearParameter.Value = book.Year;
                         publisherParameter.Value = book.Publisher;
-                        editionParameter.Value = book.Edition;
-                        commentaryParameter.Value = book.Commentary;
-                        addedDateTimeParameter.Value = book.AddedDateTime?.ToString("s");
-                        lastModifiedDateTimeParameter.Value = book.LastModifiedDateTime.ToString("s");
-                        russianAuthorFamilyParameter.Value = book.RussianAuthorFamily;
-                        russianAuthorNameParameter.Value = book.RussianAuthorName;
-                        russianAuthorSurnameParameter.Value = book.RussianAuthorSurname;
-                        coverParameter.Value = book.Cover;
+                        pagesParameter.Value = book.Pages;
+                        identifierParameter.Value = book.Identifier;
                         googleBookIdParameter.Value = book.GoogleBookId;
                         asinParameter.Value = book.Asin;
-                        authorHashParameter.Value = book.AuthorHash;
-                        titleHashParameter.Value = book.TitleHash;
+                        coverUrlParameter.Value = book.CoverUrl;
+                        formatParameter.Value = book.Format;
+                        sizeInBytesParameter.Value = book.SizeInBytes;
+                        libraryParameter.Value = book.Library;
+                        issueParameter.Value = book.Issue;
+                        locatorParameter.Value = book.Locator;
+                        commentaryParameter.Value = book.Commentary;
+                        genericParameter.Value = book.Generic;
                         visibleParameter.Value = book.Visible;
+                        addedDateTimeParameter.Value = book.AddedDateTime?.ToString("s");
+                        lastModifiedDateTimeParameter.Value = book.LastModifiedDateTime?.ToString("s");
                         libgenIdParameter.Value = book.LibgenId;
                         insertCommand.ExecuteNonQuery();
                         titleFtsParameter.Value = book.Title.SeparateCjkCharactersWithSpaces();
-                        authorFamily1FtsParameter.Value = book.AuthorFamily1.SeparateCjkCharactersWithSpaces();
-                        authorName1FtsParameter.Value = book.AuthorName1.SeparateCjkCharactersWithSpaces();
-                        authorSurname1FtsParameter.Value = book.AuthorSurname1.SeparateCjkCharactersWithSpaces();
-                        pseudonim1FtsParameter.Value = book.Pseudonim1.SeparateCjkCharactersWithSpaces();
-                        authorFamily2FtsParameter.Value = book.AuthorFamily2.SeparateCjkCharactersWithSpaces();
-                        authorName2FtsParameter.Value = book.AuthorName2.SeparateCjkCharactersWithSpaces();
-                        authorSurname2FtsParameter.Value = book.AuthorSurname2.SeparateCjkCharactersWithSpaces();
-                        pseudonim2FtsParameter.Value = book.Pseudonim2.SeparateCjkCharactersWithSpaces();
-                        authorFamily3FtsParameter.Value = book.AuthorFamily3.SeparateCjkCharactersWithSpaces();
-                        authorName3FtsParameter.Value = book.AuthorName3.SeparateCjkCharactersWithSpaces();
-                        authorSurname3FtsParameter.Value = book.AuthorSurname3.SeparateCjkCharactersWithSpaces();
-                        pseudonim3FtsParameter.Value = book.Pseudonim3.SeparateCjkCharactersWithSpaces();
-                        authorFamily4FtsParameter.Value = book.AuthorFamily4.SeparateCjkCharactersWithSpaces();
-                        authorName4FtsParameter.Value = book.AuthorName4.SeparateCjkCharactersWithSpaces();
-                        authorSurname4FtsParameter.Value = book.AuthorSurname4.SeparateCjkCharactersWithSpaces();
-                        pseudonim4FtsParameter.Value = book.Pseudonim4.SeparateCjkCharactersWithSpaces();
-                        russianAuthorFamilyFtsParameter.Value = book.RussianAuthorFamily;
-                        russianAuthorNameFtsParameter.Value = book.RussianAuthorName;
-                        russianAuthorSurnameFtsParameter.Value = book.RussianAuthorSurname;
-                        series1FtsParameter.Value = book.Series1.SeparateCjkCharactersWithSpaces();
-                        series2FtsParameter.Value = book.Series2.SeparateCjkCharactersWithSpaces();
-                        series3FtsParameter.Value = book.Series3.SeparateCjkCharactersWithSpaces();
-                        series4FtsParameter.Value = book.Series4.SeparateCjkCharactersWithSpaces();
+                        authorsFtsParameter.Value = book.Authors.SeparateCjkCharactersWithSpaces();
+                        seriesFtsParameter.Value = book.Series.SeparateCjkCharactersWithSpaces();
                         publisherFtsParameter.Value = book.Publisher.SeparateCjkCharactersWithSpaces();
                         identifierFtsParameter.Value = book.Identifier;
                         insertFtsCommand.ExecuteNonQuery();
@@ -831,214 +740,80 @@ namespace LibgenDesktop.Models.Database
                     deleteFtsCommand.CommandText = SqlScripts.DELETE_FICTION_FTS;
                     SQLiteParameter idDeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Id", DbType.Int32);
                     SQLiteParameter titleDeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Title", DbType.String);
-                    SQLiteParameter authorFamily1DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorFamily1", DbType.String);
-                    SQLiteParameter authorName1DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorName1", DbType.String);
-                    SQLiteParameter authorSurname1DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorSurname1", DbType.String);
-                    SQLiteParameter pseudonim1DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Pseudonim1", DbType.String);
-                    SQLiteParameter authorFamily2DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorFamily2", DbType.String);
-                    SQLiteParameter authorName2DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorName2", DbType.String);
-                    SQLiteParameter authorSurname2DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorSurname2", DbType.String);
-                    SQLiteParameter pseudonim2DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Pseudonim2", DbType.String);
-                    SQLiteParameter authorFamily3DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorFamily3", DbType.String);
-                    SQLiteParameter authorName3DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorName3", DbType.String);
-                    SQLiteParameter authorSurname3DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorSurname3", DbType.String);
-                    SQLiteParameter pseudonim3DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Pseudonim3", DbType.String);
-                    SQLiteParameter authorFamily4DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorFamily4", DbType.String);
-                    SQLiteParameter authorName4DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorName4", DbType.String);
-                    SQLiteParameter authorSurname4DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@AuthorSurname4", DbType.String);
-                    SQLiteParameter pseudonim4DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Pseudonim4", DbType.String);
-                    SQLiteParameter russianAuthorFamilyDeleteFtsParameter = deleteFtsCommand.Parameters.Add("@RussianAuthorFamily", DbType.String);
-                    SQLiteParameter russianAuthorNameDeleteFtsParameter = deleteFtsCommand.Parameters.Add("@RussianAuthorName", DbType.String);
-                    SQLiteParameter russianAuthorSurnameDeleteFtsParameter = deleteFtsCommand.Parameters.Add("@RussianAuthorSurname", DbType.String);
-                    SQLiteParameter series1DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Series1", DbType.String);
-                    SQLiteParameter series2DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Series2", DbType.String);
-                    SQLiteParameter series3DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Series3", DbType.String);
-                    SQLiteParameter series4DeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Series4", DbType.String);
+                    SQLiteParameter authorsDeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Authors", DbType.String);
+                    SQLiteParameter seriesDeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Series", DbType.String);
                     SQLiteParameter publisherDeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Publisher", DbType.String);
                     SQLiteParameter identifierDeleteFtsParameter = deleteFtsCommand.Parameters.Add("@Identifier", DbType.String);
                     updateCommand.CommandText = SqlScripts.UPDATE_FICTION;
                     SQLiteParameter idParameter = updateCommand.Parameters.Add("@Id", DbType.Int32);
-                    SQLiteParameter authorFamily1Parameter = updateCommand.Parameters.Add("@AuthorFamily1", DbType.String);
-                    SQLiteParameter authorName1Parameter = updateCommand.Parameters.Add("@AuthorName1", DbType.String);
-                    SQLiteParameter authorSurname1Parameter = updateCommand.Parameters.Add("@AuthorSurname1", DbType.String);
-                    SQLiteParameter role1Parameter = updateCommand.Parameters.Add("@Role1", DbType.String);
-                    SQLiteParameter pseudonim1Parameter = updateCommand.Parameters.Add("@Pseudonim1", DbType.String);
-                    SQLiteParameter authorFamily2Parameter = updateCommand.Parameters.Add("@AuthorFamily2", DbType.String);
-                    SQLiteParameter authorName2Parameter = updateCommand.Parameters.Add("@AuthorName2", DbType.String);
-                    SQLiteParameter authorSurname2Parameter = updateCommand.Parameters.Add("@AuthorSurname2", DbType.String);
-                    SQLiteParameter role2Parameter = updateCommand.Parameters.Add("@Role2", DbType.String);
-                    SQLiteParameter pseudonim2Parameter = updateCommand.Parameters.Add("@Pseudonim2", DbType.String);
-                    SQLiteParameter authorFamily3Parameter = updateCommand.Parameters.Add("@AuthorFamily3", DbType.String);
-                    SQLiteParameter authorName3Parameter = updateCommand.Parameters.Add("@AuthorName3", DbType.String);
-                    SQLiteParameter authorSurname3Parameter = updateCommand.Parameters.Add("@AuthorSurname3", DbType.String);
-                    SQLiteParameter role3Parameter = updateCommand.Parameters.Add("@Role3", DbType.String);
-                    SQLiteParameter pseudonim3Parameter = updateCommand.Parameters.Add("@Pseudonim3", DbType.String);
-                    SQLiteParameter authorFamily4Parameter = updateCommand.Parameters.Add("@AuthorFamily4", DbType.String);
-                    SQLiteParameter authorName4Parameter = updateCommand.Parameters.Add("@AuthorName4", DbType.String);
-                    SQLiteParameter authorSurname4Parameter = updateCommand.Parameters.Add("@AuthorSurname4", DbType.String);
-                    SQLiteParameter role4Parameter = updateCommand.Parameters.Add("@Role4", DbType.String);
-                    SQLiteParameter pseudonim4Parameter = updateCommand.Parameters.Add("@Pseudonim4", DbType.String);
-                    SQLiteParameter series1Parameter = updateCommand.Parameters.Add("@Series1", DbType.String);
-                    SQLiteParameter series2Parameter = updateCommand.Parameters.Add("@Series2", DbType.String);
-                    SQLiteParameter series3Parameter = updateCommand.Parameters.Add("@Series3", DbType.String);
-                    SQLiteParameter series4Parameter = updateCommand.Parameters.Add("@Series4", DbType.String);
-                    SQLiteParameter titleParameter = updateCommand.Parameters.Add("@Title", DbType.String);
-                    SQLiteParameter formatParameter = updateCommand.Parameters.Add("@Format", DbType.String);
-                    SQLiteParameter versionParameter = updateCommand.Parameters.Add("@Version", DbType.String);
-                    SQLiteParameter sizeInBytesParameter = updateCommand.Parameters.Add("@SizeInBytes", DbType.Int64);
                     SQLiteParameter md5HashParameter = updateCommand.Parameters.Add("@Md5Hash", DbType.String);
-                    SQLiteParameter pathParameter = updateCommand.Parameters.Add("@Path", DbType.String);
+                    SQLiteParameter titleParameter = updateCommand.Parameters.Add("@Title", DbType.String);
+                    SQLiteParameter authorsParameter = updateCommand.Parameters.Add("@Authors", DbType.String);
+                    SQLiteParameter seriesParameter = updateCommand.Parameters.Add("@Series", DbType.String);
+                    SQLiteParameter editionParameter = updateCommand.Parameters.Add("@Edition", DbType.String);
                     SQLiteParameter languageParameter = updateCommand.Parameters.Add("@Language", DbType.String);
-                    SQLiteParameter pagesParameter = updateCommand.Parameters.Add("@Pages", DbType.String);
-                    SQLiteParameter identifierParameter = updateCommand.Parameters.Add("@Identifier", DbType.String);
                     SQLiteParameter yearParameter = updateCommand.Parameters.Add("@Year", DbType.String);
                     SQLiteParameter publisherParameter = updateCommand.Parameters.Add("@Publisher", DbType.String);
-                    SQLiteParameter editionParameter = updateCommand.Parameters.Add("@Edition", DbType.String);
-                    SQLiteParameter commentaryParameter = updateCommand.Parameters.Add("@Commentary", DbType.String);
-                    SQLiteParameter addedDateTimeParameter = updateCommand.Parameters.Add("@AddedDateTime", DbType.String);
-                    SQLiteParameter lastModifiedDateTimeParameter = updateCommand.Parameters.Add("@LastModifiedDateTime", DbType.String);
-                    SQLiteParameter russianAuthorFamilyParameter = updateCommand.Parameters.Add("@RussianAuthorFamily", DbType.String);
-                    SQLiteParameter russianAuthorNameParameter = updateCommand.Parameters.Add("@RussianAuthorName", DbType.String);
-                    SQLiteParameter russianAuthorSurnameParameter = updateCommand.Parameters.Add("@RussianAuthorSurname", DbType.String);
-                    SQLiteParameter coverParameter = updateCommand.Parameters.Add("@Cover", DbType.String);
+                    SQLiteParameter pagesParameter = updateCommand.Parameters.Add("@Pages", DbType.String);
+                    SQLiteParameter identifierParameter = updateCommand.Parameters.Add("@Identifier", DbType.String);
                     SQLiteParameter googleBookIdParameter = updateCommand.Parameters.Add("@GoogleBookId", DbType.String);
                     SQLiteParameter asinParameter = updateCommand.Parameters.Add("@Asin", DbType.String);
-                    SQLiteParameter authorHashParameter = updateCommand.Parameters.Add("@AuthorHash", DbType.String);
-                    SQLiteParameter titleHashParameter = updateCommand.Parameters.Add("@TitleHash", DbType.String);
+                    SQLiteParameter coverUrlParameter = updateCommand.Parameters.Add("@CoverUrl", DbType.String);
+                    SQLiteParameter formatParameter = updateCommand.Parameters.Add("@Format", DbType.String);
+                    SQLiteParameter sizeInBytesParameter = updateCommand.Parameters.Add("@SizeInBytes", DbType.Int64);
+                    SQLiteParameter libraryParameter = updateCommand.Parameters.Add("@Library", DbType.String);
+                    SQLiteParameter issueParameter = updateCommand.Parameters.Add("@Issue", DbType.String);
+                    SQLiteParameter locatorParameter = updateCommand.Parameters.Add("@Locator", DbType.String);
+                    SQLiteParameter commentaryParameter = updateCommand.Parameters.Add("@Commentary", DbType.String);
+                    SQLiteParameter genericParameter = updateCommand.Parameters.Add("@Generic", DbType.String);
                     SQLiteParameter visibleParameter = updateCommand.Parameters.Add("@Visible", DbType.String);
+                    SQLiteParameter addedDateTimeParameter = updateCommand.Parameters.Add("@AddedDateTime", DbType.String);
+                    SQLiteParameter lastModifiedDateTimeParameter = updateCommand.Parameters.Add("@LastModifiedDateTime", DbType.String);
                     insertFtsWithIdCommand.CommandText = SqlScripts.INSERT_FICTION_FTS_WITH_ID;
                     SQLiteParameter idFtsParameter = insertFtsWithIdCommand.Parameters.Add("@Id", DbType.Int32);
                     SQLiteParameter titleFtsParameter = insertFtsWithIdCommand.Parameters.Add("@Title", DbType.String);
-                    SQLiteParameter authorFamily1FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorFamily1", DbType.String);
-                    SQLiteParameter authorName1FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorName1", DbType.String);
-                    SQLiteParameter authorSurname1FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorSurname1", DbType.String);
-                    SQLiteParameter pseudonim1FtsParameter = insertFtsWithIdCommand.Parameters.Add("@Pseudonim1", DbType.String);
-                    SQLiteParameter authorFamily2FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorFamily2", DbType.String);
-                    SQLiteParameter authorName2FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorName2", DbType.String);
-                    SQLiteParameter authorSurname2FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorSurname2", DbType.String);
-                    SQLiteParameter pseudonim2FtsParameter = insertFtsWithIdCommand.Parameters.Add("@Pseudonim2", DbType.String);
-                    SQLiteParameter authorFamily3FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorFamily3", DbType.String);
-                    SQLiteParameter authorName3FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorName3", DbType.String);
-                    SQLiteParameter authorSurname3FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorSurname3", DbType.String);
-                    SQLiteParameter pseudonim3FtsParameter = insertFtsWithIdCommand.Parameters.Add("@Pseudonim3", DbType.String);
-                    SQLiteParameter authorFamily4FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorFamily4", DbType.String);
-                    SQLiteParameter authorName4FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorName4", DbType.String);
-                    SQLiteParameter authorSurname4FtsParameter = insertFtsWithIdCommand.Parameters.Add("@AuthorSurname4", DbType.String);
-                    SQLiteParameter pseudonim4FtsParameter = insertFtsWithIdCommand.Parameters.Add("@Pseudonim4", DbType.String);
-                    SQLiteParameter russianAuthorFamilyFtsParameter = insertFtsWithIdCommand.Parameters.Add("@RussianAuthorFamily", DbType.String);
-                    SQLiteParameter russianAuthorNameFtsParameter = insertFtsWithIdCommand.Parameters.Add("@RussianAuthorName", DbType.String);
-                    SQLiteParameter russianAuthorSurnameFtsParameter = insertFtsWithIdCommand.Parameters.Add("@RussianAuthorSurname", DbType.String);
-                    SQLiteParameter series1FtsParameter = insertFtsWithIdCommand.Parameters.Add("@Series1", DbType.String);
-                    SQLiteParameter series2FtsParameter = insertFtsWithIdCommand.Parameters.Add("@Series2", DbType.String);
-                    SQLiteParameter series3FtsParameter = insertFtsWithIdCommand.Parameters.Add("@Series3", DbType.String);
-                    SQLiteParameter series4FtsParameter = insertFtsWithIdCommand.Parameters.Add("@Series4", DbType.String);
+                    SQLiteParameter authorsFtsParameter = insertFtsWithIdCommand.Parameters.Add("@Authors", DbType.String);
+                    SQLiteParameter seriesFtsParameter = insertFtsWithIdCommand.Parameters.Add("@Series", DbType.String);
                     SQLiteParameter publisherFtsParameter = insertFtsWithIdCommand.Parameters.Add("@Publisher", DbType.String);
                     SQLiteParameter identifierFtsParameter = insertFtsWithIdCommand.Parameters.Add("@Identifier", DbType.String);
                     foreach (FictionBook book in books)
                     {
                         idDeleteFtsParameter.Value = book.Id;
                         titleDeleteFtsParameter.Value = book.Title.SeparateCjkCharactersWithSpaces();
-                        authorFamily1DeleteFtsParameter.Value = book.AuthorFamily1.SeparateCjkCharactersWithSpaces();
-                        authorName1DeleteFtsParameter.Value = book.AuthorName1.SeparateCjkCharactersWithSpaces();
-                        authorSurname1DeleteFtsParameter.Value = book.AuthorSurname1.SeparateCjkCharactersWithSpaces();
-                        pseudonim1DeleteFtsParameter.Value = book.Pseudonim1.SeparateCjkCharactersWithSpaces();
-                        authorFamily2DeleteFtsParameter.Value = book.AuthorFamily2.SeparateCjkCharactersWithSpaces();
-                        authorName2DeleteFtsParameter.Value = book.AuthorName2.SeparateCjkCharactersWithSpaces();
-                        authorSurname2DeleteFtsParameter.Value = book.AuthorSurname2.SeparateCjkCharactersWithSpaces();
-                        pseudonim2DeleteFtsParameter.Value = book.Pseudonim2.SeparateCjkCharactersWithSpaces();
-                        authorFamily3DeleteFtsParameter.Value = book.AuthorFamily3.SeparateCjkCharactersWithSpaces();
-                        authorName3DeleteFtsParameter.Value = book.AuthorName3.SeparateCjkCharactersWithSpaces();
-                        authorSurname3DeleteFtsParameter.Value = book.AuthorSurname3.SeparateCjkCharactersWithSpaces();
-                        pseudonim3DeleteFtsParameter.Value = book.Pseudonim3.SeparateCjkCharactersWithSpaces();
-                        authorFamily4DeleteFtsParameter.Value = book.AuthorFamily4.SeparateCjkCharactersWithSpaces();
-                        authorName4DeleteFtsParameter.Value = book.AuthorName4.SeparateCjkCharactersWithSpaces();
-                        authorSurname4DeleteFtsParameter.Value = book.AuthorSurname4.SeparateCjkCharactersWithSpaces();
-                        pseudonim4DeleteFtsParameter.Value = book.Pseudonim4.SeparateCjkCharactersWithSpaces();
-                        russianAuthorFamilyDeleteFtsParameter.Value = book.RussianAuthorFamily;
-                        russianAuthorNameDeleteFtsParameter.Value = book.RussianAuthorName;
-                        russianAuthorSurnameDeleteFtsParameter.Value = book.RussianAuthorSurname;
-                        series1DeleteFtsParameter.Value = book.Series1.SeparateCjkCharactersWithSpaces();
-                        series2DeleteFtsParameter.Value = book.Series2.SeparateCjkCharactersWithSpaces();
-                        series3DeleteFtsParameter.Value = book.Series3.SeparateCjkCharactersWithSpaces();
-                        series4DeleteFtsParameter.Value = book.Series4.SeparateCjkCharactersWithSpaces();
+                        authorsDeleteFtsParameter.Value = book.Authors.SeparateCjkCharactersWithSpaces();
+                        seriesDeleteFtsParameter.Value = book.Series.SeparateCjkCharactersWithSpaces();
                         publisherDeleteFtsParameter.Value = book.Publisher.SeparateCjkCharactersWithSpaces();
                         identifierDeleteFtsParameter.Value = book.Identifier;
                         deleteFtsCommand.ExecuteNonQuery();
                         idParameter.Value = book.Id;
-                        authorFamily1Parameter.Value = book.AuthorFamily1;
-                        authorName1Parameter.Value = book.AuthorName1;
-                        authorSurname1Parameter.Value = book.AuthorSurname1;
-                        role1Parameter.Value = book.Role1;
-                        pseudonim1Parameter.Value = book.Pseudonim1;
-                        authorFamily2Parameter.Value = book.AuthorFamily2;
-                        authorName2Parameter.Value = book.AuthorName2;
-                        authorSurname2Parameter.Value = book.AuthorSurname2;
-                        role2Parameter.Value = book.Role2;
-                        pseudonim2Parameter.Value = book.Pseudonim2;
-                        authorFamily3Parameter.Value = book.AuthorFamily3;
-                        authorName3Parameter.Value = book.AuthorName3;
-                        authorSurname3Parameter.Value = book.AuthorSurname3;
-                        role3Parameter.Value = book.Role3;
-                        pseudonim3Parameter.Value = book.Pseudonim3;
-                        authorFamily4Parameter.Value = book.AuthorFamily4;
-                        authorName4Parameter.Value = book.AuthorName4;
-                        authorSurname4Parameter.Value = book.AuthorSurname4;
-                        role4Parameter.Value = book.Role4;
-                        pseudonim4Parameter.Value = book.Pseudonim4;
-                        series1Parameter.Value = book.Series1;
-                        series2Parameter.Value = book.Series2;
-                        series3Parameter.Value = book.Series3;
-                        series4Parameter.Value = book.Series4;
-                        titleParameter.Value = book.Title;
-                        formatParameter.Value = book.Format;
-                        versionParameter.Value = book.Version;
-                        sizeInBytesParameter.Value = book.SizeInBytes;
                         md5HashParameter.Value = book.Md5Hash;
-                        pathParameter.Value = book.Path;
+                        titleParameter.Value = book.Title;
+                        authorsParameter.Value = book.Authors;
+                        seriesParameter.Value = book.Series;
+                        editionParameter.Value = book.Edition;
                         languageParameter.Value = book.Language;
-                        pagesParameter.Value = book.Pages;
-                        identifierParameter.Value = book.Identifier;
                         yearParameter.Value = book.Year;
                         publisherParameter.Value = book.Publisher;
-                        editionParameter.Value = book.Edition;
-                        commentaryParameter.Value = book.Commentary;
-                        addedDateTimeParameter.Value = book.AddedDateTime?.ToString("s");
-                        lastModifiedDateTimeParameter.Value = book.LastModifiedDateTime.ToString("s");
-                        russianAuthorFamilyParameter.Value = book.RussianAuthorFamily;
-                        russianAuthorNameParameter.Value = book.RussianAuthorName;
-                        russianAuthorSurnameParameter.Value = book.RussianAuthorSurname;
-                        coverParameter.Value = book.Cover;
+                        pagesParameter.Value = book.Pages;
+                        identifierParameter.Value = book.Identifier;
                         googleBookIdParameter.Value = book.GoogleBookId;
                         asinParameter.Value = book.Asin;
-                        authorHashParameter.Value = book.AuthorHash;
-                        titleHashParameter.Value = book.TitleHash;
+                        coverUrlParameter.Value = book.CoverUrl;
+                        formatParameter.Value = book.Format;
+                        sizeInBytesParameter.Value = book.SizeInBytes;
+                        libraryParameter.Value = book.Library;
+                        issueParameter.Value = book.Issue;
+                        locatorParameter.Value = book.Locator;
+                        commentaryParameter.Value = book.Commentary;
+                        genericParameter.Value = book.Generic;
                         visibleParameter.Value = book.Visible;
+                        addedDateTimeParameter.Value = book.AddedDateTime?.ToString("s");
+                        lastModifiedDateTimeParameter.Value = book.LastModifiedDateTime?.ToString("s");
                         updateCommand.ExecuteNonQuery();
                         idFtsParameter.Value = book.Id;
                         titleFtsParameter.Value = book.Title.SeparateCjkCharactersWithSpaces();
-                        authorFamily1FtsParameter.Value = book.AuthorFamily1.SeparateCjkCharactersWithSpaces();
-                        authorName1FtsParameter.Value = book.AuthorName1.SeparateCjkCharactersWithSpaces();
-                        authorSurname1FtsParameter.Value = book.AuthorSurname1.SeparateCjkCharactersWithSpaces();
-                        pseudonim1FtsParameter.Value = book.Pseudonim1.SeparateCjkCharactersWithSpaces();
-                        authorFamily2FtsParameter.Value = book.AuthorFamily2.SeparateCjkCharactersWithSpaces();
-                        authorName2FtsParameter.Value = book.AuthorName2.SeparateCjkCharactersWithSpaces();
-                        authorSurname2FtsParameter.Value = book.AuthorSurname2.SeparateCjkCharactersWithSpaces();
-                        pseudonim2FtsParameter.Value = book.Pseudonim2.SeparateCjkCharactersWithSpaces();
-                        authorFamily3FtsParameter.Value = book.AuthorFamily3.SeparateCjkCharactersWithSpaces();
-                        authorName3FtsParameter.Value = book.AuthorName3.SeparateCjkCharactersWithSpaces();
-                        authorSurname3FtsParameter.Value = book.AuthorSurname3.SeparateCjkCharactersWithSpaces();
-                        pseudonim3FtsParameter.Value = book.Pseudonim3.SeparateCjkCharactersWithSpaces();
-                        authorFamily4FtsParameter.Value = book.AuthorFamily4.SeparateCjkCharactersWithSpaces();
-                        authorName4FtsParameter.Value = book.AuthorName4.SeparateCjkCharactersWithSpaces();
-                        authorSurname4FtsParameter.Value = book.AuthorSurname4.SeparateCjkCharactersWithSpaces();
-                        pseudonim4FtsParameter.Value = book.Pseudonim4.SeparateCjkCharactersWithSpaces();
-                        russianAuthorFamilyFtsParameter.Value = book.RussianAuthorFamily;
-                        russianAuthorNameFtsParameter.Value = book.RussianAuthorName;
-                        russianAuthorSurnameFtsParameter.Value = book.RussianAuthorSurname;
-                        series1FtsParameter.Value = book.Series1.SeparateCjkCharactersWithSpaces();
-                        series2FtsParameter.Value = book.Series2.SeparateCjkCharactersWithSpaces();
-                        series3FtsParameter.Value = book.Series3.SeparateCjkCharactersWithSpaces();
-                        series4FtsParameter.Value = book.Series4.SeparateCjkCharactersWithSpaces();
+                        authorsFtsParameter.Value = book.Authors.SeparateCjkCharactersWithSpaces();
+                        seriesFtsParameter.Value = book.Series.SeparateCjkCharactersWithSpaces();
                         publisherFtsParameter.Value = book.Publisher.SeparateCjkCharactersWithSpaces();
                         identifierFtsParameter.Value = book.Identifier;
                         insertFtsWithIdCommand.ExecuteNonQuery();
@@ -1051,6 +826,12 @@ namespace LibgenDesktop.Models.Database
         public List<string> GetFictionIndexList()
         {
             return GetIndexList(SqlScripts.GET_FICTION_INDEX_LIST);
+        }
+
+        public void DropFictionTables()
+        {
+            ExecuteCommands(SqlScripts.DROP_FICTION_FTS_TABLE);
+            ExecuteCommands(SqlScripts.DROP_FICTION_TABLE);
         }
 
         public void CreateSciMagTables()
@@ -1277,10 +1058,18 @@ namespace LibgenDesktop.Models.Database
             ExecuteCommands(SqlScripts.CREATE_FILES_TABLE);
         }
 
-        public void AddFileIdColumns()
+        public void AddFileIdColumnToNonFictionTable()
         {
             ExecuteCommands(SqlScripts.ALTER_NON_FICTION_ADD_FILE_ID);
+        }
+
+        public void AddFileIdColumnToFictionTable()
+        {
             ExecuteCommands(SqlScripts.ALTER_FICTION_ADD_FILE_ID);
+        }
+
+        public void AddFileIdColumnToSciMagTable()
+        {
             ExecuteCommands(SqlScripts.ALTER_SCIMAG_ADD_FILE_ID);
         }
 
@@ -1430,8 +1219,54 @@ namespace LibgenDesktop.Models.Database
             return resultBuilder.ToString();
         }
 
+        private static string EscapeSearchQuery(string originalSearchQuery)
+        {
+            return SearchQueryParser.GetEscapedQuery(originalSearchQuery.SeparateCjkCharactersWithSpaces());
+        }
+
+        private static string GetSearchCommandWithLimit(string searchCommand, int? resultLimit)
+        {
+            return searchCommand + (resultLimit.HasValue ? " LIMIT " + resultLimit.Value : String.Empty);
+        }
+
+        private static int ParseIntScalarResult(object objectResult)
+        {
+            return objectResult != DBNull.Value ? (int)(long)objectResult : 0;
+        }
+
+        private static int? ParseNullableIntScalarResult(object objectResult)
+        {
+            return objectResult != DBNull.Value ? (int?)(long)objectResult : null;
+        }
+
+        private static string ParseNullableDbString(object input)
+        {
+            return input != DBNull.Value ? input.ToString() : null;
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private NonFictionBook ReadNonFictionBook(SQLiteDataReader dataReader)
+        private static DateTime ParseDbDate(string input)
+        {
+            return DateTime.ParseExact(input, "s", CultureInfo.InvariantCulture);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static DateTime? ParseNullableDbDate(object input)
+        {
+            if (input is string inputString)
+            {
+                if (String.IsNullOrEmpty(inputString))
+                {
+                    return null;
+                }
+                return ParseDbDate(inputString);
+            }
+            return null;
+        }
+
+        [SuppressMessage("Style", "IDE0017:Simplify object initialization")]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static NonFictionBook ReadNonFictionBook(SQLiteDataReader dataReader)
         {
             NonFictionBook book = new NonFictionBook();
             book.Id = dataReader.GetInt32(0);
@@ -1486,66 +1321,43 @@ namespace LibgenDesktop.Models.Database
             return book;
         }
 
+        [SuppressMessage("Style", "IDE0017:Simplify object initialization")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private FictionBook ReadFictionBook(SQLiteDataReader dataReader)
+        private static FictionBook ReadFictionBook(SQLiteDataReader dataReader)
         {
             FictionBook book = new FictionBook();
             book.Id = dataReader.GetInt32(0);
-            book.AuthorFamily1 = dataReader.GetString(1);
-            book.AuthorName1 = dataReader.GetString(2);
-            book.AuthorSurname1 = dataReader.GetString(3);
-            book.Role1 = dataReader.GetString(4);
-            book.Pseudonim1 = dataReader.GetString(5);
-            book.AuthorFamily2 = dataReader.GetString(6);
-            book.AuthorName2 = dataReader.GetString(7);
-            book.AuthorSurname2 = dataReader.GetString(8);
-            book.Role2 = dataReader.GetString(9);
-            book.Pseudonim2 = dataReader.GetString(10);
-            book.AuthorFamily3 = dataReader.GetString(11);
-            book.AuthorName3 = dataReader.GetString(12);
-            book.AuthorSurname3 = dataReader.GetString(13);
-            book.Role3 = dataReader.GetString(14);
-            book.Pseudonim3 = dataReader.GetString(15);
-            book.AuthorFamily4 = dataReader.GetString(16);
-            book.AuthorName4 = dataReader.GetString(17);
-            book.AuthorSurname4 = dataReader.GetString(18);
-            book.Role4 = dataReader.GetString(19);
-            book.Pseudonim4 = dataReader.GetString(20);
-            book.Series1 = dataReader.GetString(21);
-            book.Series2 = dataReader.GetString(22);
-            book.Series3 = dataReader.GetString(23);
-            book.Series4 = dataReader.GetString(24);
-            book.Title = dataReader.GetString(25);
-            book.Format = dataReader.GetString(26);
-            book.Version = dataReader.GetString(27);
-            book.SizeInBytes = dataReader.GetInt64(28);
-            book.Md5Hash = dataReader.GetString(29);
-            book.Path = dataReader.GetString(30);
-            book.Language = dataReader.GetString(31);
-            book.Pages = dataReader.GetString(32);
-            book.Identifier = dataReader.GetString(33);
-            book.Year = dataReader.GetString(34);
-            book.Publisher = dataReader.GetString(35);
-            book.Edition = dataReader.GetString(36);
-            book.Commentary = dataReader.GetString(37);
-            book.AddedDateTime = ParseNullableDbDate(dataReader.GetValue(38));
-            book.LastModifiedDateTime = ParseDbDate(dataReader.GetString(39));
-            book.RussianAuthorFamily = dataReader.GetString(40);
-            book.RussianAuthorName = dataReader.GetString(41);
-            book.RussianAuthorSurname = dataReader.GetString(42);
-            book.Cover = dataReader.GetString(43);
-            book.GoogleBookId = dataReader.GetString(44);
-            book.Asin = dataReader.GetString(45);
-            book.AuthorHash = dataReader.GetString(46);
-            book.TitleHash = dataReader.GetString(47);
-            book.Visible = dataReader.GetString(48);
-            book.LibgenId = dataReader.GetInt32(49);
-            book.FileId = ParseNullableIntScalarResult(dataReader.GetValue(50));
+            book.Md5Hash = dataReader.GetString(1);
+            book.Title = dataReader.GetString(2);
+            book.Authors = dataReader.GetString(3);
+            book.Series = dataReader.GetString(4);
+            book.Edition = dataReader.GetString(5);
+            book.Language = dataReader.GetString(6);
+            book.Year = dataReader.GetString(7);
+            book.Publisher = dataReader.GetString(8);
+            book.Pages = dataReader.GetString(9);
+            book.Identifier = dataReader.GetString(10);
+            book.GoogleBookId = dataReader.GetString(11);
+            book.Asin = dataReader.GetString(12);
+            book.CoverUrl = dataReader.GetString(13);
+            book.Format = dataReader.GetString(14);
+            book.SizeInBytes = dataReader.GetInt64(15);
+            book.Library = dataReader.GetString(16);
+            book.Issue = dataReader.GetString(17);
+            book.Locator = dataReader.GetString(18);
+            book.Commentary = dataReader.GetString(19);
+            book.Generic = dataReader.GetString(20);
+            book.Visible = dataReader.GetString(21);
+            book.AddedDateTime = ParseNullableDbDate(dataReader.GetValue(22));
+            book.LastModifiedDateTime = ParseNullableDbDate(dataReader.GetValue(23));
+            book.LibgenId = dataReader.GetInt32(24);
+            book.FileId = ParseNullableIntScalarResult(dataReader.GetValue(25));
             return book;
         }
 
+        [SuppressMessage("Style", "IDE0017:Simplify object initialization")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private SciMagArticle ReadSciMagArticle(SQLiteDataReader dataReader)
+        private static SciMagArticle ReadSciMagArticle(SQLiteDataReader dataReader)
         {
             SciMagArticle article = new SciMagArticle();
             article.Id = dataReader.GetInt32(0);
@@ -1584,8 +1396,9 @@ namespace LibgenDesktop.Models.Database
             return article;
         }
 
+        [SuppressMessage("Style", "IDE0017:Simplify object initialization")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private LibraryFile ReadFile(SQLiteDataReader dataReader)
+        private static LibraryFile ReadFile(SQLiteDataReader dataReader)
         {
             LibraryFile file = new LibraryFile();
             file.Id = dataReader.GetInt32(0);
@@ -1594,16 +1407,6 @@ namespace LibgenDesktop.Models.Database
             file.ObjectType = (LibgenObjectType)dataReader.GetInt32(3);
             file.ObjectId = dataReader.GetInt32(4);
             return file;
-        }
-
-        private string EscapeSearchQuery(string originalSearchQuery)
-        {
-            return SearchQueryParser.GetEscapedQuery(originalSearchQuery.SeparateCjkCharactersWithSpaces());
-        }
-
-        private string GetSearchCommandWithLimit(string searchCommand, int? resultLimit)
-        {
-            return searchCommand + (resultLimit.HasValue ? " LIMIT " + resultLimit.Value : String.Empty);
         }
 
         private void ExecuteCommands(params string[] commands)
@@ -1623,11 +1426,6 @@ namespace LibgenDesktop.Models.Database
             return ParseIntScalarResult(ExecuteScalarCommand(commandText));
         }
 
-        private string ExecuteStringScalarCommand(string commandText)
-        {
-            return ParseNullableDbString(ExecuteScalarCommand(commandText));
-        }
-
         private object ExecuteScalarCommand(string commandText)
         {
             using (SQLiteCommand command = connection.CreateCommand())
@@ -1635,41 +1433,6 @@ namespace LibgenDesktop.Models.Database
                 command.CommandText = commandText;
                 return command.ExecuteScalar();
             }
-        }
-
-        private int ParseIntScalarResult(object objectResult)
-        {
-            return objectResult != DBNull.Value ? (int)(long)objectResult : 0;
-        }
-
-        private int? ParseNullableIntScalarResult(object objectResult)
-        {
-            return objectResult != DBNull.Value ? (int?)(long)objectResult : null;
-        }
-
-        private string ParseNullableDbString(object input)
-        {
-            return input != DBNull.Value ? input.ToString() : null;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private DateTime ParseDbDate(string input)
-        {
-            return DateTime.ParseExact(input, "s", CultureInfo.InvariantCulture);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private DateTime? ParseNullableDbDate(object input)
-        {
-            if (input is string inputString)
-            {
-                if (String.IsNullOrEmpty(inputString))
-                {
-                    return null;
-                }
-                return ParseDbDate(inputString);
-            }
-            return null;
         }
 
         private List<string> GetIndexList(string getIndexListQuery)

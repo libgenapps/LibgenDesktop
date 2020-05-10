@@ -1,7 +1,7 @@
 ﻿using System;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 
 namespace LibgenDesktop.ViewModels.Windows
 {
@@ -45,12 +45,12 @@ namespace LibgenDesktop.ViewModels.Windows
         public string Copy { get; private set; }
         public string Close { get; private set; }
 
-        private string DefaultWindowTitle => "Error";
-        private string DefaultUnexpectedError => "An unexpected error has occurred:";
-        private string DefaultCopy => "COPY TO CLIPBOARD";
-        private string DefaultClose => "CLOSE";
-
         public Command CopyErrorCommand { get; }
+
+        private static string DefaultWindowTitle => "Error";
+        private static string DefaultUnexpectedError => "An unexpected error has occurred:";
+        private static string DefaultCopy => "COPY TO CLIPBOARD";
+        private static string DefaultClose => "CLOSE";
 
         private void CopyErrorToClipboard()
         {

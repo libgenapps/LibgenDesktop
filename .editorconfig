@@ -1,0 +1,16 @@
+﻿[*.cs]
+
+# CA1810: Initialize reference type static fields inline
+dotnet_diagnostic.CA1810.severity = none
+
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = none
+
+# IDE0039: Use local function
+csharp_style_pattern_local_over_anonymous_function = true:none
+
+# CA2100: Review SQL queries for security vulnerabilities
+dotnet_diagnostic.CA2100.severity = none
+
+# IDE0049: Simplify Names
+dotnet_style_predefined_type_for_locals_parameters_members = false:silent

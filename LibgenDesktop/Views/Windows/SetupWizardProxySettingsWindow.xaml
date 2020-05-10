@@ -1,0 +1,50 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.SetupWizardProxySettingsWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
+                       u:EventListenerExtensions.EventProvider="{Binding Events}"
+                       Title="{Binding Localization.WindowTitle}"
+                       Style="{StaticResource SetupWizardProxySettingsWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/SetupWizardProxySettings.xaml" />
+    </Window.Resources>
+    <StackPanel Style="{StaticResource TopContainer}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="11" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="11" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="11" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="11" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.ProxyAddress}" Style="{StaticResource ProxyLabel}" />
+            <TextBox Name="proxyAddressTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding ProxyAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding NetworkUseProxy}" Style="{StaticResource ProxyField}" />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.ProxyPort}" Style="{StaticResource ProxyLabel}" />
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding ProxyPort, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="5" IsEnabled="{Binding NetworkUseProxy}" Style="{StaticResource ProxyField}" />
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding Localization.ProxyUserName}" Style="{StaticResource ProxyLabel}" />
+            <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ProxyUserName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     IsEnabled="{Binding NetworkUseProxy}" Style="{StaticResource ProxyField}" />
+            <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding Localization.ProxyPassword}" Style="{StaticResource ProxyLabel}" />
+            <PasswordBox Grid.Row="6" Grid.Column="1"
+                         u:PasswordBoxExtensions.PasswordBinding="{Binding ProxyPassword, UpdateSourceTrigger=PropertyChanged}"
+                         IsEnabled="{Binding NetworkUseProxy}" />
+            <TextBlock Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource ProxyNote}"
+                       Text="{Binding Localization.ProxyPasswordWarning}" />
+        </Grid>
+        <UniformGrid Rows="1" Columns="2" Style="{StaticResource ButtonPanel}">
+            <Button Content="{Binding Localization.Ok}" Command="{Binding OkCommand}" IsEnabled="{Binding IsOkButtonEnabled}" Style="{StaticResource OkButton}" />
+            <Button Content="{Binding Localization.Cancel}" Style="{StaticResource CancelButton}" />
+        </UniformGrid>
+    </StackPanel>
+</c:LibgenDesktopWindow>

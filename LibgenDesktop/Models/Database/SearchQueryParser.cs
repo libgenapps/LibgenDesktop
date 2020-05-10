@@ -17,6 +17,35 @@ namespace LibgenDesktop.Models.Database
             return new SearchQueryParser(originalSearchQuery).GetEscapedQuery();
         }
 
+        private static void AddSearchQueryPart(List<string> searchQueryBuilder, string searchQueryPart)
+        {
+            if (searchQueryPart.StartsWith("\""))
+            {
+                searchQueryBuilder.Add(searchQueryPart);
+            }
+            else
+            {
+                switch (searchQueryPart)
+                {
+                    case "AND":
+                    case "OR":
+                    case "NOT":
+                        searchQueryBuilder.Add(searchQueryPart);
+                        break;
+                    default:
+                        if (searchQueryPart.Length > 1 && searchQueryPart.EndsWith("*"))
+                        {
+                            searchQueryBuilder.Add($"\"{searchQueryPart.Substring(0, searchQueryPart.Length - 1)}\"*");
+                        }
+                        else
+                        {
+                            searchQueryBuilder.Add($"\"{searchQueryPart}\"");
+                        }
+                        break;
+                }
+            }
+        }
+
         private string GetEscapedQuery()
         {
             List<string> searchQueryBuilder = new List<string>();
@@ -86,35 +115,6 @@ namespace LibgenDesktop.Models.Database
                 }
             }
             return String.Join(" ", searchQueryBuilder);
-        }
-
-        private void AddSearchQueryPart(List<string> searchQueryBuilder, string searchQueryPart)
-        {
-            if (searchQueryPart.StartsWith("\""))
-            {
-                searchQueryBuilder.Add(searchQueryPart);
-            }
-            else
-            {
-                switch (searchQueryPart)
-                {
-                    case "AND":
-                    case "OR":
-                    case "NOT":
-                        searchQueryBuilder.Add(searchQueryPart);
-                        break;
-                    default:
-                        if (searchQueryPart.Length > 1 && searchQueryPart.EndsWith("*"))
-                        {
-                            searchQueryBuilder.Add($"\"{searchQueryPart.Substring(0, searchQueryPart.Length - 1)}\"*");
-                        }
-                        else
-                        {
-                            searchQueryBuilder.Add($"\"{searchQueryPart}\"");
-                        }
-                        break;
-                }
-            }
         }
     }
 }

@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.SetupSteps.ImportDumpsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:u="clr-namespace:LibgenDesktop.Views.Utils">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/SetupSteps/ImportDumps.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource ImportDumpsPanel}">
+        <TextBlock Text="{Binding Header}" Style="{StaticResource Header}"
+                   Visibility="{Binding IsHeaderVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <ItemsControl ItemsSource="{Binding ImportQueue}">
+            <ItemsControl.Resources>
+                <u:BindingProxy x:Key="parentViewModel" DataContext="{Binding}" />
+            </ItemsControl.Resources>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Grid Style="{StaticResource ImportQueueItemGrid}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Name}" Style="{StaticResource ImportQueueItemName}" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding StatusText}" />
+                        <Button Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" Content="{Binding ImportButtonText}"
+                                IsEnabled="{Binding IsImportButtonEnabled}"
+                                Command="{Binding DataContext.ImportCommand, Source={StaticResource parentViewModel}}"
+                                CommandParameter="{Binding}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <CheckBox Content="{Binding Localization.DeleteDumps}" IsChecked="{Binding IsDeleteDumpsChecked}" />
+    </StackPanel>
+</UserControl>

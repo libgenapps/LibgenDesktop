@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.SetupSteps.CollectionsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/SetupSteps/Collections.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource CollectionsPanel}">
+        <TextBlock Text="{Binding Header}" Style="{StaticResource Header}"
+                   Visibility="{Binding IsHeaderVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <TextBlock Text="{Binding Localization.ChooseCollections}" Style="{StaticResource Prompt}" />
+        <StackPanel Style="{StaticResource CollectionPanel}">
+            <CheckBox Content="{Binding Localization.NonFiction}" IsChecked="{Binding IsNonFictionCollectionSelected}" />
+            <Button Style="{StaticResource CollectionDetailsButton}" Command="{Binding NonFictionCollectionDetailsClickCommand}">
+                <StackPanel IsEnabled="{Binding IsNonFictionCollectionSelected}">
+                    <TextBlock Text="{Binding NonFictionDownloadSize}" />
+                    <TextBlock Text="{Binding NonFictionImportTime}" />
+                    <TextBlock Text="{Binding NonFictionDatabaseSize}" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <StackPanel Style="{StaticResource CollectionPanel}">
+            <CheckBox Content="{Binding Localization.Fiction}" IsChecked="{Binding IsFictionCollectionSelected}" />
+            <Button Style="{StaticResource CollectionDetailsButton}" Command="{Binding FictionCollectionDetailsClickCommand}">
+                <StackPanel IsEnabled="{Binding IsFictionCollectionSelected}">
+                    <TextBlock Text="{Binding FictionDownloadSize}" />
+                    <TextBlock Text="{Binding FictionImportTime}" />
+                    <TextBlock Text="{Binding FictionDatabaseSize}" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <StackPanel Style="{StaticResource CollectionPanel}">
+            <CheckBox Content="{Binding Localization.SciMagArticles}" IsChecked="{Binding IsSciMagCollectionSelected}" />
+            <Button Style="{StaticResource CollectionDetailsButton}" Command="{Binding SciMagCollectionDetailsClickCommand}">
+                <StackPanel IsEnabled="{Binding IsSciMagCollectionSelected}">
+                    <TextBlock Text="{Binding SciMagDownloadSize}" />
+                    <TextBlock Text="{Binding SciMagImportTime}" />
+                    <TextBlock Text="{Binding SciMagDatabaseSize}" />
+                </StackPanel>
+            </Button>
+        </StackPanel>
+        <Grid Visibility="{Binding IsDownloadDirectoryPanelVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="{Binding Localization.DownloadInto}" Style="{StaticResource DownloadDirectoryHeader}" />
+            <TextBox Grid.Column="1" Text="{Binding DownloadDirectory}" Style="{StaticResource DownloadDirectoryTextBox}" />
+            <Button Grid.Column="2" Content="..." Command="{Binding SelectDownloadDirectoryCommand}" />
+        </Grid>
+    </StackPanel>
+</UserControl>

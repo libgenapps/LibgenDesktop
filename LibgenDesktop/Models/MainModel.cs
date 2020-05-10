@@ -33,8 +33,17 @@ namespace LibgenDesktop.Models
             OPENED = 1,
             NOT_FOUND,
             NOT_SET,
+            POSSIBLE_DUMP_FILE,
+            OLD_FICTION_SCHEMA,
             CORRUPTED,
             SERVER_DATABASE
+        }
+
+        [Flags]
+        internal enum OpenDatabaseOptions
+        {
+            NONE = 0,
+            MIGRATE_FICTION = 1
         }
 
         internal enum ImportSqlDumpResult
@@ -42,7 +51,8 @@ namespace LibgenDesktop.Models
             COMPLETED = 1,
             CANCELLED,
             DATA_NOT_FOUND,
-            LOW_DISK_SPACE
+            LOW_DISK_SPACE,
+            ERROR
         }
 
         internal enum SynchronizationResult
@@ -52,14 +62,6 @@ namespace LibgenDesktop.Models
             LOW_DISK_SPACE
         }
 
-        internal enum DownloadFileResult
-        {
-            COMPLETED = 1,
-            INCOMPLETE,
-            CANCELLED
-        }
-
-        private readonly Updater updater;
         private LocalDatabase localDatabase;
         private bool disposed;
 
@@ -77,25 +79,28 @@ namespace LibgenDesktop.Models
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 |
                 SecurityProtocolType.Tls12;
             CreateNewHttpClient();
-            OpenDatabase(AppSettings.DatabaseFileName);
             LastApplicationUpdateCheckDateTime = AppSettings.LastUpdate.LastCheckedAt;
             LastApplicationUpdateCheckResult = null;
-            updater = new Updater();
-            updater.UpdateCheck += ApplicationUpdateCheck;
+            Updater = new Updater();
+            Updater.UpdateCheck += ApplicationUpdateCheck;
             ConfigureUpdater();
-            Downloader = new Downloader();
-            ConfigureDownloader();
+            DownloadManager = new DownloadManager();
+            ConfigureDownloadManager();
+            Mirrors.MirrorConfiguration defaultDatabaseDumpMirror = Mirrors[DEFAULT_DATABASE_DUMP_MIRROR_NAME];
+            LibgenDumpDownloader = new LibgenDumpDownloader(defaultDatabaseDumpMirror.DatabaseDumpPageUrl, defaultDatabaseDumpMirror.DatabaseDumpPageTransformation);
+            ConfigureLibgenDumpDownloader();
             CoverCache = new CoverCache(COVER_CACHE_CAPACITY, HttpClient, AppSettings.Network.OfflineMode);
             disposed = false;
         }
 
         public AppSettings AppSettings { get; }
-        public DatabaseStatus LocalDatabaseStatus { get; private set; }
         public DatabaseMetadata DatabaseMetadata { get; private set; }
         public Mirrors Mirrors { get; }
         public LocalizationStorage Localization { get; }
         public HttpClient HttpClient { get; private set; }
-        public Downloader Downloader { get; }
+        public Updater Updater { get; }
+        public DownloadManager DownloadManager { get; }
+        public LibgenDumpDownloader LibgenDumpDownloader { get; }
         public CoverCache CoverCache { get; }
         public int NonFictionBookCount { get; private set; }
         public int FictionBookCount { get; private set; }
@@ -106,6 +111,47 @@ namespace LibgenDesktop.Models
         public event EventHandler ApplicationUpdateCheckCompleted;
         public event EventHandler AppSettingsChanged;
         public event EventHandler BookmarksChanged;
+
+        public static void EnableLogging()
+        {
+            Logger.EnableLogging();
+        }
+
+        public static void DisableLogging()
+        {
+            Logger.DisableLogging();
+        }
+
+        public static string GetDatabaseNormalizedPath(string databaseFullPath)
+        {
+            if (Environment.IsInPortableMode)
+            {
+                if (databaseFullPath.ToLower().StartsWith(Environment.AppDataDirectory.ToLower()))
+                {
+                    return databaseFullPath.Substring(Environment.AppDataDirectory.Length + 1);
+                }
+                else
+                {
+                    return databaseFullPath;
+                }
+            }
+            else
+            {
+                return databaseFullPath;
+            }
+        }
+
+        public static string GetDatabaseFullPath(string databaseNormalizedPath)
+        {
+            if (Path.IsPathRooted(databaseNormalizedPath))
+            {
+                return databaseNormalizedPath;
+            }
+            else
+            {
+                return Path.GetFullPath(Path.Combine(Environment.AppDataDirectory, databaseNormalizedPath));
+            }
+        }
 
         public Task<List<NonFictionBook>> SearchNonFictionAsync(string searchQuery, IProgress<SearchProgress> progressHandler,
             CancellationToken cancellationToken)
@@ -185,7 +231,8 @@ namespace LibgenDesktop.Models
             return LoadItemAsync(localDatabase.GetSciMagArticleById, articleId);
         }
 
-        public Task<ImportSqlDumpResult> ImportSqlDumpAsync(string sqlDumpFilePath, IProgress<object> progressHandler, CancellationToken cancellationToken)
+        public Task<ImportSqlDumpResult> ImportSqlDumpAsync(string sqlDumpFilePath, TableType? expectedTableType, IProgress<object> progressHandler,
+            CancellationToken cancellationToken)
         {
             return Task.Run(() =>
             {
@@ -232,6 +279,11 @@ namespace LibgenDesktop.Models
                         if (tableType == TableType.UNKNOWN)
                         {
                             continue;
+                        }
+                        if (expectedTableType.HasValue && tableType != expectedTableType.Value)
+                        {
+                            progressHandler.Report(new ImportWrongTableDefinitionProgress(expectedTableType.Value, tableType));
+                            return ImportSqlDumpResult.ERROR;
                         }
                         progressHandler.Report(new ImportTableDefinitionFoundProgress(tableType));
                         bool insertFound = false;
@@ -318,7 +370,7 @@ namespace LibgenDesktop.Models
                         };
                         Logger.Debug("Importing data.");
                         Importer.ImportResult importResult = importer.Import(sqlDumpReader, importProgressReporter, IMPORT_PROGRESS_UPDATE_INTERVAL,
-                            cancellationToken, parsedTableDefinition, localDatabase.DatabaseFullPath);
+                            parsedTableDefinition, localDatabase.DatabaseFullPath, cancellationToken);
                         switch (tableType)
                         {
                             case TableType.NON_FICTION:
@@ -436,7 +488,7 @@ namespace LibgenDesktop.Models
                     }
                     Logger.Debug("Importing downloaded batch.");
                     importResult = importer.Import(currentBatch, importProgressReporter, SYNCHRONIZATION_PROGRESS_UPDATE_INTERVAL,
-                        cancellationToken, localDatabase.DatabaseFullPath);
+                        localDatabase.DatabaseFullPath, cancellationToken);
                     totalAddedBookCount += importResult.AddedObjectCount;
                     totalUpdatedBookCount += importResult.UpdatedObjectCount;
                     Logger.Debug($"Batch has been imported, total added book count = {totalAddedBookCount}, total updated book count = {totalUpdatedBookCount}.");
@@ -458,70 +510,6 @@ namespace LibgenDesktop.Models
                 }
                 Logger.Debug("Synchronization has been completed successfully.");
                 return SynchronizationResult.COMPLETED;
-            });
-        }
-
-        public Task<DownloadFileResult> DownloadFileAsync(string fileUrl, string destinationPath, IProgress<object> progressHandler,
-            CancellationToken cancellationToken)
-        {
-            return Task.Run(async () =>
-            {
-                Logger.Debug($"Requesting {fileUrl}");
-                HttpResponseMessage response;
-                try
-                {
-                    response = await HttpClient.GetAsync(fileUrl, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-                }
-                catch (TaskCanceledException)
-                {
-                    Logger.Debug("File download has been cancelled.");
-                    return DownloadFileResult.CANCELLED;
-                }
-                Logger.Debug($"Response status code: {(int)response.StatusCode} {response.StatusCode}.");
-                Logger.Debug("Response headers:", response.Headers.ToString().TrimEnd(), response.Content.Headers.ToString().TrimEnd());
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    throw new Exception($"Server returned {(int)response.StatusCode} {response.StatusCode}.");
-                }
-                long? contentLength = response.Content.Headers.ContentLength;
-                if (!contentLength.HasValue)
-                {
-                    throw new Exception($"Server did not return Content-Length value.");
-                }
-                int fileSize = (int)contentLength.Value;
-                Logger.Debug($"File size is {fileSize} bytes.");
-                Stream downloadStream = await response.Content.ReadAsStreamAsync();
-                byte[] buffer = new byte[4096];
-                int downloadedBytes = 0;
-                using (FileStream destinationFileStream = new FileStream(destinationPath, FileMode.Create))
-                {
-                    while (true)
-                    {
-                        int bytesRead;
-                        try
-                        {
-                            bytesRead = downloadStream.Read(buffer, 0, buffer.Length);
-                        }
-                        catch
-                        {
-                            if (cancellationToken.IsCancellationRequested)
-                            {
-                                Logger.Debug("File download has been cancelled.");
-                                return DownloadFileResult.CANCELLED;
-                            }
-                            throw;
-                        }
-                        if (bytesRead == 0)
-                        {
-                            bool isCompleted = downloadedBytes == fileSize;
-                            Logger.Debug($"File download is {(isCompleted ? "complete" : "incomplete")}.");
-                            return isCompleted ? DownloadFileResult.COMPLETED : DownloadFileResult.INCOMPLETE;
-                        }
-                        destinationFileStream.Write(buffer, 0, bytesRead);
-                        downloadedBytes += bytesRead;
-                        progressHandler.Report(new DownloadFileProgress(downloadedBytes, fileSize));
-                    }
-                }
             });
         }
 
@@ -648,7 +636,7 @@ namespace LibgenDesktop.Models
 
         public async Task<Updater.UpdateCheckResult> CheckForApplicationUpdateAsync()
         {
-            Updater.UpdateCheckResult result = await updater.CheckForUpdateAsync(ignoreSpecifiedRelease: false);
+            Updater.UpdateCheckResult result = await Updater.CheckForUpdateAsync(ignoreSpecifiedRelease: false);
             if (result != null && result.NewReleaseName != AppSettings.LastUpdate.IgnoreReleaseName)
             {
                 LastApplicationUpdateCheckResult = result;
@@ -714,161 +702,134 @@ namespace LibgenDesktop.Models
             Localization.SwitchLanguage(AppSettings.General.Language);
             CreateNewHttpClient();
             ConfigureUpdater();
-            ConfigureDownloader();
+            ConfigureDownloadManager();
+            ConfigureLibgenDumpDownloader();
             ConfigureCoverCache();
         }
 
-        public string GetDatabaseNormalizedPath(string databaseFullPath)
+        public Task<DatabaseStatus> OpenDatabase(string databaseFilePath, OpenDatabaseOptions openDatabaseOptions = OpenDatabaseOptions.NONE)
         {
-            if (Environment.IsInPortableMode)
+            return Task.Run(() =>
             {
-                if (databaseFullPath.ToLower().StartsWith(Environment.AppDataDirectory.ToLower()))
+                if (localDatabase != null)
                 {
-                    return databaseFullPath.Substring(Environment.AppDataDirectory.Length + 1);
+                    localDatabase.Dispose();
+                    localDatabase = null;
+                }
+                if (!String.IsNullOrWhiteSpace(databaseFilePath))
+                {
+                    if (File.Exists(databaseFilePath))
+                    {
+                        try
+                        {
+                            string databaseFullPath = GetDatabaseFullPath(databaseFilePath);
+                            localDatabase = LocalDatabase.OpenDatabase(databaseFullPath);
+                            if (!localDatabase.CheckIfMetadataExists())
+                            {
+                                return DatabaseStatus.CORRUPTED;
+                            }
+                            DatabaseMetadata = localDatabase.GetMetadata();
+                            if (!String.IsNullOrEmpty(DatabaseMetadata.AppName) &&
+                                DatabaseMetadata.AppName.CompareOrdinalIgnoreCase(LIBGEN_SERVER_DATABASE_METADATA_APP_NAME))
+                            {
+                                return DatabaseStatus.SERVER_DATABASE;
+                            }
+                            if (DatabaseMetadata.GetParsedVersion() == null)
+                            {
+                                return DatabaseStatus.CORRUPTED;
+                            }
+                            if (!openDatabaseOptions.HasFlag(OpenDatabaseOptions.MIGRATE_FICTION) && Migration.UsesOldFictionSchema(DatabaseMetadata) &&
+                                localDatabase.CountFictionBooks() > 0)
+                            {
+                                return DatabaseStatus.OLD_FICTION_SCHEMA;
+                            }
+                            if (!Migration.Migrate(localDatabase, DatabaseMetadata))
+                            {
+                                return DatabaseStatus.CORRUPTED;
+                            }
+                            UpdateNonFictionBookCount();
+                            UpdateFictionBookCount();
+                            UpdateSciMagArticleCount();
+                        }
+                        catch (Exception exception)
+                        {
+                            string databaseFileExtension = Path.GetExtension(databaseFilePath).ToLower();
+                            if (SqlDumpReader.SUPPORTED_DUMP_FILE_EXTENSIONS.Contains(databaseFileExtension))
+                            {
+                                return DatabaseStatus.POSSIBLE_DUMP_FILE;
+                            }
+                            Logger.Exception(exception);
+                            return DatabaseStatus.CORRUPTED;
+                        }
+                        return DatabaseStatus.OPENED;
+                    }
+                    else
+                    {
+                        return DatabaseStatus.NOT_FOUND;
+                    }
                 }
                 else
                 {
-                    return databaseFullPath;
+                    return DatabaseStatus.NOT_SET;
                 }
-            }
-            else
-            {
-                return databaseFullPath;
-            }
+            });
         }
 
-        public string GetDatabaseFullPath(string databaseNormalizedPath)
+        public Task<bool> CreateDatabaseAsync(string databaseFilePath)
         {
-            if (Path.IsPathRooted(databaseNormalizedPath))
+            return Task.Run(() =>
             {
-                return databaseNormalizedPath;
-            }
-            else
-            {
-                return Path.GetFullPath(Path.Combine(Environment.AppDataDirectory, databaseNormalizedPath));
-            }
-        }
-
-        public bool OpenDatabase(string databaseFilePath)
-        {
-            if (localDatabase != null)
-            {
-                localDatabase.Dispose();
-                localDatabase = null;
-            }
-            if (!String.IsNullOrWhiteSpace(databaseFilePath))
-            {
-                if (File.Exists(databaseFilePath))
+                if (localDatabase != null)
                 {
-                    try
+                    localDatabase.Dispose();
+                    localDatabase = null;
+                }
+                try
+                {
+                    string databaseFullPath = GetDatabaseFullPath(databaseFilePath);
+                    localDatabase = LocalDatabase.CreateDatabase(databaseFullPath);
+                    localDatabase.CreateMetadataTable();
+                    localDatabase.CreateFilesTable();
+                    localDatabase.CreateNonFictionTables();
+                    localDatabase.CreateFictionTables();
+                    localDatabase.CreateSciMagTables();
+                    DatabaseMetadata = new DatabaseMetadata
                     {
-                        string databaseFullPath = GetDatabaseFullPath(databaseFilePath);
-                        localDatabase = LocalDatabase.OpenDatabase(databaseFullPath);
-                        if (!localDatabase.CheckIfMetadataExists())
-                        {
-                            LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
-                            return false;
-                        }
-                        DatabaseMetadata = localDatabase.GetMetadata();
-                        if (!String.IsNullOrEmpty(DatabaseMetadata.AppName) &&
-                            DatabaseMetadata.AppName.CompareOrdinalIgnoreCase(LIBGEN_SERVER_DATABASE_METADATA_APP_NAME))
-                        {
-                            LocalDatabaseStatus = DatabaseStatus.SERVER_DATABASE;
-                            return false;
-                        }
-                        if (String.IsNullOrEmpty(DatabaseMetadata.Version))
-                        {
-                            LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
-                            return false;
-                        }
-                        if (!Migration.Migrate(localDatabase, DatabaseMetadata))
-                        {
-                            LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
-                            return false;
-                        }
-                        UpdateNonFictionBookCount();
-                        UpdateFictionBookCount();
-                        UpdateSciMagArticleCount();
-                    }
-                    catch (Exception exception)
-                    {
-                        Logger.Exception(exception);
-                        LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
-                        return false;
-                    }
-                    LocalDatabaseStatus = DatabaseStatus.OPENED;
+                        AppName = DATABASE_METADATA_APP_NAME,
+                        Version = CURRENT_DATABASE_VERSION,
+                        NonFictionFirstImportComplete = false,
+                        FictionFirstImportComplete = false,
+                        SciMagFirstImportComplete = false
+                    };
+                    localDatabase.AddMetadata(DatabaseMetadata);
+                    NonFictionBookCount = 0;
+                    FictionBookCount = 0;
+                    SciMagArticleCount = 0;
                     return true;
                 }
-                else
+                catch (Exception exception)
                 {
-                    LocalDatabaseStatus = DatabaseStatus.NOT_FOUND;
+                    Logger.Exception(exception);
+                    return false;
                 }
-            }
-            else
-            {
-                LocalDatabaseStatus = DatabaseStatus.NOT_SET;
-            }
-            return false;
-        }
-
-        public bool CreateDatabase(string databaseFilePath)
-        {
-            if (localDatabase != null)
-            {
-                localDatabase.Dispose();
-                localDatabase = null;
-            }
-            try
-            {
-                string databaseFullPath = GetDatabaseFullPath(databaseFilePath);
-                localDatabase = LocalDatabase.CreateDatabase(databaseFullPath);
-                localDatabase.CreateMetadataTable();
-                localDatabase.CreateFilesTable();
-                localDatabase.CreateNonFictionTables();
-                localDatabase.CreateFictionTables();
-                localDatabase.CreateSciMagTables();
-                DatabaseMetadata = new DatabaseMetadata
-                {
-                    Version = CURRENT_DATABASE_VERSION,
-                    NonFictionFirstImportComplete = false,
-                    FictionFirstImportComplete = false,
-                    SciMagFirstImportComplete = false
-                };
-                localDatabase.AddMetadata(DatabaseMetadata);
-                NonFictionBookCount = 0;
-                FictionBookCount = 0;
-                SciMagArticleCount = 0;
-                return true;
-            }
-            catch (Exception exception)
-            {
-                Logger.Exception(exception);
-                LocalDatabaseStatus = DatabaseStatus.CORRUPTED;
-                return false;
-            }
+            });
         }
 
         public void CreateNewHttpClient()
         {
-            HttpClientHandler httpClientHandler = new HttpClientHandler
+            WebRequestHandler webRequestHandler = new WebRequestHandler
             {
                 Proxy = NetworkUtils.CreateProxy(AppSettings.Network),
                 UseProxy = true,
                 AllowAutoRedirect = true,
-                UseCookies = false
+                UseCookies = false,
+                ReadWriteTimeout = AppSettings.Download.Timeout * 1000
             };
-            HttpClient = new HttpClient(httpClientHandler);
+            HttpClient = new HttpClient(webRequestHandler)
+            {
+                Timeout = Timeout.InfiniteTimeSpan
+            };
             HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd(USER_AGENT);
-        }
-
-        public void EnableLogging()
-        {
-            Logger.EnableLogging();
-        }
-
-        public void DisableLogging()
-        {
-            Logger.DisableLogging();
         }
 
         public void ConfigureUpdater()
@@ -902,12 +863,17 @@ namespace LibgenDesktop.Models
                     }
                 }
             }
-            updater.Configure(HttpClient, nextUpdateCheck, AppSettings.LastUpdate.IgnoreReleaseName);
+            Updater.Configure(HttpClient, AppSettings.General.UpdateUrl, nextUpdateCheck, AppSettings.LastUpdate.IgnoreReleaseName);
         }
 
-        public void ConfigureDownloader()
+        public void ConfigureDownloadManager()
         {
-            Downloader.Configure(Localization.CurrentLanguage, AppSettings.Network, AppSettings.Download);
+            DownloadManager.Configure(Localization.CurrentLanguage, AppSettings.Network, AppSettings.Download);
+        }
+
+        public void ConfigureLibgenDumpDownloader()
+        {
+            LibgenDumpDownloader.Configure(HttpClient);
         }
 
         public void ConfigureCoverCache()
@@ -927,9 +893,50 @@ namespace LibgenDesktop.Models
         {
             if (!disposed)
             {
-                Downloader?.Dispose();
+                DownloadManager?.Dispose();
+                localDatabase?.Dispose();
                 disposed = true;
             }
+        }
+
+        private static TableType DetectImportTableType(SqlDumpReader.ParsedTableDefinition parsedTableDefinition)
+        {
+            if (TableDefinitions.AllTables.TryGetValue(parsedTableDefinition.TableName, out TableDefinition tableDefinition))
+            {
+                foreach (SqlDumpReader.ParsedColumnDefinition parsedColumnDefinition in parsedTableDefinition.Columns)
+                {
+                    if (tableDefinition.Columns.TryGetValue(parsedColumnDefinition.ColumnName.ToLower(), out ColumnDefinition columnDefinition))
+                    {
+                        if (columnDefinition.ColumnType == parsedColumnDefinition.ColumnType)
+                        {
+                            continue;
+                        }
+                    }
+                    return TableType.UNKNOWN;
+                }
+                return tableDefinition.TableType;
+            }
+            return TableType.UNKNOWN;
+        }
+
+        private static void CheckAndCreateIndex(List<string> existingIndexes, string prefix, string fieldName, IProgress<object> progressHandler,
+            Action createIndexAction)
+        {
+            if (!CheckIfIndexExists(existingIndexes, prefix, fieldName))
+            {
+                Logger.Debug($"Index on {fieldName} doesn't exist, creating it.");
+                if (progressHandler != null)
+                {
+                    progressHandler.Report(new ImportCreateIndexProgress(fieldName));
+                }
+                createIndexAction();
+                Logger.Debug("Index has been created.");
+            }
+        }
+
+        private static bool CheckIfIndexExists(List<string> existingIndexes, string prefix, string fieldName)
+        {
+            return existingIndexes.Contains(prefix + fieldName);
         }
 
         private Task<List<T>> SearchItemsAsync<T>(Func<string, int?, IEnumerable<T>> searchFunction, string searchQuery,
@@ -1022,26 +1029,6 @@ namespace LibgenDesktop.Models
             {
                 return loadFunction(itemId);
             });
-        }
-
-        private TableType DetectImportTableType(SqlDumpReader.ParsedTableDefinition parsedTableDefinition)
-        {
-            if (TableDefinitions.AllTables.TryGetValue(parsedTableDefinition.TableName, out TableDefinition tableDefinition))
-            {
-                foreach (SqlDumpReader.ParsedColumnDefinition parsedColumnDefinition in parsedTableDefinition.Columns)
-                {
-                    if (tableDefinition.Columns.TryGetValue(parsedColumnDefinition.ColumnName.ToLower(), out ColumnDefinition columnDefinition))
-                    {
-                        if (columnDefinition.ColumnType == parsedColumnDefinition.ColumnType)
-                        {
-                            continue;
-                        }
-                    }
-                    return TableType.UNKNOWN;
-                }
-                return tableDefinition.TableType;
-            }
-            return TableType.UNKNOWN;
         }
 
         private Task ScanAsync<T>(string scanDirectory, IProgress<object> progressHandler, int objectsInDatabaseCount,
@@ -1191,26 +1178,6 @@ namespace LibgenDesktop.Models
             }
             Logger.Debug("Checking the index on AddedDateTime column.");
             CheckAndCreateIndex(sciMagIndexes, SqlScripts.SCIMAG_INDEX_PREFIX, "AddedDateTime", progressHandler, localDatabase.CreateSciMagAddedDateTimeIndex);
-        }
-
-        private bool CheckIfIndexExists(List<string> existingIndexes, string prefix, string fieldName)
-        {
-            return existingIndexes.Contains(prefix + fieldName);
-        }
-
-        private void CheckAndCreateIndex(List<string> existingIndexes, string prefix, string fieldName, IProgress<object> progressHandler,
-            Action createIndexAction)
-        {
-            if (!CheckIfIndexExists(existingIndexes, prefix, fieldName))
-            {
-                Logger.Debug($"Index on {fieldName} doesn't exist, creating it.");
-                if (progressHandler != null)
-                {
-                    progressHandler.Report(new ImportCreateIndexProgress(fieldName));
-                }
-                createIndexAction();
-                Logger.Debug("Index has been created.");
-            }
         }
 
         private void UpdateNonFictionBookCount()

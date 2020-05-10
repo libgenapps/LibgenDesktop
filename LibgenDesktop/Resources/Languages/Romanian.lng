@@ -39,25 +39,6 @@
             "About": "Despre"
         }
     },
-    "CreateDatabaseWindow":
-    {
-        "WindowTitle": "Biblioteca Digitală Libgen",
-        "FirstRunMessage": "Bine ați venit la Biblioteca Digitală Libgen.",
-        "DatabaseNotFound": "Baza de date nu a fost gasită.",
-        "DatabaseCorrupted": "Baza de date este coruptă.",
-        "LibgenServerDatabase": "Baza de date {database} este o bază de date Libgen Server care nu este compatibilă cu structura bazei de date Libgen Desktop.",
-        "ChooseOption": "Alege o acțiune",
-        "CreateNewDatabase": "Creează o nouă Baza de date",
-        "OpenExistingDatabase": "Deschide o Baza de date deja creată",
-        "BrowseNewDatabaseDialogTitle": "Noua locație pentru Baza de date",
-        "BrowseExistingDatabaseDialogTitle": "Locația curentă a Bazei de date",
-        "Databases": "Baza de date",
-        "AllFiles": "Toate fișierele",
-        "Error": "Eroare",
-        "CannotCreateDatabase": "Nu s-a putut crea baza de date.",
-        "Ok": "DE ACORD",
-        "Cancel": "RENUNȚĂ"
-    },
     "SearchTab":
     {
         "TabTitle": "Căutare",
@@ -224,7 +205,6 @@
     {
         "Title": "Titlul",
         "Authors": "Autor(i)",
-        "RussianAuthor": "Autor(i) rus(i)",
         "Series": "Colecția",
         "Publisher": "Editura",
         "Edition": "Ediția",
@@ -232,7 +212,6 @@
         "Language": "Limba",
         "Format": "Formatul",
         "Pages": "Paginile",
-        "Version": "Versiunea",
         "FileSize": "Dimensiunea",
         "Added": "Adăugat la data de",
         "LastModified": "Ultima modificare",
@@ -424,7 +403,6 @@
             "Id": "ID",
             "Title": "Titlul",
             "Authors": "Autor(i)",
-            "RussianAuthor": "Autor(i) ruș(i)",
             "Series": "Colecția",
             "Publisher": "Editura",
             "Edition": "Ediția",
@@ -432,7 +410,6 @@
             "Language": "Limba",
             "Format": "Formatul",
             "Pages": "Pagini",
-            "Version": "Versiunea",
             "FileSize": "Dimensiunea",
             "Added": "Adăugat la data de",
             "LastModified": "Ultima modificare",

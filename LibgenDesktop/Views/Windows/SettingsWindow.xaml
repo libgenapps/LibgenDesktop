@@ -7,7 +7,7 @@
                        ClosingCommand="{Binding WindowClosingCommand}"
                        Style="{StaticResource SettingsWindow}">
     <Window.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SettingsWindowStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/Settings.xaml" />
     </Window.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>
@@ -53,8 +53,8 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Localization.GeneralLanguage}" />
-            <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding GeneralLanguagesList}" DisplayMemberPath="Key"
-                      SelectedItem="{Binding GeneralSelectedLanguage, Mode=TwoWay}" Style="{StaticResource GeneralComboBox}" />
+            <c:LanguageComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding GeneralLanguagesList}"
+                                SelectedItem="{Binding GeneralSelectedLanguage, Mode=TwoWay}" Style="{StaticResource GeneralLanguageComboBox}" />
             <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.GeneralCheckUpdates}" />
             <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding GeneralUpdateCheckIntervalList}" DisplayMemberPath="Value"
                       SelectedItem="{Binding GeneralSelectedUpdateCheckInterval, Mode=TwoWay}" Style="{StaticResource GeneralComboBox}" />

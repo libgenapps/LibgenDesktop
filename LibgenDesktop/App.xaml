@@ -10,9 +10,9 @@
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Blue.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Red.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/materialdesign.xaml" />
-                <ResourceDictionary Source="Views\Styles\CommonStyles.xaml" />
-                <ResourceDictionary Source="Views\Styles\TabControlStyles.xaml" />
-                <ResourceDictionary Source="Views\Styles\WindowStyles.xaml" />
+                <ResourceDictionary Source="Styles\Common.xaml" />
+                <ResourceDictionary Source="Styles\Controls\Tab.xaml" />
+                <ResourceDictionary Source="Styles\Windows\Windows.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

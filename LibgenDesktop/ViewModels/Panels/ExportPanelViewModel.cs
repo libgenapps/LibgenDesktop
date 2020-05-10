@@ -9,7 +9,7 @@ using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Export;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Export;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.Utils;
@@ -362,19 +362,24 @@ namespace LibgenDesktop.ViewModels.Panels
             NotifyPropertyChanged(nameof(CancelExportButtonText));
         }
 
+        private static string GenerateFileName(string searchQuery)
+        {
+            return FileUtils.RemoveInvalidFileNameCharacters(searchQuery, "export");
+        }
+
         private void Initialize()
         {
-            AppSettings.ExportPanelSettngs exportPanelSettngs;
+            AppSettings.ExportPanelSettings exportPanelSettings;
             switch (libgenObjectType)
             {
                 case LibgenObjectType.NON_FICTION_BOOK:
-                    exportPanelSettngs = MainModel.AppSettings.NonFiction.ExportPanel;
+                    exportPanelSettings = MainModel.AppSettings.NonFiction.ExportPanel;
                     break;
                 case LibgenObjectType.FICTION_BOOK:
-                    exportPanelSettngs = MainModel.AppSettings.Fiction.ExportPanel;
+                    exportPanelSettings = MainModel.AppSettings.Fiction.ExportPanel;
                     break;
                 case LibgenObjectType.SCIMAG_ARTICLE:
-                    exportPanelSettngs = MainModel.AppSettings.SciMag.ExportPanel;
+                    exportPanelSettings = MainModel.AppSettings.SciMag.ExportPanel;
                     break;
                 default:
                     throw new Exception($"Unknown object type: {libgenObjectType}.");
@@ -382,18 +387,18 @@ namespace LibgenDesktop.ViewModels.Panels
             cancellationTokenSource = null;
             IsExportInProgress = false;
             isSettingsPanelVisible = true;
-            isXlsxSelected = exportPanelSettngs.Format == AppSettings.ExportPanelSettngs.ExportFormat.XLSX;
-            isCsvSelected = exportPanelSettngs.Format == AppSettings.ExportPanelSettngs.ExportFormat.CSV;
+            isXlsxSelected = exportPanelSettings.Format == AppSettings.ExportPanelSettings.ExportFormat.XLSX;
+            isCsvSelected = exportPanelSettings.Format == AppSettings.ExportPanelSettings.ExportFormat.CSV;
             isSeparatorPanelVisible = isCsvSelected;
-            isCommaSeparatorSelected = exportPanelSettngs.Separator == AppSettings.ExportPanelSettngs.CsvSeparator.COMMA;
-            isSemicolonSeparatorSelected = exportPanelSettngs.Separator == AppSettings.ExportPanelSettngs.CsvSeparator.SEMICOLON;
-            isTabSeparatorSelected = exportPanelSettngs.Separator == AppSettings.ExportPanelSettngs.CsvSeparator.TAB;
-            filePathTemplate = (exportPanelSettngs.ExportDirectory ?? Environment.AppDataDirectory) + @"\";
+            isCommaSeparatorSelected = exportPanelSettings.Separator == AppSettings.ExportPanelSettings.CsvSeparator.COMMA;
+            isSemicolonSeparatorSelected = exportPanelSettings.Separator == AppSettings.ExportPanelSettings.CsvSeparator.SEMICOLON;
+            isTabSeparatorSelected = exportPanelSettings.Separator == AppSettings.ExportPanelSettings.CsvSeparator.TAB;
+            filePathTemplate = (exportPanelSettings.ExportDirectory ?? Environment.AppDataDirectory) + @"\";
             isExportButtonEnabled = false;
             if (MainModel.AppSettings.Search.LimitResults)
             {
                 isLimitPanelVisible = true;
-                isLimitSelected = exportPanelSettngs.LimitSearchResults;
+                isLimitSelected = exportPanelSettings.LimitSearchResults;
                 isNoLimitSelected = !isLimitSelected;
             }
             else
@@ -462,11 +467,6 @@ namespace LibgenDesktop.ViewModels.Panels
                 }
             }
             return result;
-        }
-
-        private string GenerateFileName(string searchQuery)
-        {
-            return FileUtils.RemoveInvalidFileNameCharacters(searchQuery, "export");
         }
 
         private string GetFileNameWithoutExtension(bool correctFileName)
@@ -726,34 +726,34 @@ namespace LibgenDesktop.ViewModels.Panels
 
         private void SaveSettings()
         {
-            AppSettings.ExportPanelSettngs exportPanelSettngs = new AppSettings.ExportPanelSettngs
+            AppSettings.ExportPanelSettings exportPanelSettings = new AppSettings.ExportPanelSettings
             {
                 ExportDirectory = GetDirectoryPath(correctPath: true),
-                Format = IsXlsxSelected ? AppSettings.ExportPanelSettngs.ExportFormat.XLSX : AppSettings.ExportPanelSettngs.ExportFormat.CSV,
+                Format = IsXlsxSelected ? AppSettings.ExportPanelSettings.ExportFormat.XLSX : AppSettings.ExportPanelSettings.ExportFormat.CSV,
                 LimitSearchResults = IsLimitSelected
             };
             if (IsCommaSeparatorSelected)
             {
-                exportPanelSettngs.Separator = AppSettings.ExportPanelSettngs.CsvSeparator.COMMA;
+                exportPanelSettings.Separator = AppSettings.ExportPanelSettings.CsvSeparator.COMMA;
             }
             else if (IsSemicolonSeparatorSelected)
             {
-                exportPanelSettngs.Separator = AppSettings.ExportPanelSettngs.CsvSeparator.SEMICOLON;
+                exportPanelSettings.Separator = AppSettings.ExportPanelSettings.CsvSeparator.SEMICOLON;
             }
             else
             {
-                exportPanelSettngs.Separator = AppSettings.ExportPanelSettngs.CsvSeparator.TAB;
+                exportPanelSettings.Separator = AppSettings.ExportPanelSettings.CsvSeparator.TAB;
             }
             switch (libgenObjectType)
             {
                 case LibgenObjectType.NON_FICTION_BOOK:
-                    MainModel.AppSettings.NonFiction.ExportPanel = exportPanelSettngs;
+                    MainModel.AppSettings.NonFiction.ExportPanel = exportPanelSettings;
                     break;
                 case LibgenObjectType.FICTION_BOOK:
-                    MainModel.AppSettings.Fiction.ExportPanel = exportPanelSettngs;
+                    MainModel.AppSettings.Fiction.ExportPanel = exportPanelSettings;
                     break;
                 case LibgenObjectType.SCIMAG_ARTICLE:
-                    MainModel.AppSettings.SciMag.ExportPanel = exportPanelSettngs;
+                    MainModel.AppSettings.SciMag.ExportPanel = exportPanelSettings;
                     break;
             }
             MainModel.SaveSettings();

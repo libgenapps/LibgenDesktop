@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -12,7 +13,7 @@ using LibgenDesktop.Models;
 using LibgenDesktop.Models.Download;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.ViewModels.Panels;
 using LibgenDesktop.ViewModels.SearchResultItems;
@@ -22,6 +23,7 @@ namespace LibgenDesktop.ViewModels.Tabs
     internal abstract class SearchResultsTabViewModel<T> : TabViewModel, ISearchResultsTabViewModel where T : LibgenObject
     {
         private readonly LibgenObjectType libgenObjectType;
+        private readonly ObservableCollection<string> emptySelectedItemFields;
         private string searchQuery;
         private string lastExecutedSearchQuery;
         private bool isBookmarkSet;
@@ -38,6 +40,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             : base(mainModel, parentWindowContext, searchQuery)
         {
             this.libgenObjectType = libgenObjectType;
+            emptySelectedItemFields = new ObservableCollection<string>();
             this.searchQuery = searchQuery;
             lastExecutedSearchQuery = searchQuery;
             UpdateBookmarkedState();
@@ -53,6 +56,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             OpenDetailsCommand = new Command(OpenDetails);
             OpenFileCommand = new Command(OpenFile);
             DownloadCommand = new Command(Download);
+            CopyCommand = new Command(param => Copy(param as string));
             ToggleExportPanelCommand = new Command(ToggleExportPanel);
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
             Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SEARCH_TEXT_BOX);
@@ -180,6 +184,8 @@ namespace LibgenDesktop.ViewModels.Tabs
                 NotifyPropertyChanged(nameof(ShowOpenDetailsMenuItem));
                 NotifyPropertyChanged(nameof(ShowOpenFileMenuItem));
                 NotifyPropertyChanged(nameof(ShowDownloadMenuItem));
+                NotifyPropertyChanged(nameof(ShowCopyMenuItem));
+                NotifyPropertyChanged(nameof(SelectedItemFields));
             }
         }
 
@@ -211,6 +217,26 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
+        public bool ShowCopyMenuItem
+        {
+            get
+            {
+                return SelectedRows.Count == 1;
+            }
+        }
+
+        public ObservableCollection<string> SelectedItemFields
+        {
+            get
+            {
+                if (SelectedItem == null)
+                {
+                    return emptySelectedItemFields;
+                }
+                return SelectedItem.GetCopyMenuItems();
+            }
+        }
+
         public Command SearchCommand { get; }
         public Command InterruptSearchCommand { get; }
         public Command ToggleBookmarkCommand { get; }
@@ -219,6 +245,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         public Command OpenDetailsCommand { get; }
         public Command OpenFileCommand { get; }
         public Command DownloadCommand { get; }
+        public Command CopyCommand { get; }
 
         private SearchResultsTabLocalizator Localization
         {
@@ -375,7 +402,7 @@ namespace LibgenDesktop.ViewModels.Tabs
                             DownloadTransformations = downloadTransformations,
                             RestartSessionOnTimeout = restartSessionOnTimeout
                         }).ToList();
-                    MainModel.Downloader.EnqueueDownloadItems(downloadItemRequests);
+                    MainModel.DownloadManager.EnqueueDownloadItems(downloadItemRequests);
                 }
                 else
                 {
@@ -384,6 +411,14 @@ namespace LibgenDesktop.ViewModels.Tabs
                         Process.Start(GenerateDownloadUrl(mirror, itemToDownload.LibgenObject));
                     }
                 }
+            }
+        }
+
+        private void Copy(string selectedItemField)
+        {
+            if (!String.IsNullOrWhiteSpace(selectedItemField))
+            {
+                WindowManager.SetClipboardText(selectedItemField);
             }
         }
 

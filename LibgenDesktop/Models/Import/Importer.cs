@@ -31,7 +31,7 @@ namespace LibgenDesktop.Models.Import
         }
 
         public abstract ImportResult Import(SqlDumpReader sqlDumpReader, ImportProgressReporter progressReporter, double progressUpdateInterval,
-            CancellationToken cancellationToken, SqlDumpReader.ParsedTableDefinition parsedTableDefinition, string databaseFullPath);
+            SqlDumpReader.ParsedTableDefinition parsedTableDefinition, string databaseFullPath, CancellationToken cancellationToken);
     }
 
     internal abstract class Importer<T> : Importer where T : LibgenObject, new()
@@ -55,16 +55,16 @@ namespace LibgenDesktop.Models.Import
         protected bool IsUpdateMode { get; }
 
         public override ImportResult Import(SqlDumpReader sqlDumpReader, ImportProgressReporter progressReporter, double progressUpdateInterval,
-            CancellationToken cancellationToken, SqlDumpReader.ParsedTableDefinition parsedTableDefinition, string databaseFullPath)
+            SqlDumpReader.ParsedTableDefinition parsedTableDefinition, string databaseFullPath, CancellationToken cancellationToken)
         {
             List<Action<T, string>> sortedColumnSetters =
                 tableDefinition.GetSortedColumnSetters(parsedTableDefinition.Columns.Select(column => column.ColumnName));
-            return Import(sqlDumpReader.ParseImportObjects(sortedColumnSetters), progressReporter, progressUpdateInterval, cancellationToken,
-                databaseFullPath);
+            return Import(sqlDumpReader.ParseImportObjects(sortedColumnSetters), progressReporter, progressUpdateInterval, databaseFullPath,
+                cancellationToken);
         }
 
         public ImportResult Import(IEnumerable<T> importingObjects, ImportProgressReporter progressReporter, double progressUpdateInterval,
-            CancellationToken cancellationToken, string databaseFullPath)
+            string databaseFullPath, CancellationToken cancellationToken)
         {
             DateTime lastProgressUpdateDateTime = DateTime.Now;
             int addedObjectCount = 0;

@@ -5,7 +5,7 @@ using System.Threading;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.Utils;
 using LibgenDesktop.ViewModels.Panels;
@@ -53,7 +53,7 @@ namespace LibgenDesktop.ViewModels.Windows
             Initialize();
         }
 
-        public SynchronizationLocalizator Localization { get; }
+        public SynchronizationWindowLocalizator Localization { get; }
         public ImportLogPanelViewModel Logs { get; }
 
         public bool IsInProgress
@@ -189,10 +189,10 @@ namespace LibgenDesktop.ViewModels.Windows
             isCancelButtonVisible = true;
             isCancelButtonEnabled = true;
             isCloseButtonVisible = false;
-            Syncrhonize();
+            Synchronize();
         }
 
-        private async void Syncrhonize()
+        private async void Synchronize()
         {
             Progress<object> synchronizationProgressHandler = new Progress<object>(HandleSynchronizationProgress);
             CancellationToken cancellationToken = cancellationTokenSource.Token;

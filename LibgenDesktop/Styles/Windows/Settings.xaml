@@ -1,0 +1,132 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="clr-namespace:LibgenDesktop.Views.Controls">
+    <Style x:Key="TopContainer" TargetType="Grid">
+        <Setter Property="Margin" Value="12" />
+    </Style>
+    <Style x:Key="TabsPanel" TargetType="StackPanel">
+        <Style.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+                <Setter Property="Padding" Value="8" />
+            </Style>
+        </Style.Resources>
+        <Setter Property="Orientation" Value="Vertical" />
+        <Setter Property="Width" Value="160" />
+        <Setter Property="Margin" Value="0,0,24,0" />
+    </Style>
+    <Style x:Key="TabContent" TargetType="Grid">
+        <Style.Resources>
+            <Style TargetType="TextBlock">
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="ToggleButton" BasedOn="{StaticResource MaterialDesignSwitchToggleButton}">
+                <Setter Property="VerticalAlignment" Value="Center" />
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
+        </Style.Resources>
+        <Setter Property="Margin" Value="0,8,8,0" />
+    </Style>
+    <Style x:Key="GeneralTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <Style x:Key="GeneralComboBox" TargetType="ComboBox" BasedOn="{StaticResource NonEditableComboBox}">
+        <Setter Property="MinWidth" Value="200" />
+    </Style>
+    <Style x:Key="GeneralLanguageComboBox" TargetType="c:LanguageComboBox" BasedOn="{StaticResource GeneralComboBox}">
+        <Setter Property="PercentTranslatedFontSize" Value="15" />
+    </Style>
+    <Style x:Key="NetworkTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <SolidColorBrush x:Key="MaterialDesignTextFieldBoxDisabledBackground">Transparent</SolidColorBrush>
+    <Style x:Key="MirrorProxyLabel" TargetType="TextBlock">
+        <Setter Property="Margin" Value="24,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="NetworkProxyField" TargetType="TextBox" BasedOn="{StaticResource MaterialDesignTextBox}">
+        <Setter Property="Width" Value="220" />
+        <Setter Property="Background" Value="Transparent" />
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Validation.ErrorTemplate" Value="{x:Null}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="True">
+                <Setter Property="Validation.ErrorTemplate" Value="{StaticResource MaterialDesignValidationErrorTemplate}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style x:Key="NetworkProxyNote" TargetType="TextBlock" BasedOn="{StaticResource Note}">
+        <Setter Property="Margin" Value="24,0,0,0" />
+    </Style>
+    <Style x:Key="DownloadTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <Style x:Key="DownloadModeRadioButtonsPanel" TargetType="StackPanel">
+        <Style.Resources>
+            <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}">
+                <Style.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="0,0,0,4" />
+                    </Style>
+                </Style.Resources>
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,2" />
+            </Style>
+        </Style.Resources>
+        <Setter Property="Orientation" Value="Vertical" />
+        <Setter Property="Margin" Value="24,3,0,24" />
+    </Style>
+    <Style x:Key="DownloadDirectory" TargetType="TextBox" BasedOn="{StaticResource TextBox}">
+        <Setter Property="Margin" Value="24,0,8,0" />
+    </Style>
+    <Style x:Key="DownloadSelectDirectoryButton" TargetType="Button" BasedOn="{StaticResource SelectButton}">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="FontWeight" Value="Medium" />
+    </Style>
+    <Style x:Key="DownloadComboBox" TargetType="ComboBox" BasedOn="{StaticResource EditableComboBox}">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="Margin" Value="8,0" />
+        <Setter Property="Width" Value="100" />
+    </Style>
+    <Style x:Key="MirrorsTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <Style x:Key="MirrorSectionHeader" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Medium" />
+        <Setter Property="Foreground" Value="#707070" />
+        <Setter Property="Margin" Value="0,0,0,8" />
+    </Style>
+    <Style x:Key="MirrorType" TargetType="TextBlock">
+        <Setter Property="Margin" Value="24,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="MirrorComboBox" TargetType="ComboBox" BasedOn="{StaticResource NonEditableComboBox}">
+        <Setter Property="Margin" Value="0,6" />
+        <Setter Property="MinWidth" Value="160" />
+    </Style>
+    <Style x:Key="SearchTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <Style x:Key="SearchOpenDetailsPanel" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Vertical" />
+    </Style>
+    <Style x:Key="SearchOpenDetailsRadioButtonsPanel" TargetType="StackPanel">
+        <Style.Resources>
+            <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}">
+                <Style.Resources>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Margin" Value="0,0,0,4" />
+                    </Style>
+                </Style.Resources>
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Margin" Value="0,2" />
+            </Style>
+        </Style.Resources>
+        <Setter Property="Orientation" Value="Vertical" />
+        <Setter Property="Margin" Value="24,3,0,0" />
+    </Style>
+    <Style x:Key="ExportTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <Style x:Key="AdvancedTabContent" TargetType="Grid" BasedOn="{StaticResource TabContent}" />
+    <Style x:Key="ButtonPanel" TargetType="UniformGrid">
+        <Setter Property="Margin" Value="0,16,0,0" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style x:Key="OkButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="Margin" Value="8,0,0,0" />
+    </Style>
+    <Style x:Key="CancelButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedButton}">
+        <Setter Property="Margin" Value="8,0,0,0" />
+        <Setter Property="IsCancel" Value="True" />
+    </Style>
+</ResourceDictionary>

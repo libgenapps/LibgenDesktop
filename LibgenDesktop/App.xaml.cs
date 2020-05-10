@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using LibgenDesktop.Common;
@@ -10,22 +11,106 @@ namespace LibgenDesktop
 {
     public partial class App : Application
     {
+        private enum DatabaseOpenResult
+        {
+            IN_PROGRESS = 1,
+            DATABASE_OPENED,
+            SHOW_SETUP_WIZARD,
+            EXIT_REQUESTED
+        }
+
         private MainModel mainModel;
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             SetupExceptionHandlers();
             try
             {
                 mainModel = new MainModel();
-                if (mainModel.LocalDatabaseStatus == MainModel.DatabaseStatus.OPENED)
+                string databaseFilePath = mainModel.AppSettings.DatabaseFileName;
+                bool saveDatabaseFilePathAfterSuccessfulOpen = false;
+                MainModel.OpenDatabaseOptions openDatabaseOptions = MainModel.OpenDatabaseOptions.NONE;
+                DatabaseOpenResult databaseOpenResult = DatabaseOpenResult.IN_PROGRESS;
+                while (databaseOpenResult == DatabaseOpenResult.IN_PROGRESS)
                 {
-                    ShowMainWindow(mainModel);
+                    MainModel.DatabaseStatus databaseStatus = await mainModel.OpenDatabase(databaseFilePath, openDatabaseOptions);
+                    if (databaseStatus == MainModel.DatabaseStatus.OPENED)
+                    {
+                        databaseOpenResult = DatabaseOpenResult.DATABASE_OPENED;
+                        if (saveDatabaseFilePathAfterSuccessfulOpen)
+                        {
+                            mainModel.AppSettings.DatabaseFileName = MainModel.GetDatabaseNormalizedPath(databaseFilePath);
+                            mainModel.SaveSettings();
+                        }
+                    }
+                    else if (databaseStatus == MainModel.DatabaseStatus.NOT_SET)
+                    {
+                        databaseOpenResult = DatabaseOpenResult.SHOW_SETUP_WIZARD;
+                    }
+                    else
+                    {
+                        DatabaseErrorWindowViewModel.OptionSet optionSet;
+                        switch (databaseStatus)
+                        {
+                            case MainModel.DatabaseStatus.NOT_FOUND:
+                                optionSet = DatabaseErrorWindowViewModel.OptionSet.DATABASE_NOT_FOUND;
+                                break;
+                            case MainModel.DatabaseStatus.POSSIBLE_DUMP_FILE:
+                                optionSet = DatabaseErrorWindowViewModel.OptionSet.DATABASE_DUMP_FILE;
+                                break;
+                            case MainModel.DatabaseStatus.OLD_FICTION_SCHEMA:
+                                optionSet = DatabaseErrorWindowViewModel.OptionSet.OLD_FICTION_SCHEMA;
+                                break;
+                            case MainModel.DatabaseStatus.CORRUPTED:
+                                optionSet = DatabaseErrorWindowViewModel.OptionSet.DATABASE_NOT_VALID;
+                                break;
+                            case MainModel.DatabaseStatus.SERVER_DATABASE:
+                                optionSet = DatabaseErrorWindowViewModel.OptionSet.SERVER_DATABASE;
+                                break;
+                            default:
+                                throw new Exception($"Unknown database status: {databaseStatus}.");
+                        }
+                        DatabaseErrorWindowViewModel databaseErrorWindowViewModel = new DatabaseErrorWindowViewModel(mainModel, optionSet, databaseFilePath);
+                        IWindowContext windowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.DATABASE_ERROR_WINDOW,
+                            databaseErrorWindowViewModel);
+                        windowContext.ShowDialog();
+                        switch (databaseErrorWindowViewModel.Result)
+                        {
+                            case DatabaseErrorWindowViewModel.DatabaseErrorWindowResult.OPEN_ANOTHER_DATABASE:
+                                OpenFileDialogResult selectDatabaseFileDialogResult = DatabaseWindowViewModel.SelectDatabaseFile(mainModel);
+                                if (selectDatabaseFileDialogResult.DialogResult)
+                                {
+                                    databaseFilePath = selectDatabaseFileDialogResult.SelectedFilePaths.First();
+                                    saveDatabaseFilePathAfterSuccessfulOpen = true;
+                                }
+                                break;
+                            case DatabaseErrorWindowViewModel.DatabaseErrorWindowResult.START_SETUP_WIZARD:
+                                databaseOpenResult = DatabaseOpenResult.SHOW_SETUP_WIZARD;
+                                break;
+                            case DatabaseErrorWindowViewModel.DatabaseErrorWindowResult.DELETE_FICTION:
+                                openDatabaseOptions = MainModel.OpenDatabaseOptions.MIGRATE_FICTION;
+                                break;
+                            case DatabaseErrorWindowViewModel.DatabaseErrorWindowResult.EXIT:
+                            case DatabaseErrorWindowViewModel.DatabaseErrorWindowResult.CANCEL:
+                                databaseOpenResult = DatabaseOpenResult.EXIT_REQUESTED;
+                                break;
+                            default:
+                                throw new Exception($"Unknown database error view model result: {databaseErrorWindowViewModel.Result}.");
+                        }
+                    }
                 }
-                else
+                switch (databaseOpenResult)
                 {
-                    ShowCreateDatabaseWindow(mainModel);
+                    case DatabaseOpenResult.DATABASE_OPENED:
+                        ShowMainWindow(mainModel);
+                        break;
+                    case DatabaseOpenResult.SHOW_SETUP_WIZARD:
+                        ShowSetupWizardWindow(mainModel);
+                        break;
+                    default:
+                        Close();
+                        break;
                 }
             }
             catch (Exception exception)
@@ -44,10 +129,10 @@ namespace LibgenDesktop
             windowContext.Show();
         }
 
-        private void ShowCreateDatabaseWindow(MainModel mainModel)
+        private void ShowSetupWizardWindow(MainModel mainModel)
         {
-            CreateDatabaseWindowViewModel createDatabaseWindowViewModel = new CreateDatabaseWindowViewModel(mainModel);
-            IWindowContext windowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.CREATE_DATABASE_WINDOW, createDatabaseWindowViewModel);
+            SetupWizardWindowViewModel setupWizardWindowViewModel = new SetupWizardWindowViewModel(mainModel);
+            IWindowContext windowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.SETUP_WIZARD_WINDOW, setupWizardWindowViewModel);
             bool? result = windowContext.ShowDialog();
             if (result == true)
             {
@@ -101,7 +186,7 @@ namespace LibgenDesktop
         {
             if (mainModel != null)
             {
-                mainModel.Downloader.Shutdown();
+                mainModel.DownloadManager.Shutdown();
                 mainModel.Dispose();
             }
             Shutdown();

@@ -1,6 +1,6 @@
 ﻿using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
 
 namespace LibgenDesktop.ViewModels.DetailsItems
 {
@@ -15,26 +15,26 @@ namespace LibgenDesktop.ViewModels.DetailsItems
         }
 
         public FictionBook Book => LibgenObject;
+        public string Md5Hash => Book.Md5Hash;
         public string Title => Book.Title;
         public string Authors => Book.Authors;
-        public string RussianAuthor => Book.RussianAuthor;
         public string Series => Book.Series;
-        public string Publisher => Book.Publisher;
         public string Edition => Book.Edition;
-        public string Year => localization.GetYearString(Book.Year);
         public string Language => Book.Language;
-        public string Format => Book.Format;
+        public string Year => FictionDetailsTabLocalizator.GetYearString(Book.Year);
+        public string Publisher => Book.Publisher;
         public string Pages => localization.GetPagesString(Book.Pages);
-        public string Version => Book.Version;
-        public string FileSize => FormatFileSize(Book.SizeInBytes);
-        public string AddedDateTime => localization.GetAddedDateTimeString(Book.AddedDateTime);
-        public string LastModifiedDateTime => FormatDateTime(Book.LastModifiedDateTime);
-        public string Md5Hash => Book.Md5Hash;
-        public string Commentary => Book.Commentary;
-        public string LibgenId => Book.LibgenId.ToString();
         public string Identifier => Book.Identifier;
         public string GoogleBookId => Book.GoogleBookId;
         public string Asin => Book.Asin;
+        public string Format => Book.Format;
+        public string FileSize => FormatFileSize(Book.SizeInBytes);
+        public string Library => Book.Library;
+        public string Issue => Book.Issue;
+        public string Commentary => Book.Commentary;
+        public string AddedDateTime => localization.GetLastModifiedDateTimeString(Book.AddedDateTime);
+        public string LastModifiedDateTime => localization.GetLastModifiedDateTimeString(Book.LastModifiedDateTime);
+        public string LibgenId => Book.LibgenId.ToString();
 
         protected override void UpdateLocalizableProperties()
         {

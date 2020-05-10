@@ -6,7 +6,7 @@
                        ClosingCommand="{Binding WindowClosingCommand}"
                        Style="{StaticResource DatabaseWindow}">
     <Window.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/DatabaseWindowStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/Database.xaml" />
     </Window.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <StackPanel Visibility="{Binding IsCreatingIndexesMessageVisible, Converter={StaticResource booleanToCollapsedConverter}}"
@@ -43,7 +43,6 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{Binding Localization.CurrentDatabase}" Style="{StaticResource RowNameLabel}" />
                 <TextBox Grid.Column="1" Text="{Binding DatabaseFilePath}" Style="{StaticResource CurrentDatabaseTextBox}" />

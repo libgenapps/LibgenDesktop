@@ -6,7 +6,7 @@
                        ClosedCommand="{Binding WindowClosedCommand}"
                        Style="{StaticResource SynchronizationWindow}">
     <Window.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SynchronizationWindowStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/Synchronization.xaml" />
     </Window.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>

@@ -32,7 +32,7 @@ namespace LibgenDesktop.Models.Settings
             public int Height { get; set; }
         }
 
-        internal class ExportPanelSettngs
+        internal class ExportPanelSettings
         {
             internal enum ExportFormat
             {
@@ -47,11 +47,11 @@ namespace LibgenDesktop.Models.Settings
                 TAB
             }
 
-            public static ExportPanelSettngs Default
+            public static ExportPanelSettings Default
             {
                 get
                 {
-                    return new ExportPanelSettngs
+                    return new ExportPanelSettings
                     {
                         ExportDirectory = null,
                         Format = ExportFormat.XLSX,
@@ -100,6 +100,7 @@ namespace LibgenDesktop.Models.Settings
                         AuthorsColumnWidth = DEFAULT_NON_FICTION_GRID_AUTHORS_COLUMN_WIDTH,
                         SeriesColumnWidth = DEFAULT_NON_FICTION_GRID_SERIES_COLUMN_WIDTH,
                         YearColumnWidth = DEFAULT_NON_FICTION_GRID_YEAR_COLUMN_WIDTH,
+                        LanguageColumnWidth = DEFAULT_NON_FICTION_GRID_LANGUAGE_COLUMN_WIDTH,
                         PublisherColumnWidth = DEFAULT_NON_FICTION_GRID_PUBLISHER_COLUMN_WIDTH,
                         FormatColumnWidth = DEFAULT_NON_FICTION_GRID_FORMAT_COLUMN_WIDTH,
                         FileSizeColumnWidth = DEFAULT_NON_FICTION_GRID_FILESIZE_COLUMN_WIDTH,
@@ -113,6 +114,7 @@ namespace LibgenDesktop.Models.Settings
             public int AuthorsColumnWidth { get; set; }
             public int SeriesColumnWidth { get; set; }
             public int YearColumnWidth { get; set; }
+            public int LanguageColumnWidth { get; set; }
             public int PublisherColumnWidth { get; set; }
             public int FormatColumnWidth { get; set; }
             public int FileSizeColumnWidth { get; set; }
@@ -130,14 +132,14 @@ namespace LibgenDesktop.Models.Settings
                     {
                         DetailsWindow = NonFictionDetailsWindowSettings.Default,
                         Columns = NonFictionColumnSettings.Default,
-                        ExportPanel = ExportPanelSettngs.Default
+                        ExportPanel = ExportPanelSettings.Default
                     };
                 }
             }
 
             public NonFictionDetailsWindowSettings DetailsWindow { get; set; }
             public NonFictionColumnSettings Columns { get; set; }
-            public ExportPanelSettngs ExportPanel { get; set; }
+            public ExportPanelSettings ExportPanel { get; set; }
         }
 
         internal class FictionDetailsWindowSettings : DetailsWindowSettings
@@ -167,6 +169,7 @@ namespace LibgenDesktop.Models.Settings
                         AuthorsColumnWidth = DEFAULT_FICTION_GRID_AUTHORS_COLUMN_WIDTH,
                         SeriesColumnWidth = DEFAULT_FICTION_GRID_SERIES_COLUMN_WIDTH,
                         YearColumnWidth = DEFAULT_FICTION_GRID_YEAR_COLUMN_WIDTH,
+                        LanguageColumnWidth = DEFAULT_FICTION_GRID_LANGUAGE_COLUMN_WIDTH,
                         PublisherColumnWidth = DEFAULT_FICTION_GRID_PUBLISHER_COLUMN_WIDTH,
                         FormatColumnWidth = DEFAULT_FICTION_GRID_FORMAT_COLUMN_WIDTH,
                         FileSizeColumnWidth = DEFAULT_FICTION_GRID_FILESIZE_COLUMN_WIDTH,
@@ -179,6 +182,7 @@ namespace LibgenDesktop.Models.Settings
             public int AuthorsColumnWidth { get; set; }
             public int SeriesColumnWidth { get; set; }
             public int YearColumnWidth { get; set; }
+            public int LanguageColumnWidth { get; set; }
             public int PublisherColumnWidth { get; set; }
             public int FormatColumnWidth { get; set; }
             public int FileSizeColumnWidth { get; set; }
@@ -195,14 +199,14 @@ namespace LibgenDesktop.Models.Settings
                     {
                         DetailsWindow = FictionDetailsWindowSettings.Default,
                         Columns = FictionColumnSettings.Default,
-                        ExportPanel = ExportPanelSettngs.Default
+                        ExportPanel = ExportPanelSettings.Default
                     };
                 }
             }
 
             public FictionDetailsWindowSettings DetailsWindow { get; set; }
             public FictionColumnSettings Columns { get; set; }
-            public ExportPanelSettngs ExportPanel { get; set; }
+            public ExportPanelSettings ExportPanel { get; set; }
         }
 
         internal class SciMagDetailsWindowSettings : DetailsWindowSettings
@@ -258,14 +262,14 @@ namespace LibgenDesktop.Models.Settings
                     {
                         DetailsWindow = SciMagDetailsWindowSettings.Default,
                         Columns = SciMagColumnSettings.Default,
-                        ExportPanel = ExportPanelSettngs.Default
+                        ExportPanel = ExportPanelSettings.Default
                     };
                 }
             }
 
             public SciMagDetailsWindowSettings DetailsWindow { get; set; }
             public SciMagColumnSettings Columns { get; set; }
-            public ExportPanelSettngs ExportPanel { get; set; }
+            public ExportPanelSettings ExportPanel { get; set; }
         }
 
         internal class DownloadManagerTabSettings
@@ -344,13 +348,15 @@ namespace LibgenDesktop.Models.Settings
                     return new GeneralSettings
                     {
                         Language = null,
-                        UpdateCheck = UpdateCheckInterval.NEVER
+                        UpdateCheck = UpdateCheckInterval.NEVER,
+                        UpdateUrl = DEFAULT_GITHUB_RELEASE_API_URL
                     };
                 }
             }
 
             public string Language { get; set; }
             public UpdateCheckInterval UpdateCheck { get; set; }
+            public string UpdateUrl { get; set; }
         }
 
         internal class NetworkSettings
@@ -562,6 +568,26 @@ namespace LibgenDesktop.Models.Settings
             }
         }
 
+        private static ExportPanelSettings ValidateAndCorrectExportPanelSettings(ExportPanelSettings exportPanelSettings)
+        {
+            if (exportPanelSettings == null)
+            {
+                exportPanelSettings = ExportPanelSettings.Default;
+            }
+            else
+            {
+                if (!Enum.IsDefined(typeof(ExportPanelSettings.ExportFormat), exportPanelSettings.Format))
+                {
+                    exportPanelSettings.Format = ExportPanelSettings.ExportFormat.XLSX;
+                }
+                if (!Enum.IsDefined(typeof(ExportPanelSettings.CsvSeparator), exportPanelSettings.Separator))
+                {
+                    exportPanelSettings.Separator = ExportPanelSettings.CsvSeparator.COMMA;
+                }
+            }
+            return exportPanelSettings;
+        }
+
         private void ValidateAndCorrectDatabaseFileName()
         {
             if (DatabaseFileName == null)
@@ -652,6 +678,10 @@ namespace LibgenDesktop.Models.Settings
                     {
                         nonFictionColumns.YearColumnWidth = NON_FICTION_GRID_YEAR_COLUMN_MIN_WIDTH;
                     }
+                    if (nonFictionColumns.LanguageColumnWidth < NON_FICTION_GRID_LANGUAGE_COLUMN_MIN_WIDTH)
+                    {
+                        nonFictionColumns.LanguageColumnWidth = NON_FICTION_GRID_LANGUAGE_COLUMN_MIN_WIDTH;
+                    }
                     if (nonFictionColumns.PublisherColumnWidth < NON_FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH)
                     {
                         nonFictionColumns.PublisherColumnWidth = NON_FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH;
@@ -723,6 +753,10 @@ namespace LibgenDesktop.Models.Settings
                     if (fictionColumns.YearColumnWidth < FICTION_GRID_YEAR_COLUMN_MIN_WIDTH)
                     {
                         fictionColumns.YearColumnWidth = FICTION_GRID_YEAR_COLUMN_MIN_WIDTH;
+                    }
+                    if (fictionColumns.LanguageColumnWidth < FICTION_GRID_LANGUAGE_COLUMN_MIN_WIDTH)
+                    {
+                        fictionColumns.LanguageColumnWidth = FICTION_GRID_LANGUAGE_COLUMN_MIN_WIDTH;
                     }
                     if (fictionColumns.PublisherColumnWidth < FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH)
                     {
@@ -824,26 +858,6 @@ namespace LibgenDesktop.Models.Settings
             }
         }
 
-        private ExportPanelSettngs ValidateAndCorrectExportPanelSettings(ExportPanelSettngs exportPanelSettngs)
-        {
-            if (exportPanelSettngs == null)
-            {
-                exportPanelSettngs = ExportPanelSettngs.Default;
-            }
-            else
-            {
-                if (!Enum.IsDefined(typeof(ExportPanelSettngs.ExportFormat), exportPanelSettngs.Format))
-                {
-                    exportPanelSettngs.Format = ExportPanelSettngs.ExportFormat.XLSX;
-                }
-                if (!Enum.IsDefined(typeof(ExportPanelSettngs.CsvSeparator), exportPanelSettngs.Separator))
-                {
-                    exportPanelSettngs.Separator = ExportPanelSettngs.CsvSeparator.COMMA;
-                }
-            }
-            return exportPanelSettngs;
-        }
-
         private void ValidateAndCorrectLastUpdateSettings()
         {
             if (LastUpdate == null)
@@ -890,6 +904,11 @@ namespace LibgenDesktop.Models.Settings
                 if (!Enum.IsDefined(typeof(GeneralSettings.UpdateCheckInterval), General.UpdateCheck))
                 {
                     General.UpdateCheck = GeneralSettings.UpdateCheckInterval.NEVER;
+                }
+                if (String.IsNullOrWhiteSpace(General.UpdateUrl) || !Uri.IsWellFormedUriString(General.UpdateUrl, UriKind.Absolute) ||
+                    (!General.UpdateUrl.ToLower().StartsWith("http://") && !General.UpdateUrl.ToLower().StartsWith("https://")))
+                {
+                    General.UpdateUrl = DEFAULT_GITHUB_RELEASE_API_URL;
                 }
             }
         }

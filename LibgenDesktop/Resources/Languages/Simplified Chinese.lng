@@ -39,25 +39,6 @@
             "About": "关于"
         }
     },
-    "CreateDatabaseWindow":
-    {
-        "WindowTitle": "Libgen 桌面版",
-        "FirstRunMessage": "欢迎使用 Libgen 桌面版",
-        "DatabaseNotFound": "无法找到数据库“{database}”。",
-        "DatabaseCorrupted": "数据库“{database}”已损坏。",
-        "LibgenServerDatabase": "“{database}”是 Libgen 服务器所用数据库，由于格式不同，不能用于 Libgen 桌面版。",
-        "ChooseOption": "选择操作",
-        "CreateNewDatabase": "创建新数据库",
-        "OpenExistingDatabase": "打开现有数据库",
-        "BrowseNewDatabaseDialogTitle": "新数据库存放位置",
-        "BrowseExistingDatabaseDialogTitle": "现有数据库位置",
-        "Databases": "数据库",
-        "AllFiles": "所有文件",
-        "Error": "错误",
-        "CannotCreateDatabase": "无法创建数据库文件。",
-        "Ok": "确定",
-        "Cancel": "取消"
-    },
     "SearchTab":
     {
         "TabTitle": "搜索",
@@ -224,7 +205,6 @@
     {
         "Title": "书名",
         "Authors": "作者",
-        "RussianAuthor": "作者（俄语）",
         "Series": "系列",
         "Publisher": "出版商",
         "Edition": "发行版本",
@@ -232,7 +212,6 @@
         "Language": "语言",
         "Format": "文件格式",
         "Pages": "页数",
-        "Version": "版本",
         "FileSize": "文件大小",
         "Added": "添加日期",
         "LastModified": "修改日期",
@@ -424,7 +403,6 @@
             "Id": "ID",
             "Title": "书名",
             "Authors": "作者",
-            "RussianAuthor": "作者（俄语）",
             "Series": "系列",
             "Publisher": "出版商",
             "Edition": "发行版本",
@@ -432,7 +410,6 @@
             "Language": "语言",
             "Format": "文件格式",
             "Pages": "页数",
-            "Version": "版本",
             "FileSize": "文件大小",
             "Added": "添加日期",
             "LastModified": "修改日期",

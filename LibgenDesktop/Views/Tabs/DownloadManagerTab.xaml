@@ -8,7 +8,7 @@
              xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
              u:EventListenerExtensions.EventProvider="{Binding Events}">
     <UserControl.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/DownloadManagerTabStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Tabs/DownloadManager.xaml" />
     </UserControl.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>
@@ -56,10 +56,11 @@
                 </StackPanel>
             </Button>
         </StackPanel>
-        <c:DownloaderListBox Grid.Row="1" x:Name="downloaderListBox" ItemsSource="{Binding Downloads, IsAsync=True}"
-                             SelectedItem="{Binding SelectedDownload, Mode=OneWay}" SelectedRows="{Binding SelectedRows, Mode=OneWayToSource}"
-                             SelectionChangedCommand="{Binding SelectionChangedCommand}" DoubleClickCommand="{Binding DownloaderListBoxDoubleClickCommand}"
-                             Style="{StaticResource DownloaderListBox}" ItemContainerStyle="{StaticResource DownloaderListBoxItem}">
+        <c:DownloadManagerListBox Grid.Row="1" x:Name="downloadManagerListBox" ItemsSource="{Binding Downloads, IsAsync=True}"
+                                  SelectedItem="{Binding SelectedDownload, Mode=OneWay}" SelectedRows="{Binding SelectedRows, Mode=OneWayToSource}"
+                                  SelectionChangedCommand="{Binding SelectionChangedCommand}"
+                                  DoubleClickCommand="{Binding DownloadManagerListBoxDoubleClickCommand}"
+                                  Style="{StaticResource DownloadManagerListBox}" ItemContainerStyle="{StaticResource DownloadManagerListBoxItem}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -111,7 +112,7 @@
                     </DataTemplate.Triggers>
                 </DataTemplate>
             </ListBox.ItemTemplate>                                                                     
-        </c:DownloaderListBox>
+        </c:DownloadManagerListBox>
         <GridSplitter Grid.Row="2" Style="{StaticResource Splitter}" />
         <Grid Grid.Row="3" Style="{StaticResource LogPanelHeader}">
             <Grid.RowDefinitions>

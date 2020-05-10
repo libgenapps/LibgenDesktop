@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.SetupSteps.ConfirmationPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/SetupSteps/Confirmation.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource ConfirmationPanel}">
+        <TextBlock Text="{Binding Localization.StepHeader}" Style="{StaticResource Header}" />
+        <TextBlock Text="{Binding Localization.SettingsHeader}" />
+        <StackPanel Style="{StaticResource NetworkModePanel}">
+            <ToggleButton IsChecked="{Binding IsOnlineModeSelected}" />
+            <Button Content="{Binding Localization.AllowInternetConnection}" Style="{StaticResource NetworkModeLabelButton}"
+                    Command="{Binding ToggleOnlineModeCommand}" />
+        </StackPanel>
+        <StackPanel Style="{StaticResource DownloadManagerPanel}" IsEnabled="{Binding IsDownloadingEnabled}">
+            <RadioButton Content="{Binding Localization.UseDownloadManager}" IsChecked="{Binding IsDownloadManagerModeSelected}" />
+            <RadioButton Content="{Binding Localization.UseBrowser}" IsChecked="{Binding IsBrowserModeSelected}" />
+        </StackPanel>
+        <TextBlock Text="{Binding Localization.YouCanChangeSettings}" Style="{StaticResource Note}" />
+    </StackPanel>
+</UserControl>

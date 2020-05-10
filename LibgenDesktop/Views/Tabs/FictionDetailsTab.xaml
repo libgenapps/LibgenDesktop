@@ -4,7 +4,7 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:c="clr-namespace:LibgenDesktop.Views.Controls">
     <UserControl.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/FictionDetailsTabStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Tabs/FictionDetails.xaml" />
     </UserControl.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>
@@ -59,26 +59,26 @@
                 <c:BookAttributeValueLabel Grid.Row="0" Grid.Column="1" Text="{Binding DetailsItem.Title}" />
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="{Binding Localization.Authors}" Style="{StaticResource AttributeHeaderLabel}" />
                 <c:BookAttributeValueLabel Grid.Row="1" Grid.Column="1" Text="{Binding DetailsItem.Authors}" />
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.RussianAuthor}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="2" Grid.Column="1" Text="{Binding DetailsItem.RussianAuthor}" />
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding Localization.Series}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="3" Grid.Column="1" Text="{Binding DetailsItem.Series}" />
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding Localization.Publisher}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="4" Grid.Column="1" Text="{Binding DetailsItem.Publisher}" />
-                <TextBlock Grid.Row="5" Grid.Column="0" Text="{Binding Localization.Edition}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="5" Grid.Column="1" Text="{Binding DetailsItem.Edition}" />
-                <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding Localization.Year}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="6" Grid.Column="1" Text="{Binding DetailsItem.Year}" />
-                <TextBlock Grid.Row="7" Grid.Column="0" Text="{Binding Localization.Language}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="7" Grid.Column="1" Text="{Binding DetailsItem.Language}" />
-                <TextBlock Grid.Row="8" Grid.Column="0" Text="{Binding Localization.FormatLabel}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="8" Grid.Column="1" Text="{Binding DetailsItem.Format}" />
-                <TextBlock Grid.Row="9" Grid.Column="0" Text="{Binding Localization.Pages}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="9" Grid.Column="1" Text="{Binding DetailsItem.Pages}" />
-                <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding Localization.Version}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="10" Grid.Column="1" Text="{Binding DetailsItem.Version}" />
-                <TextBlock Grid.Row="11" Grid.Column="0" Text="{Binding Localization.FileSize}" Style="{StaticResource AttributeHeaderLabel}" />
-                <c:BookAttributeValueLabel Grid.Row="11" Grid.Column="1" Text="{Binding DetailsItem.FileSize}" />
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding Localization.Series}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="2" Grid.Column="1" Text="{Binding DetailsItem.Series}" />
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding Localization.Publisher}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="3" Grid.Column="1" Text="{Binding DetailsItem.Publisher}" />
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="{Binding Localization.Edition}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="4" Grid.Column="1" Text="{Binding DetailsItem.Edition}" />
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="{Binding Localization.Year}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="5" Grid.Column="1" Text="{Binding DetailsItem.Year}" />
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="{Binding Localization.Language}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="6" Grid.Column="1" Text="{Binding DetailsItem.Language}" />
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="{Binding Localization.FormatLabel}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="7" Grid.Column="1" Text="{Binding DetailsItem.Format}" />
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="{Binding Localization.Pages}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="8" Grid.Column="1" Text="{Binding DetailsItem.Pages}" />
+                <TextBlock Grid.Row="9" Grid.Column="0" Text="{Binding Localization.FileSize}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="9" Grid.Column="1" Text="{Binding DetailsItem.FileSize}" />
+                <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding Localization.Library}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="10" Grid.Column="1" Text="{Binding DetailsItem.Library}" />
+                <TextBlock Grid.Row="11" Grid.Column="0" Text="{Binding Localization.Issue}" Style="{StaticResource AttributeHeaderLabel}" />
+                <c:BookAttributeValueLabel Grid.Row="11" Grid.Column="1" Text="{Binding DetailsItem.Issue}" />
                 <TextBlock Grid.Row="12" Grid.Column="0" Text="{Binding Localization.Added}" Style="{StaticResource AttributeHeaderLabel}" />
                 <c:BookAttributeValueLabel Grid.Row="12" Grid.Column="1" Text="{Binding DetailsItem.AddedDateTime}" />
                 <TextBlock Grid.Row="13" Grid.Column="0" Text="{Binding Localization.LastModified}" Style="{StaticResource AttributeHeaderLabel}"  />

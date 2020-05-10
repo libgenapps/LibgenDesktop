@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes">
+    <Style x:Key="DownloadDumpsPanel" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Vertical" />
+    </Style>
+    <Style x:Key="Header" TargetType="TextBlock">
+        <Setter Property="Margin" Value="12,0,12,12" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="DownloadList" TargetType="ItemsControl">
+        <Setter Property="MinWidth" Value="800" />
+    </Style>
+    <Style x:Key="DownloadItem" TargetType="Grid">
+        <Setter Property="Margin" Value="0,12,0,12" />
+    </Style>
+    <Style x:Key="DownloadItemIcon" TargetType="md:PackIcon">
+        <Setter Property="Margin" Value="0,1,4,0" />
+    </Style>
+    <Style x:Key="DownloadItemName" TargetType="TextBlock">
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+    </Style>
+    <Style x:Key="DownloadItemProgressText" TargetType="TextBlock">
+        <Setter Property="Margin" Value="16,0,0,0" />
+    </Style>
+    <Style x:Key="DownloadItemProgressBar" TargetType="ProgressBar" BasedOn="{StaticResource MaterialDesignLinearProgressBar}">
+        <Setter Property="md:TransitionAssist.DisableTransitions" Value="True" />
+        <Setter Property="Height" Value="10" />
+        <Setter Property="Margin" Value="0,3,0,0" />
+    </Style>
+    <SolidColorBrush x:Key="StoppedProgressBarBackgroundBrush" Color="#E0E0E0" />
+    <SolidColorBrush x:Key="StoppedProgressBarForegroundBrush" Color="#9E9E9E" />
+    <SolidColorBrush x:Key="ErrorProgressBarBackgroundBrush" Color="#FF8A80" />
+    <SolidColorBrush x:Key="ErrorProgressBarForegroundBrush" Color="#D50000" />
+    <SolidColorBrush x:Key="ErrorIconForegroundBrush" Color="#D50000" />
+    <SolidColorBrush x:Key="CompletedProgressBarBackgroundBrush" Color="#B9F6CA" />
+    <SolidColorBrush x:Key="CompletedProgressBarForegroundBrush" Color="#00C853" />
+    <SolidColorBrush x:Key="CompletedIconForegroundBrush" Color="#00C853" />
+    <Style x:Key="ButtonPanel" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,16,0,0" />
+    </Style>
+    <Style x:Key="InterruptButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignRaisedAccentButton}" />
+</ResourceDictionary>

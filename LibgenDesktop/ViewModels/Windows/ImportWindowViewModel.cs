@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Text;
 using System.Threading;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.Models.SqlDump;
 using LibgenDesktop.ViewModels.Panels;
@@ -12,6 +13,19 @@ namespace LibgenDesktop.ViewModels.Windows
 {
     internal class ImportWindowViewModel : LibgenWindowViewModel
     {
+        internal enum ImportStatus
+        {
+            NOT_STARTED = 1,
+            DATA_LOOKUP,
+            CREATING_INDEXES,
+            LOADING_IDS,
+            IMPORTING_DATA,
+            IMPORT_COMPLETE,
+            IMPORT_CANCELLED,
+            DATA_NOT_FOUND,
+            IMPORT_ERROR
+        }
+
         private enum Step
         {
             SEARCHING_TABLE_DEFINITION = 1,
@@ -21,11 +35,11 @@ namespace LibgenDesktop.ViewModels.Windows
         }
 
         private readonly string dumpFilePath;
+        private readonly TableType? expectedTableType;
         private readonly CancellationTokenSource cancellationTokenSource;
         private readonly LanguageFormatter languageFormatter;
         private readonly Timer elapsedTimer;
-        private bool isInProgress;
-        private string status;
+        private ImportStatus status;
         private string elapsed;
         private string freeSpace;
         private string cancelButtonText;
@@ -40,38 +54,27 @@ namespace LibgenDesktop.ViewModels.Windows
         private DateTime startDateTime;
         private TimeSpan lastElapsedTime;
 
-        public ImportWindowViewModel(MainModel mainModel, string dumpFilePath)
+        public ImportWindowViewModel(MainModel mainModel, string dumpFilePath, TableType? expectedTableType)
             : base(mainModel)
         {
             this.dumpFilePath = dumpFilePath;
+            this.expectedTableType = expectedTableType;
             cancellationTokenSource = new CancellationTokenSource();
             Localization = mainModel.Localization.CurrentLanguage.Import;
             languageFormatter = mainModel.Localization.CurrentLanguage.Formatter;
             elapsedTimer = new Timer(state => UpdateElapsedTime());
             Logs = new ImportLogPanelViewModel();
+            status = ImportStatus.NOT_STARTED;
             CancelCommand = new Command(Cancel);
             CloseCommand = new Command(Close);
             WindowClosedCommand = new Command(WindowClosed);
             Initialize();
         }
 
-        public ImportLocalizator Localization { get; }
+        public ImportWindowLocalizator Localization { get; }
         public ImportLogPanelViewModel Logs { get; }
 
-        public bool IsInProgress
-        {
-            get
-            {
-                return isInProgress;
-            }
-            set
-            {
-                isInProgress = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        public string Status
+        public ImportStatus Status
         {
             get
             {
@@ -80,7 +83,47 @@ namespace LibgenDesktop.ViewModels.Windows
             set
             {
                 status = value;
-                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(IsInProgress));
+                NotifyPropertyChanged(nameof(StatusText));
+            }
+        }
+
+        public bool IsInProgress
+        {
+            get
+            {
+                return Status == ImportStatus.DATA_LOOKUP || Status == ImportStatus.CREATING_INDEXES || Status == ImportStatus.LOADING_IDS ||
+                    Status == ImportStatus.IMPORTING_DATA;
+            }
+        }
+
+        public string StatusText
+        {
+            get
+            {
+                switch (Status)
+                {
+                    case ImportStatus.NOT_STARTED:
+                        return String.Empty;
+                    case ImportStatus.DATA_LOOKUP:
+                        return GetStatusAndStepText(Localization.StatusDataLookup);
+                    case ImportStatus.CREATING_INDEXES:
+                        return GetStatusAndStepText(Localization.StatusCreatingIndexes);
+                    case ImportStatus.LOADING_IDS:
+                        return GetStatusAndStepText(Localization.StatusLoadingIds);
+                    case ImportStatus.IMPORTING_DATA:
+                        return GetStatusAndStepText(Localization.StatusImportingData);
+                    case ImportStatus.IMPORT_COMPLETE:
+                        return Localization.StatusImportComplete;
+                    case ImportStatus.IMPORT_CANCELLED:
+                        return Localization.StatusImportCancelled;
+                    case ImportStatus.DATA_NOT_FOUND:
+                        return Localization.StatusDataNotFound;
+                    case ImportStatus.IMPORT_ERROR:
+                        return Localization.StatusImportError;
+                    default:
+                        throw new Exception($"Unexpected import status: {Status}.");
+                }
             }
         }
 
@@ -175,13 +218,33 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
+        public static OpenFileDialogResult SelectDatabaseDumpFile(MainModel mainModel)
+        {
+            ImportWindowLocalizator importLocalizator = mainModel.Localization.CurrentLanguage.Import;
+            StringBuilder filterBuilder = new StringBuilder();
+            filterBuilder.Append(importLocalizator.AllSupportedFiles);
+            filterBuilder.Append("|*.sql;*zip;*.rar;*.gz;*.7z|");
+            filterBuilder.Append(importLocalizator.SqlDumps);
+            filterBuilder.Append(" (*.sql)|*.sql|");
+            filterBuilder.Append(importLocalizator.Archives);
+            filterBuilder.Append(" (*.zip, *.rar, *.gz, *.7z)|*zip;*.rar;*.gz;*.7z|");
+            filterBuilder.Append(importLocalizator.AllFiles);
+            filterBuilder.Append(" (*.*)|*.*");
+            OpenFileDialogParameters selectSqlDumpFileDialogParameters = new OpenFileDialogParameters
+            {
+                DialogTitle = importLocalizator.BrowseImportFileDialogTitle,
+                Filter = filterBuilder.ToString(),
+                Multiselect = false
+            };
+            return WindowManager.ShowOpenFileDialog(selectSqlDumpFileDialogParameters);
+        }
+
         private void Initialize()
         {
-            isInProgress = true;
             currentStep = Step.SEARCHING_TABLE_DEFINITION;
             currentStepIndex = 1;
             totalSteps = 2;
-            UpdateStatus(Localization.StatusDataLookup);
+            status = ImportStatus.DATA_LOOKUP;
             startDateTime = DateTime.Now;
             lastElapsedTime = TimeSpan.Zero;
             elapsedTimer.Change(TimeSpan.Zero, TimeSpan.FromMilliseconds(100));
@@ -203,14 +266,13 @@ namespace LibgenDesktop.ViewModels.Windows
             MainModel.ImportSqlDumpResult importResult;
             try
             {
-                importResult = await MainModel.ImportSqlDumpAsync(dumpFilePath, importProgressHandler, cancellationToken);
+                importResult = await MainModel.ImportSqlDumpAsync(dumpFilePath, expectedTableType, importProgressHandler, cancellationToken);
             }
             catch (Exception exception)
             {
                 elapsedTimer.Change(Timeout.InfiniteTimeSpan, Timeout.InfiniteTimeSpan);
                 Logs.ShowErrorLogLine(Localization.LogLineImportError);
-                IsInProgress = false;
-                Status = Localization.StatusImportError;
+                Status = ImportStatus.IMPORT_ERROR;
                 IsCancelButtonVisible = false;
                 IsCloseButtonVisible = true;
                 ShowErrorWindow(exception, CurrentWindowContext);
@@ -221,22 +283,25 @@ namespace LibgenDesktop.ViewModels.Windows
             {
                 case MainModel.ImportSqlDumpResult.COMPLETED:
                     Logs.ShowResultLogLine(Localization.LogLineImportSuccessful);
-                    Status = Localization.StatusImportComplete;
+                    Status = ImportStatus.IMPORT_COMPLETE;
                     break;
                 case MainModel.ImportSqlDumpResult.CANCELLED:
                     Logs.ShowErrorLogLine(Localization.LogLineImportCancelled);
-                    Status = Localization.StatusImportCancelled;
+                    Status = ImportStatus.IMPORT_CANCELLED;
                     break;
                 case MainModel.ImportSqlDumpResult.DATA_NOT_FOUND:
                     Logs.ShowErrorLogLine(Localization.LogLineDataNotFound);
-                    Status = Localization.StatusDataNotFound;
+                    Status = ImportStatus.DATA_NOT_FOUND;
                     break;
                 case MainModel.ImportSqlDumpResult.LOW_DISK_SPACE:
                     Logs.ShowErrorLogLine(Localization.LogLineInsufficientDiskSpace);
-                    Status = Localization.StatusImportCancelled;
+                    Status = ImportStatus.IMPORT_CANCELLED;
+                    break;
+                case MainModel.ImportSqlDumpResult.ERROR:
+                    Logs.ShowErrorLogLine(Localization.LogLineImportError);
+                    Status = ImportStatus.IMPORT_ERROR;
                     break;
             }
-            IsInProgress = false;
             IsCancelButtonVisible = false;
             IsCloseButtonVisible = true;
         }
@@ -279,7 +344,7 @@ namespace LibgenDesktop.ViewModels.Windows
                             currentStep = Step.CREATING_INDEXES;
                             currentStepIndex++;
                             totalSteps++;
-                            UpdateStatus(Localization.StatusCreatingIndexes);
+                            Status = ImportStatus.CREATING_INDEXES;
                             Logs.AddLogItem(Localization.GetLogLineStep(currentStepIndex), Localization.LogLineCreatingIndexes);
                         }
                         CurrentLogItem.LogLines.Add(Localization.GetLogLineCreatingIndexForColumn(createIndexProgress.ColumnName));
@@ -290,7 +355,7 @@ namespace LibgenDesktop.ViewModels.Windows
                             currentStep = Step.LOADING_EXISTING_IDS;
                             currentStepIndex++;
                             totalSteps++;
-                            UpdateStatus(Localization.StatusLoadingIds);
+                            Status = ImportStatus.LOADING_IDS;
                             Logs.AddLogItem(Localization.GetLogLineStep(currentStepIndex), Localization.LogLineLoadingIds);
                         }
                         CurrentLogItem.LogLines.Add(Localization.GetLogLineLoadingColumnValues("LibgenId"));
@@ -300,7 +365,7 @@ namespace LibgenDesktop.ViewModels.Windows
                         {
                             currentStep = Step.IMPORTING_DATA;
                             currentStepIndex++;
-                            UpdateStatus(Localization.StatusImportingData);
+                            Status = ImportStatus.IMPORTING_DATA;
                             Logs.AddLogItem(Localization.GetLogLineStep(currentStepIndex), Localization.LogLineImportingData);
                         }
                         string logLine = GetImportedObjectCountLogLine(importObjectsProgress.ObjectsAdded, importObjectsProgress.ObjectsUpdated);
@@ -310,6 +375,41 @@ namespace LibgenDesktop.ViewModels.Windows
                         string freeSpaceInBytesString = importDiskSpaceProgress.FreeSpaceInBytes.HasValue ?
                             languageFormatter.FileSizeToString(importDiskSpaceProgress.FreeSpaceInBytes.Value, false) : Localization.Unknown;
                         FreeSpace = Localization.GetFreeSpaceString(freeSpaceInBytesString);
+                        break;
+                    case ImportWrongTableDefinitionProgress importWrongTableDefinitionProgress:
+                        string expected;
+                        switch (importWrongTableDefinitionProgress.ExpectedTableType)
+                        {
+                            case TableType.NON_FICTION:
+                                expected = Localization.LogLineExpectedNonFictionTable;
+                                break;
+                            case TableType.FICTION:
+                                expected = Localization.LogLineExpectedFictionTable;
+                                break;
+                            case TableType.SCI_MAG:
+                                expected = Localization.LogLineExpectedSciMagTable;
+                                break;
+                            case TableType.UNKNOWN:
+                            default:
+                                throw new Exception($"Unexpected table type: {importWrongTableDefinitionProgress.ExpectedTableType}.");
+                        }
+                        string found;
+                        switch (importWrongTableDefinitionProgress.ActualTableType)
+                        {
+                            case TableType.NON_FICTION:
+                                found = Localization.LogLineFoundNonFictionTable;
+                                break;
+                            case TableType.FICTION:
+                                found = Localization.LogLineFoundFictionTable;
+                                break;
+                            case TableType.SCI_MAG:
+                                found = Localization.LogLineFoundSciMagTable;
+                                break;
+                            case TableType.UNKNOWN:
+                            default:
+                                throw new Exception($"Unexpected table type: {importWrongTableDefinitionProgress.ActualTableType}.");
+                        }
+                        CurrentLogItem.LogLine = Localization.GetLogLineWrongTableFound(expected, found);
                         break;
                 }
             }
@@ -347,9 +447,9 @@ namespace LibgenDesktop.ViewModels.Windows
             cancellationTokenSource.Cancel();
         }
 
-        private void UpdateStatus(string statusDescription)
+        private string GetStatusAndStepText(string statusDescription)
         {
-            Status = $"{Localization.GetStatusStep(currentStepIndex, totalSteps)} {statusDescription}...";
+            return $"{Localization.GetStatusStep(currentStepIndex, totalSteps)} {statusDescription}...";
         }
 
         private string GetScannedPercentageStatusString(decimal scannedPercentage)

@@ -38,24 +38,6 @@
             "About": "À propos"
         }
     },
-    "CreateDatabaseWindow":
-    {
-        "WindowTitle": "Libgen Desktop",
-        "FirstRunMessage": "Bienvenue dans Libgen Desktop.",
-        "DatabaseNotFound": "La base de données {database} est introuvable.",
-        "DatabaseCorrupted": "La base de données {database} est corrompue.",
-        "ChooseOption": "Choisissez une action ",
-        "CreateNewDatabase": "Créer une nouvelle base de donnée",
-        "OpenExistingDatabase": "Ouvrir une base de données existante",
-        "BrowseNewDatabaseDialogTitle": "Emplacement de la nouvelle base de données",
-        "BrowseExistingDatabaseDialogTitle": "Emplacement de la base de données existante",
-        "Databases": "Bases de données",
-        "AllFiles": "Tous les fichiers",
-        "Error": "Erreur",
-        "CannotCreateDatabase": "La base de données n'a pas pu être créée.",
-        "Ok": "OK",
-        "Cancel": "ANNULER"
-    },
     "SearchTab":
     {
         "TabTitle": "Recherche",
@@ -212,7 +194,6 @@
     {
         "Title": "Titre ",
         "Authors": "Auteurs ",
-        "RussianAuthor": "Auteur en russe ",
         "Series": "Série ",
         "Publisher": "Éditeur ",
         "Edition": "Édition ",
@@ -220,7 +201,6 @@
         "Language": "Langue ",
         "Format": "Format ",
         "Pages": "Pages ",
-        "Version": "Version ",
         "FileSize": "Taille du fichier ",
         "Added": "Ajouté ",
         "LastModified": "Dernière modification ",
@@ -410,7 +390,6 @@
             "Id": "ID",
             "Title": "Titre",
             "Authors": "Auteurs",
-            "RussianAuthor": "Auteur en russe",
             "Series": "Série",
             "Publisher": "Éditeur",
             "Edition": "Édition",
@@ -418,7 +397,6 @@
             "Language": "Langue",
             "Format": "Format",
             "Pages": "Pages",
-            "Version": "Version",
             "FileSize": "Taille du fichier",
             "Added": "Ajouté",
             "LastModified": "Dernière modification",

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Database;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 
 namespace LibgenDesktop.ViewModels.Windows
 {
@@ -28,7 +29,7 @@ namespace LibgenDesktop.ViewModels.Windows
         {
             Localization = mainModel.Localization.CurrentLanguage.Database;
             formatter = mainModel.Localization.CurrentLanguage.Formatter;
-            WindowClosingCommand = new FuncCommand<bool>(WindowClosing);
+            WindowClosingCommand = new FuncCommand<bool?, bool>(WindowClosing);
             ChangeDatabaseCommand = new Command(ChangeDatabase);
             CloseButtonCommand = new Command(CloseButtonClick);
             GetStats();
@@ -153,9 +154,95 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
-        public FuncCommand<bool> WindowClosingCommand { get; }
+        public FuncCommand<bool?, bool> WindowClosingCommand { get; }
         public Command ChangeDatabaseCommand { get; }
         public Command CloseButtonCommand { get; }
+
+        public static async Task<bool> OpenDatabase(MainModel mainModel, IWindowContext parentWindowContext)
+        {
+            DatabaseWindowLocalizator databaseLocalizator = mainModel.Localization.CurrentLanguage.Database;
+            MessageBoxLocalizator messageBoxLocalizator = mainModel.Localization.CurrentLanguage.MessageBox;
+            OpenFileDialogResult openFileDialogResult = SelectDatabaseFile(mainModel);
+            if (openFileDialogResult.DialogResult)
+            {
+                string databaseFilePath = openFileDialogResult.SelectedFilePaths.First();
+                MainModel.OpenDatabaseOptions openDatabaseOptions = MainModel.OpenDatabaseOptions.NONE;
+                MainModel.DatabaseStatus databaseStatus;
+                bool stopOpenAttempts = false;
+                bool openedSuccessfully = false;
+                while (!stopOpenAttempts)
+                {
+                    databaseStatus = await mainModel.OpenDatabase(databaseFilePath, openDatabaseOptions);
+                    switch (databaseStatus)
+                    {
+                        case MainModel.DatabaseStatus.OPENED:
+                            mainModel.AppSettings.DatabaseFileName = MainModel.GetDatabaseNormalizedPath(databaseFilePath);
+                            mainModel.SaveSettings();
+                            openedSuccessfully = true;
+                            stopOpenAttempts = true;
+                            break;
+                        case MainModel.DatabaseStatus.POSSIBLE_DUMP_FILE:
+                            WindowManager.ShowMessage(databaseLocalizator.Error, databaseLocalizator.GetDatabaseDumpFileText(databaseFilePath),
+                                messageBoxLocalizator.Ok, parentWindowContext);
+                            stopOpenAttempts = true;
+                            break;
+                        case MainModel.DatabaseStatus.OLD_FICTION_SCHEMA:
+                            if (WindowManager.ShowPrompt(databaseLocalizator.OldFictionSchemaTitle, databaseLocalizator.GetOldFictionSchemaText(databaseFilePath),
+                                messageBoxLocalizator.Yes, messageBoxLocalizator.No, parentWindowContext))
+                            {
+                                openDatabaseOptions = MainModel.OpenDatabaseOptions.MIGRATE_FICTION;
+                            }
+                            else
+                            {
+                                stopOpenAttempts = true;
+                            }
+                            break;
+                        case MainModel.DatabaseStatus.CORRUPTED:
+                            WindowManager.ShowMessage(databaseLocalizator.Error, databaseLocalizator.GetDatabaseNotValidText(databaseFilePath),
+                                messageBoxLocalizator.Ok, parentWindowContext);
+                            stopOpenAttempts = true;
+                            break;
+                        case MainModel.DatabaseStatus.SERVER_DATABASE:
+                            WindowManager.ShowMessage(databaseLocalizator.Error, databaseLocalizator.GetLibgenServerDatabaseText(databaseFilePath),
+                                messageBoxLocalizator.Ok, parentWindowContext);
+                            stopOpenAttempts = true;
+                            break;
+                        default:
+                            throw new Exception($"Unexpected database status: {databaseStatus}.");
+                    }
+                }
+                if (openedSuccessfully)
+                {
+                    return true;
+                }
+                else
+                {
+                    await mainModel.OpenDatabase(mainModel.AppSettings.DatabaseFileName);
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static OpenFileDialogResult SelectDatabaseFile(MainModel mainModel)
+        {
+            DatabaseWindowLocalizator databaseLocalizator = mainModel.Localization.CurrentLanguage.Database;
+            StringBuilder filterBuilder = new StringBuilder();
+            filterBuilder.Append(databaseLocalizator.Databases);
+            filterBuilder.Append(" (*.db)|*.db|");
+            filterBuilder.Append(databaseLocalizator.AllFiles);
+            filterBuilder.Append(" (*.*)|*.*");
+            OpenFileDialogParameters openFileDialogParameters = new OpenFileDialogParameters
+            {
+                DialogTitle = databaseLocalizator.BrowseDatabaseDialogTitle,
+                Filter = filterBuilder.ToString(),
+                Multiselect = false
+            };
+            return WindowManager.ShowOpenFileDialog(openFileDialogParameters);
+        }
 
         private async void GetStats()
         {
@@ -199,38 +286,15 @@ namespace LibgenDesktop.ViewModels.Windows
             isDatabaseOperationInProgress = false;
         }
 
-        private void ChangeDatabase()
+        private async void ChangeDatabase()
         {
-            StringBuilder filterBuilder = new StringBuilder();
-            filterBuilder.Append(Localization.Databases);
-            filterBuilder.Append(" (*.db)|*.db|");
-            filterBuilder.Append(Localization.AllFiles);
-            filterBuilder.Append(" (*.*)|*.*");
-            OpenFileDialogParameters openFileDialogParameters = new OpenFileDialogParameters
+            if (await OpenDatabase(MainModel, CurrentWindowContext))
             {
-                DialogTitle = Localization.BrowseDatabaseDialogTitle,
-                Filter = filterBuilder.ToString(),
-                Multiselect = false
-            };
-            OpenFileDialogResult openFileDialogResult = WindowManager.ShowOpenFileDialog(openFileDialogParameters);
-            if (openFileDialogResult.DialogResult)
-            {
-                string databaseFilePath = openFileDialogResult.SelectedFilePaths.First();
-                if (MainModel.OpenDatabase(databaseFilePath))
-                {
-                    MainModel.AppSettings.DatabaseFileName = MainModel.GetDatabaseNormalizedPath(databaseFilePath);
-                    MainModel.SaveSettings();
-                    GetStats();
-                }
-                else
-                {
-                    ShowMessage(Localization.Error, Localization.GetCannotOpenDatabase(databaseFilePath));
-                    MainModel.OpenDatabase(MainModel.AppSettings.DatabaseFileName);
-                }
+                GetStats();
             }
         }
 
-        private bool WindowClosing()
+        private bool WindowClosing(bool? dialogResult)
         {
             return !isDatabaseOperationInProgress;
         }

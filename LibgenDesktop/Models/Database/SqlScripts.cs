@@ -177,64 +177,36 @@
         public const string CREATE_FICTION_TABLE =
             "CREATE TABLE IF NOT EXISTS fiction (" +
                 "Id INTEGER PRIMARY KEY NOT NULL," +
-                "AuthorFamily1 TEXT," +
-                "AuthorName1 TEXT," +
-                "AuthorSurname1 TEXT," +
-                "Role1 TEXT," +
-                "Pseudonim1 TEXT," +
-                "AuthorFamily2 TEXT," +
-                "AuthorName2 TEXT," +
-                "AuthorSurname2 TEXT," +
-                "Role2 TEXT," +
-                "Pseudonim2 TEXT," +
-                "AuthorFamily3 TEXT," +
-                "AuthorName3 TEXT," +
-                "AuthorSurname3 TEXT," +
-                "Role3 TEXT," +
-                "Pseudonim3 TEXT," +
-                "AuthorFamily4 TEXT," +
-                "AuthorName4 TEXT," +
-                "AuthorSurname4 TEXT," +
-                "Role4 TEXT," +
-                "Pseudonim4 TEXT," +
-                "Series1 TEXT," +
-                "Series2 TEXT," +
-                "Series3 TEXT," +
-                "Series4 TEXT," +
-                "Title TEXT," +
-                "Format TEXT," +
-                "Version TEXT," +
-                "SizeInBytes INTEGER NOT NULL," +
                 "Md5Hash TEXT," +
-                "Path TEXT," +
+                "Title TEXT," +
+                "Authors TEXT," +
+                "Series TEXT," +
+                "Edition TEXT," +
                 "Language TEXT," +
-                "Pages TEXT," +
-                "Identifier TEXT," +
                 "Year TEXT," +
                 "Publisher TEXT," +
-                "Edition TEXT," +
-                "Commentary TEXT," +
-                "AddedDateTime TEXT," +
-                "LastModifiedDateTime TEXT NOT NULL," +
-                "RussianAuthorFamily TEXT," +
-                "RussianAuthorName TEXT," +
-                "RussianAuthorSurname TEXT," +
-                "Cover TEXT," +
+                "Pages TEXT," +
+                "Identifier TEXT," +
                 "GoogleBookId TEXT," +
                 "Asin TEXT," +
-                "AuthorHash TEXT," +
-                "TitleHash TEXT," +
+                "CoverUrl TEXT," +
+                "Format TEXT," +
+                "SizeInBytes INTEGER NOT NULL," +
+                "Library TEXT," +
+                "Issue TEXT," +
+                "Locator TEXT," +
+                "Commentary TEXT," +
+                "Generic TEXT," +
                 "Visible TEXT," +
+                "AddedDateTime TEXT," +
+                "LastModifiedDateTime TEXT," +
                 "LibgenId INTEGER NOT NULL," +
                 "FileId INTEGER," +
                 "FOREIGN KEY (FileId) REFERENCES files(Id)" +
             ")";
 
         public const string CREATE_FICTION_FTS_TABLE =
-            "CREATE VIRTUAL TABLE IF NOT EXISTS fiction_fts USING fts5 (Title, AuthorFamily1, AuthorName1, AuthorSurname1, Pseudonim1, " +
-                "AuthorFamily2, AuthorName2, AuthorSurname2, Pseudonim2, AuthorFamily3, AuthorName3, AuthorSurname3, Pseudonim3, " +
-                "AuthorFamily4, AuthorName4, AuthorSurname4, Pseudonim4, RussianAuthorFamily, RussianAuthorName, RussianAuthorSurname, " +
-                "Series1, Series2, Series3, Series4, Publisher, Identifier, content=fiction, content_rowid=Id)";
+            "CREATE VIRTUAL TABLE IF NOT EXISTS fiction_fts USING fts5 (Title, Authors, Series, Publisher, Identifier, content=fiction, content_rowid=Id)";
 
         public const string GET_ALL_FICTION_LIBGEN_IDS = "SELECT LibgenId FROM fiction";
 
@@ -254,87 +226,45 @@
         public const string SEARCH_FICTION = "SELECT * FROM fiction WHERE Id IN (SELECT rowid FROM fiction_fts WHERE fiction_fts MATCH @SearchQuery) ORDER BY Id";
 
         public const string INSERT_FICTION =
-            "INSERT INTO fiction VALUES (@Id,@AuthorFamily1,@AuthorName1,@AuthorSurname1,@Role1,@Pseudonim1,@AuthorFamily2,@AuthorName2,@AuthorSurname2,@Role2,@Pseudonim2," +
-                "@AuthorFamily3,@AuthorName3,@AuthorSurname3,@Role3,@Pseudonim3,@AuthorFamily4,@AuthorName4,@AuthorSurname4,@Role4,@Pseudonim4,@Series1,@Series2,@Series3,@Series4," +
-                "@Title,@Format,@Version,@SizeInBytes,@Md5Hash,@Path,@Language,@Pages,@Identifier,@Year,@Publisher,@Edition,@Commentary,@AddedDateTime,@LastModifiedDateTime," +
-                "@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname,@Cover,@GoogleBookId,@Asin,@AuthorHash,@TitleHash,@Visible,@LibgenId,NULL)";
+            "INSERT INTO fiction VALUES (@Id,@Md5Hash,@Title,@Authors,@Series,@Edition,@Language,@Year,@Publisher,@Pages,@Identifier,@GoogleBookId,@Asin," +
+                "@CoverUrl,@Format,@SizeInBytes,@Library,@Issue,@Locator,@Commentary,@Generic,@Visible,@AddedDateTime,@LastModifiedDateTime,@LibgenId,NULL)";
 
         public const string UPDATE_FICTION =
             "UPDATE fiction SET " +
-                "AuthorFamily1=@AuthorFamily1," +
-                "AuthorName1=@AuthorName1," +
-                "AuthorSurname1=@AuthorSurname1," +
-                "Role1=@Role1," +
-                "Pseudonim1=@Pseudonim1," +
-                "AuthorFamily2=@AuthorFamily2," +
-                "AuthorName2=@AuthorName2," +
-                "AuthorSurname2=@AuthorSurname2," +
-                "Role2=@Role2," +
-                "Pseudonim2=@Pseudonim2," +
-                "AuthorFamily3=@AuthorFamily3," +
-                "AuthorName3=@AuthorName3," +
-                "AuthorSurname3=@AuthorSurname3," +
-                "Role3=@Role3," +
-                "Pseudonim3=@Pseudonim3," +
-                "AuthorFamily4=@AuthorFamily4," +
-                "AuthorName4=@AuthorName4," +
-                "AuthorSurname4=@AuthorSurname4," +
-                "Role4=@Role4," +
-                "Pseudonim4=@Pseudonim4," +
-                "Series1=@Series1," +
-                "Series2=@Series2," +
-                "Series3=@Series3," +
-                "Series4=@Series4," +
-                "Title=@Title," +
-                "Format=@Format," +
-                "Version=@Version," +
-                "SizeInBytes=@SizeInBytes," +
                 "Md5Hash=@Md5Hash," +
-                "Path=@Path," +
+                "Title=@Title," +
+                "Authors=@Authors," +
+                "Series=@Series," +
+                "Edition=@Edition," +
                 "Language=@Language," +
-                "Pages=@Pages," +
-                "Identifier=@Identifier," +
                 "Year=@Year," +
                 "Publisher=@Publisher," +
-                "Edition=@Edition," +
-                "Commentary=@Commentary," +
-                "AddedDateTime=@AddedDateTime," +
-                "LastModifiedDateTime=@LastModifiedDateTime," +
-                "RussianAuthorFamily=@RussianAuthorFamily," +
-                "RussianAuthorName=@RussianAuthorName," +
-                "RussianAuthorSurname=@RussianAuthorSurname," +
-                "Cover=@Cover," +
+                "Pages=@Pages," +
+                "Identifier=@Identifier," +
                 "GoogleBookId=@GoogleBookId," +
                 "Asin=@Asin," +
-                "AuthorHash=@AuthorHash," +
-                "TitleHash=@TitleHash," +
-                "Visible=@Visible " +
+                "CoverUrl=@CoverUrl," +
+                "Format=@Format," +
+                "SizeInBytes=@SizeInBytes" +
+                "Library=@Library," +
+                "Issue=@Issue," +
+                "Locator=@Locator," +
+                "Commentary=@Commentary," +
+                "Generic=@Generic," +
+                "Visible=@Visible," +
+                "AddedDateTime=@AddedDateTime," +
+                "LastModifiedDateTime=@LastModifiedDateTime " +
                 "WHERE Id=@Id";
 
         public const string INSERT_FICTION_FTS_WITHOUT_ID =
-            "INSERT INTO fiction_fts VALUES (@Title,@AuthorFamily1,@AuthorName1,@AuthorSurname1,@Pseudonim1," +
-                "@AuthorFamily2,@AuthorName2,@AuthorSurname2,@Pseudonim2,@AuthorFamily3,@AuthorName3,@AuthorSurname3,@Pseudonim3," +
-                "@AuthorFamily4,@AuthorName4,@AuthorSurname4,@Pseudonim4,@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname," +
-                "@Series1,@Series2,@Series3,@Series4,@Publisher,@Identifier)";
+            "INSERT INTO fiction_fts VALUES (@Title,@Authors,@Series,@Publisher,@Identifier)";
 
         public const string INSERT_FICTION_FTS_WITH_ID =
-            "INSERT INTO fiction_fts (rowid,Title,AuthorFamily1,AuthorName1,AuthorSurname1,Pseudonim1," +
-                "AuthorFamily2,AuthorName2,AuthorSurname2,Pseudonim2,AuthorFamily3,AuthorName3,AuthorSurname3,Pseudonim3," +
-                "AuthorFamily4,AuthorName4,AuthorSurname4,Pseudonim4,RussianAuthorFamily,RussianAuthorName,RussianAuthorSurname," +
-                "Series1,Series2,Series3,Series4,Publisher,Identifier) VALUES (@Id,@Title,@AuthorFamily1,@AuthorName1,@AuthorSurname1,@Pseudonim1," +
-                "@AuthorFamily2,@AuthorName2,@AuthorSurname2,@Pseudonim2,@AuthorFamily3,@AuthorName3,@AuthorSurname3,@Pseudonim3," +
-                "@AuthorFamily4,@AuthorName4,@AuthorSurname4,@Pseudonim4,@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname," +
-                "@Series1,@Series2,@Series3,@Series4,@Publisher,@Identifier)";
+            "INSERT INTO fiction_fts (rowid,Title,Authors,Series,Publisher,Identifier) VALUES (@Id,@Title,@Authors,@Series,@Publisher,@Identifier)";
 
         public const string DELETE_FICTION_FTS =
-            "INSERT INTO fiction_fts (fiction_fts,rowid,Title,AuthorFamily1,AuthorName1,AuthorSurname1,Pseudonim1," +
-                "AuthorFamily2,AuthorName2,AuthorSurname2,Pseudonim2,AuthorFamily3,AuthorName3,AuthorSurname3,Pseudonim3," +
-                "AuthorFamily4,AuthorName4,AuthorSurname4,Pseudonim4,RussianAuthorFamily,RussianAuthorName,RussianAuthorSurname," +
-                "Series1,Series2,Series3,Series4,Publisher,Identifier) "+
-                "VALUES ('delete',@Id,@Title,@AuthorFamily1,@AuthorName1,@AuthorSurname1,@Pseudonim1," +
-                "@AuthorFamily2,@AuthorName2,@AuthorSurname2,@Pseudonim2,@AuthorFamily3,@AuthorName3,@AuthorSurname3,@Pseudonim3," +
-                "@AuthorFamily4,@AuthorName4,@AuthorSurname4,@Pseudonim4,@RussianAuthorFamily,@RussianAuthorName,@RussianAuthorSurname," +
-                "@Series1,@Series2,@Series3,@Series4,@Publisher,@Identifier)";
+            "INSERT INTO fiction_fts (fiction_fts,rowid,Title,Authors,Series,Publisher,Identifier) " +
+                "VALUES ('delete',@Id,@Title,@Authors,@Series,@Publisher,@Identifier)";
 
         public const string GET_FICTION_INDEX_LIST = "PRAGMA index_list(fiction)";
 
@@ -346,6 +276,10 @@
             "LastModifiedDateTime ON fiction (LastModifiedDateTime DESC)";
 
         public const string CREATE_FICTION_LIBGENID_INDEX = "CREATE UNIQUE INDEX " + FICTION_INDEX_PREFIX + "LibgenId ON fiction (LibgenId ASC)";
+
+        public const string DROP_FICTION_FTS_TABLE = "DROP TABLE IF EXISTS fiction_fts";
+
+        public const string DROP_FICTION_TABLE = "DROP TABLE IF EXISTS fiction";
 
         public const string CREATE_SCIMAG_TABLE =
             "CREATE TABLE IF NOT EXISTS scimag (" +

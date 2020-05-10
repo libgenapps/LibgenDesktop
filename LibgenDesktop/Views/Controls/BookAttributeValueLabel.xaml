@@ -1,6 +1,6 @@
 ﻿<TextBlock x:Class="LibgenDesktop.Views.Controls.BookAttributeValueLabel"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <TextBlock.Resources>
         <ContextMenu x:Key="labelContextMenu">
             <MenuItem Click="CopyMenuItemClick" />

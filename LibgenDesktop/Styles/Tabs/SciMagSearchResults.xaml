@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Tab.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <Style x:Key="ArticleDataGrid" TargetType="DataGrid" BasedOn="{StaticResource SearchResultsDataGrid}" />
+    <Style x:Key="TitleHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridLeftAlignedTextHeaderStyle}" />
+    <Style x:Key="TitleColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
+    <Style x:Key="AuthorsHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridLeftAlignedTextHeaderStyle}" />
+    <Style x:Key="AuthorsColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
+    <Style x:Key="JournalHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridLeftAlignedTextHeaderStyle}" />
+    <Style x:Key="JournalColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
+    <Style x:Key="YearHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridCenterAlignedTextHeaderStyle}" />
+    <Style x:Key="YearColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="FileSizeHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridRightAlignedTextHeaderStyle}" />
+    <Style x:Key="FileSizeColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}">
+        <Setter Property="HorizontalAlignment" Value="Right" />
+    </Style>
+    <Style x:Key="DoiHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridLeftAlignedTextHeaderStyle}" />
+    <Style x:Key="DoiColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
+    <Style x:Key="ExistsInLibraryHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridIconHeaderStyle}" />
+    <Style x:Key="ArticleSearchProgressPanel" TargetType="StackPanel" BasedOn="{StaticResource SearchProgressPanel}">
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+</ResourceDictionary>

@@ -39,25 +39,6 @@
             "About": "Hakkında"
         }
     },
-    "CreateDatabaseWindow":
-    {
-        "WindowTitle": "Libgen Desktop",
-        "FirstRunMessage": "Libgen Desktop'a Hoş Geldiniz.",
-        "DatabaseNotFound": "{database} veri tabanı bulunamadı.",
-        "DatabaseCorrupted": "{database} veri tabanı bozuk.",
-        "LibgenServerDatabase": "{database} veri tabanı Libgen Desktop veri tabanı yapısıyla uyumlu olmayan bir Libgen Sunucu veri tabanı.",
-        "ChooseOption": "Bir eylem seç",
-        "CreateNewDatabase": "Yeni bir veri tabanı oluştur",
-        "OpenExistingDatabase": "Var olan bir veri tabanı aç",
-        "BrowseNewDatabaseDialogTitle": "Yeni veri tabanı konumu",
-        "BrowseExistingDatabaseDialogTitle": "Var olan veri tabanı konumu",
-        "Databases": "Veri tabanları",
-        "AllFiles": "Tüm dosyalar",
-        "Error": "Hata",
-        "CannotCreateDatabase": "Veri tabanı oluşturulamadı.",
-        "Ok": "TAMAM",
-        "Cancel": "İPTAL"
-    },
     "SearchTab":
     {
         "TabTitle": "Ara",
@@ -224,7 +205,6 @@
     {
         "Title": "Başlık",
         "Authors": "Yazar",
-        "RussianAuthor": "Yazar (Rusça)",
         "Series": "Dizi",
         "Publisher": "Yayıncı",
         "Edition": "Basım",
@@ -232,7 +212,6 @@
         "Language": "Dil",
         "Format": "Tür",
         "Pages": "Sayfa",
-        "Version": "Sürüm",
         "FileSize": "Dosya Boyutu",
         "Added": "Eklenme Tarihi",
         "LastModified": "Son Değiştirilme Tarihi",
@@ -424,7 +403,6 @@
             "Id": "ID",
             "Title": "Başlık",
             "Authors": "Yazar",
-            "RussianAuthor": "Yazar (Rusça)",
             "Series": "Dizi",
             "Publisher": "Yayıncı",
             "Edition": "Basım",
@@ -432,7 +410,6 @@
             "Language": "Dil",
             "Format": "Tür",
             "Pages": "Sayfa",
-            "Version": "Sürüm",
             "FileSize": "Dosya Boyutu",
             "Added": "Eklenme Tarihi",
             "LastModified": "Son Değiştirilme Tarihi",

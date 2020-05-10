@@ -8,7 +8,7 @@ using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Download;
 using LibgenDesktop.Models.Entities;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.Update;
 using LibgenDesktop.ViewModels.Bookmarks;
@@ -56,7 +56,7 @@ namespace LibgenDesktop.ViewModels.Windows
             mainModel.AppSettingsChanged += AppSettingsChanged;
             mainModel.BookmarksChanged += BookmarksChanged;
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
-            mainModel.Downloader.DownloaderBatchEvent += DownloaderBatchEvent;
+            mainModel.DownloadManager.DownloadManagerBatchEvent += DownloadManagerBatchEvent;
         }
 
         public int WindowWidth { get; set; }
@@ -586,45 +586,20 @@ namespace LibgenDesktop.ViewModels.Windows
 
         private void Import()
         {
-            ImportLocalizator importLocalizator = MainModel.Localization.CurrentLanguage.Import;
-            StringBuilder filterBuilder = new StringBuilder();
-            filterBuilder.Append(importLocalizator.AllSupportedFiles);
-            filterBuilder.Append("|*.sql;*zip;*.rar;*.gz;*.7z|");
-            filterBuilder.Append(importLocalizator.SqlDumps);
-            filterBuilder.Append(" (*.sql)|*.sql|");
-            filterBuilder.Append(importLocalizator.Archives);
-            filterBuilder.Append(" (*.zip, *.rar, *.gz, *.7z)|*zip;*.rar;*.gz;*.7z|");
-            filterBuilder.Append(importLocalizator.AllFiles);
-            filterBuilder.Append(" (*.*)|*.*");
-            OpenFileDialogParameters selectSqlDumpFileDialogParameters = new OpenFileDialogParameters
-            {
-                DialogTitle = importLocalizator.BrowseImportFileDialogTitle,
-                Filter = filterBuilder.ToString(),
-                Multiselect = false
-            };
-            OpenFileDialogResult selectSqlDumpFileDialogResult = WindowManager.ShowOpenFileDialog(selectSqlDumpFileDialogParameters);
+            OpenFileDialogResult selectSqlDumpFileDialogResult = ImportWindowViewModel.SelectDatabaseDumpFile(MainModel);
             if (selectSqlDumpFileDialogResult.DialogResult)
             {
-                ImportWindowViewModel importWindowViewModel = new ImportWindowViewModel(MainModel, selectSqlDumpFileDialogResult.SelectedFilePaths.First());
+                ImportWindowViewModel importWindowViewModel =
+                    new ImportWindowViewModel(MainModel, selectSqlDumpFileDialogResult.SelectedFilePaths.First(), null);
                 IWindowContext importWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.IMPORT_WINDOW, importWindowViewModel, CurrentWindowContext);
                 importWindowContext.ShowDialog();
-                if (IsDefaultSearchTabVisible)
-                {
-                    DefaultSearchTabViewModel.Refresh(setFocus: true);
-                }
-                else
-                {
-                    foreach (SearchTabViewModel searchTabViewModel in TabViewModels.OfType<SearchTabViewModel>())
-                    {
-                        searchTabViewModel.Refresh(setFocus: searchTabViewModel == SelectedTabViewModel);
-                    }
-                }
+                RefreshSearchTabCollectionAvailabilities();
             }
         }
 
-        public void Synchronize()
+        private void Synchronize()
         {
-            SynchronizationLocalizator synchronizationLocalizator = MainModel.Localization.CurrentLanguage.Synchronization;
+            SynchronizationWindowLocalizator synchronizationLocalizator = MainModel.Localization.CurrentLanguage.Synchronization;
             if (MainModel.DatabaseMetadata.NonFictionFirstImportComplete != true)
             {
                 ShowMessage(synchronizationLocalizator.ErrorMessageTitle, synchronizationLocalizator.ImportRequired);
@@ -690,6 +665,7 @@ namespace LibgenDesktop.ViewModels.Windows
             IWindowContext databaseWindowContext = WindowManager.CreateWindow(RegisteredWindows.WindowKey.DATABASE_WINDOW, databaseWindowViewModel,
                 CurrentWindowContext);
             databaseWindowContext.ShowDialog();
+            RefreshSearchTabCollectionAvailabilities();
         }
 
         private void SqlDebuggerMenuItemClick()
@@ -698,6 +674,7 @@ namespace LibgenDesktop.ViewModels.Windows
             IWindowContext sqlDebuggerWindowContext =
                 WindowManager.CreateWindow(RegisteredWindows.WindowKey.SQL_DEBUGGER_WINDOW, sqlDebuggerWindowViewModel, CurrentWindowContext);
             sqlDebuggerWindowContext.ShowDialog();
+            RefreshSearchTabCollectionAvailabilities();
         }
 
         private void BookmarksMenuItemClick(BookmarkViewModel bookmarkViewModel)
@@ -807,7 +784,7 @@ namespace LibgenDesktop.ViewModels.Windows
             Localization = MainModel.Localization.CurrentLanguage.MainWindow;
         }
 
-        private void DownloaderBatchEvent(object sender, DownloaderBatchEventArgs e)
+        private void DownloadManagerBatchEvent(object sender, DownloadManagerBatchEventArgs e)
         {
             if (!(SelectedTabViewModel is DownloadManagerTabViewModel))
             {
@@ -827,6 +804,21 @@ namespace LibgenDesktop.ViewModels.Windows
                             }
                             break;
                     }
+                }
+            }
+        }
+
+        private void RefreshSearchTabCollectionAvailabilities()
+        {
+            if (IsDefaultSearchTabVisible)
+            {
+                DefaultSearchTabViewModel.Refresh(setFocus: true);
+            }
+            else
+            {
+                foreach (SearchTabViewModel searchTabViewModel in TabViewModels.OfType<SearchTabViewModel>())
+                {
+                    searchTabViewModel.Refresh(setFocus: searchTabViewModel == SelectedTabViewModel);
                 }
             }
         }

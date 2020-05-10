@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Export;
 
 namespace LibgenDesktop.Models.Export
 {
     internal class NonFictionExportObject : ExportObject<NonFictionBook>
     {
-        private NonFictionExporterLocalizator localization;
+        private readonly NonFictionExporterLocalizator localization;
 
         public NonFictionExportObject(ExportWriter exportWriter, Language currentLanguage)
             : base(exportWriter)

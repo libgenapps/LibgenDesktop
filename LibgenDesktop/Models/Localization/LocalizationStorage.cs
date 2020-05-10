@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using LibgenDesktop.Common;
 using LibgenDesktop.Models.Utils;
 using Newtonsoft.Json;
@@ -12,6 +14,30 @@ namespace LibgenDesktop.Models.Localization
 {
     internal class LocalizationStorage
     {
+        internal class TranslationPropertyInfo
+        {
+            public TranslationPropertyInfo(PropertyInfo propertyInfo)
+            {
+                PropertyInfo = propertyInfo;
+                IsSection = false;
+                SectionProperties = null;
+            }
+
+            public TranslationPropertyInfo(PropertyInfo propertyInfo, List<TranslationPropertyInfo> sectionProperties)
+            {
+                PropertyInfo = propertyInfo;
+                IsSection = true;
+                SectionProperties = sectionProperties;
+            }
+
+            public PropertyInfo PropertyInfo { get; }
+            public bool IsSection { get; }
+            public List<TranslationPropertyInfo> SectionProperties { get; }
+        }
+
+        private static List<TranslationPropertyInfo> translationProperties;
+        private static int totalTranslationPropertyCount;
+
         public LocalizationStorage(string languageDirectoryPath, string selectedLanguageName)
         {
             LoadLanguages(languageDirectoryPath, selectedLanguageName);
@@ -34,6 +60,38 @@ namespace LibgenDesktop.Models.Localization
                 }
             }
         }
+
+        private static Translation LoadTranslation(string filePath)
+        {
+            JsonSerializer jsonSerializer = new JsonSerializer();
+            using (StreamReader streamReader = new StreamReader(filePath))
+            using (JsonTextReader jsonTextReader = new JsonTextReader(streamReader))
+            {
+                return jsonSerializer.Deserialize<Translation>(jsonTextReader);
+            }
+        }
+
+        private static Language CreateLanguage(Translation languageTranslation, List<Translation> translationList, Translation defaultTranslation)
+        {
+            List<Translation> prioritizedTranslationList = new List<Translation> { languageTranslation };
+            string translationCultureCode = languageTranslation.General?.CultureCode ?? String.Empty;
+            if (translationCultureCode.Length > 2)
+            {
+                string languageCode = translationCultureCode.Substring(0, 2);
+                Translation baseLanguageTranslation = translationList.FirstOrDefault(translation => (translation != languageTranslation) &&
+                    (translation.General?.CultureCode?.StartsWith(languageCode, StringComparison.OrdinalIgnoreCase) ?? false));
+                if (baseLanguageTranslation != null)
+                {
+                    prioritizedTranslationList.Add(baseLanguageTranslation);
+                }
+            }
+            if (defaultTranslation != null)
+            {
+                prioritizedTranslationList.Add(defaultTranslation);
+            }
+            return new Language(prioritizedTranslationList, CalculatePercentTranslated(languageTranslation));
+        }
+
 
         private void LoadLanguages(string languageDirectoryPath, string selectedLanguageName)
         {
@@ -113,35 +171,57 @@ namespace LibgenDesktop.Models.Localization
             }
         }
 
-        private Translation LoadTranslation(string filePath)
+        private static decimal CalculatePercentTranslated(Translation translation)
         {
-            JsonSerializer jsonSerializer = new JsonSerializer();
-            using (StreamReader streamReader = new StreamReader(filePath))
-            using (JsonTextReader jsonTextReader = new JsonTextReader(streamReader))
+            if (translationProperties == null)
             {
-                return jsonSerializer.Deserialize<Translation>(jsonTextReader);
+                totalTranslationPropertyCount = 0;
+                translationProperties = RetrievePropertyInfos(typeof(Translation), ref totalTranslationPropertyCount);
             }
+            int translatedPropertyCount = GetTranslatedPropertyCount(translationProperties, translation);
+            return ((decimal)translatedPropertyCount * 100) / totalTranslationPropertyCount;
         }
 
-        private Language CreateLanguage(Translation languageTranslation, List<Translation> translationList, Translation defaultTranslation)
+        private static int GetTranslatedPropertyCount(List<TranslationPropertyInfo> translationSectionPropertyInfos, object translationSection)
         {
-            List<Translation> prioritizedTranslationList = new List<Translation> { languageTranslation };
-            string translationCultureCode = languageTranslation.General?.CultureCode ?? String.Empty;
-            if (translationCultureCode.Length > 2)
+            int result = 0;
+            foreach (TranslationPropertyInfo translationPropertyInfo in translationSectionPropertyInfos)
             {
-                string languageCode = translationCultureCode.Substring(0, 2);
-                Translation baseLanguageTranslation = translationList.FirstOrDefault(translation => (translation != languageTranslation) &&
-                    (translation.General?.CultureCode?.StartsWith(languageCode, StringComparison.OrdinalIgnoreCase) ?? false));
-                if (baseLanguageTranslation != null)
+                object propertyValue = translationSection != null ? translationPropertyInfo.PropertyInfo.GetValue(translationSection) : null;
+                if (!translationPropertyInfo.IsSection)
                 {
-                    prioritizedTranslationList.Add(baseLanguageTranslation);
+                    if (propertyValue != null)
+                    {
+                        result++;
+                    }
+                }
+                else
+                {
+                    result += GetTranslatedPropertyCount(translationPropertyInfo.SectionProperties, propertyValue);
                 }
             }
-            if (defaultTranslation != null)
+            return result;
+        }
+
+        private static List<TranslationPropertyInfo> RetrievePropertyInfos(Type type, ref int totalPropertyCount)
+        {
+            List<TranslationPropertyInfo> result = new List<TranslationPropertyInfo>();
+            foreach (PropertyInfo propertyInfo in type.GetProperties())
             {
-                prioritizedTranslationList.Add(defaultTranslation);
+                TranslationPropertyInfo translationPropertyInfo;
+                if (propertyInfo.PropertyType == typeof(String))
+                {
+                    translationPropertyInfo = new TranslationPropertyInfo(propertyInfo);
+                    totalPropertyCount++;
+                }
+                else
+                {
+                    translationPropertyInfo =
+                        new TranslationPropertyInfo(propertyInfo, RetrievePropertyInfos(propertyInfo.PropertyType, ref totalPropertyCount));
+                }
+                result.Add(translationPropertyInfo);
             }
-            return new Language(prioritizedTranslationList);
+            return result;
         }
     }
 }

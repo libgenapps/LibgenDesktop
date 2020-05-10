@@ -1,8 +1,9 @@
-﻿using LibgenDesktop.Infrastructure;
+﻿using System;
+using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.Utils;
 using LibgenDesktop.ViewModels.DetailsItems;
@@ -49,7 +50,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         protected override string FileNameWithoutExtension => $"{DetailsItem.Authors} - {DetailsItem.Title}";
         protected override string FileExtension => DetailsItem.Format;
         protected override string Md5Hash => DetailsItem.Md5Hash;
-        protected override bool HasCover => DetailsItem.Book.Cover == "1";
+        protected override bool HasCover => !String.IsNullOrWhiteSpace(DetailsItem.Book.CoverUrl);
 
         protected override string GenerateDownloadUrl(Mirrors.MirrorConfiguration mirrorConfiguration)
         {

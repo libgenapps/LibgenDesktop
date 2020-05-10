@@ -1,7 +1,7 @@
 ﻿using System;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 
 namespace LibgenDesktop.ViewModels.Windows
 {
@@ -25,7 +25,7 @@ namespace LibgenDesktop.ViewModels.Windows
             isCloseButtonEnabled = true;
             isQueryInProgress = false;
             Localization = mainModel.Localization.CurrentLanguage.SqlDebugger;
-            WindowClosingCommand = new FuncCommand<bool>(WindowClosing);
+            WindowClosingCommand = new FuncCommand<bool?, bool>(WindowClosing);
             RunSqlCommand = new Command(RunSqlAsync);
             CopyResultCommand = new Command(CopyResultToClipboard);
             Events.RaiseEvent(ViewModelEvent.RegisteredEventId.FOCUS_SQL_QUERY_TEXT_BOX);
@@ -87,7 +87,7 @@ namespace LibgenDesktop.ViewModels.Windows
             }
         }
 
-        public FuncCommand<bool> WindowClosingCommand { get; }
+        public FuncCommand<bool?, bool> WindowClosingCommand { get; }
         public Command RunSqlCommand { get; }
         public Command CopyResultCommand { get; }
 
@@ -121,7 +121,7 @@ namespace LibgenDesktop.ViewModels.Windows
             WindowManager.SetClipboardText(Result ?? String.Empty);
         }
 
-        private bool WindowClosing()
+        private bool WindowClosing(bool? dialogResult)
         {
             return !isQueryInProgress;
         }

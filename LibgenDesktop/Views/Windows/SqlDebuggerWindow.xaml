@@ -8,7 +8,7 @@
                        ClosingCommand="{Binding WindowClosingCommand}"
                        Title="{Binding Localization.WindowTitle}" Style="{StaticResource SqlDebuggerWindow}">
     <Window.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SqlDebuggerWindowStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/SqlDebugger.xaml" />
     </Window.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>

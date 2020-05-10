@@ -6,7 +6,7 @@
              xmlns:u="clr-namespace:LibgenDesktop.Views.Utils"
              u:EventListenerExtensions.EventProvider="{Binding Events}">
     <UserControl.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/SearchTabStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Tabs/Search.xaml" />
     </UserControl.Resources>
     <StackPanel Style="{StaticResource CenterPanel}">
         <Image Style="{StaticResource LogoImage}" />

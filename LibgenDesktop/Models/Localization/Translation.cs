@@ -49,24 +49,182 @@
             public MainMenuTranslation MainMenu { get; set; }
         }
 
-        internal class CreateDatabaseWindowTranslation
+        internal class LanguageStepTranslation
         {
-            public string WindowTitle { get; set; }
-            public string FirstRunMessage { get; set; }
-            public string DatabaseNotFound { get; set; }
-            public string DatabaseCorrupted { get; set; }
-            public string LibgenServerDatabase { get; set; }
-            public string ChooseOption { get; set; }
+            public string ChooseLanguage { get; set; }
+        }
+
+        internal class SetupModeStepTranslation
+        {
+            public string WelcomeAndChooseOption { get; set; }
+            public string FirstTimeUser { get; set; }
+            public string ExperiencedUser { get; set; }
+        }
+
+        internal class DatabaseOperationStepTranslation
+        {
+            public string ChooseAction { get; set; }
             public string CreateNewDatabase { get; set; }
             public string OpenExistingDatabase { get; set; }
-            public string BrowseNewDatabaseDialogTitle { get; set; }
-            public string BrowseExistingDatabaseDialogTitle { get; set; }
-            public string Databases { get; set; }
-            public string AllFiles { get; set; }
-            public string Error { get; set; }
-            public string CannotCreateDatabase { get; set; }
+        }
+
+        internal class StepListStepTranslation
+        {
+            public string StepListHeader { get; set; }
+            public string Step { get; set; }
+            public string DownloadingDumps { get; set; }
+            public string CreatingDatabase { get; set; }
+            public string ImportingDumps { get; set; }
+            public string ClickNextButton { get; set; }
+        }
+
+        internal class DownloadModeStepTranslation
+        {
+            public string ChooseDownloadMode { get; set; }
+            public string DownloadManagerMode { get; set; }
+            public string UseProxyServer { get; set; }
+            public string ProxySettings { get; set; }
+            public string BrowserMode { get; set; }
+        }
+
+        internal class SetupWizardProxySettingsWindowTranslation
+        {
+            public string WindowTitle { get; set; }
+            public string ProxyAddress { get; set; }
+            public string ProxyAddressRequired { get; set; }
+            public string ProxyPort { get; set; }
+            public string ProxyPortValidation { get; set; }
+            public string ProxyUserName { get; set; }
+            public string ProxyPassword { get; set; }
+            public string ProxyPasswordWarning { get; set; }
             public string Ok { get; set; }
             public string Cancel { get; set; }
+        }
+
+        internal class DownloadDumpInfoStepTranslation
+        {
+            public string DownloadingDumpInfo { get; set; }
+            public string CannotDownloadDumpInfo { get; set; }
+            public string Interrupt { get; set; }
+            public string Interrupting { get; set; }
+            public string Retry { get; set; }
+        }
+
+        internal class CollectionsStepTranslation
+        {
+            public string ChooseCollections { get; set; }
+            public string NonFiction { get; set; }
+            public string Fiction { get; set; }
+            public string SciMagArticles { get; set; }
+            public string DownloadSizeExact { get; set; }
+            public string DownloadSizeApproximate { get; set; }
+            public string DatabaseSize { get; set; }
+            public string ImportTimeInMinutes { get; set; }
+            public string ImportTimeInHours { get; set; }
+            public string DownloadInto { get; set; }
+            public string BrowseDirectoryDialogTitle { get; set; }
+            public string ErrorWarningTitle { get; set; }
+            public string NoCollectionsSelected { get; set; }
+            public string DirectoryNotFound { get; set; }
+        }
+
+        internal class DownloadDumpsStepTranslation
+        {
+            public string NonFictionDumpName { get; set; }
+            public string FictionDumpName { get; set; }
+            public string SciMagArticlesDumpName { get; set; }
+            public string QueuedStatus { get; set; }
+            public string DownloadingStatus { get; set; }
+            public string StoppedStatus { get; set; }
+            public string ErrorStatus { get; set; }
+            public string DownloadProgress { get; set; }
+            public string Interrupt { get; set; }
+            public string Interrupting { get; set; }
+            public string Retry { get; set; }
+        }
+
+        internal class DownloadDumpLinksStepTranslation
+        {
+            public string OpenPage { get; set; }
+            public string CopyLink { get; set; }
+            public string DownloadFiles { get; set; }
+            public string NonFictionDumpName { get; set; }
+            public string FictionDumpName { get; set; }
+            public string SciMagArticlesDumpName { get; set; }
+            public string FileName { get; set; }
+            public string YYYY { get; set; }
+            public string MM { get; set; }
+            public string DD { get; set; }
+            public string MostRecentDateNote { get; set; }
+        }
+
+        internal class CreateDatabaseStepTranslation
+        {
+            public string DatabaseFilePathPrompt { get; set; }
+            public string DatabaseCreated { get; set; }
+            public string CannotCreateDatabase { get; set; }
+            public string DiskSpaceRequirementsNote { get; set; }
+            public string SelectDatabaseFilePathDialogTitle { get; set; }
+            public string Databases { get; set; }
+            public string AllFiles { get; set; }
+            public string CreateDatabase { get; set; }
+            public string CreatingDatabase { get; set; }
+            public string DatabaseFileOverwritePromptTitle { get; set; }
+            public string DatabaseFileOverwritePromptText { get; set; }
+        }
+
+        internal class ImportDumpsStepTranslation
+        {
+            public string NonFictionDumpName { get; set; }
+            public string FictionDumpName { get; set; }
+            public string SciMagArticlesDumpName { get; set; }
+            public string Status { get; set; }
+            public string NotImported { get; set; }
+            public string Importing { get; set; }
+            public string ImportSuccessful { get; set; }
+            public string ImportCancelled { get; set; }
+            public string ImportError { get; set; }
+            public string ImportButton { get; set; }
+            public string ImportingButton { get; set; }
+            public string DeleteDumps { get; set; }
+        }
+
+        internal class ConfirmationStepTranslation
+        {
+            public string StepHeader { get; set; }
+            public string SettingsHeader { get; set; }
+            public string AllowInternetConnection { get; set; }
+            public string UseDownloadManager { get; set; }
+            public string UseBrowser { get; set; }
+            public string YouCanChangeSettings { get; set; }
+        }
+
+        internal class SetupWizardWindowTranslation
+        {
+            public string WindowTitle { get; set; }
+            public LanguageStepTranslation LanguageStep { get; set; }
+            public SetupModeStepTranslation SetupModeStep { get; set; }
+            public DatabaseOperationStepTranslation DatabaseOperationStep { get; set; }
+            public StepListStepTranslation StepListStep { get; set; }
+            public DownloadModeStepTranslation DownloadModeStep { get; set; }
+            public SetupWizardProxySettingsWindowTranslation ProxySettingsWindow { get; set; }
+            public DownloadDumpInfoStepTranslation DownloadDumpInfoStep { get; set; }
+            public CollectionsStepTranslation CollectionsStep { get; set; }
+            public DownloadDumpsStepTranslation DownloadDumpsStep { get; set; }
+            public DownloadDumpLinksStepTranslation DownloadDumpLinksStep { get; set; }
+            public CreateDatabaseStepTranslation CreateDatabaseStep { get; set; }
+            public ImportDumpsStepTranslation ImportDumpsStep { get; set; }
+            public ConfirmationStepTranslation ConfirmationStep { get; set; }
+            public string StepHeaderTemplate { get; set; }
+            public string DownloadingDumpsStepHeader { get; set; }
+            public string CreatingDatabaseStepHeader { get; set; }
+            public string ImportingDumpsStepHeader { get; set; }
+            public string Back { get; set; }
+            public string Next { get; set; }
+            public string Finish { get; set; }
+            public string Cancel { get; set; }
+            public string ExitSetupTitle { get; set; }
+            public string ExitSetupText { get; set; }
         }
 
         internal class SearchTabTranslation
@@ -101,6 +259,7 @@
             public string Details { get; set; }
             public string Open { get; set; }
             public string Download { get; set; }
+            public string Copy { get; set; }
             public string ErrorMessageTitle { get; set; }
             public string FileNotFoundError { get; set; }
             public string OfflineModeIsOnMessageTitle { get; set; }
@@ -116,6 +275,7 @@
             public string Authors { get; set; }
             public string Series { get; set; }
             public string Year { get; set; }
+            public string Language { get; set; }
             public string Publisher { get; set; }
             public string Format { get; set; }
             public string FileSize { get; set; }
@@ -137,6 +297,7 @@
             public string Authors { get; set; }
             public string Series { get; set; }
             public string Year { get; set; }
+            public string Language { get; set; }
             public string Publisher { get; set; }
             public string Format { get; set; }
             public string FileSize { get; set; }
@@ -248,7 +409,6 @@
         {
             public string Title { get; set; }
             public string Authors { get; set; }
-            public string RussianAuthor { get; set; }
             public string Series { get; set; }
             public string Publisher { get; set; }
             public string Edition { get; set; }
@@ -256,8 +416,9 @@
             public string Language { get; set; }
             public string Format { get; set; }
             public string Pages { get; set; }
-            public string Version { get; set; }
             public string FileSize { get; set; }
+            public string Library { get; set; }
+            public string Issue { get; set; }
             public string Added { get; set; }
             public string LastModified { get; set; }
             public string Md5Hash { get; set; }
@@ -338,6 +499,13 @@
             public string ImportCancelled { get; set; }
             public string DataNotFound { get; set; }
             public string InsufficientDiskSpace { get; set; }
+            public string WrongTableFound { get; set; }
+            public string ExpectedNonFictionTable { get; set; }
+            public string ExpectedFictionTable { get; set; }
+            public string ExpectedSciMagTable { get; set; }
+            public string FoundNonFictionTable { get; set; }
+            public string FoundFictionTable { get; set; }
+            public string FoundSciMagTable { get; set; }
             public string ImportError { get; set; }
         }
 
@@ -450,7 +618,6 @@
             public string Id { get; set; }
             public string Title { get; set; }
             public string Authors { get; set; }
-            public string RussianAuthor { get; set; }
             public string Series { get; set; }
             public string Publisher { get; set; }
             public string Edition { get; set; }
@@ -458,8 +625,9 @@
             public string Language { get; set; }
             public string Format { get; set; }
             public string Pages { get; set; }
-            public string Version { get; set; }
             public string FileSize { get; set; }
+            public string Library { get; set; }
+            public string Issue { get; set; }
             public string Added { get; set; }
             public string LastModified { get; set; }
             public string Md5Hash { get; set; }
@@ -611,8 +779,29 @@
             public string Databases { get; set; }
             public string AllFiles { get; set; }
             public string Error { get; set; }
-            public string CannotOpenDatabase { get; set; }
+            public string DatabaseNotValid { get; set; }
+            public string DatabaseDumpFile { get; set; }
+            public string LibgenServerDatabase { get; set; }
+            public string OldFictionSchemaTitle { get; set; }
+            public string OldFictionSchemaText { get; set; }
             public string Close { get; set; }
+        }
+
+        internal class DatabaseErrorTranslation
+        {
+            public string WindowTitle { get; set; }
+            public string DatabaseNotFound { get; set; }
+            public string DatabaseNotValid { get; set; }
+            public string DatabaseDumpFile { get; set; }
+            public string LibgenServerDatabase { get; set; }
+            public string OldFictionSchema { get; set; }
+            public string HeaderTemplate { get; set; }
+            public string OpenAnotherDatabase { get; set; }
+            public string StartSetupWizard { get; set; }
+            public string DeleteFiction { get; set; }
+            public string Exit { get; set; }
+            public string Ok { get; set; }
+            public string Cancel { get; set; }
         }
 
         internal class SqlDebuggerWindowTranslation
@@ -714,6 +903,7 @@
         {
             public string TabHeader { get; set; }
             public string Language { get; set; }
+            public string PercentTranslated { get; set; }
             public string CheckUpdates { get; set; }
             public UpdateCheckIntervalTranslation UpdateCheckIntervals { get; set; }
         }
@@ -841,7 +1031,7 @@
         public GeneralInfo General { get; set; }
         public FormattingInfo Formatting { get; set; }
         public MainWindowTranslation MainWindow { get; set; }
-        public CreateDatabaseWindowTranslation CreateDatabaseWindow { get; set; }
+        public SetupWizardWindowTranslation SetupWizardWindow { get; set; }
         public SearchTabTranslation SearchTab { get; set; }
         public SearchResultsTabsTranslation SearchResultsTabs { get; set; }
         public NonFictionSearchResultsTabTranslation NonFictionSearchResultsTab { get; set; }
@@ -856,6 +1046,7 @@
         public ExporterTranslation Exporter { get; set; }
         public SynchronizationTranslation Synchronization { get; set; }
         public DatabaseTranslation Database { get; set; }
+        public DatabaseErrorTranslation DatabaseError { get; set; }
         public SqlDebuggerWindowTranslation SqlDebugger { get; set; }
         public DownloadManagerTranslation DownloadManager { get; set; }
         public ApplicationUpdateTranslation ApplicationUpdate { get; set; }

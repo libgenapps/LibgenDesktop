@@ -1,5 +1,4 @@
-﻿using System;
-using LibgenDesktop.Infrastructure;
+﻿using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 
 namespace LibgenDesktop.ViewModels.Windows

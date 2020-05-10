@@ -1,7 +1,6 @@
-﻿using System;
-using LibgenDesktop.Models.Entities;
+﻿using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
 
 namespace LibgenDesktop.ViewModels.DetailsItems
 {

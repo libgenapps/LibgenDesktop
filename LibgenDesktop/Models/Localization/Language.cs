@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Export;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 
 namespace LibgenDesktop.Models.Localization
 {
@@ -9,7 +11,8 @@ namespace LibgenDesktop.Models.Localization
     {
         private readonly List<Translation> translations;
         private MainWindowLocalizator mainWindow;
-        private CreateDatabaseWindowLocalizator createDatabaseWindow;
+        private SetupWizardWindowLocalizator setupWizardWindow;
+        private SetupWizardProxySettingsWindowLocalizator setupWizardProxySettingsWindowLocalizator;
         private SearchTabLocalizator searchTab;
         private NonFictionSearchResultsTabLocalizator nonFictionSearchResultsTab;
         private FictionSearchResultsTabLocalizator fictionSearchResultsTab;
@@ -18,27 +21,29 @@ namespace LibgenDesktop.Models.Localization
         private NonFictionDetailsTabLocalizator nonFictionDetailsTab;
         private FictionDetailsTabLocalizator fictionDetailsTab;
         private SciMagDetailsTabLocalizator sciMagDetailsTab;
-        private ImportLocalizator import;
+        private ImportWindowLocalizator import;
         private ExportPanelLocalizator exportPanel;
         private NonFictionExporterLocalizator nonFictionExporter;
         private FictionExporterLocalizator fictionExporter;
         private SciMagExporterLocalizator sciMagExporter;
-        private SynchronizationLocalizator synchronization;
+        private SynchronizationWindowLocalizator synchronization;
         private DatabaseWindowLocalizator database;
+        private DatabaseErrorWindowLocalizator databaseError;
         private SqlDebuggerWindowLocalizator sqlDebugger;
-        private DownloadManagerLocalizator downloadManager;
-        private ApplicationUpdateLocalizator applicationUpdate;
+        private DownloadManagerTabLocalizator downloadManager;
+        private ApplicationUpdateWindowLocalizator applicationUpdate;
         private LibraryTabLocalizator library;
         private SettingsWindowLocalizator settings;
         private AboutWindowLocalizator about;
         private MessageBoxLocalizator messageBox;
         private ErrorWindowLocalizator errorWindow;
 
-        public Language(List<Translation> prioritizedTranslationList)
+        public Language(List<Translation> prioritizedTranslationList, decimal percentTranslated)
         {
             translations = prioritizedTranslationList;
             mainWindow = null;
-            createDatabaseWindow = null;
+            setupWizardWindow = null;
+            setupWizardProxySettingsWindowLocalizator = null;
             searchTab = null;
             nonFictionSearchResultsTab = null;
             fictionSearchResultsTab = null;
@@ -54,6 +59,7 @@ namespace LibgenDesktop.Models.Localization
             sciMagExporter = null;
             synchronization = null;
             database = null;
+            databaseError = null;
             sqlDebugger = null;
             downloadManager = null;
             applicationUpdate = null;
@@ -74,6 +80,7 @@ namespace LibgenDesktop.Models.Localization
             }
             CultureCode = mainTranslation.General?.CultureCode?.Trim() ?? String.Empty;
             TranslatorName = mainTranslation.General?.TranslatorName ?? "unknown";
+            PercentTranslated = percentTranslated;
             Formatter = new LanguageFormatter(prioritizedTranslationList);
         }
 
@@ -82,12 +89,16 @@ namespace LibgenDesktop.Models.Localization
         public string DisplayName { get; }
         public string CultureCode { get; }
         public string TranslatorName { get; }
+        public decimal PercentTranslated { get; }
         public LanguageFormatter Formatter { get; }
 
         public MainWindowLocalizator MainWindow => mainWindow ?? (mainWindow = new MainWindowLocalizator(translations, Formatter));
 
-        public CreateDatabaseWindowLocalizator CreateDatabaseWindow =>
-            createDatabaseWindow ?? (createDatabaseWindow = new CreateDatabaseWindowLocalizator(translations, Formatter));
+        public SetupWizardWindowLocalizator SetupWizardWindow =>
+            setupWizardWindow ?? (setupWizardWindow = new SetupWizardWindowLocalizator(translations, Formatter));
+
+        public SetupWizardProxySettingsWindowLocalizator SetupWizardProxySettingsWindowLocalizator =>
+            setupWizardProxySettingsWindowLocalizator ?? (setupWizardProxySettingsWindowLocalizator = new SetupWizardProxySettingsWindowLocalizator(translations, Formatter));
 
         public SearchTabLocalizator SearchTab => searchTab ?? (searchTab = new SearchTabLocalizator(translations, Formatter));
 
@@ -112,7 +123,7 @@ namespace LibgenDesktop.Models.Localization
         public SciMagDetailsTabLocalizator SciMagDetailsTab =>
             sciMagDetailsTab ?? (sciMagDetailsTab = new SciMagDetailsTabLocalizator(translations, Formatter));
 
-        public ImportLocalizator Import => import ?? (import = new ImportLocalizator(translations, Formatter));
+        public ImportWindowLocalizator Import => import ?? (import = new ImportWindowLocalizator(translations, Formatter));
 
         public ExportPanelLocalizator ExportPanel => exportPanel ?? (exportPanel = new ExportPanelLocalizator(translations, Formatter));
 
@@ -123,16 +134,20 @@ namespace LibgenDesktop.Models.Localization
 
         public SciMagExporterLocalizator SciMagExporter => sciMagExporter ?? (sciMagExporter = new SciMagExporterLocalizator(translations, Formatter));
 
-        public SynchronizationLocalizator Synchronization => synchronization ?? (synchronization = new SynchronizationLocalizator(translations, Formatter));
+        public SynchronizationWindowLocalizator Synchronization =>
+            synchronization ?? (synchronization = new SynchronizationWindowLocalizator(translations, Formatter));
 
         public DatabaseWindowLocalizator Database => database ?? (database = new DatabaseWindowLocalizator(translations, Formatter));
 
+        public DatabaseErrorWindowLocalizator DatabaseError => databaseError ?? (databaseError = new DatabaseErrorWindowLocalizator(translations, Formatter));
+
         public SqlDebuggerWindowLocalizator SqlDebugger => sqlDebugger ?? (sqlDebugger = new SqlDebuggerWindowLocalizator(translations, Formatter));
 
-        public DownloadManagerLocalizator DownloadManager => downloadManager ?? (downloadManager = new DownloadManagerLocalizator(translations, Formatter));
+        public DownloadManagerTabLocalizator DownloadManager =>
+            downloadManager ?? (downloadManager = new DownloadManagerTabLocalizator(translations, Formatter));
 
-        public ApplicationUpdateLocalizator ApplicationUpdate =>
-            applicationUpdate ?? (applicationUpdate = new ApplicationUpdateLocalizator(translations, Formatter));
+        public ApplicationUpdateWindowLocalizator ApplicationUpdate =>
+            applicationUpdate ?? (applicationUpdate = new ApplicationUpdateWindowLocalizator(translations, Formatter));
 
         public LibraryTabLocalizator Library => library ?? (library = new LibraryTabLocalizator(translations, Formatter));
 

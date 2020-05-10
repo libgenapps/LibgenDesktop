@@ -9,7 +9,7 @@ using System.Text;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Download;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
 using static LibgenDesktop.Common.Constants;
 
 namespace LibgenDesktop.ViewModels.Tabs
@@ -175,7 +175,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         }
 
         private readonly Dictionary<Guid, DownloadItemViewModel> downloadDictionary;
-        private DownloadManagerLocalizator localization;
+        private DownloadManagerTabLocalizator localization;
         private bool isStartButtonEnabled;
         private bool isStopButtonEnabled;
         private bool isRemoveButtonEnabled;
@@ -193,10 +193,10 @@ namespace LibgenDesktop.ViewModels.Tabs
             : base(mainModel, parentWindowContext, mainModel.Localization.CurrentLanguage.DownloadManager.TabTitle)
         {
             localization = mainModel.Localization.CurrentLanguage.DownloadManager;
-            Downloads = new ObservableCollection<DownloadItemViewModel>(mainModel.Downloader.GetDownloadQueueSnapshot().Select(ToDownloadItemViewModel));
+            Downloads = new ObservableCollection<DownloadItemViewModel>(mainModel.DownloadManager.GetDownloadQueueSnapshot().Select(ToDownloadItemViewModel));
             downloadDictionary = Downloads.ToDictionary(downloadItem => downloadItem.Id);
             SelectionChangedCommand = new Command(param => SelectionChangedHandler(param as SelectionChangedCommandArgs));
-            DownloaderListBoxDoubleClickCommand = new Command(DownloaderListBoxDoubleClick);
+            DownloadManagerListBoxDoubleClickCommand = new Command(DownloadManagerListBoxDoubleClick);
             StartSelectedDownloadsCommand = new Command(StartSelectedDownloads);
             StopSelectedDownloadsCommand = new Command(StopSelectedDownloads);
             RemoveSelectedDownloadsCommand = new Command(RemoveSelectedDownloads);
@@ -205,11 +205,11 @@ namespace LibgenDesktop.ViewModels.Tabs
             RemoveAllCompletedDownloadsCommand = new Command(RemoveAllCompletedDownloads);
             CopyDownloadLogCommand = new Command(CopyDownloadLog);
             Initialize();
-            mainModel.Downloader.DownloaderBatchEvent += DownloaderBatchEvent;
+            mainModel.DownloadManager.DownloadManagerBatchEvent += DownloadManagerBatchEvent;
             mainModel.Localization.LanguageChanged += LocalizationLanguageChanged;
         }
 
-        public DownloadManagerLocalizator Localization
+        public DownloadManagerTabLocalizator Localization
         {
             get
             {
@@ -368,7 +368,7 @@ namespace LibgenDesktop.ViewModels.Tabs
         }
 
         public Command SelectionChangedCommand { get; }
-        public Command DownloaderListBoxDoubleClickCommand { get; }
+        public Command DownloadManagerListBoxDoubleClickCommand { get; }
         public Command StartSelectedDownloadsCommand { get; }
         public Command StopSelectedDownloadsCommand { get; }
         public Command RemoveSelectedDownloadsCommand { get; }
@@ -400,8 +400,40 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         public override void HandleTabClosing()
         {
-            MainModel.Downloader.DownloaderBatchEvent -= DownloaderBatchEvent;
+            MainModel.DownloadManager.DownloadManagerBatchEvent -= DownloadManagerBatchEvent;
             MainModel.Localization.LanguageChanged -= LocalizationLanguageChanged;
+        }
+
+        private static double GetDownloadProgressValue(DownloadItem downloadItem)
+        {
+            if (downloadItem.DownloadedFileSize.HasValue && downloadItem.TotalFileSize.HasValue)
+            {
+                return (double)downloadItem.DownloadedFileSize.Value * 100 / downloadItem.TotalFileSize.Value;
+            }
+            else if (downloadItem.Status == DownloadItemStatus.COMPLETED)
+            {
+                return 100;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private static bool CanBeStarted(DownloadItemStatus downloadItemStatus)
+        {
+            return downloadItemStatus == DownloadItemStatus.STOPPED || downloadItemStatus == DownloadItemStatus.ERROR;
+        }
+
+        private static bool CanBeStopped(DownloadItemStatus downloadItemStatus)
+        {
+            return downloadItemStatus == DownloadItemStatus.QUEUED || downloadItemStatus == DownloadItemStatus.DOWNLOADING ||
+                downloadItemStatus == DownloadItemStatus.RETRY_DELAY;
+        }
+
+        private static bool IsCompleted(DownloadItemStatus downloadItemStatus)
+        {
+            return downloadItemStatus == DownloadItemStatus.COMPLETED;
         }
 
         private void Initialize()
@@ -420,14 +452,14 @@ namespace LibgenDesktop.ViewModels.Tabs
             UpdateNonSelectionButtonStates();
         }
 
-        private void DownloaderBatchEvent(object sender, DownloaderBatchEventArgs e)
+        private void DownloadManagerBatchEvent(object sender, DownloadManagerBatchEventArgs e)
         {
-            if (e.AddEventCount + e.RemoveEventCount < LARGE_DOWNLOADER_BATCH_UPDATE_ITEM_COUNT)
+            if (e.AddEventCount + e.RemoveEventCount < LARGE_DOWNLOAD_MANAGER_BATCH_UPDATE_ITEM_COUNT)
             {
                 ExecuteInUiThread(() =>
                 {
                     isSelectionChangedHandlerEnabled = false;
-                    ApplyDownloaderBatchEventArgs(Downloads, e, out bool selectionButtonStatesUpdateRequired, out bool nonSelectionButtonStatesUpdateRequired);
+                    ApplyDownloadManagerBatchEventArgs(Downloads, e, out bool selectionButtonStatesUpdateRequired, out bool nonSelectionButtonStatesUpdateRequired);
                     if (selectionButtonStatesUpdateRequired)
                     {
                         UpdateSelectionButtonStates();
@@ -443,7 +475,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             else
             {
                 ObservableCollection<DownloadItemViewModel> newDownloads = new ObservableCollection<DownloadItemViewModel>(Downloads);
-                ApplyDownloaderBatchEventArgs(newDownloads, e, out bool selectionButtonStatesUpdateRequired, out bool nonSelectionButtonStatesUpdateRequired);
+                ApplyDownloadManagerBatchEventArgs(newDownloads, e, out bool selectionButtonStatesUpdateRequired, out bool nonSelectionButtonStatesUpdateRequired);
                 ExecuteInUiThread(() =>
                 {
                     Downloads = newDownloads;
@@ -460,12 +492,13 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        private void ApplyDownloaderBatchEventArgs(ObservableCollection<DownloadItemViewModel> downloads, DownloaderBatchEventArgs downloaderBatchEventArgs,
+        private void ApplyDownloadManagerBatchEventArgs(ObservableCollection<DownloadItemViewModel> downloads,
+            DownloadManagerBatchEventArgs downloadManagerBatchEventArgs,
             out bool selectionButtonStatesUpdateRequired, out bool nonSelectionButtonStatesUpdateRequired)
         {
             selectionButtonStatesUpdateRequired = false;
             nonSelectionButtonStatesUpdateRequired = false;
-            foreach (DownloadItemEventArgs downloadItemEventArgs in downloaderBatchEventArgs.BatchEvents)
+            foreach (DownloadItemEventArgs downloadItemEventArgs in downloadManagerBatchEventArgs.BatchEvents)
             {
                 switch (downloadItemEventArgs)
                 {
@@ -610,7 +643,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             IsRemoveAllCompletedButtonEnabled = enableRemoveAllCompletedButton;
         }
 
-        private void DownloaderListBoxDoubleClick()
+        private void DownloadManagerListBoxDoubleClick()
         {
             if (SelectedRows.Count == 1)
             {
@@ -632,34 +665,34 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         private void StartSelectedDownloads()
         {
-            MainModel.Downloader.StartDownloads(SelectedDownloads.Where(downloadItem => CanBeStarted(downloadItem.Status)).
+            MainModel.DownloadManager.StartDownloads(SelectedDownloads.Where(downloadItem => CanBeStarted(downloadItem.Status)).
                 Select(downloadItem => downloadItem.Id));
         }
 
         private void StopSelectedDownloads()
         {
-            MainModel.Downloader.StopDownloads(SelectedDownloads.Where(downloadItem => CanBeStopped(downloadItem.Status)).
+            MainModel.DownloadManager.StopDownloads(SelectedDownloads.Where(downloadItem => CanBeStopped(downloadItem.Status)).
                 Select(downloadItem => downloadItem.Id));
         }
 
         private void RemoveSelectedDownloads()
         {
-            MainModel.Downloader.RemoveDownloads(SelectedDownloads.Select(downloadItem => downloadItem.Id));
+            MainModel.DownloadManager.RemoveDownloads(SelectedDownloads.Select(downloadItem => downloadItem.Id));
         }
 
         private void StartAllDownloads()
         {
-            MainModel.Downloader.StartDownloads(Downloads.Where(downloadItem => CanBeStarted(downloadItem.Status)).Select(downloadItem => downloadItem.Id));
+            MainModel.DownloadManager.StartDownloads(Downloads.Where(downloadItem => CanBeStarted(downloadItem.Status)).Select(downloadItem => downloadItem.Id));
         }
 
         private void StopAllDownloads()
         {
-            MainModel.Downloader.StopDownloads(Downloads.Where(downloadItem => CanBeStopped(downloadItem.Status)).Select(downloadItem => downloadItem.Id));
+            MainModel.DownloadManager.StopDownloads(Downloads.Where(downloadItem => CanBeStopped(downloadItem.Status)).Select(downloadItem => downloadItem.Id));
         }
 
         private void RemoveAllCompletedDownloads()
         {
-            MainModel.Downloader.RemoveDownloads(Downloads.Where(downloadItem => IsCompleted(downloadItem.Status)).Select(downloadItem => downloadItem.Id));
+            MainModel.DownloadManager.RemoveDownloads(Downloads.Where(downloadItem => IsCompleted(downloadItem.Status)).Select(downloadItem => downloadItem.Id));
         }
 
         private void CopyDownloadLog()
@@ -726,49 +759,17 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        private double GetDownloadProgressValue(DownloadItem downloadItem)
-        {
-            if (downloadItem.DownloadedFileSize.HasValue && downloadItem.TotalFileSize.HasValue)
-            {
-                return (double)downloadItem.DownloadedFileSize.Value * 100 / downloadItem.TotalFileSize.Value;
-            }
-            else if (downloadItem.Status == DownloadItemStatus.COMPLETED)
-            {
-                return 100;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
         private DownloadItemLogLineViewModel ToDownloadItemLogLineViewModel(DownloadItemLogLine downloadItemLogLine)
         {
             return new DownloadItemLogLineViewModel(downloadItemLogLine.Type,
                 MainModel.Localization.CurrentLanguage.Formatter.ToFormattedTimeString(downloadItemLogLine.TimeStamp), downloadItemLogLine.Text);
         }
 
-        private bool CanBeStarted(DownloadItemStatus downloadItemStatus)
-        {
-            return downloadItemStatus == DownloadItemStatus.STOPPED || downloadItemStatus == DownloadItemStatus.ERROR;
-        }
-
-        private bool CanBeStopped(DownloadItemStatus downloadItemStatus)
-        {
-            return downloadItemStatus == DownloadItemStatus.QUEUED || downloadItemStatus == DownloadItemStatus.DOWNLOADING ||
-                downloadItemStatus == DownloadItemStatus.RETRY_DELAY;
-        }
-
-        private bool IsCompleted(DownloadItemStatus downloadItemStatus)
-        {
-            return downloadItemStatus == DownloadItemStatus.COMPLETED;
-        }
-
         private void LocalizationLanguageChanged(object sender, EventArgs e)
         {
             Localization = MainModel.Localization.CurrentLanguage.DownloadManager;
             Title = Localization.TabTitle;
-            foreach (DownloadItem downloadItem in MainModel.Downloader.GetDownloadQueueSnapshot())
+            foreach (DownloadItem downloadItem in MainModel.DownloadManager.GetDownloadQueueSnapshot())
             {
                 if (downloadDictionary.TryGetValue(downloadItem.Id, out DownloadItemViewModel downloadItemViewModel))
                 {

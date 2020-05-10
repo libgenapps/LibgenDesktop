@@ -2,13 +2,13 @@
 {
     internal class DownloadFileProgress
     {
-        public DownloadFileProgress(int downloadedBytes, int fileSize)
+        public DownloadFileProgress(long downloadedBytes, long fileSize)
         {
             DownloadedBytes = downloadedBytes;
             FileSize = fileSize;
         }
 
-        public int DownloadedBytes { get; }
-        public int FileSize { get; }
+        public long DownloadedBytes { get; }
+        public long FileSize { get; }
     }
 }

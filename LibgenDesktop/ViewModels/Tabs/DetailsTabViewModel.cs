@@ -9,7 +9,7 @@ using LibgenDesktop.Models;
 using LibgenDesktop.Models.Download;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.ViewModels.EventArguments;
 
@@ -211,7 +211,7 @@ namespace LibgenDesktop.ViewModels.Tabs
 
         public override void HandleTabClosing()
         {
-            MainModel.Downloader.DownloaderBatchEvent -= DownloaderBatchEvent;
+            MainModel.DownloadManager.DownloadManagerBatchEvent -= DownloadManagerBatchEvent;
             MainModel.Localization.LanguageChanged -= LocalizationLanguageChanged;
         }
 
@@ -219,6 +219,20 @@ namespace LibgenDesktop.ViewModels.Tabs
         protected abstract string GenerateCoverUrl(Mirrors.MirrorConfiguration mirrorConfiguration);
         protected abstract string GetDownloadTransformations(Mirrors.MirrorConfiguration mirrorConfiguration);
         protected abstract void UpdateLocalization(Language newLanguage);
+
+        private static BitmapImage ConvertCoverByteArrayToBitmapImage(byte[] coverByteArray)
+        {
+            BitmapImage result = new BitmapImage();
+            using (MemoryStream memoryStream = new MemoryStream(coverByteArray))
+            {
+                result.BeginInit();
+                result.CacheOption = BitmapCacheOption.OnLoad;
+                result.StreamSource = memoryStream;
+                result.EndInit();
+                result.Freeze();
+            }
+            return result;
+        }
 
         private async void Initialize()
         {
@@ -271,12 +285,12 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
             UpdateMainActionButtonCaption();
             UpdateMainActionButtonTooltip();
-            DownloadItem downloadItem = MainModel.Downloader.GetDownloadItemByDownloadPageUrl(downloadUrl);
+            DownloadItem downloadItem = MainModel.DownloadManager.GetDownloadItemByDownloadPageUrl(downloadUrl);
             if (downloadItem != null)
             {
                 UpdateDownloadStatus(downloadItem);
             }
-            MainModel.Downloader.DownloaderBatchEvent += DownloaderBatchEvent;
+            MainModel.DownloadManager.DownloadManagerBatchEvent += DownloadManagerBatchEvent;
             await InitializeCoverAsync();
         }
 
@@ -351,20 +365,6 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        private BitmapImage ConvertCoverByteArrayToBitmapImage(byte[] coverByteArray)
-        {
-            BitmapImage result = new BitmapImage();
-            using (MemoryStream memoryStream = new MemoryStream(coverByteArray))
-            {
-                result.BeginInit();
-                result.CacheOption = BitmapCacheOption.OnLoad;
-                result.StreamSource = memoryStream;
-                result.EndInit();
-                result.Freeze();
-            }
-            return result;
-        }
-
         private void MainActionButtonClick()
         {
             switch (mainActionButtonMode)
@@ -382,7 +382,7 @@ namespace LibgenDesktop.ViewModels.Tabs
                             DownloadTransformations = GetDownloadTransformations(mirror),
                             RestartSessionOnTimeout = mirror.RestartSessionOnTimeout
                         };
-                        MainModel.Downloader.EnqueueDownloadItems(new[] { downloadItemRequest });
+                        MainModel.DownloadManager.EnqueueDownloadItems(new[] { downloadItemRequest });
                     }
                     else
                     {
@@ -405,7 +405,7 @@ namespace LibgenDesktop.ViewModels.Tabs
             }
         }
 
-        private void DownloaderBatchEvent(object sender, DownloaderBatchEventArgs e)
+        private void DownloadManagerBatchEvent(object sender, DownloadManagerBatchEventArgs e)
         {
             foreach (DownloadItemEventArgs downloadItemEventArgs in e.BatchEvents)
             {

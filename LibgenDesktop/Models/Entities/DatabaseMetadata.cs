@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace LibgenDesktop.Models.Entities
 {
@@ -48,6 +49,15 @@ namespace LibgenDesktop.Models.Entities
         public bool? NonFictionFirstImportComplete { get; set; }
         public bool? FictionFirstImportComplete { get; set; }
         public bool? SciMagFirstImportComplete { get; set; }
+
+        public Version GetParsedVersion()
+        {
+            if (!System.Version.TryParse(Version, out Version result))
+            {
+                return null;
+            }
+            return result;
+        }
 
         private static void AddField(string fieldName, Func<DatabaseMetadata, string> getter, Action<DatabaseMetadata, string> setter)
         {

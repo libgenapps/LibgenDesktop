@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.SetupSteps.CreateDatabasePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/SetupSteps/CreateDatabase.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource CreateDatabasePanel}">
+        <TextBlock Text="{Binding Header}" Style="{StaticResource Header}"
+                   Visibility="{Binding IsHeaderVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <TextBlock Text="{Binding PromptText}" Style="{StaticResource StatusMessage}" />
+        <Grid Style="{StaticResource DatabaseFilePathGrid}" IsEnabled="{Binding AreDatabaseFilePathControlsEnabled}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Text="{Binding DatabaseFilePath}" Style="{StaticResource DatabaseFilePathTextBox}" />
+            <Button Grid.Column="1" Content="..." Command="{Binding SelectDatabaseFilePathCommand}" />
+        </Grid>
+        <TextBlock Text="{Binding DiskSpaceRequirementsNote}" Style="{StaticResource Note}" />
+        <Button Content="{Binding CreateDatabaseButtonText}" Style="{StaticResource CreateDatabaseButton}"
+                IsEnabled="{Binding IsCreateDatabaseButtonEnabled}"
+                Visibility="{Binding IsCreateDatabaseButtonVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                Command="{Binding CreateDatabaseCommand}" />
+    </StackPanel>
+</UserControl>

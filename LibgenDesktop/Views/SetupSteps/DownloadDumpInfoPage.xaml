@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.SetupSteps.DownloadDumpInfoPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/SetupSteps/DownloadDumpInfo.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource DownloadProgressPanel}">
+        <TextBlock Text="{Binding Header}" Style="{StaticResource Header}"
+                   Visibility="{Binding IsHeaderVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <StackPanel Style="{StaticResource DownloadingMessagePanel}"
+                    Visibility="{Binding IsDownloadingMessageVisible, Converter={StaticResource booleanToCollapsedConverter}}">
+            <ProgressBar Style="{StaticResource DownloadingProgressBar}" />
+            <TextBlock Text="{Binding Localization.DownloadingDumpInfo}" />
+        </StackPanel>
+        <TextBlock Text="{Binding Localization.CannotDownloadDumpInfo}" Style="{StaticResource RetryMessage}"
+                   Visibility="{Binding IsErrorMessageVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <Button Content="{Binding InterruptButtonText}" Style="{StaticResource InterruptButton}"
+                IsEnabled="{Binding IsInterruptButtonEnabled}"
+                Visibility="{Binding IsInterruptButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                Command="{Binding InterruptCommand}" />
+        <Button Content="{Binding Localization.Retry}" Style="{StaticResource RetryButton}"
+                Visibility="{Binding IsRetryButtonVisible, Converter={StaticResource booleanToCollapsedConverter}}"
+                Command="{Binding RetryCommand}" />
+    </StackPanel>
+</UserControl>

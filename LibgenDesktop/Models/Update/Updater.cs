@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using LibgenDesktop.Common;
+using LibgenDesktop.Models.Download;
 using Newtonsoft.Json;
 using static LibgenDesktop.Common.Constants;
 using Environment = LibgenDesktop.Common.Environment;
@@ -47,8 +49,15 @@ namespace LibgenDesktop.Models.Update
             public UpdateCheckResult Result { get; }
         }
 
+        internal class UpdateDownloadResult
+        {
+            public DownloadUtils.DownloadResult DownloadResult { get; set; }
+            public string DownloadFilePath { get; set; }
+        }
+
         private readonly string expectedAssetName;
         private HttpClient httpClient;
+        private string updateUrl;
         private Timer timer;
         private string ignoreReleaseName;
         private bool disposed;
@@ -57,6 +66,7 @@ namespace LibgenDesktop.Models.Update
         {
             expectedAssetName = GetExpectedAssetName();
             httpClient = null;
+            updateUrl = null;
             timer = null;
             ignoreReleaseName = null;
             disposed = false;
@@ -64,9 +74,10 @@ namespace LibgenDesktop.Models.Update
 
         public event EventHandler<UpdateCheckEventArgs> UpdateCheck;
 
-        public void Configure(HttpClient httpClient, DateTime? nextUpdateCheck, string ignoreReleaseName)
+        public void Configure(HttpClient httpClient, string updateUrl, DateTime? nextUpdateCheck, string ignoreReleaseName)
         {
             this.httpClient = httpClient;
+            this.updateUrl = updateUrl;
             this.ignoreReleaseName = ignoreReleaseName;
             if (timer != null)
             {
@@ -102,21 +113,16 @@ namespace LibgenDesktop.Models.Update
             UpdateCheckResult result = null;
             if (httpClient != null)
             {
-                string url = GITHUB_RELEASE_API_URL;
-                Logger.Debug($"Sending a request to {url}");
-                HttpResponseMessage response = await httpClient.GetAsync(url);
-                Logger.Debug($"Response status code: {(int)response.StatusCode} {response.StatusCode}.");
-                Logger.Debug("Response headers:", response.Headers.ToString().TrimEnd(), response.Content.Headers.ToString().TrimEnd());
-                if (response.StatusCode != HttpStatusCode.OK)
+                DownloadUtils.DownloadPageResult downloadPageResult = await DownloadUtils.DownloadPageAsync(httpClient, updateUrl,
+                    CancellationToken.None);
+                if (downloadPageResult.HttpStatusCode != HttpStatusCode.OK)
                 {
-                    throw new Exception($"GitHub API returned {(int)response.StatusCode} {response.StatusCode}.");
+                    throw new Exception($"GitHub API returned {(int)downloadPageResult.HttpStatusCode} {downloadPageResult.HttpStatusCode}.");
                 }
-                string responseContent = await response.Content.ReadAsStringAsync();
-                Logger.Debug("Response content:", responseContent);
                 List<GitHubApiRelease> releases;
                 try
                 {
-                    releases = JsonConvert.DeserializeObject<List<GitHubApiRelease>>(responseContent);
+                    releases = JsonConvert.DeserializeObject<List<GitHubApiRelease>>(downloadPageResult.PageContent);
                 }
                 catch (Exception exception)
                 {
@@ -138,6 +144,21 @@ namespace LibgenDesktop.Models.Update
                     }
                 }
             }
+            return result;
+        }
+
+        public async Task<UpdateDownloadResult> DownloadUpdateAsync(UpdateCheckResult updateCheckResult, IProgress<object> progressHandler,
+            CancellationToken cancellationToken)
+        {
+            UpdateDownloadResult result = new UpdateDownloadResult();
+            string downloadDirectory = Path.Combine(Environment.AppDataDirectory, "Updates");
+            if (!Directory.Exists(downloadDirectory))
+            {
+                Directory.CreateDirectory(downloadDirectory);
+            }
+            result.DownloadFilePath = Path.Combine(downloadDirectory, updateCheckResult.FileName);
+            result.DownloadResult = await DownloadUtils.DownloadFileAsync(httpClient, updateCheckResult.DownloadUrl, result.DownloadFilePath, false,
+                progressHandler, cancellationToken);
             return result;
         }
 

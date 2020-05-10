@@ -4,7 +4,7 @@ using System.Linq;
 using LibgenDesktop.Common;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Windows;
 using LibgenDesktop.Models.Update;
 
 namespace LibgenDesktop.ViewModels.Windows

@@ -1,0 +1,23 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.DatabaseErrorWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       Title="{Binding Localization.WindowTitle}" Style="{StaticResource DatabaseErrorWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/DatabaseError.xaml" />
+    </Window.Resources>
+    <StackPanel Style="{StaticResource TopContainer}">
+        <TextBlock Text="{Binding Header}" Style="{StaticResource Header}" />
+        <ItemsControl ItemsSource="{Binding Options}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <RadioButton GroupName="options" Content="{Binding Text}" IsChecked="{Binding IsSelected}" Style="{StaticResource Option}" />
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <UniformGrid Columns="2" Style="{StaticResource ButtonPanel}">
+            <Button Content="{Binding Localization.Ok}" Command="{Binding OkButtonCommand}" Style="{StaticResource OkButton}" />
+            <Button Content="{Binding Localization.Cancel}" Command="{Binding CancelButtonCommand}" Style="{StaticResource CancelButton}" />
+        </UniformGrid>
+    </StackPanel>
+</c:LibgenDesktopWindow>

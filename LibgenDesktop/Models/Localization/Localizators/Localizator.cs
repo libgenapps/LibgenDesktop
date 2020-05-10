@@ -4,23 +4,30 @@ using System.Reflection;
 
 namespace LibgenDesktop.Models.Localization.Localizators
 {
-    internal abstract class Localizator
+    internal abstract class Localizator<T> where T : class
     {
         private readonly List<Translation> prioritizedTranslationList;
+        private readonly Func<Translation, T> translationSectionSelector;
 
-        public Localizator(List<Translation> prioritizedTranslationList, LanguageFormatter formatter)
+        public Localizator(List<Translation> prioritizedTranslationList, LanguageFormatter formatter, Func<Translation, T> translationSectionSelector)
         {
             this.prioritizedTranslationList = prioritizedTranslationList;
             Formatter = formatter;
+            this.translationSectionSelector = translationSectionSelector;
         }
 
         protected LanguageFormatter Formatter { get; }
 
-        protected string Format(Func<Translation, string> translationField, object templateArguments = null)
+        protected string Format(Func<T, string> translationSectionField, object templateArguments = null)
+        {
+            return Format(translation => translationSectionField(translationSectionSelector(translation)), templateArguments);
+        }
+
+        protected string Format(Func<Translation, string> translationFieldSelector, object templateArguments = null)
         {
             foreach (Translation translation in prioritizedTranslationList)
             {
-                string result = translationField(translation)?.Replace("{new-line}", "\r\n");
+                string result = translationFieldSelector(translation)?.Replace("{new-line}", "\r\n");
                 if (result != null)
                 {
                     return templateArguments == null ? result : RenderTemplate(result, templateArguments);
@@ -29,7 +36,7 @@ namespace LibgenDesktop.Models.Localization.Localizators
             return "Error";
         }
 
-        private string RenderTemplate(string template, object templateArguments)
+        private static string RenderTemplate(string template, object templateArguments)
         {
             string result = template;
             foreach (PropertyInfo property in templateArguments.GetType().GetProperties())

@@ -54,5 +54,11 @@ namespace LibgenDesktop.Models.SqlDump
         {
             throw new NotImplementedException();
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            baseStream?.Dispose();
+        }
     }
 }

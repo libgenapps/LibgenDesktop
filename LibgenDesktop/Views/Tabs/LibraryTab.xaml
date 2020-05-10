@@ -5,7 +5,7 @@
              xmlns:const="clr-namespace:LibgenDesktop.Common"
              xmlns:u="clr-namespace:LibgenDesktop.Views.Utils">
     <UserControl.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/LibraryTabStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Tabs/Library.xaml" />
     </UserControl.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <StackPanel Visibility="{Binding AreScanButtonsVisible, Converter={StaticResource booleanToCollapsedConverter}}">

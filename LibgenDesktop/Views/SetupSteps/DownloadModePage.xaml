@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="LibgenDesktop.Views.SetupSteps.DownloadModePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/SetupSteps/DownloadMode.xaml" />
+    </UserControl.Resources>
+    <StackPanel Style="{StaticResource DownloadModePanel}">
+        <TextBlock Text="{Binding Header}" Style="{StaticResource Header}"
+                   Visibility="{Binding IsHeaderVisible, Converter={StaticResource booleanToCollapsedConverter}}" />
+        <TextBlock Text="{Binding Localization.ChooseDownloadMode}" Style="{StaticResource Prompt}" />
+        <RadioButton Content="{Binding Localization.DownloadManagerMode}" IsChecked="{Binding IsDownloadManagerModeSelected}"
+                     Style="{StaticResource Option}" />
+        <StackPanel Style="{StaticResource ProxySettingsPanel}">
+            <CheckBox Content="{Binding Localization.UseProxyServer}" IsChecked="{Binding IsProxyServerEnabled}"
+                      IsEnabled="{Binding AreProxyServerControlsEnabled}" />
+            <Button Content="{Binding Localization.ProxySettings}" Command="{Binding ProxyServerSettingsCommand}"
+                    IsEnabled="{Binding IsProxyServerSettingsButtonEnabled}" Style="{StaticResource ProxySettingsButton}" />
+        </StackPanel>
+        <RadioButton Content="{Binding Localization.BrowserMode}" IsChecked="{Binding IsBrowserModeSelected}"
+                     Style="{StaticResource Option}" />
+    </StackPanel>
+</UserControl>

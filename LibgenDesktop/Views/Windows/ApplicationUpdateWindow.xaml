@@ -6,7 +6,7 @@
                        ClosingCommand="{Binding WindowClosingCommand}"
                        Style="{StaticResource ApplicationUpdateWindow}">
     <Window.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/ApplicationUpdateWindowStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/ApplicationUpdate.xaml" />
     </Window.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>

@@ -1,4 +1,5 @@
-﻿using LibgenDesktop.Models.Entities;
+﻿using System.Collections.ObjectModel;
+using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
 
 namespace LibgenDesktop.ViewModels.SearchResultItems
@@ -22,6 +23,11 @@ namespace LibgenDesktop.ViewModels.SearchResultItems
         public override string FileNameWithoutExtension => $"{Authors} - {Title}";
         public override string FileExtension => "pdf";
         public override string Md5Hash => Article.Md5Hash;
+
+        public override ObservableCollection<string> GetCopyMenuItems()
+        {
+            return GetNonEmptyCopyMenuItems(Title, Authors, Journal, Year, FileSize, Doi);
+        }
 
         protected override void UpdateLocalizableProperties()
         {

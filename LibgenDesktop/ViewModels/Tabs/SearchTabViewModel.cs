@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using LibgenDesktop.Common;
 using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
 using LibgenDesktop.Models.ProgressArgs;
 using LibgenDesktop.ViewModels.EventArguments;
 
@@ -302,6 +301,18 @@ namespace LibgenDesktop.ViewModels.Tabs
                 IsNonFictionLibraryAvailable = nonFictionBookCount > 0;
                 IsFictionLibraryAvailable = fictionBookCount > 0;
                 IsSciMagLibraryAvailable = sciMagArticleCount > 0;
+                if (IsNonFictionLibrarySelected && !IsNonFictionLibraryAvailable)
+                {
+                    IsNonFictionLibrarySelected = false;
+                }
+                if (IsFictionLibrarySelected && !IsFictionLibraryAvailable)
+                {
+                    IsFictionLibrarySelected = false;
+                }
+                if (IsSciMagLibrarySelected && !IsSciMagLibraryAvailable)
+                {
+                    IsSciMagLibrarySelected = false;
+                }
                 if (!IsNonFictionLibrarySelected && !IsFictionLibrarySelected && !IsSciMagLibrarySelected)
                 {
                     if (IsNonFictionLibraryAvailable)

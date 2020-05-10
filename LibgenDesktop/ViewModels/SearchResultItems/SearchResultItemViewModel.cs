@@ -1,9 +1,11 @@
-﻿using LibgenDesktop.Models.Entities;
+﻿using System;
+using System.Collections.ObjectModel;
+using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
 
 namespace LibgenDesktop.ViewModels.SearchResultItems
 {
-    internal abstract class SearchResultItemViewModel<T> : ViewModel where T: LibgenObject
+    internal abstract class SearchResultItemViewModel<T> : ViewModel where T : LibgenObject
     {
         public SearchResultItemViewModel(T libgenObject, LanguageFormatter formatter)
         {
@@ -20,6 +22,8 @@ namespace LibgenDesktop.ViewModels.SearchResultItems
 
         protected LanguageFormatter Formatter { get; private set; }
 
+        public abstract ObservableCollection<string> GetCopyMenuItems();
+
         public void UpdateLocalization(LanguageFormatter newFormatter)
         {
             Formatter = newFormatter;
@@ -27,5 +31,18 @@ namespace LibgenDesktop.ViewModels.SearchResultItems
         }
 
         protected abstract void UpdateLocalizableProperties();
+
+        protected ObservableCollection<string> GetNonEmptyCopyMenuItems(params string[] copyMenuItems)
+        {
+            ObservableCollection<string> result = new ObservableCollection<string>();
+            foreach (string copyMenuItem in copyMenuItems)
+            {
+                if (!String.IsNullOrWhiteSpace(copyMenuItem))
+                {
+                    result.Add(copyMenuItem);
+                }
+            }
+            return result;
+        }
     }
 }

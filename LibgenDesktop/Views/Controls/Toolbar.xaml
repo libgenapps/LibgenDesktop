@@ -4,7 +4,7 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:c="clr-namespace:LibgenDesktop.Views.Controls">
     <UserControl.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/ToolbarStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Controls/Toolbar.xaml" />
     </UserControl.Resources>
     <StackPanel Style="{StaticResource TopContainer}">
         <md:Badged>
@@ -21,7 +21,7 @@
                     </Style.Triggers>
                 </Style>
             </md:Badged.Style>
-            <Button	Command="{Binding DownloadManagerCommand}" ToolTip="{Binding Localization.ToolbarDownloadManagerTooltip}">
+            <Button Command="{Binding DownloadManagerCommand}" ToolTip="{Binding Localization.ToolbarDownloadManagerTooltip}">
                 <Button.Style>
                     <Style TargetType="Button" BasedOn="{StaticResource DownloadManagerButton}">
                         <Style.Triggers>

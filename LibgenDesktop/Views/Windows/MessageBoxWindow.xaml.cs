@@ -33,7 +33,8 @@ namespace LibgenDesktop.Views.Windows
             {
                 Title = title,
                 Owner = parentWindow,
-                WindowStartupLocation = parentWindow != null ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen
+                WindowStartupLocation = parentWindow != null ? WindowStartupLocation.CenterOwner : WindowStartupLocation.CenterScreen,
+                ShowInTaskbar = parentWindow == null
             };
             messageBoxWindow.messageTextBlock.Text = text;
             return messageBoxWindow;

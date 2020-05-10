@@ -16,5 +16,11 @@ namespace LibgenDesktop.Infrastructure
         void Focus();
         void Show(int? width = null, int? height = null, bool showMaximized = false);
         bool? ShowDialog(int? width = null, int? height = null, bool showMaximized = false);
+        void AddWindowMinimizeButton();
+        void AddWindowMaximizeButton();
+        void AddWindowCloseButton();
+        void RemoveWindowMinimizeButton();
+        void RemoveWindowMaximizeButton();
+        void RemoveWindowCloseButton();
     }
 }

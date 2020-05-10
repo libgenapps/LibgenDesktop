@@ -2,9 +2,9 @@
 
 namespace LibgenDesktop.ViewModels.Library
 {
-    internal class NonFictionScanResultItemViewModel : ScanResultItemViewModel<NonFictionBook>
+    internal class FictionScanResultItemViewModel : ScanResultItemViewModel<FictionBook>
     {
-        public NonFictionScanResultItemViewModel(string relativeFilePath, NonFictionBook book)
+        public FictionScanResultItemViewModel(string relativeFilePath, FictionBook book)
             : base(relativeFilePath, book)
         {
         }

@@ -1,0 +1,61 @@
+﻿<c:LibgenDesktopWindow x:Class="LibgenDesktop.Views.Windows.SetupWizardWindow"
+                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                       xmlns:c="clr-namespace:LibgenDesktop.Views.Controls"
+                       xmlns:s="clr-namespace:LibgenDesktop.Views.SetupSteps"
+                       Title="{Binding Localization.WindowTitle}"
+                       ClosingCommand="{Binding WindowClosingCommand}"
+                       Style="{StaticResource SetupWizardWindow}">
+    <Window.Resources>
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Windows/SetupWizard.xaml" />
+    </Window.Resources>
+    <Grid Style="{StaticResource TopContainer}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <s:LanguagePage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                        DataContext="{Binding LanguagePageViewModel}" />
+        <s:SetupModePage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                         DataContext="{Binding SetupModePageViewModel}" />
+        <s:DatabaseOperationPage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                                 DataContext="{Binding DatabaseOperationPageViewModel}" />
+        <s:StepListPage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                        DataContext="{Binding StepListPageViewModel}" />
+        <s:DownloadModePage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                            DataContext="{Binding DownloadModePageViewModel}" />
+        <s:DownloadDumpInfoPage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                                DataContext="{Binding DownloadDumpInfoPageViewModel}" />
+        <s:CollectionsPage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                           DataContext="{Binding CollectionsPageViewModel}" />
+        <s:DownloadDumpsPage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                             DataContext="{Binding DownloadDumpsPageViewModel}" />
+        <s:DownloadDumpLinksPage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                                 DataContext="{Binding DownloadDumpLinksPageViewModel}" />
+        <s:CreateDatabasePage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                           DataContext="{Binding CreateDatabasePageViewModel}" />
+        <s:ImportDumpsPage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                           DataContext="{Binding ImportDumpsPageViewModel}" />
+        <s:ConfirmationPage Grid.Row="0" Visibility="{Binding IsPageVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                            DataContext="{Binding ConfirmationPageViewModel}" />
+        <Grid Grid.Row="1" Grid.IsSharedSizeScope="True" Style="{StaticResource BottomPanel}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="SetupButtons" />
+                <ColumnDefinition />
+                <ColumnDefinition SharedSizeGroup="SetupButtons" />
+                <ColumnDefinition SharedSizeGroup="SetupButtons" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="{Binding Localization.Back}" Command="{Binding BackCommand}"
+                    Visibility="{Binding IsBackButtonVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                    Style="{StaticResource BackButton}" />
+            <Button Grid.Column="2" Content="{Binding Localization.Next}" Command="{Binding NextCommand}"
+                    Visibility="{Binding IsNextButtonVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                    Style="{StaticResource NextButton}" />
+            <Button Grid.Column="2" Content="{Binding Localization.Finish}" Command="{Binding FinishCommand}"
+                    Visibility="{Binding IsFinishButtonVisible, Converter={StaticResource booleanToHiddenConverter}}"
+                    Style="{StaticResource FinishButton}" />
+            <Button Grid.Column="3" Content="{Binding Localization.Cancel}" Style="{StaticResource CancelButton}"
+                    Visibility="{Binding IsCancelButtonVisible, Converter={StaticResource booleanToHiddenConverter}}" />
+        </Grid>
+    </Grid>
+</c:LibgenDesktopWindow>

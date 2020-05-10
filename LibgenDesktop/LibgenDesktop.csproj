@@ -140,21 +140,24 @@
     <Compile Include="Infrastructure\SelectionChangedCommandArgs.cs" />
     <Compile Include="Infrastructure\ViewModelEvent.cs" />
     <Compile Include="Infrastructure\WindowContext.cs" />
+    <Compile Include="Infrastructure\WindowExtensions.cs" />
     <Compile Include="Infrastructure\WindowManager.cs" />
     <Compile Include="Common\Logger.cs" />
     <Compile Include="Models\Database\DatabaseStats.cs" />
     <Compile Include="Models\Database\Migration.cs" />
     <Compile Include="Models\Database\SearchQueryParser.cs" />
     <Compile Include="Models\Download\CoverCache.cs" />
-    <Compile Include="Models\Download\Downloader.cs" />
-    <Compile Include="Models\Download\DownloaderBatchEventArgs.cs" />
-    <Compile Include="Models\Download\DownloaderEventArgs.cs" />
+    <Compile Include="Models\Download\DownloadManager.cs" />
+    <Compile Include="Models\Download\DownloadManagerBatchEventArgs.cs" />
+    <Compile Include="Models\Download\DownloadManagerEventArgs.cs" />
     <Compile Include="Models\Download\DownloadItem.cs" />
     <Compile Include="Models\Download\DownloadItemLogLine.cs" />
     <Compile Include="Models\Download\DownloadItemLogLineType.cs" />
     <Compile Include="Models\Download\DownloadItemRequest.cs" />
     <Compile Include="Models\Download\DownloadItemStatus.cs" />
-    <Compile Include="Models\Download\DownloadQueueStorage.cs" />
+    <Compile Include="Models\Download\DownloadManagerQueueStorage.cs" />
+    <Compile Include="Models\Download\DownloadUtils.cs" />
+    <Compile Include="Models\Download\LibgenDumpDownloader.cs" />
     <Compile Include="Models\Entities\DatabaseMetadata.cs" />
     <Compile Include="Models\Entities\FictionBook.cs" />
     <Compile Include="Models\Entities\LibgenObject.cs" />
@@ -177,44 +180,59 @@
     <Compile Include="Models\JsonApi\JsonApiClient.cs" />
     <Compile Include="Models\JsonApi\JsonApiNonFictionBook.cs" />
     <Compile Include="Models\Localization\Language.cs" />
-    <Compile Include="Models\Localization\Localizators\ApplicationUpdateLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\CommonDetailsTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\AboutWindowLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\SqlDebuggerWindowLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\LibraryTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\DatabaseWindowLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\CreateDatabaseWindowLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\DetailsTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\DownloadManagerLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\ErrorWindowLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\ExporterLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\ExportPanelLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\FictionDetailsTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\ImportLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\MessageBoxLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\NonFictionDetailsTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\FictionExporterLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\SciMagExporterLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\NonFictionExporterLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\SciMagDetailsTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\SciMagSearchResultsGridColumnsLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\SciMagSearchResultsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\CollectionsSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\CreateDatabaseSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\DatabaseOperationSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\DownloadDumpLinksSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\DownloadDumpInfoSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\DownloadDumpsSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\DownloadModeSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\ImportDumpsSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\LanguageSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\SetupModeSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\ConfirmationSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SetupSteps\StepListSetupStepLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\ApplicationUpdateWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\CommonDetailsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\AboutWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\DatabaseErrorWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\SetupWizardProxySettingsWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\SetupWizardWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\SqlDebuggerWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\LibraryTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\DatabaseWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\DetailsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\DownloadManagerTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\ErrorWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Export\ExporterLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Export\ExportPanelLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\FictionDetailsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\ImportWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\MessageBoxLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\NonFictionDetailsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Export\FictionExporterLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Export\SciMagExporterLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Export\NonFictionExporterLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\SciMagDetailsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SearchResultGrids\SciMagSearchResultsGridColumnsLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\SciMagSearchResultsTabLocalizator.cs" />
     <Compile Include="Models\Localization\LanguageFormatter.cs" />
     <Compile Include="Models\Localization\Localizators\Localizator.cs" />
     <Compile Include="Models\Localization\LocalizationStorage.cs" />
-    <Compile Include="Models\Localization\Localizators\MainWindowLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\FictionSearchResultsGridColumnsLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\NonFictionSearchResultsGridColumnsLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\FictionSearchResultsTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\NonFictionSearchResultsTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\SearchResultsTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\SearchTabLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\SettingsWindowLocalizator.cs" />
-    <Compile Include="Models\Localization\Localizators\SynchronizationLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\MainWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SearchResultGrids\FictionSearchResultsGridColumnsLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\SearchResultGrids\NonFictionSearchResultsGridColumnsLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\FictionSearchResultsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\NonFictionSearchResultsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\SearchResultsTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Tabs\SearchTabLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\SettingsWindowLocalizator.cs" />
+    <Compile Include="Models\Localization\Localizators\Windows\SynchronizationWindowLocalizator.cs" />
     <Compile Include="Models\Localization\Translation.cs" />
     <Compile Include="Models\ProgressArgs\DownloadFileProgress.cs" />
     <Compile Include="Models\ProgressArgs\GenericProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportCreateIndexProgress.cs" />
+    <Compile Include="Models\ProgressArgs\ImportWrongTableDefinitionProgress.cs" />
     <Compile Include="Models\ProgressArgs\SynchronizationDiskSpaceProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportDiskSpaceProgress.cs" />
     <Compile Include="Models\ProgressArgs\ImportLoadLibgenIdsProgress.cs" />
@@ -252,10 +270,26 @@
     <Compile Include="ViewModels\DetailsItems\FictionDetailsItemViewModel.cs" />
     <Compile Include="ViewModels\DetailsItems\NonFictionDetailsItemViewModel.cs" />
     <Compile Include="ViewModels\DetailsItems\SciMagDetailsItemViewModel.cs" />
+    <Compile Include="ViewModels\Settings\LanguageItemViewModel.cs" />
     <Compile Include="ViewModels\Library\SciMagScanResultItemViewModel.cs" />
-    <Compile Include="ViewModels\Library\FictionScanResultItemViewModel.cs" />
     <Compile Include="ViewModels\Library\NonFictionScanResultItemViewModel.cs" />
+    <Compile Include="ViewModels\Library\FictionScanResultItemViewModel.cs" />
     <Compile Include="ViewModels\Library\ScanResultItemViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\CollectionsPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\CreateDatabasePageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\DownloadDumpLinksPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\DownloadDumpInfoPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\DownloadDumpsPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\DownloadModePageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\ImportDumpsPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\StepListPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\ConfirmationPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\LanguagePageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\SetupModePageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\DatabaseOperationPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\SetupStepPageViewModel.cs" />
+    <Compile Include="ViewModels\SetupSteps\SetupWizardStep.cs" />
+    <Compile Include="ViewModels\SetupSteps\SharedSetupContext.cs" />
     <Compile Include="ViewModels\Tabs\ISearchResultsTabViewModel.cs" />
     <Compile Include="ViewModels\SearchResultItems\SciMagSearchResultItemViewModel.cs" />
     <Compile Include="ViewModels\SearchResultItems\FictionSearchResultItemViewModel.cs" />
@@ -265,6 +299,7 @@
     <Compile Include="ViewModels\Tabs\DetailsTabViewModel.cs" />
     <Compile Include="ViewModels\Windows\AboutWindowViewModel.cs" />
     <Compile Include="ViewModels\Tabs\LibraryTabViewModel.cs" />
+    <Compile Include="ViewModels\Windows\DatabaseErrorWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\DatabaseWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\DetailsWindowViewModel.cs" />
     <Compile Include="ViewModels\EventArguments\OpenFictionDetailsEventArgs.cs" />
@@ -274,6 +309,8 @@
     <Compile Include="ViewModels\Panels\ExportPanelViewModel.cs" />
     <Compile Include="ViewModels\Tabs\FictionDetailsTabViewModel.cs" />
     <Compile Include="ViewModels\Panels\ImportLogPanelViewModel.cs" />
+    <Compile Include="ViewModels\Windows\SetupWizardProxySettingsWindowViewModel.cs" />
+    <Compile Include="ViewModels\Windows\SetupWizardWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\SqlDebuggerWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\LibgenWindowViewModel.cs" />
     <Compile Include="ViewModels\SearchResultItems\SearchResultItemViewModel.cs" />
@@ -287,7 +324,6 @@
     <Compile Include="ViewModels\Tabs\SciMagSearchResultsTabViewModel.cs" />
     <Compile Include="ViewModels\Windows\NonFictionDetailsWindowViewModel.cs" />
     <Compile Include="Infrastructure\Command.cs" />
-    <Compile Include="ViewModels\Windows\CreateDatabaseWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\ErrorWindowViewModel.cs" />
     <Compile Include="ViewModels\Windows\ImportWindowViewModel.cs" />
     <Compile Include="ViewModels\Tabs\FictionSearchResultsTabViewModel.cs" />
@@ -296,6 +332,9 @@
     <Compile Include="ViewModels\Tabs\SearchTabViewModel.cs" />
     <Compile Include="ViewModels\Windows\SettingsWindowViewModel.cs" />
     <Compile Include="ViewModels\Tabs\TabViewModel.cs" />
+    <Compile Include="Views\Controls\Link.xaml.cs">
+      <DependentUpon>Link.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\BookDataGrid.cs" />
     <Compile Include="Views\Controls\BookDataGridContextMenu.xaml.cs">
       <DependentUpon>BookDataGridContextMenu.xaml</DependentUpon>
@@ -303,6 +342,45 @@
     <Compile Include="Views\Controls\HorizontalScrollViewer.cs" />
     <Compile Include="Views\Controls\LibraryTabHeader.xaml.cs">
       <DependentUpon>LibraryTabHeader.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\LanguageComboBox.xaml.cs">
+      <DependentUpon>LanguageComboBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\CollectionsPage.xaml.cs">
+      <DependentUpon>CollectionsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\DownloadDumpLinksPage.xaml.cs">
+      <DependentUpon>DownloadDumpLinksPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\DownloadModePage.xaml.cs">
+      <DependentUpon>DownloadModePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\DownloadDumpInfoPage.xaml.cs">
+      <DependentUpon>DownloadDumpInfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\DownloadDumpsPage.xaml.cs">
+      <DependentUpon>DownloadDumpsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\ImportDumpsPage.xaml.cs">
+      <DependentUpon>ImportDumpsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\CreateDatabasePage.xaml.cs">
+      <DependentUpon>CreateDatabasePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\StepListPage.xaml.cs">
+      <DependentUpon>StepListPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\ConfirmationPage.xaml.cs">
+      <DependentUpon>ConfirmationPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\SetupModePage.xaml.cs">
+      <DependentUpon>SetupModePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\LanguagePage.xaml.cs">
+      <DependentUpon>LanguagePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SetupSteps\DatabaseOperationPage.xaml.cs">
+      <DependentUpon>DatabaseOperationPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Utils\IconExtension.cs" />
     <Compile Include="Views\Windows\ApplicationUpdateWindow.xaml.cs">
@@ -315,7 +393,7 @@
     <Compile Include="Views\Controls\CloseTabButton.xaml.cs">
       <DependentUpon>CloseTabButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\DownloaderListBox.cs" />
+    <Compile Include="Views\Controls\DownloadManagerListBox.cs" />
     <Compile Include="Views\Controls\ExportPanel.xaml.cs">
       <DependentUpon>ExportPanel.xaml</DependentUpon>
     </Compile>
@@ -332,8 +410,17 @@
     <Compile Include="Views\Tabs\LibraryTab.xaml.cs">
       <DependentUpon>LibraryTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Windows\DatabaseErrorWindow.xaml.cs">
+      <DependentUpon>DatabaseErrorWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Windows\DatabaseWindow.xaml.cs">
       <DependentUpon>DatabaseWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\SetupWizardProxySettingsWindow.xaml.cs">
+      <DependentUpon>SetupWizardProxySettingsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Windows\SetupWizardWindow.xaml.cs">
+      <DependentUpon>SetupWizardWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\SqlDebuggerWindow.xaml.cs">
       <DependentUpon>SqlDebuggerWindow.xaml</DependentUpon>
@@ -366,9 +453,6 @@
     </Compile>
     <Compile Include="Views\Controls\Toolbar.xaml.cs">
       <DependentUpon>Toolbar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\Windows\CreateDatabaseWindow.xaml.cs">
-      <DependentUpon>CreateDatabaseWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\ErrorWindow.xaml.cs">
       <DependentUpon>ErrorWindow.xaml</DependentUpon>
@@ -412,6 +496,58 @@
     <Compile Include="Views\Utils\EventListenerExtensions.cs" />
     <Compile Include="Views\Utils\GridLengthConverter.cs" />
     <Compile Include="Views\Utils\PasswordBoxExtensions.cs" />
+    <Page Include="Styles\SetupSteps\Collections.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\DownloadDumpInfo.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\DownloadDumpLinks.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\DownloadMode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\DownloadDumps.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\ImportDumps.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\CreateDatabase.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\StepList.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\Confirmation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\DatabaseOperation.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\Windows\DatabaseError.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\Windows\SetupWizardProxySettings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\Link.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Controls\BookDataGridContextMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -420,19 +556,83 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\AboutWindowStyles.xaml">
+    <Page Include="Views\Controls\LanguageComboBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\SqlDebuggerWindowStyles.xaml">
+    <Page Include="Views\SetupSteps\CollectionsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\LibraryTabStyles.xaml">
+    <Page Include="Views\SetupSteps\DownloadDumpLinksPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\DatabaseWindowStyles.xaml">
+    <Page Include="Views\SetupSteps\DownloadModePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetupSteps\DownloadDumpInfoPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetupSteps\DownloadDumpsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetupSteps\ImportDumpsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetupSteps\CreateDatabasePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetupSteps\StepListPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetupSteps\ConfirmationPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetupSteps\SetupModePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetupSteps\LanguagePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\Windows\About.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\SetupMode.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\SetupSteps\Language.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\Windows\SetupWizard.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\Windows\SqlDebugger.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\Tabs\Library.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\Windows\Database.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SetupSteps\DatabaseOperationPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -468,9 +668,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Windows\DatabaseErrorWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Windows\DatabaseWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Windows\SetupWizardProxySettingsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Windows\SetupWizardWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Windows\SqlDebuggerWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -480,23 +692,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\ApplicationUpdateWindowStyles.xaml">
+    <Page Include="Styles\Windows\ApplicationUpdate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\ExportPanelStyles.xaml">
+    <Page Include="Styles\Controls\ExportPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\ImportLogPanelStyles.xaml">
+    <Page Include="Styles\Controls\ImportLogPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\MessageBoxWindowStyles.xaml">
+    <Page Include="Styles\Windows\MessageBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\SynchronizationWindowStyles.xaml">
+    <Page Include="Styles\Windows\Synchronization.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -532,10 +744,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Windows\CreateDatabaseWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\Windows\ErrorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -564,39 +772,39 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\Styles\DownloadManagerTabStyles.xaml">
+    <Page Include="Styles\Tabs\DownloadManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\NonFictionDetailsTabStyles.xaml">
+    <Page Include="Styles\Tabs\NonFictionDetails.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\SciMagSearchResultsTabStyles.xaml">
+    <Page Include="Styles\Tabs\SciMagSearchResults.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\SciMagDetailsTabStyles.xaml">
+    <Page Include="Styles\Tabs\SciMagDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\FictionSearchResultsTabStyles.xaml">
+    <Page Include="Styles\Tabs\FictionSearchResults.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\FictionDetailsTabStyles.xaml">
+    <Page Include="Styles\Tabs\FictionDetails.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\NonFictionSearchResultsTabStyles.xaml">
+    <Page Include="Styles\Tabs\NonFictionSearchResults.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\TabStyles.xaml">
+    <Page Include="Styles\Tabs\Tab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\ToolbarStyles.xaml">
+    <Page Include="Styles\Controls\Toolbar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -636,39 +844,35 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\CommonStyles.xaml">
+    <Page Include="Styles\Common.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\ErrorWindowStyles.xaml">
+    <Page Include="Styles\Windows\Error.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\CreateDatabaseWindowStyles.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Styles\MainWindowStyles.xaml">
+    <Page Include="Styles\Windows\Main.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\SearchTabStyles.xaml">
+    <Page Include="Styles\Tabs\Search.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\ImportWindowStyles.xaml">
+    <Page Include="Styles\Windows\Import.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Styles\SettingsWindowStyles.xaml">
+    <Page Include="Styles\Windows\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\TabControlStyles.xaml">
+    <Page Include="Styles\Controls\Tab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Styles\WindowStyles.xaml">
+    <Page Include="Styles\Windows\Windows.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -700,6 +904,10 @@
     <ContentWithTargetPath Include="Resources\Mirrors\mirrors.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Mirrors\mirrors.config</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Mirrors\genlibrusec_dbdumps.xslt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Mirrors\genlibrusec_dbdumps.xslt</TargetPath>
     </ContentWithTargetPath>
     <ContentWithTargetPath Include="Resources\Mirrors\libgen_lc_nonfiction.xslt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -773,6 +981,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Languages\Turkish.lng</TargetPath>
     </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Languages\Portuguse_BR.lng">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Languages\Portuguse_BR.lng</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="Resources\Languages\Italian.lng">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Languages\Italian.lng</TargetPath>
+    </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -783,6 +999,7 @@
   <ItemGroup>
     <Resource Include="Resources\LibgenDesktop_logo.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.109.2\build\net45\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.109.2\build\net45\System.Data.SQLite.Core.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

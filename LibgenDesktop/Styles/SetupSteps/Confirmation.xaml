@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="ConfirmationPanel" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Vertical" />
+    </Style>
+    <Style x:Key="Header" TargetType="TextBlock">
+        <Setter Property="Margin" Value="12,0,12,16" />
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="NetworkModePanel" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="Margin" Value="0,12,0,12" />
+    </Style>
+    <Style x:Key="NetworkModeLabelButton" TargetType="Button">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="Transparent" Padding="5,0,0,0">
+                        <ContentPresenter SnapsToDevicePixels="True" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Foreground" Value="{StaticResource MaterialDesignBody}" />
+    </Style>
+    <Style x:Key="DownloadManagerPanel" TargetType="StackPanel">
+        <Style.Resources>
+            <Style TargetType="RadioButton" BasedOn="{StaticResource MaterialDesignRadioButton}">
+                <Setter Property="Margin" Value="0,0,0,8" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+            </Style>
+        </Style.Resources>
+        <Setter Property="Orientation" Value="Vertical" />
+        <Setter Property="Margin" Value="24,0,0,4" />
+    </Style>
+</ResourceDictionary>

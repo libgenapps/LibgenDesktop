@@ -3,7 +3,7 @@ using LibgenDesktop.Infrastructure;
 using LibgenDesktop.Models;
 using LibgenDesktop.Models.Entities;
 using LibgenDesktop.Models.Localization;
-using LibgenDesktop.Models.Localization.Localizators;
+using LibgenDesktop.Models.Localization.Localizators.Tabs;
 using LibgenDesktop.Models.Settings;
 using LibgenDesktop.Models.Utils;
 using LibgenDesktop.ViewModels.DetailsItems;

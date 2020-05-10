@@ -4,7 +4,7 @@
              xmlns:md="http://materialdesigninxaml.net/winfx/xaml/themes"
              xmlns:c="clr-namespace:LibgenDesktop.Views.Controls">
     <UserControl.Resources>
-        <ResourceDictionary Source="/LibgenDesktop;component/Views/Styles/NonFictionDetailsTabStyles.xaml" />
+        <ResourceDictionary Source="/LibgenDesktop;component/Styles/Tabs/NonFictionDetails.xaml" />
     </UserControl.Resources>
     <Grid Style="{StaticResource TopContainer}">
         <Grid.RowDefinitions>

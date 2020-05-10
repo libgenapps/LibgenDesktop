@@ -15,12 +15,14 @@ namespace LibgenDesktop.Infrastructure
             SCI_MAG_DETAILS_WINDOW,
             ERROR_WINDOW,
             IMPORT_WINDOW,
-            CREATE_DATABASE_WINDOW,
+            SETUP_WIZARD_WINDOW,
+            SETUP_WIZARD_PROXY_SETTINGS_WINDOW,
             SETTINGS_WINDOW,
             SYNCHRONIZATION_WINDOW,
             APPLICATION_UPDATE_WINDOW,
             LIBRARY_WINDOW,
             DATABASE_WINDOW,
+            DATABASE_ERROR_WINDOW,
             ABOUT_WINDOW,
             SQL_DEBUGGER_WINDOW
         }
@@ -48,11 +50,13 @@ namespace LibgenDesktop.Infrastructure
             RegisterWindow(WindowKey.SCI_MAG_DETAILS_WINDOW, typeof(SciMagDetailsWindow), typeof(SciMagDetailsWindowViewModel));
             RegisterWindow(WindowKey.ERROR_WINDOW, typeof(ErrorWindow), typeof(ErrorWindowViewModel));
             RegisterWindow(WindowKey.IMPORT_WINDOW, typeof(ImportWindow), typeof(ImportWindowViewModel));
-            RegisterWindow(WindowKey.CREATE_DATABASE_WINDOW, typeof(CreateDatabaseWindow), typeof(CreateDatabaseWindowViewModel));
+            RegisterWindow(WindowKey.SETUP_WIZARD_WINDOW, typeof(SetupWizardWindow), typeof(SetupWizardWindowViewModel));
+            RegisterWindow(WindowKey.SETUP_WIZARD_PROXY_SETTINGS_WINDOW, typeof(SetupWizardProxySettingsWindow), typeof(SetupWizardProxySettingsWindowViewModel));
             RegisterWindow(WindowKey.SETTINGS_WINDOW, typeof(SettingsWindow), typeof(SettingsWindowViewModel));
             RegisterWindow(WindowKey.SYNCHRONIZATION_WINDOW, typeof(SynchronizationWindow), typeof(SynchronizationWindowViewModel));
             RegisterWindow(WindowKey.APPLICATION_UPDATE_WINDOW, typeof(ApplicationUpdateWindow), typeof(ApplicationUpdateWindowViewModel));
             RegisterWindow(WindowKey.DATABASE_WINDOW, typeof(DatabaseWindow), typeof(DatabaseWindowViewModel));
+            RegisterWindow(WindowKey.DATABASE_ERROR_WINDOW, typeof(DatabaseErrorWindow), typeof(DatabaseErrorWindowViewModel));
             RegisterWindow(WindowKey.ABOUT_WINDOW, typeof(AboutWindow), typeof(AboutWindowViewModel));
             RegisterWindow(WindowKey.SQL_DEBUGGER_WINDOW, typeof(SqlDebuggerWindow), typeof(SqlDebuggerWindowViewModel));
             MessageBox = new MessageBox();

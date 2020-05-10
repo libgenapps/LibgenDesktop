@@ -39,24 +39,156 @@
             "About": "About"
         }
     },
-    "CreateDatabaseWindow":
+    "SetupWizardWindow":
     {
         "WindowTitle": "Libgen Desktop",
-        "FirstRunMessage": "Welcome to Libgen Desktop.",
-        "DatabaseNotFound": "Database {database} not found.",
-        "DatabaseCorrupted": "Database {database} is corrupted.",
-        "LibgenServerDatabase": "Database {database} is a Libgen Server database which is not compatible with the Libgen Desktop database structure.",
-        "ChooseOption": "Choose an action",
-        "CreateNewDatabase": "Create a new database",
-        "OpenExistingDatabase": "Open an existing database",
-        "BrowseNewDatabaseDialogTitle": "New database location",
-        "BrowseExistingDatabaseDialogTitle": "Existing database location",
-        "Databases": "Databases",
-        "AllFiles": "All files",
-        "Error": "Error",
-        "CannotCreateDatabase": "Couldn't create database.",
-        "Ok": "OK",
-        "Cancel": "CANCEL"
+        "LanguageStep":
+        {
+            "ChooseLanguage": "Please choose your language:"
+        },
+        "SetupModeStep":
+        {
+            "WelcomeAndChooseOption": "Welcome to Libgen Desktop. Choose an option:",
+            "FirstTimeUser": "I am running Libgen Desktop for the first time",
+            "ExperiencedUser": "I am an experienced Libgen Desktop user"
+        },
+        "DatabaseOperationStep":
+        {
+            "ChooseAction": "Please choose an action:",
+            "CreateNewDatabase": "Create a new database",
+            "OpenExistingDatabase": "Open an existing database"
+        },
+        "DownloadModeStep":
+        {
+            "ChooseDownloadMode": "Choose the way you want to download database dumps:",
+            "DownloadManagerMode": "Let Libgen Desktop download them",
+            "UseProxyServer": "Use proxy server",
+            "ProxySettings": "SETTINGS...",
+            "BrowserMode": "I want to download them myself"
+        },
+        "StepListStep":
+        {
+            "StepListHeader": "Libgen Desktop first time setup",
+            "Step": "Step {step}",
+            "DownloadingDumps": "Downloading database dumps",
+            "CreatingDatabase": "Creating a Libgen Desktop database",
+            "ImportingDumps": "Importing database dumps into the Libgen Desktop database",
+            "ClickNextButton": "Click Next button to start the setup."
+        },
+        "ProxySettingsWindow":
+        {
+            "WindowTitle": "Proxy server settings",
+            "ProxyAddress": "Address",
+            "ProxyAddressRequired": "Required field",
+            "ProxyPort": "Port",
+            "ProxyPortValidation": "Numbers from {min} to {max}",
+            "ProxyUserName": "User name",
+            "ProxyPassword": "Password",
+            "ProxyPasswordWarning": "Storing the password here is not secure.",
+            "Ok": "OK",
+            "Cancel": "CANCEL"
+        },
+        "DownloadDumpInfoStep":
+        {
+            "DownloadingDumpInfo": "Please wait. Downloading database dump information...",
+            "CannotDownloadDumpInfo": "Couldn't download database dump information.",
+            "Interrupt": "INTERRUPT",
+            "Interrupting": "INTERRUPTING...",
+            "Retry": "RETRY"
+        },
+        "CollectionsStep":
+        {
+            "ChooseCollections": "Choose collections you want to use in Libgen Desktop:",
+            "NonFiction": "Non-fiction books",
+            "Fiction": "Fiction books",
+            "SciMagArticles": "Scientific articles",
+            "DownloadSizeExact": "Download size: {size}",
+            "DownloadSizeApproximate": "Download size: approximately {size}",
+            "DatabaseSize": "Database size: approximately {size}",
+            "ImportTimeInMinutes": "Import time: {from}–{to} minutes",
+            "ImportTimeInHours": "Import time: {from}–{to} hours",
+            "DownloadInto": "Download into:",
+            "BrowseDirectoryDialogTitle": "Download database dumps into...",
+            "ErrorWarningTitle": "Error",
+            "NoCollectionsSelected": "At least one collection needs to be selected.",
+            "DirectoryNotFound": "Directory {directory} doesn't exist. Please choose a different directory."
+        },
+        "DownloadDumpsStep":
+        {
+            "NonFictionDumpName": "Non-fiction books database dump",
+            "FictionDumpName": "Fiction books database dump",
+            "SciMagArticlesDumpName": "Scientific articles database dump",
+            "QueuedStatus": "Queued",
+            "DownloadingStatus": "Downloading",
+            "StoppedStatus": "Stopped",
+            "ErrorStatus": "Error",
+            "DownloadProgress": "Downloaded {downloaded} of {total} bytes ({percent}%)",
+            "Interrupt": "INTERRUPT",
+            "Interrupting": "INTERRUPTING...",
+            "Retry": "RETRY"
+        },
+        "DownloadDumpLinksStep":
+        {
+            "OpenPage": "Open the database dump list page in your browser:",
+            "CopyLink": "Copy link",
+            "DownloadFiles": "Then download the following files:",
+            "NonFictionDumpName": "Non-fiction books database dump",
+            "FictionDumpName": "Fiction books database dump",
+            "SciMagArticlesDumpName": "Scientific articles database dump",
+            "FileName": "File name: {file}",
+            "YYYY": "YYYY",
+            "MM": "MM",
+            "DD": "DD",
+            "MostRecentDateNote": "where {dateTemplate} is the most recent date available in the list."
+        },
+        "CreateDatabaseStep":
+        {
+            "DatabaseFilePathPrompt": "Please choose the path where you want to store the new database file:",
+            "DatabaseCreated": "Libgen Desktop database has been successfully created.",
+            "CannotCreateDatabase": "Couldn't create Libgen Desktop database.",
+            "DiskSpaceRequirementsNote": "You will need approximately {size} of free disk space.",
+            "SelectDatabaseFilePathDialogTitle": "New Libgen Desktop database location",
+            "Databases": "Databases",
+            "AllFiles": "All files",
+            "CreateDatabase": "CREATE DATABASE",
+            "CreatingDatabase": "CREATING DATABASE...",
+            "DatabaseFileOverwritePromptTitle": "Overwrite database file?",
+            "DatabaseFileOverwritePromptText": "File {file} already exists. Do you want to overwrite it?"
+        },
+        "ImportDumpsStep":
+        {
+            "NonFictionDumpName": "Non-fiction books database dump",
+            "FictionDumpName": "Fiction books database dump",
+            "SciMagArticlesDumpName": "Scientific articles database dump",
+            "Status": "Status: {status}",
+            "NotImported": "not imported yet",
+            "Importing": "importing...",
+            "ImportSuccessful": "imported successfully",
+            "ImportCancelled": "import cancelled",
+            "ImportError": "import error",
+            "ImportButton": "IMPORT...",
+            "ImportingButton": "IMPORTING...",
+            "DeleteDumps": "Delete database dump files after successful import"
+        },
+        "ConfirmationStep":
+        {
+            "StepHeader": "Setup is complete",
+            "SettingsHeader": "Some settings for you to consider before you finish the setup:",
+            "AllowInternetConnection": "Allow Libgen Desktop to connect to the internet",
+            "UseDownloadManager": "Use built-in download manager to download books and articles",
+            "UseBrowser": "Open download URLs in a browser",
+            "YouCanChangeSettings": "You can change these settings at any time."
+        },
+        "StepHeaderTemplate": "Step {current} of {total}: {header}",
+        "DownloadingDumpsStepHeader": "Downloading database dumps",
+        "CreatingDatabaseStepHeader": "Creating a Libgen Desktop database",
+        "ImportingDumpsStepHeader": "Importing database dumps into the Libgen Desktop database",
+        "Back": "BACK",
+        "Next": "NEXT",
+        "Finish": "FINISH",
+        "Cancel": "CANCEL",
+        "ExitSetupTitle": "Exit setup",
+        "ExitSetupText": "The setup hasn't been completed yet. Are you sure you want to exit?"
     },
     "SearchTab":
     {
@@ -89,6 +221,7 @@
         "Details": "Details",
         "Open": "Open",
         "Download": "Download",
+        "Copy": "Copy",
         "ErrorMessageTitle": "Error",
         "FileNotFoundError": "File {file} not found.",
         "OfflineModeIsOnMessageTitle": "Offline mode is on",
@@ -108,6 +241,7 @@
             "Authors": "Authors",
             "Series": "Series",
             "Year": "Year",
+            "Language": "Language",
             "Publisher": "Publisher",
             "Format": "Format",
             "FileSize": "File Size",
@@ -126,6 +260,7 @@
             "Authors": "Authors",
             "Series": "Series",
             "Year": "Year",
+            "Language": "Language",
             "Publisher": "Publisher",
             "Format": "Format",
             "FileSize": "File Size",
@@ -224,7 +359,6 @@
     {
         "Title": "Title",
         "Authors": "Authors",
-        "RussianAuthor": "Author in Russian",
         "Series": "Series",
         "Publisher": "Publisher",
         "Edition": "Edition",
@@ -232,8 +366,9 @@
         "Language": "Language",
         "Format": "Format",
         "Pages": "Pages",
-        "Version": "Version",
         "FileSize": "File Size",
+        "Library": "Library",
+        "Issue": "Issue",
         "Added": "Added",
         "LastModified": "Last Modified",
         "Md5Hash": "MD5 hash",
@@ -325,6 +460,13 @@
             "ImportCancelled": "Import has been cancelled by the user.",
             "DataNotFound": "Couldn't find the data to import.",
             "InsufficientDiskSpace": "Insufficient disk space.",
+            "WrongTableFound": "Expected to find {expected} but found {found}.",
+            "ExpectedNonFictionTable": "non-fiction book table",
+            "ExpectedFictionTable": "fiction book table",
+            "ExpectedSciMagTable": "scientific article table",
+            "FoundNonFictionTable": "non-fiction book table",
+            "FoundFictionTable": "fiction book table",
+            "FoundSciMagTable": "scientific article table",
             "ImportError": "An error occurred during the import."
         }
     },
@@ -424,7 +566,6 @@
             "Id": "ID",
             "Title": "Title",
             "Authors": "Authors",
-            "RussianAuthor": "Author in Russian",
             "Series": "Series",
             "Publisher": "Publisher",
             "Edition": "Edition",
@@ -432,8 +573,9 @@
             "Language": "Language",
             "Format": "Format",
             "Pages": "Pages",
-            "Version": "Version",
             "FileSize": "File Size",
+            "Library": "Library",
+            "Issue": "Issue",
             "Added": "Added",
             "LastModified": "Last Modified",
             "Md5Hash": "MD5 hash",
@@ -564,8 +706,28 @@
         "Databases": "Databases",
         "AllFiles": "All files",
         "Error": "Error",
-        "CannotOpenDatabase": "An error occurred while trying to open database file: {file}",
+        "DatabaseNotValid": "File {file} is not a valid Libgen Desktop database.",
+        "DatabaseDumpFile": "It seems that {file} is a database dump and not a Libgen Desktop database file.",
+        "LibgenServerDatabase": "Database {database} is a Libgen Server database which is not compatible with the Libgen Desktop database structure.",
+        "OldFictionSchemaTitle": "Delete fiction collection?",
+        "OldFictionSchemaText": "Database {database} has an outdated database structure. Starting from February 2020 the main Libgen mirror uses a new database structure for its fiction collection. You need to download and import a new fiction database dump in order to continue using this collection in Libgen Desktop. Do you want to delete the fiction collection from this database now?",
         "Close": "CLOSE"
+    },
+    "DatabaseError":
+    {
+        "WindowTitle": "Libgen Desktop",
+        "DatabaseNotFound": "Database {database} not found.",
+        "DatabaseNotValid": "File {file} is not a valid Libgen Desktop database.",
+        "DatabaseDumpFile": "It seems that {file} is a database dump and not a Libgen Desktop database file. Start setup wizard to import it.",
+        "LibgenServerDatabase": "Database {database} is a Libgen Server database which is not compatible with the Libgen Desktop database structure.",
+        "OldFictionSchema": "Database {database} has an outdated database structure. Starting from February 2020 the main Libgen mirror uses a new database structure for its fiction collection. You need to download and import a new fiction database dump in order to continue using this collection in Libgen Desktop.",
+        "HeaderTemplate": "{error} Choose an action:",
+        "OpenAnotherDatabase": "Open another database",
+        "StartSetupWizard": "Start setup wizard",
+        "DeleteFiction": "Delete current fiction collection and continue",
+        "Exit": "Exit Libgen Desktop",
+        "Ok": "OK",
+        "Cancel": "CANCEL"
     },
     "SqlDebugger":
     {
@@ -660,6 +822,7 @@
         {
             "TabHeader": "General",
             "Language": "Language",
+            "PercentTranslated": "{percent}% translated",
             "CheckUpdates": "Check for the application updates",
             "UpdateCheckIntervals":
             {
@@ -680,7 +843,7 @@
             "ProxyPortValidation": "Numbers from {min} to {max}",
             "ProxyUserName": "User name",
             "ProxyPassword": "Password",
-            "ProxyPasswordWarning": "Storing the password here is insecure."
+            "ProxyPasswordWarning": "Storing password here is not secure."
         },
         "Download":
         {

@@ -39,25 +39,157 @@
             "About": "О программе"
         }
     },
-    "CreateDatabaseWindow":
+    "SetupWizardWindow":
     {
         "WindowTitle": "Libgen Desktop",
-        "FirstRunMessage": "Добро пожаловать в Libgen Desktop.",
-        "DatabaseNotFound": "База данных {database} не найдена.",
-        "DatabaseCorrupted": "База данных {database} повреждена.",
-        "LibgenServerDatabase": "Файл {database} является базой данных приложения Libgen Server и не может быть использован в приложении Libgen Desktop.",
-        "ChooseOption": "Выберите действие",
-        "CreateNewDatabase": "Создать новую базу данных",
-        "OpenExistingDatabase": "Открыть существующую базу данных",
-        "BrowseNewDatabaseDialogTitle": "Сохранение новой базы данных",
-        "BrowseExistingDatabaseDialogTitle": "Выбор базы данных",
-        "Databases": "Базы данных",
-        "AllFiles": "Все файлы",
-        "Error": "Ошибка",
-        "CannotCreateDatabase": "Не удалось создать базу данных.",
-        "Ok": "OK",
-        "Cancel": "ОТМЕНА"
-    },
+        "LanguageStep":
+        {
+            "ChooseLanguage": "Пожалуйста, выберите язык:"
+        },
+        "SetupModeStep":
+        {
+            "WelcomeAndChooseOption": "Добро пожаловать в Libgen Desktop. Выберите действие:",
+            "FirstTimeUser": "Я использую Libgen Desktop впервые",
+            "ExperiencedUser": "У меня есть опыт работы с Libgen Desktop"
+        },
+        "DatabaseOperationStep":
+        {
+            "ChooseAction": "Пожалуйста, выберите нужное действие:",
+            "CreateNewDatabase": "Создать новую базу данных",
+            "OpenExistingDatabase": "Открыть существующую базу данных"
+        },
+        "DownloadModeStep":
+        {
+            "ChooseDownloadMode": "Выберите способ скачивания дампов баз данных:",
+            "DownloadManagerMode": "Скачать их при помощи Libgen Desktop",
+            "UseProxyServer": "Использовать прокси-сервер",
+            "ProxySettings": "НАСТРОЙКИ...",
+            "BrowserMode": "Я хочу скачать их вручную"
+        },
+        "StepListStep":
+        {
+            "StepListHeader": "Первоначальная настройка Libgen Desktop",
+            "Step": "Шаг {step}",
+            "DownloadingDumps": "Скачивание дампов баз данных",
+            "CreatingDatabase": "Создание базы данных Libgen Desktop",
+            "ImportingDumps": "Импортирование дампов в базу данных Libgen Desktop",
+            "ClickNextButton": "Нажмите кнопку \"Далее\" для начала установки."
+        },
+        "ProxySettingsWindow":
+        {
+            "WindowTitle": "Настройки прокси-сервера",
+            "ProxyAddress": "Адрес",
+            "ProxyAddressRequired": "Обязательное поле",
+            "ProxyPort": "Порт",
+            "ProxyPortValidation": "Числа от {min} до {max}",
+            "ProxyUserName": "Имя пользователя",
+            "ProxyPassword": "Пароль",
+            "ProxyPasswordWarning": "Хранить здесь пароль небезопасно.",
+            "Ok": "OK",
+            "Cancel": "Отмена"
+        },
+        "DownloadDumpInfoStep":
+        {
+            "DownloadingDumpInfo": "Идет загрузка информации о дампах баз данных. Пожалуйста, подождите...",
+            "CannotDownloadDumpInfo": "Не удалось загрузить информацию о дампах баз данных",
+            "Interrupt": "ПРЕРВАТЬ",
+            "Interrupting": "ПРЕРЫВАЕТСЯ...",
+            "Retry": "ПОВТОРИТЬ"
+        },
+        "CollectionsStep":
+        {
+            "ChooseCollections": "Выберите коллекции, которые вы хотите использовать в Libgen Desktop:",
+            "NonFiction": "Нехудожественная литература",
+            "Fiction": "Художественная литература",
+            "SciMagArticles": "Научные статьи",
+            "DownloadSizeExact": "Размер скачиваемого дампа: {size}",
+            "DownloadSizeApproximate": "Размер скачиваемого дампа: примерно {size}",
+            "DatabaseSize": "Размер базы данных: примерно {size}",
+            "ImportTimeInMinutes": "Продолжительность импорта: {from}–{to} минут",
+            "ImportTimeInHours": "Продолжительность импорта: {from}–{to} часов",
+            "DownloadInto": "Скачать в:",
+            "BrowseDirectoryDialogTitle": "Выберите директорию для хранения скачиваемых дампов",
+            "ErrorWarningTitle": "Ошибка",
+            "NoCollectionsSelected": "Нужно выбрать хотя бы одну коллекцию.",
+            "DirectoryNotFound": "Директория {directory} не существует. Пожалуйста, выберите другую директорию."
+        },
+        "DownloadDumpsStep":
+        {
+            "NonFictionDumpName": "Дамп БД для нехудожественной литературы",
+            "FictionDumpName": "Дамп БД для художественной литературы",
+            "SciMagArticlesDumpName": "Дамп БД для научных статей",
+            "QueuedStatus": "В очереди",
+            "DownloadingStatus": "Загружается",
+            "StoppedStatus": "Остановлено",
+            "ErrorStatus": "Ошибка",
+            "DownloadProgress": "Загружено: {downloaded} из {total} байт ({percent}%)",
+            "Interrupt": "ПРЕРВАТЬ",
+            "Interrupting": "ПРЕРЫВАЕТСЯ...",
+            "Retry": "ПОВТОРИТЬ"
+        },
+        "DownloadDumpLinksStep":
+        {
+            "OpenPage": "Откройте страницу со списком дампов в вашем браузере:",
+            "CopyLink": "Копировать ссылку",
+            "DownloadFiles": "Затем скачайте следующие файлы:",
+            "NonFictionDumpName": "Дамп БД для нехудожественной литературы",
+            "FictionDumpName": "Дамп БД для художественной литературы",
+            "SciMagArticlesDumpName": "Дамп БД для научных статей",
+            "FileName": "Имя файла: {file}",
+            "YYYY": "ГГГГ",
+            "MM": "ММ",
+            "DD": "ДД",
+            "MostRecentDateNote": "где {dateTemplate} — самая поздняя из доступных дат в списке файлов."
+        },
+        "CreateDatabaseStep":
+        {
+            "DatabaseFilePathPrompt": "Пожалуйста, выберите место, где вы бы хотели хранить файл базы данных:",
+            "DatabaseCreated": "База данных Libgen Desktop успешно создана.",
+            "CannotCreateDatabase": "Не удалось создать базу данных Libgen Desktop.",
+            "DiskSpaceRequirementsNote": "Вам понадобится примерно {size} свободного места на диске.",
+            "SelectDatabaseFilePathDialogTitle": "Расположение для новой базы данных Libgen Desktop",
+            "Databases": "Базы данных",
+            "AllFiles": "Все файлы",
+            "CreateDatabase": "СОЗДАТЬ БАЗУ ДАННЫХ",
+            "CreatingDatabase": "СОЗДАЕТСЯ БАЗА ДАННЫХ...",
+            "DatabaseFileOverwritePromptTitle": "Перезаписать файл базы данных?",
+            "DatabaseFileOverwritePromptText": "Файл {file} уже существует. Вы хотите перезаписать его?"
+        },
+        "ImportDumpsStep":
+        {
+            "NonFictionDumpName": "Дамп БД для нехудожественной литературы",
+            "FictionDumpName": "Дамп БД для художественной литературы",
+            "SciMagArticlesDumpName": "Дамп БД для научных статей",
+            "Status": "Статус: {status}",
+            "NotImported": "еще не импортирован",
+            "Importing": "импортируется...",
+            "ImportSuccessful": "успешно импортирован",
+            "ImportCancelled": "импорт отменен",
+            "ImportError": "ошибка импорта",
+            "ImportButton": "ИМПОРТ...",
+            "ImportingButton": "ИМПОРТИРУЕТСЯ...",
+            "DeleteDumps": "Удалить файлы дампов после успешного импорта"
+        },
+        "ConfirmationStep":
+        {
+            "StepHeader": "Установка завершена",
+            "SettingsHeader": "Прежде чем вы закроете мастер установки, обратите внимание на следующие настройки:",
+            "AllowInternetConnection": "Разрешить Libgen Desktop подключаться к интернету",
+            "UseDownloadManager": "Использовать встроенный менеджер загрузок для скачивания книг и статей",
+            "UseBrowser": "Открывать ссылки на загрузку файлов в браузере",
+            "YouCanChangeSettings": "Вы всегда можете изменить эти и другие параметры в настройках программы."
+        },
+        "StepHeaderTemplate": "Шаг {current} из {total}: {header}",
+        "DownloadingDumpsStepHeader": "Загрузка дампов баз данных",
+        "CreatingDatabaseStepHeader": "Создание базы данных Libgen Desktop",
+        "ImportingDumpsStepHeader": "Импорт дампов БД в базу данных Libgen Desktop",
+        "Back": "НАЗАД",
+        "Next": "ДАЛЕЕ",
+        "Finish": "ГОТОВО",
+        "Cancel": "ОТМЕНА",
+        "ExitSetupTitle": "Отменить настройку",
+        "ExitSetupText": "Настройка Libgen Desktop еще не завершена. Вы действительно хотите выйти?"
+    },    
     "SearchTab":
     {
         "TabTitle": "Поиск",
@@ -89,6 +221,7 @@
         "Details": "Детальная информация",
         "Open": "Открыть",
         "Download": "Скачать",
+        "Copy": "Копировать",
         "ErrorMessageTitle": "Ошибка",
         "FileNotFoundError": "Файл {file} не найден.",
         "OfflineModeIsOnMessageTitle": "Включен автономный режим",
@@ -108,6 +241,7 @@
             "Authors": "Авторы",
             "Series": "Серия",
             "Year": "Год",
+            "Language": "Язык",
             "Publisher": "Издатель",
             "Format": "Формат",
             "FileSize": "Размер файла",
@@ -126,6 +260,7 @@
             "Authors": "Авторы",
             "Series": "Серия",
             "Year": "Год",
+            "Language": "Язык",
             "Publisher": "Издатель",
             "Format": "Формат",
             "FileSize": "Размер файла",
@@ -224,7 +359,6 @@
     {
         "Title": "Наименование",
         "Authors": "Авторы",
-        "RussianAuthor": "Автор (рус.)",
         "Series": "Серия",
         "Publisher": "Издатель",
         "Edition": "Издание",
@@ -232,8 +366,9 @@
         "Language": "Язык",
         "Format": "Формат",
         "Pages": "Страниц",
-        "Version": "Версия",
         "FileSize": "Размер файла",
+        "Library": "Библиотека",
+        "Issue": "Выпуск",
         "Added": "Добавлено",
         "LastModified": "Обновлено",
         "Md5Hash": "MD5-хэш",
@@ -325,6 +460,13 @@
             "ImportCancelled": "Импорт был прерван пользователем.",
             "DataNotFound": "Не найдены данные для импорта.",
             "InsufficientDiskSpace": "Недостаточно места на диске.",
+            "WrongTableFound": "Ожидалось найти {expected}, но была найдена {found}.",
+            "ExpectedNonFictionTable": "таблицу с нехудожественными книгами",
+            "ExpectedFictionTable": "таблицу с художественными книгами",
+            "ExpectedSciMagTable": "таблицу с научными статьями",
+            "FoundNonFictionTable": "таблица с нехудожественными книгами",
+            "FoundFictionTable": "таблица с художественными книгами",
+            "FoundSciMagTable": "таблица с научными статьями",
             "ImportError": "Импорт завершился с ошибками."
         }
     },
@@ -424,7 +566,6 @@
             "Id": "ID",
             "Title": "Наименование",
             "Authors": "Авторы",
-            "RussianAuthor": "Автор (рус.)",
             "Series": "Серия",
             "Publisher": "Издатель",
             "Edition": "Издание",
@@ -432,8 +573,9 @@
             "Language": "Язык",
             "Format": "Формат",
             "Pages": "Страниц",
-            "Version": "Версия",
             "FileSize": "Размер файла",
+            "Library": "Библиотека",
+            "Issue": "Выпуск",
             "Added": "Добавлено",
             "LastModified": "Обновлено",
             "Md5Hash": "MD5-хэш",
@@ -564,8 +706,28 @@
         "Databases": "Базы данных",
         "AllFiles": "Все файлы",
         "Error": "Ошибка",
-        "CannotOpenDatabase": "Произошла ошибка при открытии файла базы данных: {file}",
+        "DatabaseNotValid": "Файл {file} не является корректной базой данных Libgen Desktop.",
+        "DatabaseDumpFile": "Похоже, что {file} — это файл дампа, а не база данных Libgen Desktop.",
+        "LibgenServerDatabase": "Файл {database} является базой данных приложения Libgen Server, структура которой не совместима со структурой базы данных Libgen Desktop.",
+        "OldFictionSchemaTitle": "Удалить коллекцию художественной литературы?",
+        "OldFictionSchemaText": "Необходимо обновление структуры базы данных {database}. Начиная с февраля 2020 года основное зеркало библиотеки использует новую структуру базы данных для коллекции художественной литературы. Для продолжения использования этой коллекции в программе Libgen Desktop вам необходимо скачать и импортировать новый дамп базы данных для коллекции художественной литературы. Вы хотите удалить старую коллекцию художественной литературы из этой базы данных?",
         "Close": "ЗАКРЫТЬ"
+    },
+    "DatabaseError":
+    {
+        "WindowTitle": "Libgen Desktop",
+        "DatabaseNotFound": "База данных {database} не найдена.",
+        "DatabaseNotValid": "Файл {file} не является корректной базой данных Libgen Desktop.",
+        "DatabaseDumpFile": "Похоже, что {file} — это файл дампа, а не база данных Libgen Desktop. Запустите мастер установки для того, чтобы импортировать его.",
+        "LibgenServerDatabase": "Файл {database} является базой данных приложения Libgen Server, структура которой не совместима со структурой базы данных Libgen Desktop.",
+        "OldFictionSchema": "Необходимо обновление структуры базы данных {database}. Начиная с февраля 2020 года основное зеркало библиотеки использует новую структуру базы данных для коллекции художественной литературы. Для продолжения использования этой коллекции в программе Libgen Desktop вам необходимо скачать и импортировать новый дамп базы данных для коллекции художественной литературы.",
+        "HeaderTemplate": "{error} Выберите действие:",
+        "OpenAnotherDatabase": "Открыть другую базу данных",
+        "StartSetupWizard": "Запустить мастер установки",
+        "DeleteFiction": "Удалить существующую коллекцию художественной литературы и продолжить",
+        "Exit": "Выйти из Libgen Desktop",
+        "Ok": "OK",
+        "Cancel": "ОТМЕНА"
     },
     "SqlDebugger":
     {
@@ -660,6 +822,7 @@
         {
             "TabHeader": "Общие",
             "Language": "Язык интерфейса",
+            "PercentTranslated": "переведено {percent}%",
             "CheckUpdates": "Проверять обновления программы",
             "UpdateCheckIntervals":
             {
