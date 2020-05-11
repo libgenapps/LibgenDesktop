@@ -1,6 +1,6 @@
 ---
-name: Issue template
-about: Issue template
+name: New issue
+about: Submit a bug report or a new translation suggestion
 title: ''
 labels: ''
 assignees: ''
