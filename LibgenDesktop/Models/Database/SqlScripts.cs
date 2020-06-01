@@ -245,7 +245,7 @@
                 "Asin=@Asin," +
                 "CoverUrl=@CoverUrl," +
                 "Format=@Format," +
-                "SizeInBytes=@SizeInBytes" +
+                "SizeInBytes=@SizeInBytes," +
                 "Library=@Library," +
                 "Issue=@Issue," +
                 "Locator=@Locator," +
