@@ -4,12 +4,12 @@
         "Name": "Chinese (Simplified)",
         "LocalizedName": "简体中文",
         "CultureCode": "zh-CN",
-        "TranslatorName": "VaslD"
+        "TranslatorName": "VaslD & ihonliu"
     },
     "Formatting":
     {
         "DecimalSeparator": ".",
-        "ThousandsSeparator": "",
+        "ThousandsSeparator": ",",
         "DateFormat": "yyyy 年 M 月 d 日",
         "TimeFormat": "HH:mm:ss",
         "FileSizePostfixes":
@@ -39,6 +39,157 @@
             "About": "关于"
         }
     },
+     "SetupWizardWindow":
+    {
+        "WindowTitle": "Libgen 桌面版",
+        "LanguageStep":
+        {
+            "ChooseLanguage": "请选择您使用的语言："
+        },
+        "SetupModeStep":
+        {
+            "WelcomeAndChooseOption": "欢迎来到Libgen 桌面版。 请选择一个选项:",
+            "FirstTimeUser": "我是初次使用Libgen 桌面版",
+            "ExperiencedUser": "我是Libgen 桌面版的经验用户"
+        },
+        "DatabaseOperationStep":
+        {
+            "ChooseAction": "请选择一个操作：",
+            "CreateNewDatabase": "创建一个新的数据库",
+            "OpenExistingDatabase": "选择一个已经存在的数据库"
+        },
+        "DownloadModeStep":
+        {
+            "ChooseDownloadMode": "请选择一个下载数据库转储文件的方式：",
+            "DownloadManagerMode": "让Libgen 桌面版下载他们",
+            "UseProxyServer": "使用代理服务器",
+            "ProxySettings": "设置…",
+            "BrowserMode": "我想自行下载"
+        },
+        "StepListStep":
+        {
+            "StepListHeader": "Libgen 桌面版初次设定",
+            "Step": "步骤{step}",
+            "DownloadingDumps": "下载数据库转储文件",
+            "CreatingDatabase": "创建一个Libgen 桌面版数据库",
+            "ImportingDumps": "将数据库转储文件导入Libgen 桌面版的数据库中",
+            "ClickNextButton": "点击下一步来执行设置程序"
+        },
+        "ProxySettingsWindow":
+        {
+            "WindowTitle": "代理服务器设置",
+            "ProxyAddress": "地址",
+            "ProxyAddressRequired": "必填项",
+            "ProxyPort": "端口",
+            "ProxyPortValidation": "从{min}开始到{max}之间为有效端口",
+            "ProxyUserName": "用户名",
+            "ProxyPassword": "密码",
+            "ProxyPasswordWarning": "不建议您在这里保存密码",
+            "Ok": "确定",
+            "Cancel": "取消"
+        },
+        "DownloadDumpInfoStep":
+        {
+            "DownloadingDumpInfo": "请稍待片刻。正在下载数据库转储文件…",
+            "CannotDownloadDumpInfo": "无法下载数据库转储文件",
+            "Interrupt": "中断",
+            "Interrupting": "中断中…",
+            "Retry": "重试"
+        },
+        "CollectionsStep":
+        {
+            "ChooseCollections": "请选择您要在Libgen 桌面版中使用的数据集合：",
+            "NonFiction": "非小说书籍",
+            "Fiction": "小说",
+            "SciMagArticles": "科学文献",
+            "DownloadSizeExact": "下载大小：{size}",
+            "DownloadSizeApproximate": "预计下载大小：{size}",
+            "DatabaseSize": "预计数据库大小：{size}",
+            "ImportTimeInMinutes": "导入时间： {from}–{to} 分钟",
+            "ImportTimeInHours": "导入时间： {from}–{to} 小时",
+            "DownloadInto": "下载至：",
+            "BrowseDirectoryDialogTitle": "下载数据库转储文件至…",
+            "ErrorWarningTitle": "错误",
+            "NoCollectionsSelected": "至少需要选择一个集合。",
+            "DirectoryNotFound": "目录{directory}不存在。请选择其他目录。"
+        },
+        "DownloadDumpsStep":
+        {
+            "NonFictionDumpName": "非小说书籍数据库转储文件",
+            "FictionDumpName": "小说文件数据库转储文件",
+            "SciMagArticlesDumpName": "科学文献数据库转储文件",
+            "QueuedStatus": "已在队列中",
+            "DownloadingStatus": "下载中",
+            "StoppedStatus": "已停止",
+            "ErrorStatus": "错误",
+            "DownloadProgress": "已下载 {downloaded}/{total} B ({percent}%)",
+            "Interrupt": "中断",
+            "Interrupting": "中断中…",
+            "Retry": "重试"
+        },
+        "DownloadDumpLinksStep":
+        {
+            "OpenPage": "在您的浏览器中打开数据库转储文件列表页面：",
+            "CopyLink": "复制链接",
+            "DownloadFiles": "然后下载以下文件:",
+            "NonFictionDumpName": "非小说书籍数据库转储文件(Non-fiction books database dump)",
+            "FictionDumpName": "小说书籍数据库转储文件(Fiction books database dump)",
+            "SciMagArticlesDumpName": "科学文献(Scientific articles database dump)",
+            "FileName": "文件名: {file}",
+            "YYYY": "YYYY",
+            "MM": "MM",
+            "DD": "DD",
+            "MostRecentDateNote": "在列表中 {dateTemplate} 是转储文件可用的最新日期"
+        },
+        "CreateDatabaseStep":
+        {
+            "DatabaseFilePathPrompt": "请选择一个位置来存储数据库文件：",
+            "DatabaseCreated": "Libgen 桌面版数据库已经成功创建。",
+            "CannotCreateDatabase": "无法创建Libgen桌面版数据库。",
+            "DiskSpaceRequirementsNote": "您大概需要 {size} 的自由磁盘空间",
+            "SelectDatabaseFilePathDialogTitle": "Libgen 桌面版 新数据库文件路径",
+            "Databases": "数据库",
+            "AllFiles": "所有文件",
+            "CreateDatabase": "创建数据库",
+            "CreatingDatabase": "正在创建数据库…",
+            "DatabaseFileOverwritePromptTitle": "覆盖数据库文件？",
+            "DatabaseFileOverwritePromptText": "文件 {file} 已存在。您是否确认要覆盖它？"
+        },
+        "ImportDumpsStep":
+        {
+            "NonFictionDumpName": "非小说书籍数据库转储文件",
+            "FictionDumpName": "小说书籍数据库转储文件",
+            "SciMagArticlesDumpName": "科学文献数据库转储文件",
+            "Status": "状态: {status}",
+            "NotImported": "未导入",
+            "Importing": "导入中",
+            "ImportSuccessful": "导入成功",
+            "ImportCancelled": "导入已取消",
+            "ImportError": "导入时发生错误",
+            "ImportButton": "导入…",
+            "ImportingButton": "导入中…",
+            "DeleteDumps": "导入完成后删除数据库转储文件"
+        },
+        "ConfirmationStep":
+        {
+            "StepHeader": "设置完成",
+            "SettingsHeader": "在完成设置之前有以下设置需要您考虑：",
+            "AllowInternetConnection": "允许Libgen 桌面版连接至互联网",
+            "UseDownloadManager": "使用内置下载程序下载书籍与文章",
+            "UseBrowser": "在浏览器中打开下载链接",
+            "YouCanChangeSettings": "您可以在任何时候改变这些设置。"
+        },
+        "StepHeaderTemplate": "当前正在执行 {current} / {total} 步： {header}",
+        "DownloadingDumpsStepHeader": "正在下载数据库转储文件",
+        "CreatingDatabaseStepHeader": "正在创建Libgen 桌面版数据库",
+        "ImportingDumpsStepHeader": "正在将数据导入至Libgen 桌面版",
+        "Back": "返回",
+        "Next": "下一步",
+        "Finish": "完成",
+        "Cancel": "取消",
+        "ExitSetupTitle": "退出设置",
+        "ExitSetupText": "设置还未完成，您确定要退出吗？"
+    },
     "SearchTab":
     {
         "TabTitle": "搜索",
@@ -49,27 +200,28 @@
         "NonFictionSearchBoxTooltip": "搜索书名、作者、作品系列、出版商或 ISBN（不含横杠）",
         "FictionSearchBoxTooltip": "搜索书名、作者、作品系列、出版商或 ISBN（包含横杠）",
         "SciMagSearchBoxTooltip": "搜索文章名、作者、杂志名、DOI、PubMed 编号或 ISSN",
-        "SearchInProgress": "正在搜索……",
+        "SearchInProgress": "正在搜索…",
         "NonFictionSearchProgress": "已找到 {count} 个结果",
         "FictionSearchProgress": "已找到 {count} 个结果",
         "SciMagSearchProgress": "已找到 {count} 个结果",
         "Interrupt": "中止",
-        "Interrupting": "正在中止……",
+        "Interrupting": "正在中止…",
         "DatabaseIsEmpty": "本地数据为空。您需要先从 Library Genesis 网站下载数据库转储文件，然后导入本地。",
         "ImportButton": "导入数据"
     },
     "SearchResultsTabs":
     {
         "SearchPlaceHolder": "搜索",
-        "SearchInProgress": "正在搜索……",
+        "SearchInProgress": "正在搜索…",
         "Interrupt": "中止",
-        "Interrupting": "正在中止……",
+        "Interrupting": "正在中止…",
         "AddToBookmarksTooltip": "添加书签",
         "RemoveFromBookmarksTooltip": "删除书签",
         "ExportButtonTooltip": "导出搜索结果",
         "Details": "详情",
         "Open": "打开",
         "Download": "下载",
+        "Copy": "复制",
         "ErrorMessageTitle": "错误",
         "FileNotFoundError": "文件“{file}”不存在。",
         "OfflineModeIsOnMessageTitle": "离线模式已打开",
@@ -89,11 +241,12 @@
             "Authors": "作者",
             "Series": "系列",
             "Year": "年份",
+            "Language": "语言",
             "Publisher": "出版商",
             "Format": "格式",
             "FileSize": "大小",
             "Ocr": "扫描版",
-            "InLocalLibrary": "本地缓存"
+            "InLocalLibrary": "本地书库"
         }
     },
     "FictionSearchResultsTab":
@@ -107,10 +260,11 @@
             "Authors": "作者",
             "Series": "系列",
             "Year": "年份",
+            "Language": "语言",
             "Publisher": "出版商",
             "Format": "格式",
             "FileSize": "大小",
-            "InLocalLibrary": "本地缓存"
+            "InLocalLibrary": "本地书库"
         }
     },
     "SciMagSearchResultsTab":
@@ -126,12 +280,12 @@
             "Year": "年份",
             "FileSize": "大小",
             "Doi": "DOI",
-            "InLocalLibrary": "本地缓存"
+            "InLocalLibrary": "本地书库"
         }
     },
     "DetailsTabs":
     {
-        "CoverIsLoading": "正在下载封面……",
+        "CoverIsLoading": "正在下载封面…",
         "NoCover": "无封面",
         "NoCoverMirror": "未选择{new-line}封面镜像站",
         "NoCoverDueToOfflineMode": "离线模式{new-line}未加载封面",
@@ -213,6 +367,8 @@
         "Format": "文件格式",
         "Pages": "页数",
         "FileSize": "文件大小",
+        "Library": "书库",
+        "Issue": "期刊",
         "Added": "添加日期",
         "LastModified": "修改日期",
         "Md5Hash": "MD5",
@@ -268,7 +424,7 @@
         "FreeSpace": "磁盘剩余空间：{freeSpace}",
         "Unknown": "未知",
         "Interrupt": "中止",
-        "Interrupting": "正在中止……",
+        "Interrupting": "正在中止…",
         "Close": "关闭",
         "StatusMessages":
         {
@@ -286,16 +442,16 @@
         {
             "Step": "第 {step} 步",
             "DataLookup": "正在查找表结构定义",
-            "Scanning": "正在扫描……",
-            "ScannedProgress": "已扫描全部文件的 {percent}%……",
+            "Scanning": "正在扫描…",
+            "ScannedProgress": "已扫描全部文件的 {percent}%…",
             "NonFictionTableFound": "已找到“非虚构作品”表。",
             "FictionTableFound": "已找到“虚构类图书”表。",
             "SciMagTableFound": "已找到“科学文章”表。",
-            "CreatingIndexes": "正在创建缺失的索引……",
-            "CreatingIndexForColumn": "正在为“{column}”列创建索引……",
+            "CreatingIndexes": "正在创建缺失的索引…",
+            "CreatingIndexForColumn": "正在为“{column}”列创建索引…",
             "LoadingIds": "正在加载现有数据标识符",
-            "LoadingColumnValues": "正在为“{column}”列加载数据……",
-            "ImportingData": "正在导入数据……",
+            "LoadingColumnValues": "正在为“{column}”列加载数据…",
+            "ImportingData": "正在导入数据…",
             "ImportBooksProgressNoUpdate": "已导入图书：{added}.",
             "ImportBooksProgressWithUpdate": "已导入图书：{added}，已更新图书：{updated}.",
             "ImportArticlesProgressNoUpdate": "已导入文章：{added}.",
@@ -304,6 +460,13 @@
             "ImportCancelled": "用户取消导入。",
             "DataNotFound": "无法找到可供导入的数据。",
             "InsufficientDiskSpace": "磁盘空间不足。",
+            "WrongTableFound": "期望找到 {expected} 但是仅找到 {found}。",
+            "ExpectedNonFictionTable": "非小说书籍表",
+            "ExpectedFictionTable": "小说书籍表",
+            "ExpectedSciMagTable": "科学文献表",
+            "FoundNonFictionTable": "非小说书籍表",
+            "FoundFictionTable": "小说书籍表",
+            "FoundSciMagTable": "科学文献表",
             "ImportError": "导入数据时遇到错误。"
         }
     },
@@ -342,7 +505,7 @@
         "RowLimitWarningText": "Microsoft Excel 文件支持行数有限。{new-line}由于已达到行数限制，导出已中断。{new-line}请前往设置 > 导出页面打开“分卷导出”。",
         "ExportError": "导出数据时遇到问题",
         "Interrupt": "中止",
-        "Interrupting": "正在中止……",
+        "Interrupting": "正在中止…",
         "ExportInterrupted": "导出已中止。",
         "Results": "打开导出文件",
         "Close": "关闭"
@@ -411,6 +574,8 @@
             "Format": "文件格式",
             "Pages": "页数",
             "FileSize": "文件大小",
+            "Library": "书库",
+            "Issue": "期刊",
             "Added": "添加日期",
             "LastModified": "修改日期",
             "Md5Hash": "MD5",
@@ -466,7 +631,7 @@
         "FreeSpace": "磁盘剩余空间：{freeSpace}",
         "Unknown": "未知",
         "Interrupt": "中止",
-        "Interrupting": "正在中止……",
+        "Interrupting": "正在中止…",
         "Close": "关闭",
         "StatusMessages":
         {
@@ -506,10 +671,10 @@
         "ScanSciMag": "扫描科学文章…",
         "BrowseDirectoryDialogTitle": "在此文件夹内扫描",
         "ScanStarted": "扫描已启动，目标位置：{directory}",
-        "CreatingIndexes": "请稍候，正在创建缺失的数据库索引……",
+        "CreatingIndexes": "请稍候，正在创建缺失的数据库索引…",
         "Found": "已找到 ({count})",
         "AddAll": "将所有已找到文件添加到书库",
-        "Adding": "正在添加到书库……",
+        "Adding": "正在添加到书库…",
         "Added": "文件已加入书库",
         "NotFound": "未找到 ({count})",
         "ScanLog": "扫描日志",
@@ -535,14 +700,34 @@
         "Never": "未知",
         "IndexesRequiredTitle": "数据库索引",
         "IndexesRequiredText": "Libgen 桌面版需要为本地数据库补全缺失的索引。{new-line}创建索引耗时可能较长（长至 1 小时），且中途无法取消或中止。{new-line}您要现在开始创建索引吗？",
-        "CreatingIndexes": "正在创建缺失的索引……{new-line}此操作无法被取消，请耐心等待。",
+        "CreatingIndexes": "正在创建缺失的索引…{new-line}此操作无法被取消，请耐心等待。",
         "ChangeDatabase": "切换数据库…",
         "BrowseDatabaseDialogTitle": "数据库文件位置",
         "Databases": "数据库",
         "AllFiles": "所有文件",
         "Error": "错误",
-        "CannotOpenDatabase": "打开文件“{file}”时遇到问题。",
+        "DatabaseNotValid": "文件 {file} 不是一个有效的Libgen 桌面版数据库文件.",
+        "DatabaseDumpFile": "看来 {file}是一个数据库转储文件，而非Libgen 桌面版的数据库文件",
+        "LibgenServerDatabase": "数据库 {database} 是一个Libgen 服务器版数据库文件，而它和Libgen桌面版数据库是不兼容的。",
+        "OldFictionSchemaTitle": "删除小说合集？",
+        "OldFictionSchemaText": "数据库 {database} 采用了过时的数据库架构。从2020年2月开始，主要的Libgen镜像为小说集合使用了新的数据库架构。 为了在Libgen桌面版中使用这些数据集合，您需要重新下载，并导入新的小说数据库转储文件。您确定现在就要从本数据库中删除小说集合吗？",
         "Close": "关闭"
+    },
+    "DatabaseError":
+    {
+        "WindowTitle": "Libgen 桌面版",
+        "DatabaseNotFound": "无法找到 {database} 数据库。",
+        "DatabaseNotValid": "文件 {file} 不是一个有效的 Libgen 桌面版数据库。",
+        "DatabaseDumpFile": "看来 {file} 是一个数据库转储文件，而非一个 Libgen 桌面版数据库文件。启动设置引导来导入。",
+        "LibgenServerDatabase": "数据库 {database} 是一个Libgen 服务器版数据库文件，而它和Libgen桌面版数据库是不兼容的。",
+        "OldFictionSchema": "数据库 {database} 采用了过时的数据库架构。从2020年2月开始，主要的Libgen镜像为小说集合使用了新的数据库架构。 为了在Libgen桌面版中使用这些数据集合，您需要重新下载，并导入新的小说数据库转储文件。",
+        "HeaderTemplate": "{error} 请选择一个操作：",
+        "OpenAnotherDatabase": "打开另一个数据库文件",
+        "StartSetupWizard": "启动设置引导",
+        "DeleteFiction": "删除当前小说合集并继续",
+        "Exit": "退出 Libgen 桌面版",
+        "Ok": "确定",
+        "Cancel": "取消"
     },
     "SqlDebugger":
     {
@@ -619,7 +804,7 @@
         "SkipThisVersion": "忽略此版本",
         "Cancel": "取消",
         "Interrupt": "中止",
-        "Interrupting": "正在中止……",
+        "Interrupting": "正在中止…",
         "InterruptPromptTitle": "取消下载？",
         "InterruptPromptText": "您要停止下载并取消软件更新吗？",
         "Error": "错误",
@@ -637,6 +822,7 @@
         {
             "TabHeader": "通用",
             "Language": "语言",
+            "PercentTranslated": "已翻译{percent}%",
             "CheckUpdates": "自动检查更新",
             "UpdateCheckIntervals":
             {
@@ -722,7 +908,7 @@
         "ApplicationName": "Libgen 桌面版",
         "Version": "版本：{version}，发布时间：{date}",
         "CheckForUpdates": "检查更新",
-        "CheckingUpdates": "正在检查更新……",
+        "CheckingUpdates": "正在检查更新…",
         "OfflineModeIsOnTooltip": "离线模式开启",
         "LatestVersion": "您的软件是最新版本。",
         "NewVersionAvailable": "新版本可用：{version}，发布时间：{date}",
