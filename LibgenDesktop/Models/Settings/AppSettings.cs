@@ -100,6 +100,7 @@ namespace LibgenDesktop.Models.Settings
                         AuthorsColumnWidth = DEFAULT_NON_FICTION_GRID_AUTHORS_COLUMN_WIDTH,
                         SeriesColumnWidth = DEFAULT_NON_FICTION_GRID_SERIES_COLUMN_WIDTH,
                         YearColumnWidth = DEFAULT_NON_FICTION_GRID_YEAR_COLUMN_WIDTH,
+                        IdentifierColumnWidth = DEFAULT_NON_FICTION_GRID_IDENTIFIER_COLUMN_WIDTH,
                         LanguageColumnWidth = DEFAULT_NON_FICTION_GRID_LANGUAGE_COLUMN_WIDTH,
                         PublisherColumnWidth = DEFAULT_NON_FICTION_GRID_PUBLISHER_COLUMN_WIDTH,
                         FormatColumnWidth = DEFAULT_NON_FICTION_GRID_FORMAT_COLUMN_WIDTH,
@@ -114,6 +115,7 @@ namespace LibgenDesktop.Models.Settings
             public int AuthorsColumnWidth { get; set; }
             public int SeriesColumnWidth { get; set; }
             public int YearColumnWidth { get; set; }
+            public int IdentifierColumnWidth { get; set; }
             public int LanguageColumnWidth { get; set; }
             public int PublisherColumnWidth { get; set; }
             public int FormatColumnWidth { get; set; }

@@ -11,6 +11,7 @@ namespace LibgenDesktop.Models.Localization.Localizators.SearchResultGrids
             Authors = Format(section => section?.Authors);
             Series = Format(section => section?.Series);
             Year = Format(section => section?.Year);
+            Identifier = Format(section => section?.Identifier);
             Language = Format(section => section?.Language);
             Publisher = Format(section => section?.Publisher);
             FormatColumn = Format(section => section?.Format);
@@ -23,6 +24,7 @@ namespace LibgenDesktop.Models.Localization.Localizators.SearchResultGrids
         public string Authors { get; }
         public string Series { get; }
         public string Year { get; }
+        public string Identifier { get; }
         public string Language { get; }
         public string Publisher { get; }
         public string FormatColumn { get; }
