@@ -1,4 +1,8 @@
-﻿[*.cs]
+﻿[*]
+indent_style = space
+indent_size = 4
+
+[*.cs]
 
 # CA1810: Initialize reference type static fields inline
 dotnet_diagnostic.CA1810.severity = none
