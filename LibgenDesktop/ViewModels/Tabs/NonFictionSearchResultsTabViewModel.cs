@@ -30,10 +30,11 @@ namespace LibgenDesktop.ViewModels.Tabs
             List<NonFictionBook> searchResults)
             : base(mainModel, parentWindowContext, LibgenObjectType.NON_FICTION_BOOK, searchQuery)
         {
+            GroupingByIdentifier grouping = new GroupingByIdentifier();
             columnSettings = mainModel.AppSettings.NonFiction.Columns;
             LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
             books = new ObservableCollection<NonFictionSearchResultItemViewModel>(searchResults.Select(book =>
-                new NonFictionSearchResultItemViewModel(book, formatter)));
+                new NonFictionSearchResultItemViewModel(book, formatter, grouping)));
             Initialize();
         }
 
@@ -108,6 +109,18 @@ namespace LibgenDesktop.ViewModels.Tabs
             set
             {
                 columnSettings.YearColumnWidth = value;
+            }
+        }
+
+        public int IdentifierColumnWidth
+        {
+            get
+            {
+                return columnSettings.IdentifierColumnWidth;
+            }
+            set
+            {
+                columnSettings.IdentifierColumnWidth = value;
             }
         }
 
@@ -232,8 +245,9 @@ namespace LibgenDesktop.ViewModels.Tabs
                 ShowErrorWindow(exception, ParentWindowContext);
             }
             LanguageFormatter formatter = MainModel.Localization.CurrentLanguage.Formatter;
+            GroupingByIdentifier grouping = new GroupingByIdentifier();
             Books = new ObservableCollection<NonFictionSearchResultItemViewModel>(result.Select(book =>
-                new NonFictionSearchResultItemViewModel(book, formatter)));
+                new NonFictionSearchResultItemViewModel(book, formatter, grouping)));
             UpdateBookCount();
             IsSearchResultsGridVisible = true;
             IsStatusBarVisible = true;

@@ -14,6 +14,8 @@
     <Style x:Key="YearColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}">
         <Setter Property="HorizontalAlignment" Value="Center" />
     </Style>
+    <Style x:Key="IdentifierHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridLeftAlignedTextHeaderStyle}" />
+    <Style x:Key="IdentifierColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
     <Style x:Key="LanguageHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridLeftAlignedTextHeaderStyle}" />
     <Style x:Key="LanguageColumnStyle" TargetType="TextBlock" BasedOn="{StaticResource SearchResultsDataGridTextColumnElementStyle}" />
     <Style x:Key="PublisherHeaderStyle" TargetType="DataGridColumnHeader" BasedOn="{StaticResource SearchResultsDataGridLeftAlignedTextHeaderStyle}" />

@@ -241,6 +241,7 @@
             "Authors": "Authors",
             "Series": "Series",
             "Year": "Year",
+            "Identifier": "Identifier",
             "Language": "Language",
             "Publisher": "Publisher",
             "Format": "Format",

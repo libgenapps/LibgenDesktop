@@ -27,6 +27,7 @@ namespace LibgenDesktop.Common
         public const int NON_FICTION_GRID_AUTHORS_COLUMN_MIN_WIDTH = 150;
         public const int NON_FICTION_GRID_SERIES_COLUMN_MIN_WIDTH = 150;
         public const int NON_FICTION_GRID_YEAR_COLUMN_MIN_WIDTH = 60;
+        public const int NON_FICTION_GRID_IDENTIFIER_COLUMN_MIN_WIDTH = 150;
         public const int NON_FICTION_GRID_LANGUAGE_COLUMN_MIN_WIDTH = 150;
         public const int NON_FICTION_GRID_PUBLISHER_COLUMN_MIN_WIDTH = 150;
         public const int NON_FICTION_GRID_FORMAT_COLUMN_MIN_WIDTH = 80;
@@ -95,6 +96,7 @@ namespace LibgenDesktop.Common
         public const int DEFAULT_NON_FICTION_GRID_AUTHORS_COLUMN_WIDTH = 200;
         public const int DEFAULT_NON_FICTION_GRID_SERIES_COLUMN_WIDTH = 180;
         public const int DEFAULT_NON_FICTION_GRID_YEAR_COLUMN_WIDTH = 60;
+        public const int DEFAULT_NON_FICTION_GRID_IDENTIFIER_COLUMN_WIDTH = 180;
         public const int DEFAULT_NON_FICTION_GRID_LANGUAGE_COLUMN_WIDTH = 180;
         public const int DEFAULT_NON_FICTION_GRID_PUBLISHER_COLUMN_WIDTH = 180;
         public const int DEFAULT_NON_FICTION_GRID_FORMAT_COLUMN_WIDTH = 100;
